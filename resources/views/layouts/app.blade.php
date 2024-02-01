@@ -18,7 +18,7 @@
     @yield('content')
     <!-- demo chat-->
     @include('layouts.chat')
-   
+    @include('layouts.copyright')
     @include('layouts.footer')
 </body>
 <!-- END: Body-->

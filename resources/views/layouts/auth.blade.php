@@ -18,7 +18,12 @@
                 <section id="auth-login" class="row flexbox-container">
                     <div class="col-xl-8 col-11">
                         <div class="card bg-authentication mb-0">
-                            <div class="row m-0">
+                            <div class="row m-4">
+                                <a href="/" class="app-brand-link gap-2" style="margin: auto !important;">
+                                    <span class="app-brand-logo demo">
+                                        <img src="{{ asset('app-assets/images/logo/logo.png') }}" height="100px">
+                                    </span>
+                                </a>
                                 @yield('body')
                             </div>
                         </div>
