@@ -11,15 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('users')){
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->string('firtname')->nullable();
+                $table->string('middlename')->nullable();
+                $table->string('lastname')->nullable();
+                $table->string('avatar')->nullable();
+                $table->string('phone')->nullable();
+                $table->string('status')->nullable();
+                $table->string('wallet_lock')->nullable();
+                $table->string('api_key')->nullable();
+                $table->string('secret_key')->nullable();
+                $table->string('public_key')->nullable();
+                $table->string('transaction_pin')->nullable();
+                $table->string('referal_wallet')->nullable();
+                $table->string('wallet')->nullable();
+                $table->string('app_version')->nullable();
+                $table->string('email')->unique();
+                $table->timestamp('email_verified_at')->nullable();
+                $table->string('password');
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -27,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        if (Schema::hasTable('users')){Schema::dropIfExists('users');}
     }
 };
