@@ -1,313 +1,185 @@
 @extends('layouts.app')
 @section('content')
     <!-- BEGIN: Content-->
-    <div class="app-content content">
+    {{-- <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
             </div>
             <div class="content-body">
                 <!-- Dashboard Analytics Start -->
-                <section id="dashboard-analytics">
+                 <section id="dashboard-ecommerce">
                     <div class="row">
-                        <!-- Website Analytics Starts-->
-                        <div class="col-md-6 col-sm-12">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">Website Analytics</h4>
-                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                </div>
-                                <div class="card-content">
-                                    <div class="card-body pb-1">
-                                        <div class="d-flex justify-content-around align-items-center flex-wrap">
-                                            <div class="user-analytics">
-                                                <i class="bx bx-user mr-25 align-middle"></i>
-                                                <span class="align-middle text-muted">Users</span>
-                                                <div class="d-flex">
-                                                    <div id="radial-success-chart"></div>
-                                                    <h3 class="mt-1 ml-50">61K</h3>
-                                                </div>
-                                            </div>
-                                            <div class="sessions-analytics">
-                                                <i class="bx bx-trending-up align-middle mr-25"></i>
-                                                <span class="align-middle text-muted">Sessions</span>
-                                                <div class="d-flex">
-                                                    <div id="radial-warning-chart"></div>
-                                                    <h3 class="mt-1 ml-50">92K</h3>
-                                                </div>
-                                            </div>
-                                            <div class="bounce-rate-analytics">
-                                                <i class="bx bx-pie-chart-alt align-middle mr-25"></i>
-                                                <span class="align-middle text-muted">Bounce Rate</span>
-                                                <div class="d-flex">
-                                                    <div id="radial-danger-chart"></div>
-                                                    <h3 class="mt-1 ml-50">72.6%</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="analytics-bar-chart"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="col-xl-3 col-md-6 col-sm-12 dashboard-referral-impression">
-                            <div class="row">
-                                <!-- Referral Chart Starts-->
-                                <div class="col-xl-12 col-12">
-                                    <div class="card">
-                                        <div class="card-content">
-                                            <div class="card-body text-center pb-0">
-                                                <h2>$32,690</h2>
-                                                <span class="text-muted">Referral</span> 40%
-                                                <div id="success-line-chart"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Impression Radial Chart Starts-->
-                                <div class="col-xl-12 col-12">
-                                    <div class="card">
-                                        <div class="card-content">
-                                            <div class="card-body donut-chart-wrapper">
-                                                <div id="donut-chart" class="d-flex justify-content-center"></div>
-                                                <ul class="list-inline d-flex justify-content-around mb-0">
-                                                    <li> <span class="bullet bullet-xs bullet-warning mr-50"></span>Search</li>
-                                                    <li> <span class="bullet bullet-xs bullet-info mr-50"></span>Email</li>
-                                                    <li> <span class="bullet bullet-xs bullet-primary mr-50"></span>Social</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-3 col-md-12 col-sm-12">
-                            <div class="row">
-                                <!-- Conversion Chart Starts-->
-                                <div class="col-xl-12 col-md-6 col-12">
-                                    <div class="card">
-                                        <div class="card-header d-flex justify-content-between pb-xl-0 pt-xl-1">
-                                            <div class="conversion-title">
-                                                <h4 class="card-title">Conversion</h4>
-                                                <p>60%
-                                                    <i class="bx bx-trending-up text-success font-size-small align-middle mr-25"></i>
-                                                </p>
-                                            </div>
-                                            <div class="conversion-rate">
-                                                <h2>89k</h2>
-                                            </div>
-                                        </div>
-                                        <div class="card-content">
-                                            <div class="card-body text-center">
-                                                <div id="bar-negative-chart"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-12 col-md-6 col-12">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body d-flex align-items-center justify-content-between">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar bg-rgba-primary m-0 p-25 mr-75 mr-xl-2">
-                                                            <div class="avatar-content">
-                                                                <i class="bx bx-user text-primary font-medium-2"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div class="total-amount">
-                                                            <h5 class="mb-0">$38,566</h5>
-                                                            <small class="text-muted">Conversion</small>
-                                                        </div>
-                                                    </div>
-                                                    <div id="primary-line-chart"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body d-flex align-items-center justify-content-between">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar bg-rgba-warning m-0 p-25 mr-75 mr-xl-2">
-                                                            <div class="avatar-content">
-                                                                <i class="bx bx-dollar text-warning font-medium-2"></i>
-                                                            </div>
-                                                        </div>
-                                                        <div class="total-amount">
-                                                            <h5 class="mb-0">$53,659</h5>
-                                                            <small class="text-muted">Income</small>
-                                                        </div>
-                                                    </div>
-                                                    <div id="warning-line-chart"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Activity Card Starts-->
-                        <div class="col-xl-3 col-md-6 col-12 activity-card">
+                        <!-- Greetings Content Starts -->
+                        <div class="col-xl-4 col-md-6 col-12 dashboard-greetings">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Activity</h4>
+                                    <h3 class="greeting-text">Congratulations John!</h3>
+                                    <p class="mb-0">Best seller of the month</p>
                                 </div>
                                 <div class="card-content">
-                                    <div class="card-body pt-1">
-                                        <div class="d-flex activity-content">
-                                            <div class="avatar bg-rgba-primary m-0 mr-75">
-                                                <div class="avatar-content">
-                                                    <i class="bx bx-bar-chart-alt-2 text-primary"></i>
-                                                </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-end">
+                                            <div class="dashboard-content-left">
+                                                <h1 class="text-primary font-large-2 text-bold-500">$89k</h1>
+                                                <p>You have done 57.6% more sales today.</p>
+                                                <button type="button" class="btn btn-primary glow">View Sales</button>
                                             </div>
-                                            <div class="activity-progress flex-grow-1">
-                                                <small class="text-muted d-inline-block mb-50">Total Sales</small>
-                                                <small class="float-right">$8,125</small>
-                                                <div class="progress progress-bar-primary progress-sm">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="50" style="width:50%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex activity-content">
-                                            <div class="avatar bg-rgba-success m-0 mr-75">
-                                                <div class="avatar-content">
-                                                    <i class="bx bx-dollar text-success"></i>
-                                                </div>
-                                            </div>
-                                            <div class="activity-progress flex-grow-1">
-                                                <small class="text-muted d-inline-block mb-50">Income Amount</small>
-                                                <small class="float-right">$18,963</small>
-                                                <div class="progress progress-bar-success progress-sm">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="80" style="width:80%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex activity-content">
-                                            <div class="avatar bg-rgba-warning m-0 mr-75">
-                                                <div class="avatar-content">
-                                                    <i class="bx bx-stats text-warning"></i>
-                                                </div>
-                                            </div>
-                                            <div class="activity-progress flex-grow-1">
-                                                <small class="text-muted d-inline-block mb-50">Total Budget</small>
-                                                <small class="float-right">$14,150</small>
-                                                <div class="progress progress-bar-warning progress-sm">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" style="width:60%"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex mb-75">
-                                            <div class="avatar bg-rgba-danger m-0 mr-75">
-                                                <div class="avatar-content">
-                                                    <i class="bx bx-check text-danger"></i>
-                                                </div>
-                                            </div>
-                                            <div class="activity-progress flex-grow-1">
-                                                <small class="text-muted d-inline-block mb-50">Completed Tasks</small>
-                                                <small class="float-right">106</small>
-                                                <div class="progress progress-bar-danger progress-sm">
-                                                    <div class="progress-bar" role="progressbar" aria-valuenow="30" style="width:30%"></div>
-                                                </div>
+                                            <div class="dashboard-content-right">
+                                                <img src="../../../app-assets/images/icon/cup.png" height="220" width="220" class="img-fluid" alt="Dashboard Ecommerce" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Profit Report Card Starts-->
-                        <div class="col-xl-3 col-md-6 col-12 profit-report-card">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-6">
-                                    <div class="card">
-                                        <div class="card-header d-flex justify-content-between align-items-center">
-                                            <h4 class="card-title">Profit Report</h4>
-                                            <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                        </div>
-                                        <div class="card-content">
-                                            <div class="card-body pb-0 d-flex justify-content-around">
-                                                <div class="d-inline-flex mr-xl-2">
-                                                    <div id="profit-primary-chart"></div>
-                                                    <div class="profit-content ml-50 mt-50">
-                                                        <h5 class="mb-0">$12k</h5>
-                                                        <small class="text-muted">2019</small>
-                                                    </div>
-                                                </div>
-                                                <div class="d-inline-flex">
-                                                    <div id="profit-info-chart"></div>
-                                                    <div class="profit-content ml-50 mt-50">
-                                                        <h5 class="mb-0">$64k</h5>
-                                                        <small class="text-muted">2019</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 col-sm-6">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h4 class="card-title">Registrations</h4>
-                                        </div>
-                                        <div class="card-content">
-                                            <div class="card-body">
-                                                <div class="d-flex align-items-end justify-content-around">
-                                                    <div class="registration-content mr-xl-2">
-                                                        <h4 class="mb-0">56.3k</h4>
-                                                        <i class="bx bx-trending-up success align-middle"></i>
-                                                        <span class="text-success">12.8%</span>
-                                                    </div>
-                                                    <div id="registration-chart"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sales Chart Starts-->
-                        <div class="col-xl-3 col-md-6 col-12 sales-card">
+                        <!-- Multi Radial Chart Starts -->
+                        <div class="col-xl-4 col-md-6 col-12 dashboard-visit">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <div class="card-title-content">
-                                        <h4 class="card-title">Sales</h4>
-                                        <small class="text-muted">Calculated in last 7 days</small>
-                                    </div>
+                                    <h4 class="card-title">Visits of 2019</h4>
                                     <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <div id="sales-chart" class="mb-2"></div>
-                                        <div class="d-flex justify-content-between my-1">
-                                            <div class="sales-info d-flex align-items-center">
-                                                <i class='bx bx-up-arrow-circle text-primary font-medium-5 mr-50'></i>
-                                                <div class="sales-info-content">
-                                                    <h6 class="mb-0">Best Selling</h6>
-                                                    <small class="text-muted">Sunday</small>
+                                        <div id="multi-radial-chart"></div>
+                                        <ul class="list-inline d-flex justify-content-around mb-0">
+                                            <li> <span class="bullet bullet-xs bullet-primary mr-50"></span>Target</li>
+                                            <li> <span class="bullet bullet-xs bullet-danger mr-50"></span>Mart</li>
+                                            <li> <span class="bullet bullet-xs bullet-warning mr-50"></span>Ebay</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-12 dashboard-users">
+                            <div class="row  ">
+                                <!-- Statistics Cards Starts -->
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-12 dashboard-users-success">
+                                            <div class="card text-center">
+                                                <div class="card-content">
+                                                    <div class="card-body py-1">
+                                                        <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                                            <i class="bx bx-briefcase-alt font-medium-5"></i>
+                                                        </div>
+                                                        <div class="text-muted line-ellipsis">New Products</div>
+                                                        <h3 class="mb-0">1.2k</h3>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <h6 class="mb-0">28.6k</h6>
                                         </div>
-                                        <div class="d-flex justify-content-between mt-2">
-                                            <div class="sales-info d-flex align-items-center">
-                                                <i class='bx bx-down-arrow-circle icon-light font-medium-5 mr-50'></i>
-                                                <div class="sales-info-content">
-                                                    <h6 class="mb-0">Lowest Selling</h6>
-                                                    <small class="text-muted">Thursday</small>
+                                        <div class="col-sm-6 col-12 dashboard-users-danger">
+                                            <div class="card text-center">
+                                                <div class="card-content">
+                                                    <div class="card-body py-1">
+                                                        <div class="badge-circle badge-circle-lg badge-circle-light-danger mx-auto mb-50">
+                                                            <i class="bx bx-user font-medium-5"></i>
+                                                        </div>
+                                                        <div class="text-muted line-ellipsis">New Users</div>
+                                                        <h3 class="mb-0">45.6k</h3>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <h6 class="mb-0">986k</h6>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-6 col-12 dashboard-revenue-growth">
+                                            <div class="card">
+                                                <div class="card-header d-flex justify-content-between align-items-center pb-0">
+                                                    <h4 class="card-title">Revenue Growth</h4>
+                                                    <div class="d-flex align-items-end justify-content-end">
+                                                        <span class="mr-25">$25,980</span>
+                                                        <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="card-content">
+                                                    <div class="card-body pb-0">
+                                                        <div id="revenue-growth-chart"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Revenue Growth Chart Starts -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-8 col-12 dashboard-order-summary">
+                            <div class="card">
+                                <div class="row">
+                                    <!-- Order Summary Starts -->
+                                    <div class="col-md-8 col-12 order-summary border-right pr-md-0">
+                                        <div class="card mb-0">
+                                            <div class="card-header d-flex justify-content-between align-items-center">
+                                                <h4 class="card-title">Order Summary</h4>
+                                                <div class="d-flex">
+                                                    <button type="button" class="btn btn-sm btn-light-primary mr-1">Month</button>
+                                                    <button type="button" class="btn btn-sm btn-primary glow">Week</button>
+                                                </div>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="card-body p-0">
+                                                    <div id="order-summary-chart"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Sales History Starts -->
+                                    <div class="col-md-4 col-12 pl-md-0">
+                                        <div class="card mb-0">
+                                            <div class="card-header pb-50">
+                                                <h4 class="card-title">Sales History</h4>
+                                            </div>
+                                            <div class="card-content">
+                                                <div class="card-body py-1">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div class="sales-item-name">
+                                                            <p class="mb-0">Airpods</p>
+                                                            <small class="text-muted">30 min ago</small>
+                                                        </div>
+                                                        <div class="sales-item-amount">
+                                                            <h6 class="mb-0"><span class="text-success">+</span> $50</h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <div class="sales-item-name">
+                                                            <p class="mb-0">iPhone</p>
+                                                            <small class="text-muted">2 hour ago</small>
+                                                        </div>
+                                                        <div class="sales-item-amount">
+                                                            <h6 class="mb-0"><span class="text-danger">-</span> $59</h6>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div class="sales-item-name">
+                                                            <p class="mb-0">Macbook</p>
+                                                            <small class="text-muted">1 day ago</small>
+                                                        </div>
+                                                        <div class="sales-item-amount">
+                                                            <h6 class="mb-0"><span class="text-success">+</span> $12</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer border-top pb-0">
+                                                    <h5>Total Sales</h5>
+                                                    <span class="text-primary text-bold-500">$82,950.96</span>
+                                                    <div class="progress progress-bar-primary progress-sm my-50">
+                                                        <div class="progress-bar" role="progressbar" aria-valuenow="78" style="width:78%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Growth Chart Starts-->
-                        <div class="col-xl-3 col-md-6 col-12 growth-card">
+                        <!-- Latest Update Starts -->
+                        <div class="col-xl-4 col-md-6 col-12 dashboard-latest-update">
                             <div class="card">
-                                <div class="card-body text-center">
+                                <div class="card-header d-flex justify-content-between align-items-center pb-50">
+                                    <h4 class="card-title">Latest Update</h4>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButtonSec" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             2019
@@ -318,247 +190,771 @@
                                             <a class="dropdown-item" href="#">2017</a>
                                         </div>
                                     </div>
-                                    <div id="growth-Chart"></div>
-                                    <h6 class="mb-0"> 62% Company Growth in 2019</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <!-- Task Card Starts -->
-                        <div class="col-lg-7">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="card widget-todo">
-                                        <div class="card-header border-bottom d-flex justify-content-between align-items-center flex-wrap">
-                                            <h4 class="card-title d-flex mb-25 mb-sm-0">
-                                                <i class='bx bx-check font-medium-5 pl-25 pr-75'></i>Tasks
-                                            </h4>
-                                            <ul class="list-inline d-flex mb-25 mb-sm-0">
-                                                <li class="d-flex align-items-center">
-                                                    <i class='bx bx-check-circle font-medium-3 mr-50'></i>
-                                                    <div class="dropdown">
-                                                        <div class="dropdown-toggle mr-1 cursor-pointer" role="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Task
-                                                        </div>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="#">Option 1</a>
-                                                            <a class="dropdown-item" href="#">Option 2</a>
-                                                            <a class="dropdown-item" href="#">Option 3</a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="d-flex align-items-center">
-                                                    <i class='bx bx-sort mr-50 font-medium-3'></i>
-                                                    <div class="dropdown">
-                                                        <div class="dropdown-toggle cursor-pointer" role="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Task</div>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                                                            <a class="dropdown-item" href="#">Option 1</a>
-                                                            <a class="dropdown-item" href="#">Option 2</a>
-                                                            <a class="dropdown-item" href="#">Option 3</a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-body px-0 py-1">
-                                            <ul class="widget-todo-list-wrapper" id="widget-todo-list">
-                                                <li class="widget-todo-item">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox1">
-                                                                <label for="checkbox1"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Add SCSS and JS files if required</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-success mr-1">frontend</div>
-                                                            <div class="avatar bg-rgba-primary m-0 mr-50">
-                                                                <div class="avatar-content">
-                                                                    <span class="font-size-base text-primary">RA</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="widget-todo-item">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox2">
-                                                                <label for="checkbox2"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Check your changes, before commiting</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-danger mr-1">backend</div>
-                                                            <div class="avatar m-0 mr-50">
-                                                                <img src="{{ asset('app-assets/images/profile/user-uploads/social-2.jpg')}}" alt="img placeholder" height="32" width="32">
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="widget-todo-item completed">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox3" checked>
-                                                                <label for="checkbox3"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Dribble, Behance, UpLabs & Pinterest Post</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-primary mr-1">UI/UX</div>
-                                                            <div class="avatar bg-rgba-primary m-0 mr-50">
-                                                                <div class="avatar-content">
-                                                                    <span class="font-size-base text-primary">JP</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="widget-todo-item">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox4">
-                                                                <label for="checkbox4"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Fresh Design Web & Responsive Miracle</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-info mr-1">Design</div>
-                                                            <div class="avatar m-0 mr-50">
-                                                                <img src="{{ asset('app-assets/images/profile/user-uploads/user-05.jpg')}}" alt="img placeholder" height="32" width="32">
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="widget-todo-item">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox5">
-                                                                <label for="checkbox5"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Add Calendar page, source, credit page in
-                                                                documentation</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-warning mr-1">Javascript</div>
-                                                            <div class="avatar bg-rgba-primary m-0 mr-50">
-                                                                <div class="avatar-content">
-                                                                    <span class="font-size-base text-primary">AK</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li class="widget-todo-item">
-                                                    <div class="widget-todo-title-wrapper d-flex justify-content-between align-items-center mb-50">
-                                                        <div class="widget-todo-title-area d-flex align-items-center">
-                                                            <i class='bx bx-grid-vertical mr-25 font-medium-4 cursor-move'></i>
-                                                            <div class="checkbox checkbox-shadow">
-                                                                <input type="checkbox" class="checkbox__input" id="checkbox6">
-                                                                <label for="checkbox6"></label>
-                                                            </div>
-                                                            <span class="widget-todo-title ml-50">Add Angular Starter-kit</span>
-                                                        </div>
-                                                        <div class="widget-todo-item-action d-flex align-items-center">
-                                                            <div class="badge badge-pill badge-light-primary mr-1">UI/UX</div>
-                                                            <div class="avatar m-0 mr-50">
-                                                                <img src="{{ asset('app-assets/images/profile/user-uploads/user-05.jpg') }}" alt="img placeholder" height="32" width="32">
-                                                            </div>
-                                                            <div class="dropdown">
-                                                                <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer icon-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Daily Financials Card Starts -->
-                        <div class="col-lg-5">
-                            <div class="card ">
-                                <div class="card-header">
-                                    <h4 class="card-title">
-                                        Order Timeline
-                                    </h4>
                                 </div>
                                 <div class="card-content">
-                                    <div class="card-body">
-                                        <ul class="widget-timeline mb-0">
-                                            <li class="timeline-items timeline-icon-primary active">
-                                                <div class="timeline-time">September, 16</div>
-                                                <h6 class="timeline-title">1983, orders, $4220</h6>
-                                                <p class="timeline-text">2 hours ago</p>
-                                                <div class="timeline-content">
-                                                    <img src="{{ asset('app-assets/images/icon/pdf.png')}}" alt="document" height="23" width="19" class="mr-50">New Order.pdf
+                                    <div class="card-body p-0 pb-1">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-primary m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bxs-zap text-primary font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Products</span>
+                                                        <small class="text-muted d-block">1.2k New Products</small>
+                                                    </div>
                                                 </div>
+                                                <span>10.6k</span>
                                             </li>
-                                            <li class="timeline-items timeline-icon-primary active">
-                                                <div class="timeline-time">September, 17</div>
-                                                <h6 class="timeline-title">12 Invoices have been paid</h6>
-                                                <p class="timeline-text">25 minutes ago</p>
-                                                <div class="timeline-content">
-                                                    <img src="{{ asset('app-assets/images/icon/pdf.png') }}" alt="document" height="23" width="19" class="mr-50">Invoices.pdf
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-info m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bx-stats text-info font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Sales</span>
+                                                        <small class="text-muted d-block">39.4k New Sales</small>
+                                                    </div>
                                                 </div>
+                                                <span>26M</span>
                                             </li>
-                                            <li class="timeline-items timeline-icon-primary active pb-0">
-                                                <div class="timeline-time">September, 18</div>
-                                                <h6 class="timeline-title">Order #37745 from September</h6>
-                                                <p class="timeline-text">4 minutes ago</p>
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-danger m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bx-credit-card text-danger font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Revenue</span>
+                                                        <small class="text-muted d-block">43.5k New Revenue</small>
+                                                    </div>
+                                                </div>
+                                                <span>15.89M</span>
+                                            </li>
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-success m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bx-dollar text-success font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Cost</span>
+                                                        <small class="text-muted d-block">Total Expenses</small>
+                                                    </div>
+                                                </div>
+                                                <span>1.25B</span>
+                                            </li>
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-primary m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bx-user text-primary font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Users</span>
+                                                        <small class="text-muted d-block">New Users</small>
+                                                    </div>
+                                                </div>
+                                                <span>1.2k</span>
+                                            </li>
+                                            <li class="list-group-item list-group-item-action border-0 d-flex align-items-center justify-content-between">
+                                                <div class="list-left d-flex">
+                                                    <div class="list-icon mr-1">
+                                                        <div class="avatar bg-rgba-danger m-0">
+                                                            <div class="avatar-content">
+                                                                <i class="bx bx-edit-alt text-danger font-size-base"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="list-content">
+                                                        <span class="list-title">Total Visits</span>
+                                                        <small class="text-muted d-block">New Visits</small>
+                                                    </div>
+                                                </div>
+                                                <span>4.6k</span>
                                             </li>
                                         </ul>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Earning Swiper Starts -->
+                        <div class="col-xl-4 col-md-6 col-12 dashboard-earning-swiper" id="widget-earnings">
+                            <div class="card">
+                                <div class="card-header border-bottom d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title"><i class="bx bx-dollar font-medium-5 align-middle"></i> <span class="align-middle">Earnings</span></h5>
+                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body py-1 px-0">
+                                        <!-- earnings swiper starts -->
+                                        <div class="widget-earnings-swiper swiper-container p-1">
+                                            <div class="swiper-wrapper">
+                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center" id="repo-design">
+                                                    <i class="bx bx-pyramid mr-1 font-weight-normal font-medium-4"></i>
+                                                    <div class="swiper-text">
+                                                        <div class="swiper-heading">Repo Design</div>
+                                                        <small class="d-block">Gitlab</small>
+                                                    </div>
+                                                </div>
+                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center" id="laravel-temp">
+                                                    <i class="bx bx-sitemap mr-50 font-large-1"></i>
+                                                    <div class="swiper-text">
+                                                        <div class="swiper-heading">Designer</div>
+                                                        <small class="d-block">Women Clothes</small>
+                                                    </div>
+                                                </div>
+                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center" id="admin-theme">
+                                                    <i class="bx bx-check-shield mr-50 font-large-1"></i>
+                                                    <div class="swiper-text">
+                                                        <div class="swiper-heading">Best Sellers</div>
+                                                        <small class="d-block">Clothing</small>
+                                                    </div>
+                                                </div>
+                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center" id="ux-devloper">
+                                                    <i class="bx bx-devices mr-50 font-large-1"></i>
+                                                    <div class="swiper-text">
+                                                        <div class="swiper-heading">Admin Template</div>
+                                                        <small class="d-block">Global Network</small>
+                                                    </div>
+                                                </div>
+                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center" id="marketing-guide">
+                                                    <i class="bx bx-book-bookmark mr-50 font-large-1"></i>
+                                                    <div class="swiper-text">
+                                                        <div class="swiper-heading">Marketing Guide</div>
+                                                        <small class="d-block">Books</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- earnings swiper ends -->
+                                    </div>
+                                </div>
+                                <div class="main-wrapper-content">
+                                    <div class="wrapper-content" data-earnings="repo-design">
+                                        <div class="widget-earnings-scroll table-responsive">
+                                            <table class="table table-borderless widget-earnings-width mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Jerry Lter</h6>
+                                                                    <span class="font-small-2">Designer</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-info progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="33" aria-valuemin="80" aria-valuemax="100" style="width:33%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-warning">- $280</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Pauly uez</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-success progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="80" aria-valuemax="100" style="width:10%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-success">+ $853</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lary Masey</h6>
+                                                                    <span class="font-small-2">Marketing</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-primary progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="15" aria-valuemin="80" aria-valuemax="100" style="width:15%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">+ $125</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lula Taylor</h6>
+                                                                    <span class="font-small-2">Degigner</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-danger progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="35" aria-valuemin="80" aria-valuemax="100" style="width:35%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $310</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="wrapper-content" data-earnings="laravel-temp">
+                                        <div class="widget-earnings-scroll table-responsive">
+                                            <table class="table table-borderless widget-earnings-width mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-9.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Jesus Lter</h6>
+                                                                    <span class="font-small-2">Designer</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-info progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="28" aria-valuemin="80" aria-valuemax="100" style="width:28%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-info">- $280</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Pauly Dez</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-success progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="80" aria-valuemax="100" style="width:90%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-success">+ $83</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lary Masey</h6>
+                                                                    <span class="font-small-2">Marketing</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-primary progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="15" aria-valuemin="80" aria-valuemax="100" style="width:15%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">+ $125</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lula Taylor</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-danger progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="35" aria-valuemin="80" aria-valuemax="100" style="width:35%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $310</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="wrapper-content" data-earnings="admin-theme">
+                                        <div class="widget-earnings-scroll table-responsive">
+                                            <table class="table table-borderless widget-earnings-width mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Mera Lter</h6>
+                                                                    <span class="font-small-2">Designer</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-info progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="52" aria-valuemin="80" aria-valuemax="100" style="width:52%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-info">- $180</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-15.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Pauly Dez</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-success progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="80" aria-valuemax="100" style="width:90%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-success">+ $553</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">jini mara</h6>
+                                                                    <span class="font-small-2">Marketing</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-primary progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="15" aria-valuemin="80" aria-valuemax="100" style="width:15%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">+ $125</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lula Taylor</h6>
+                                                                    <span class="font-small-2">UX</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-danger progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="35" aria-valuemin="80" aria-valuemax="100" style="width:35%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $150</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="wrapper-content" data-earnings="ux-devloper">
+                                        <div class="widget-earnings-scroll table-responsive">
+                                            <table class="table table-borderless widget-earnings-width mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-16.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Drako Lter</h6>
+                                                                    <span class="font-small-2">Designer</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-info progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="38" aria-valuemin="80" aria-valuemax="100" style="width:38%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $280</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-1.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Pauly Dez</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-success progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="80" aria-valuemax="100" style="width:90%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-success">+ $853</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lary Masey</h6>
+                                                                    <span class="font-small-2">Marketing</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-primary progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="15" aria-valuemin="80" aria-valuemax="100" style="width:15%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">+ $125</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-2.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lvia Taylor</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-danger progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="80" aria-valuemax="100" style="width:75%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $360</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="wrapper-content" data-earnings="marketing-guide">
+                                        <div class="widget-earnings-scroll table-responsive">
+                                            <table class="table table-borderless widget-earnings-width mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-19.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">yono Lter</h6>
+                                                                    <span class="font-small-2">Designer</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-info progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="28" aria-valuemin="80" aria-valuemax="100" style="width:28%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">- $270</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Pauly Dez</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-success progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="80" aria-valuemax="100" style="width:90%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-success">+ $853</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lary Masey</h6>
+                                                                    <span class="font-small-2">Marketing</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-primary progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="15" aria-valuemin="80" aria-valuemax="100" style="width:15%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-primary">+ $225</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="pr-75">
+                                                            <div class="media align-items-center">
+                                                                <a class="media-left mr-50" href="#">
+                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                </a>
+                                                                <div class="media-body">
+                                                                    <h6 class="media-heading mb-0">Lula Taylor</h6>
+                                                                    <span class="font-small-2">Devloper</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="px-0 w-25">
+                                                            <div class="progress progress-bar-danger progress-sm mb-0">
+                                                                <div class="progress-bar" role="progressbar" aria-valuenow="35" aria-valuemin="80" aria-valuemax="100" style="width:35%;"></div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center"><span class="badge badge-light-danger">- $350</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Marketing Campaigns Starts -->
+                        <div class="col-xl-8 col-12 dashboard-marketing-campaign">
+                            <div class="card marketing-campaigns">
+                                <div class="card-header d-flex justify-content-between align-items-center pb-1">
+                                    <h4 class="card-title">Marketing campaigns</h4>
+                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body pb-0">
+                                        <div class="row">
+                                            <div class="col-md-9 col-12">
+                                                <div class="d-inline-block">
+                                                    <!-- chart-1   -->
+                                                    <div class="d-flex market-statistics-1">
+                                                        <!-- chart-statistics-1 -->
+                                                        <div id="donut-success-chart"></div>
+                                                        <!-- data -->
+                                                        <div class="statistics-data my-auto">
+                                                            <div class="statistics">
+                                                                <span class="font-medium-2 mr-50 text-bold-600">25,756</span><span class="text-success">(+16.2%)</span>
+                                                            </div>
+                                                            <div class="statistics-date">
+                                                                <i class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
+                                                                <small class="text-muted">May 12, 2019</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-inline-block">
+                                                    <!-- chart-2 -->
+                                                    <div class="d-flex mb-75 market-statistics-2">
+                                                        <!-- chart statistics-2 -->
+                                                        <div id="donut-danger-chart"></div>
+                                                        <!-- data-2 -->
+                                                        <div class="statistics-data my-auto">
+                                                            <div class="statistics">
+                                                                <span class="font-medium-2 mr-50 text-bold-600">5,352</span><span class="text-danger">(-4.9%)</span>
+                                                            </div>
+                                                            <div class="statistics-date">
+                                                                <i class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
+                                                                <small class="text-muted">Jul 26, 2019</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-12 text-md-right">
+                                                <button class="btn btn-sm btn-primary glow mt-md-2 mb-1">View Report</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <!-- table start -->
+                                    <table id="table-marketing-campaigns" class="table table-borderless table-marketing-campaigns mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Campaign</th>
+                                                <th>Growth</th>
+                                                <th>Charges</th>
+                                                <th>Status</th>
+                                                <th class="text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="py-1 line-ellipsis">
+                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/fs.png" alt="card" height="24" width="24">Fastrack Watches
+                                                </td>
+                                                <td class="py-1">
+                                                    <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>30%</span>
+                                                </td>
+                                                <td class="py-1">$5,536</td>
+                                                <td class="text-success py-1">Active</td>
+                                                <td class="text-center py-1">
+                                                    <div class="dropdown">
+                                                        <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-1 line-ellipsis">
+                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/puma.png" alt="card" height="24" width="24">Puma Shoes
+                                                </td>
+                                                <td class="py-1">
+                                                    <i class="bx bx-trending-down text-danger align-middle mr-50"></i><span>15.5%</span>
+                                                </td>
+                                                <td class="py-1">$1,569</td>
+                                                <td class="text-success py-1">Active</td>
+                                                <td class="text-center py-1">
+                                                    <div class="dropdown">
+                                                        <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                        </span>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-1 line-ellipsis">
+                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/nike.png" alt="card" height="24" width="24">Nike Air Jordan
+                                                </td>
+                                                <td class="py-1">
+                                                    <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>70.30%</span>
+                                                </td>
+                                                <td class="py-1">$23,859</td>
+                                                <td class="text-danger py-1">Closed</td>
+                                                <td class="text-center py-1">
+                                                    <div class="dropdown">
+                                                        <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                        </span>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-1 line-ellipsis">
+                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/one-plus.png" alt="card" height="24" width="24">Oneplus 7 pro
+                                                </td>
+                                                <td class="py-1">
+                                                    <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>10.4%</span>
+                                                </td>
+                                                <td class="py-1">$9,523</td>
+                                                <td class="text-success py-1">Active</td>
+                                                <td class="text-center py-1">
+                                                    <div class="dropdown">
+                                                        <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                        </span>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-1 line-ellipsis">
+                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/google.png" alt="card" height="24" width="24">Google Pixel 4 xl
+                                                </td>
+                                                <td class="py-1"><i class="bx bx-trending-down text-danger align-middle mr-50"></i><span>-62.38%</span>
+                                                </td>
+                                                <td class="py-1">12,897</td>
+                                                <td class="text-danger py-1">Closed</td>
+                                                <td class="text-center py-1">
+                                                    <div class="dropup">
+                                                        <span class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                        </span>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-edit-alt mr-1"></i> edit</a>
+                                                            <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- table ends -->
                                 </div>
                             </div>
                         </div>
@@ -568,7 +964,7 @@
 
             </div>
         </div>
-    </div>
+    </div> --}}
     <!-- END: Content-->
 @endsection
 @section('page-script')
