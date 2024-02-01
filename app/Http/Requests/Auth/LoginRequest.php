@@ -49,6 +49,10 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $body = 'Dear '. auth()->user()->first_name. '<br>';
+        logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
+
+        dd(auth()->user(), 'sdsdds');
         RateLimiter::clear($this->throttleKey());
     }
 
