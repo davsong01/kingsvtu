@@ -1,5 +1,8 @@
 <?php
 
+use App\Mail\EmailMessages;
+use Illuminate\Support\Facades\Mail;
+
 if (!function_exists("logEmails")) {
     function logEmails($email_to, $subject, $body){
         $data = [
