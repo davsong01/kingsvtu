@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'All Products')
+@section('title', 'All APIs')
+
 @section('page-css')
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/datatables.min.css') }}"> 
@@ -23,9 +24,9 @@
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/"><i class="bx bx-home-alt"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Products</a>
+                                    <li class="breadcrumb-item"><a href="{{ route('category.index') }}">Categories</a>
                                     </li>
-                                    <li class="breadcrumb-item active">All Products
+                                    <li class="breadcrumb-item active">All Categories
                                     </li>
                                 </ol>
                             </div>
@@ -40,8 +41,9 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">All products</h4> <br>
-                                    <a href="{{ route('product.create') }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Add Product</button></a>
+                                    <h4 class="card-title">All Categories</h4> <br>
+                                    <a href="{{ route('category.create') }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Add Category</button></a>
+                                    @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body card-dashboard">
@@ -50,23 +52,24 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Name</th>
-                                                        <th>Category</th>
-                                                        <th>Active API</th>
+                                                        <th>Order</th>
+                                                        <th>Products</th>
                                                         <th>Status</th>
                                                         <th>Date Added</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ( $products as $product )
+                                                    @foreach ( $categories as $category )
                                                     <tr>
-                                                        <td>Donna Snider</td>
-                                                        <td>Customer Support</td>
-                                                        <td>New York</td>
-                                                        <td>27</td>
-                                                        <td>2011/01/25</td>
+                                                        <td>{{ $category->name }}</td>
+                                                        <td>{{ $category->order }}</td>
+                                                        <td>{{ $category->products_count }}</td>
+                                                        <td style="color:{{ $category->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($category->status) }}</td>
+                                                        <td>{{ $category->created_at }}</td>
                                                         <td>
-                                                            <button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button>
+                                                            <a href="{{ route('category.edit', $category->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                        
                                                         </td>
                                                     </tr>
                                                     @endforeach

@@ -15,18 +15,18 @@
         {{-- start --}}
             <li class="{{ Route::is('dashboard') ? 'active' : ''}} nav-item"><a href="{{ route('dashboard') }}"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Dashboard</span></a>
             </li>
-            <li class="{{ (Route::is('product.*') || Route::is('api.*') || Route::is('category.*') ) ? 'active' : '' }} nav-item"><a href="#"><i class="menu-livicon" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Catalogue</span></a>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Catalogue</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ route('product.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Products</span></a>
+                    <li class="{{ Route::is('api.*') ? 'active' : '' }}"><a href="{{ route('api.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" >API Providers</span></a>
                     </li>
-                    <li><a href="form-input-groups.html"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Categories</span></a>
+                    <li class="{{ Route::is('category.*') ? 'active' : '' }}"><a href="{{ route('category.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Categories</span></a>
                     </li>
-                    <li><a href=""><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Number Input">API Prodviders</span></a>
+                    <li class="{{ Route::is('product.*') ? 'active' : '' }}"><a href="{{ route('product.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Products</span></a>
                     </li>
                 </ul>
             </li>
 
-            <li class=" nav-item"><a href="form-layout.html"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Transactions</span></a>
+            {{-- <li class=" nav-item"><a href="form-layout.html"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Transactions</span></a>
             </li>
             <li class=" nav-item"><a href="form-wizard.html"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Wizard">Buy airtime VTU</span></a>
             </li>
@@ -65,7 +65,7 @@
                     <li><a href="form-date-time-picker.html"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Date &amp; Time Picker">Date &amp; Time Picker</span></a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
         {{-- end  --}}
         </ul>

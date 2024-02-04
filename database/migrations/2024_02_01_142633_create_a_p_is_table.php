@@ -21,9 +21,9 @@ return new class extends Migration
                 $table->string('secret_key')->nullable();
                 $table->string('public_key')->nullable();
                 $table->string('slug')->nullable();
-                $table->integer('min')->nullable();
-                $table->integer('max')->nullable();
-                $table->string('serviceID')->nullable();
+                $table->string('warning_threshold')->nullable();
+                $table->string('warning_threshold_status')->nullable();
+                $table->string('file_name')->nullable();
                 $table->timestamps();
             });
         }

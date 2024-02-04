@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\APIController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 
 /*
@@ -31,6 +33,8 @@ Route::middleware('auth')->group(function () {
 // Admin
 Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function () {
     Route::resource('product', ProductController::class);
+    Route::resource('api', APIController::class);
+    Route::resource('category', CategoryController::class);
 });
 
 require __DIR__.'/auth.php';
