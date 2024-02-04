@@ -1,14 +1,14 @@
 @extends('layouts.app')
 @section('content')
-    <!-- BEGIN: Content-->
-    {{-- <div class="app-content content">
-        <div class="content-overlay"></div>
+<!-- Content wrapper -->
+<div class="app-content content">
+    <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
             </div>
             <div class="content-body">
-                <!-- Dashboard Analytics Start -->
-                 <section id="dashboard-ecommerce">
+                <!-- Dashboard Ecommerce Starts -->
+                <section id="dashboard-ecommerce">
                     <div class="row">
                         <!-- Greetings Content Starts -->
                         <div class="col-xl-4 col-md-6 col-12 dashboard-greetings">
@@ -960,14 +960,14 @@
                         </div>
                     </div>
                 </section>
-                <!-- Dashboard Analytics end -->
+                <!-- Dashboard Ecommerce ends -->
 
             </div>
         </div>
-    </div> --}}
-    <!-- END: Content-->
+    </div>
+</div>
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
-    
+
 @endsection

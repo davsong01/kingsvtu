@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
-use Illuminate\Auth\Events\Lockout;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
@@ -49,7 +50,8 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        $body = 'Dear '. auth()->user()->first_name. '<br>';
+        $body = 'Dear '. auth()->user()->first_name. '<br>A new sign in has occured on your account at: ' . Carbon::now() . ' If this was not you, please get in touch with us as quick as possible';
+
         logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
 
         // dd(auth()->user(), 'sdsdds');

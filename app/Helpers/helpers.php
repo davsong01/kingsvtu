@@ -17,3 +17,19 @@ if (!function_exists("logEmails")) {
         }
     }
 }
+
+if (!function_exists("sendEmails")) {
+    function sendEmails($email_to, $subject, $body)
+    {
+        $data = [
+            'subject' => $subject,
+            'body' => $body,
+        ];
+
+        try {
+            Mail::to($email_to,)->send(new EmailMessages($data));
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+}
