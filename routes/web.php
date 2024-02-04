@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,13 +16,11 @@ use App\Http\Controllers\ProfileController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->middleware(['auth', 'verified']);
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -30,8 +29,8 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin
-Route::group(['prefix' => 'admin'], function () {
-    Route::post('/products', [ProductsController::class, 'index']);
+Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function () {
+    Route::resource('product', ProductController::class);
 });
 
 require __DIR__.'/auth.php';

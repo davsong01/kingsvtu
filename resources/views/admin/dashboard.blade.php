@@ -26,7 +26,7 @@
                                                 <button type="button" class="btn btn-primary glow">View Sales</button>
                                             </div>
                                             <div class="dashboard-content-right">
-                                                <img src="../../../app-assets/images/icon/cup.png" height="220" width="220" class="img-fluid" alt="Dashboard Ecommerce" />
+                                                <img src="{{ asset('app-assets/images/icon/cup.png') }}" height="220" width="220" class="img-fluid" alt="Dashboard Ecommerce" />
                                             </div>
                                         </div>
                                     </div>
@@ -356,8 +356,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Jerry Lter</h6>
                                                                     <span class="font-small-2">Designer</span>
@@ -376,8 +376,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Pauly uez</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -396,8 +396,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lary Masey</h6>
                                                                     <span class="font-small-2">Marketing</span>
@@ -416,8 +416,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lula Taylor</h6>
                                                                     <span class="font-small-2">Degigner</span>
@@ -444,8 +444,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-9.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-9.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Jesus Lter</h6>
                                                                     <span class="font-small-2">Designer</span>
@@ -463,8 +463,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-10.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Pauly Dez</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -483,8 +483,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lary Masey</h6>
                                                                     <span class="font-small-2">Marketing</span>
@@ -503,8 +503,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lula Taylor</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -531,8 +531,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Mera Lter</h6>
                                                                     <span class="font-small-2">Designer</span>
@@ -550,8 +550,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-15.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-15.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Pauly Dez</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -570,8 +570,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">jini mara</h6>
                                                                     <span class="font-small-2">Marketing</span>
@@ -590,8 +590,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lula Taylor</h6>
                                                                     <span class="font-small-2">UX</span>
@@ -618,8 +618,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-16.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-16.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Drako Lter</h6>
                                                                     <span class="font-small-2">Designer</span>
@@ -638,8 +638,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-1.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-1.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Pauly Dez</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -658,8 +658,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lary Masey</h6>
                                                                     <span class="font-small-2">Marketing</span>
@@ -678,8 +678,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-2.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-2.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lvia Taylor</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -706,8 +706,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-19.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-19.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">yono Lter</h6>
                                                                     <span class="font-small-2">Designer</span>
@@ -726,8 +726,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-11.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Pauly Dez</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -746,8 +746,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-12.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lary Masey</h6>
                                                                     <span class="font-small-2">Marketing</span>
@@ -766,8 +766,8 @@
                                                         <td class="pr-75">
                                                             <div class="media align-items-center">
                                                                 <a class="media-left mr-50" href="#">
-                                                                    <img src="../../../app-assets/images/portrait/small/avatar-s-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
-                                                                </a>
+                                                                    <img src="{{ asset('app-assets/images/portrait/small/avatar-s') }}-25.jpg" alt="avatar" class="rounded-circle" height="30" width="30">
+                                                                    </a>
                                                                 <div class="media-body">
                                                                     <h6 class="media-heading mb-0">Lula Taylor</h6>
                                                                     <span class="font-small-2">Devloper</span>
@@ -856,8 +856,8 @@
                                         <tbody>
                                             <tr>
                                                 <td class="py-1 line-ellipsis">
-                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/fs.png" alt="card" height="24" width="24">Fastrack Watches
-                                                </td>
+                                                    <img class="rounded-circle mr-1" src="{{ asset('') }}app-assets/images/icon/fs.png" alt="card" height="24" width="24">Fastrack Watches
+                                                    </td>
                                                 <td class="py-1">
                                                     <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>30%</span>
                                                 </td>
@@ -875,8 +875,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="py-1 line-ellipsis">
-                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/puma.png" alt="card" height="24" width="24">Puma Shoes
-                                                </td>
+                                                    <img class="rounded-circle mr-1" src="{{ asset('') }}app-assets/images/icon/puma.png" alt="card" height="24" width="24">Puma Shoes
+                                                    </td>
                                                 <td class="py-1">
                                                     <i class="bx bx-trending-down text-danger align-middle mr-50"></i><span>15.5%</span>
                                                 </td>
@@ -895,8 +895,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="py-1 line-ellipsis">
-                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/nike.png" alt="card" height="24" width="24">Nike Air Jordan
-                                                </td>
+                                                    <img class="rounded-circle mr-1" src="{{ asset('') }}app-assets/images/icon/nike.png" alt="card" height="24" width="24">Nike Air Jordan
+                                                    </td>
                                                 <td class="py-1">
                                                     <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>70.30%</span>
                                                 </td>
@@ -915,8 +915,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="py-1 line-ellipsis">
-                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/one-plus.png" alt="card" height="24" width="24">Oneplus 7 pro
-                                                </td>
+                                                    <img class="rounded-circle mr-1" src="{{ asset('') }}app-assets/images/icon/one-plus.png" alt="card" height="24" width="24">Oneplus 7 pro
+                                                    </td>
                                                 <td class="py-1">
                                                     <i class="bx bx-trending-up text-success align-middle mr-50"></i><span>10.4%</span>
                                                 </td>
@@ -935,8 +935,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="py-1 line-ellipsis">
-                                                    <img class="rounded-circle mr-1" src="../../../app-assets/images/icon/google.png" alt="card" height="24" width="24">Google Pixel 4 xl
-                                                </td>
+                                                    <img class="rounded-circle mr-1" src="{{ asset('') }}app-assets/images/icon/google.png" alt="card" height="24" width="24">Google Pixel 4 xl
+                                                    </td>
                                                 <td class="py-1"><i class="bx bx-trending-down text-danger align-middle mr-50"></i><span>-62.38%</span>
                                                 </td>
                                                 <td class="py-1">12,897</td>
