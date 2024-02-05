@@ -47,7 +47,7 @@
                                                     </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="name">Display Name</label>
-                                                        <input type="text" class="form-control" id="display_name" name="display_name" value="{{ $category->name ?? old('display_name') }}" placeholder="Enter name" required>
+                                                        <input type="text" class="form-control" id="display_name" name="display_name" value="{{ $category->display_name ?? old('display_name') }}" placeholder="Enter name" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="slug">Slug</label>

@@ -10,7 +10,7 @@ class VtpassController extends Controller
 {
     public function getVariations($product)
     {
-        $url = env('APP_ENV') == 'local' ? $product->api->sandbox_base_url : $product->api->live_url;
+        $url = env('ENV') == 'local' ? $product->api->sandbox_base_url : $product->api->live_url;
         $url = $url."service-variations?serviceID=".$product->slug;
         
         $headers = [
