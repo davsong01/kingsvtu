@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Api extends Model
 {
+    
     use HasFactory;
     protected $guarded = [];
     protected $table = 'a_p_is';
