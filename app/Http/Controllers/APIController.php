@@ -9,7 +9,7 @@ class APIController extends Controller
 {
     public function index()
     {
-        $apis = Api::withCount('products')->get();
+        $apis = API::withCount('products')->get();
         return view('admin.api.index', compact('apis'));
     }
 
@@ -32,7 +32,7 @@ class APIController extends Controller
             "public_key" => "nullable"
         ]);
 
-        Api::updateOrCreate([
+        API::updateOrCreate([
             "name" => $request->name,
             "slug" => $request->slug,
             "warning_threshold_status" => $request->warning_threshold_status,

@@ -19,7 +19,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::where('status', 'active')->get();
-        $apis = Api::where('status', 'active')->get();
+        $apis = API::where('status', 'active')->get();
         return view('admin.product.create', compact('categories', 'apis'));
     }
 
@@ -77,7 +77,7 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 'active')->get();
         $variations = Variation::where('product_id', $product->id)->where('api_id', $product->api_id)->get();
-        $apis = Api::where('status', 'active')->get();
+        $apis = API::where('status', 'active')->get();
         return view('admin.product.edit', compact('categories', 'apis', 'product', 'variations'));
     }
 
