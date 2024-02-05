@@ -9,7 +9,7 @@ class APIController extends Controller
 {
     public function index()
     {
-        $apis = API::withCount('products')->get();
+        $apis = Api::withCount('products')->get();
         return view('admin.api.index', compact('apis'));
     }
 
@@ -18,7 +18,8 @@ class APIController extends Controller
         return view('admin.api.create');
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $this->validate($request, [
             "name" => "required",
             "slug" => "required",
@@ -31,7 +32,7 @@ class APIController extends Controller
             "public_key" => "nullable"
         ]);
 
-        API::updateOrCreate([
+        Api::updateOrCreate([
             "name" => $request->name,
             "slug" => $request->slug,
             "warning_threshold_status" => $request->warning_threshold_status,
@@ -64,7 +65,7 @@ class APIController extends Controller
             "secret_key" => "nullable",
             "public_key" => "nullable"
         ]);
-        
+
         $api->update([
             "name" => $request->name,
             "slug" => $request->slug,

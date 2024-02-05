@@ -25,6 +25,7 @@ return new class extends Migration
                 $table->string('warning_threshold_status')->nullable();
                 $table->string('live_base_url')->nullable();
                 $table->string('sandbox_base_url')->nullable();
+                $table->string('file_name')->nullable();
                 $table->timestamps();
             });
         }
