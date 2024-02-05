@@ -60,13 +60,13 @@
                                                 <tbody>
                                                     @foreach ( $products as $product )
                                                     <tr>
-                                                        <td>Donna Snider</td>
-                                                        <td>Customer Support</td>
-                                                        <td>New York</td>
-                                                        <td>27</td>
-                                                        <td>2011/01/25</td>
+                                                        <td>{{ $product->name }}</td>
+                                                        <td>{{ $product->category->name }}</td>
+                                                        <td>{{ $product->api->name }}</td>
+                                                        <td>{{ $product->status }}</td>
+                                                        <td>{{ $product->created_at }}</td>
                                                         <td>
-                                                            <button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button>
+                                                            <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button></a>
                                                         </td>
                                                     </tr>
                                                     @endforeach

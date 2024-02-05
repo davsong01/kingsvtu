@@ -15,7 +15,7 @@ class APIController extends Controller
 
     public function create()
     {
-        return view('admin.category.create');
+        return view('admin.api.create');
     }
 
     public function store(Request $request){
@@ -48,7 +48,7 @@ class APIController extends Controller
 
     public function edit(API $api)
     {
-        return view('admin.category.edit', compact('api'));
+        return view('admin.api.edit', compact('api'));
     }
 
     public function update(Request $request, API $api)

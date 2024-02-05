@@ -15,14 +15,14 @@ return new class extends Migration
             Schema::create('categories', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->string('status');
+                $table->string('status')->default('inactive');
                 $table->string('slug');
-                $table->text('description');
-                $table->text('seo_description');
-                $table->text('seo_keywords');
-                $table->string('display_name');
-                $table->string('seo_title');
-                $table->string('order');
+                $table->text('description')->nullable();
+                $table->text('seo_description')->nullable();
+                $table->text('seo_keywords')->nullable();
+                $table->string('display_name')->nullable();
+                $table->string('seo_title')->nullable();
+                $table->string('order')->nullable();
                 $table->timestamps();
             });
         }

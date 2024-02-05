@@ -15,15 +15,16 @@ return new class extends Migration
             Schema::create('products', function (Blueprint $table) {
                 $table->id();
                 $table->integer('category_id');
-                $table->string('status');
-                $table->string('name');
-                $table->string('slug');
-                $table->string('seo_title');
-                $table->text('seo_description');
-                $table->text('seo_keywords');
-                $table->string('display_name');
-                $table->string('image');
-                $table->text('description');
+                $table->string('status')->default('inactive');
+                $table->string('name')->nullable();
+                $table->string('slug')->unique();
+                $table->string('seo_title')->nullable();
+                $table->text('seo_description')->nullable();
+                $table->text('seo_keywords')->nullable();
+                $table->string('display_name')->nullable();
+                $table->string('image')->nullable();
+                $table->text('description')->nullable();
+                $table->string('has_variations')->default('no');
                 $table->string('api_id');
                 $table->timestamps();
             });

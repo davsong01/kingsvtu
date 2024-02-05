@@ -14,7 +14,7 @@
                                     </li>
                                     <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Products</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Add Product
+                                    <li class="breadcrumb-item active">Edit {{$product->name}}
                                     </li>
                                 </ol>
                             </div>
@@ -35,7 +35,7 @@
                                             <div class="col-sm-12">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <h4 class="card-title">Add Product</h4>
+                                                        <h4 class="card-title">Edit {{$product->name}}</h4>
                                                         @include('layouts.alerts')
                                                     </div>
                                                     <div class="card-content">
@@ -65,51 +65,52 @@
                                                             <!-- Tab panes -->
                                                             <div class="tab-content pt-1">
                                                                 <div class="tab-pane active" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
-                                                                    <form action="{{route('product.store')}}" method="POST" enctype="multipart/form-data">
+                                                                    <form action="{{route('product.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                         @csrf
+                                                                        @method('PATCH')
                                                                         <div class="row">
                                                                             <div class="col-md-6">
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">Name</label>
-                                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" value="{{ old('name')}}" required>
+                                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" value="{{ $product->name ?? old('name')}}" required>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="display_name">Display Name</label>
-                                                                                    <input type="text" class="form-control" id="display_name" name="display_name" placeholder="Enter display name" value="{{ old('display_name')}}" required>
+                                                                                    <input type="text" class="form-control" id="display_name" name="display_name" placeholder="Enter display name" value="{{ $product->display_name ?? old('display_name')}}" required>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="category">Category</label>
                                                                                     <select class="form-control" name="category" id="category" required>
                                                                                         <option value="">Select</option>
                                                                                         @foreach ($categories as $category)
-                                                                                            <option value="{{ $category->id  }}" {{ old('category') == $category->id ? 'selected' : ''}}>{{ $category->name }}</option>
+                                                                                            <option value="{{ $category->id  }}" {{ $product->category_id == $category->id ? 'selected' : ''}}>{{ $category->name }}</option>
                                                                                         @endforeach
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 
                                                                                 <fieldset class="form-group">
                                                                                     <label for="description">Description</label>
-                                                                                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ old('description')}}"></textarea>
+                                                                                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ $product->description ??  old('description')}}"></textarea>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="seo_title">SEO Title</label>
-                                                                                    <input type="text" class="form-control" id="seo_title"  name="seo_title" placeholder="Enter SEO Title" value="{{ old('seo_title')}}">
+                                                                                    <input type="text" class="form-control" id="seo_title"  name="seo_title" placeholder="Enter SEO Title" value="{{ $product->seo_title ?? old('seo_title')}}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="seo_keywords">SEO Keywords</label>
-                                                                                    <input type="text" class="form-control"  name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords" value="{{ old('seo_keywords')}}">
+                                                                                    <input type="text" class="form-control"  name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords" value="{{ $product->seo_keywords ?? old('seo_keywords')}}">
                                                                                 </fieldset>
                                                                             </div>
                                                                             <div class="col-md-6">
                                                                                 <fieldset class="form-group">
                                                                                     <label for="slug">Slug</label>
-                                                                                    <input type="text" class="form-control" name="slug" placeholder="Enter slug" id="slug" value="{{ old('slug')}}" required>
+                                                                                    <input type="text" class="form-control" name="slug" placeholder="Enter slug" id="slug" value="{{ $product->slug ?? old('slug')}}" required>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="basicInputFile">Display Image</label>
                                                                                     <div class="custom-file">
                                                                                         <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
-                                                                                        <label class="custom-file-label" for="image">Choose file</label>
+                                                                                        <label class="custom-file-label" for="image">Replace file</label>
                                                                                     </div>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
@@ -117,7 +118,7 @@
                                                                                     <select class="form-control" name="api" id="api" required>
                                                                                         <option value="">Select</option>
                                                                                         @foreach ($apis as $item)
-                                                                                            <option value="{{ $item->id  }}" {{ old('api') == $item->id ? 'selected' : ''}}>{{ $item->name }}</option>
+                                                                                            <option value="{{ $item->id  }}" {{ $product->api_id == $item->id ? 'selected' : ''}}>{{ $item->name }}</option>
                                                                                         @endforeach
                                                                                     </select>
                                                                                 </fieldset>
@@ -125,15 +126,15 @@
                                                                                     <label for="status">Status</label>
                                                                                     <select class="form-control" name="status" id="status" required>
                                                                                         <option value="">Select</option>
-                                                                                        <option value="active" {{ old('status') == 'active' ? 'selected' : ''}}>Active</option>
-                                                                                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : ''}}>InActive</option>
+                                                                                        <option value="active" {{ $product->status == 'active' ? 'selected' : ''}}>Active</option>
+                                                                                        <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : ''}}>InActive</option>
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="seo_description">SEO Description</label>
-                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" placeholder="SEO Description">{{ old('seo_description') }}</textarea>
+                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $product->seo_description ?? old('seo_description') }}" placeholder="SEO Description">{{ $product->seo_description ?? old('seo_description') }}</textarea>
                                                                                 </fieldset>
-                                                                                <input type="hidden" value="product.store" name="route">
+                                                                                <input type="hidden" value="page1" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">
                                                                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -142,13 +143,16 @@
                                                                         </div>
                                                                     </form>
                                                                 </div>
+
                                                                 <div class="tab-pane" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
-                                                                    <p>
-                                                                        Tootsie roll oat cake I love bear claw I love caramels caramels halvah chocolate bar. Cotton candy
-                                                                        gummi
-                                                                        bears pudding pie apple pie cookie. Cheesecake jujubes lemon drops danish dessert I love caramels
-                                                                        powder.
-                                                                    </p>
+                                                                    @if($product->has_variations == 'yes')
+                                                                        <a class="btn btn-primary mb-2 d-flex align-items-center" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
+
+                                                                        @if($product->variations->count() > 0)
+                                                                        <a class="btn btn-info mb-2 d-flex align-items-center" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i>&nbsp; Edit Variations</a>
+                                                                        @endif
+                                                                        
+                                                                    @endif
                                                                 </div>
                                                                 <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="messages-tab-fill">
                                                                     <p>
@@ -166,86 +170,7 @@
                                     </section>
                                     <!-- Nav Filled Ends -->
                                 </div>
-                                {{-- <div class="card-content">
-                                    <div class="card-body">
-                                        <form action="{{route('product.store')}}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <fieldset class="form-group">
-                                                        <label for="name">Name</label>
-                                                        <input type="text" class="form-control" id="name" placeholder="Enter name" required>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="display_name">Display Name</label>
-                                                        <input type="text" class="form-control" id="display_name" placeholder="Enter display name" required>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="category">Category</label>
-                                                        <select class="form-control" name="category" id="category" required>
-                                                            <option value="">Select</option>
-                                                            @foreach ($categories as $category)
-                                                                <option value="{{ $category->id  }}" {{ old('category') == 'active' ? 'selected' : ''}}>{{ $category->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </fieldset>
-                                                    
-                                                    <fieldset class="form-group">
-                                                        <label for="description">Description</label>
-                                                        <textarea class="form-control" id="description" rows="3" placeholder="Description" required></textarea>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="seo_title">SEO Title</label>
-                                                        <input type="text" class="form-control" id="seo_title" placeholder="Enter SEO Title">
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="seo_keywords">SEO Keywords</label>
-                                                        <input type="text" class="form-control" placeholder="Enter SEO Keywords" id="seo_keywords">
-                                                    </fieldset>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <fieldset class="form-group">
-                                                        <label for="slug">Slug</label>
-                                                        <input type="text" class="form-control" placeholder="Enter slug" id="slug" required>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="basicInputFile">Display Image</label>
-                                                        <div class="custom-file">
-                                                            <input type="file" accept="image/*" class="custom-file-input" id="image">
-                                                            <label class="custom-file-label" for="image">Choose file</label>
-                                                        </div>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="helperText">API to use</label>
-                                                        <select class="form-control" name="api" id="api" required>
-                                                            <option value="">Select</option>
-                                                            @foreach ($apis as $item)
-                                                                <option value="{{ $item->id  }}" {{ old('api') == 'active' ? 'selected' : ''}}>{{ $item->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="helperText">Status</label>
-                                                        <select class="form-control" name="status" id="status" required>
-                                                            <option value="">Select</option>
-                                                            <option value="{{ old('status') == 'active' ? 'selected' : ''}}">Active</option>
-                                                            <option value="{{ old('status') == 'inactive' ? 'selected' : ''}}">InActive</option>
-                                                        </select>
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="seo_description">SEO Description</label>
-                                                        <textarea class="form-control" id="seo_description" rows="3" placeholder="SEO Description"></textarea>
-                                                    </fieldset>
-                                                   
-                                                </div>
-                                                <div class="col-md-12">
-                                                <button class="btn btn-primary" type="submit">Submit</button>
-    
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div> --}}
+                               
                             </div>
                         </div>
                     </div>

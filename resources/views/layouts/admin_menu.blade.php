@@ -10,7 +10,6 @@
     </div>
     <div class="shadow-bottom"></div>
     <div class="main-menu-content">
-       
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
         {{-- start --}}
             <li class="{{ Route::is('dashboard') ? 'active' : ''}} nav-item"><a href="{{ route('dashboard') }}"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Dashboard</span></a>

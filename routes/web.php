@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VariationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +36,8 @@ Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function
     Route::resource('product', ProductController::class);
     Route::resource('api', APIController::class);
     Route::resource('category', CategoryController::class);
+
+    Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
 });
 
 require __DIR__.'/auth.php';
