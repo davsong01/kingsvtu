@@ -55,7 +55,7 @@
                     </form>
                     <hr>
                     <div class="text-center"><small class="mr-25">Don't have an account?</small><a
-                            href="{{ route('register') }}"><small>Sign up</small></a></div>
+                            href="{{ route('login') }}"><small>Sign In</small></a></div>
                 </div>
             </div>
         </div>
