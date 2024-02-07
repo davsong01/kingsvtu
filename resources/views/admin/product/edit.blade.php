@@ -1,4 +1,18 @@
+<?php 
+
+    use Illuminate\Support\Facades\Session;
+    $page = Session::get('page') ?? 1;
+?>
 @extends('layouts.app')
+@section('page-css')
+<style>
+    .tiny{
+        padding: 1.5px !important;
+        font-size: 11px !important;
+    }
+
+</style>
+@endsection
 @section('content')
 <!-- Content wrapper -->
  <div class="app-content content">
@@ -44,14 +58,15 @@
                                                                 
                                                             </p>
                                                             <!-- Nav tabs -->
+                                                           
                                                             <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link active" id="home-tab-fill" data-toggle="tab" href="#product-details" role="tab" aria-controls="product-details" aria-selected="true">
+                                                                    <a class="nav-link {{ $page == 1 ? 'active' : ''}}" id="home-tab-fill" data-toggle="tab" href="#product-details" role="tab" aria-controls="product-details" aria-selected="true">
                                                                         Product Details
                                                                     </a>
                                                                 </li>
                                                                 <li class="nav-item">
-                                                                    <a class="nav-link" id="profile-tab-fill" data-toggle="tab" href="#variations" role="tab" aria-controls="variations" aria-selected="false">
+                                                                    <a class="nav-link {{ $page == 2 ? 'active' : ''}}" id="profile-tab-fill" data-toggle="tab" href="#variations" role="tab" aria-controls="variations" aria-selected="false">
                                                                         Variations
                                                                     </a>
                                                                 </li>
@@ -64,7 +79,7 @@
 
                                                             <!-- Tab panes -->
                                                             <div class="tab-content pt-1">
-                                                                <div class="tab-pane active" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
+                                                                <div class="tab-pane {{ $page == 1 ? 'active' : ''}}" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
                                                                     <form action="{{route('product.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                         @csrf
                                                                         @method('PATCH')
@@ -137,19 +152,78 @@
                                                                                 <input type="hidden" value="page1" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">
-                                                                            <button class="btn btn-primary" type="submit">Submit</button>
-                                
+                                                                                <button class="btn btn-primary" type="submit">Update</button>
                                                                             </div>
                                                                         </div>
                                                                     </form>
                                                                 </div>
 
-                                                                <div class="tab-pane" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
+                                                                <div class="tab-pane {{ isset($page) && $page == 2 ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
                                                                     @if($product->has_variations == 'yes')
-                                                                        <a class="btn btn-primary mb-2 d-flex align-items-center" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
+                                                                        
 
-                                                                        @if($product->variations->count() > 0)
-                                                                        <a class="btn btn-info mb-2 d-flex align-items-center" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i>&nbsp; Edit Variations</a>
+                                                                        @if($product->variations->count() < 1)
+                                                                            <a href="{{ route('variations.pull', $product->id) }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</button></a>
+                                                                        @else
+                                                                            <a href="{{ route('variations.pull', $product->id) }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</button></a>
+
+                                                                            <form action="{{route('variations.update', $product->id)}}" method="POST" enctype="multipart/form-data">
+                                                                                @csrf
+                                                                                @foreach($product->variations as $variation)
+                                                                                <div class="row">
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="api_name">API Name</label>
+                                                                                            <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                   
+                                                                                    <div class="col-md-3">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">System Name</label>
+                                                                                            <input type="text" class="form-control tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">Slug</label>
+                                                                                            <input type="text" class="form-control tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">API Price</label>
+                                                                                            <input type="text" class="form-control tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">SYSTEM Price</label>
+                                                                                            <input type="text" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-1">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="status">Status</label>
+                                                                                            <select class="form-control tiny" name="status[{{ $variation->id }}]" id="status" required>
+                                                                                                <option value="">Select</option>
+                                                                                                <option value="active" {{ $variation->status == 'active' ? 'selected' : ''}}>Active</option>
+                                                                                                <option value="inactive" {{ $variation->status == 'inactive' ? 'selected' : ''}}>InActive</option>
+                                                                                                
+                                                                                            </select>
+                                                                                        </fieldset>
+                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input type="hidden" name="variation_id[{{$variation->id}}]" value="{{$variation->id}}">
+                                                                                @endforeach
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12">
+                                                                                        
+                                                                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
                                                                         @endif
                                                                         
                                                                     @endif

@@ -21,6 +21,8 @@ use App\Http\Controllers\VariationController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
+    
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('customer.dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
@@ -38,6 +40,8 @@ Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function
     Route::resource('category', CategoryController::class);
 
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
+    Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
+    
 });
 
 require __DIR__.'/auth.php';
