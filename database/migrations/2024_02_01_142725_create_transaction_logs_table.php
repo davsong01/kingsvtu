@@ -28,16 +28,24 @@ return new class extends Migration
             $table->double('total_amount', 11,2);
             $table->double('balance_before', 11, 2);
             $table->double('balance_after', 11, 2);
-            $table->string('qunatity');
+            $table->integer('quantity');
             $table->integer('product_id')->nullable();
             $table->string('product_name')->nullable();
             $table->string('variation_id')->nullable();
             $table->string('variation_name')->nullable();
             $table->string('category_id')->nullable();
             $table->text('request_data')->nullable();
+            $table->longtext('api_response')->nullable();
             $table->string('extras');
-
-
+            $table->string('ip_address')->nullable();
+            $table->string('domain_name')->nullable();
+            $table->text('failure_reason')->nullable();
+            $table->integer('api_id')->nullable();
+            $table->string('descr')->nullable();
+            $table->string('app_version')->nullable();
+            $table->double('provider_charge',11,2)->nullable();
+            $table->double('provider_discount',11,2)->nullable();
+            
             $table->timestamps();
         });
     }
