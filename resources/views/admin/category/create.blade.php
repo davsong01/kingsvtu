@@ -74,6 +74,15 @@
                                                         </select>
                                                     </fieldset>
                                                     <fieldset class="form-group">
+                                                        <label for="unique_element">Unique Element</label>
+                                                        <select class="form-control" name="unique_element" id="unique_element" required>
+                                                            <option value="">Select</option>
+                                                            @foreach ( getUniqueElements() as $element )
+                                                                <option value="{{ $element }}" {{ old('unique_element') == 'element' ? 'selected' : ''}}>{{ ucfirst($element)}}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
                                                         <label for="order">Order</label>
                                                         <input type="number" class="form-control" name="order" value="{{ old('order') }}" placeholder="Enter order" id="order" required>
                                                     </fieldset>

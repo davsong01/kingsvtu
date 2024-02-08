@@ -33,3 +33,15 @@ if (!function_exists("sendEmails")) {
         }
     }
 }
+
+if (!function_exists("getUniqueElements")) {
+    function getUniqueElements()
+    {
+        return [
+            'phone',
+            'meter_number',
+            'iuc_number',
+            'account_id'
+        ];
+    }
+}

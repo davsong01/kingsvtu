@@ -15,7 +15,7 @@ class TransactionController extends Controller
 {
     public function showProductsPage($slug){
         $category = Category::with('products')->where('slug', $slug)->first();
-
+        
         if(!empty($category) && $category->status == 'active'){
             return view('customer.single_category_page', compact('category'));
         }else{
@@ -42,9 +42,7 @@ class TransactionController extends Controller
         if ($variation->fixedPrice == 'Yes') {
             $request['amount'] = $variation->system_price;
         } else {
-            // CLEAN UP AMOUNT FIGURE
             $request['amount'] = $this->removeCharsInAmount($request->amount);
-            // CLEAN UP AMOUNT FIGURE
         }
 
         $discount = $this->getDiscount($request['amount']) ?? 0;
@@ -68,20 +66,27 @@ class TransactionController extends Controller
             return back()->with('error', 'Insufficient Wallet Balance, Please try again');
         }
         
+        $request['unique_element'] = $this->getUniqueElement($request->all(), $product);
         // Log Wallet
         $request_id = $this->generateRequestId();
         $request['type'] = 'debit';
         $request['customer_id'] = auth()->user()->customer->id;
         $request['transaction_id'] = 'KVTU-'. $request_id;
         $request['request_id'] = $request_id;
-       
+        $request['payment_method'] = 'wallet';
+        
         $wallet->logWallet($request->all());
 
         // Log basic data in transaction
-        $this->logTransaction($request);
-        $transaction = $this->createTransaction($data);
-
+        $this->logTransaction($request->all());
+        
         dd($request->all());
+    }
+
+    public function getUniqueElement($request, $product){
+        $unique = $request['meter_number']$request['phone'];
+
+        if($product->category)
     }
 
     public function generateRequestId()
@@ -142,8 +147,8 @@ class TransactionController extends Controller
             'domain_name' => $this->getDomainName(),
             'app_version' => 1,
         ];
-        
-        TransactionLog::create($data);
+        dd($pre, $data);
+        TransactionLog::create($pre);
         return $data;
     }
 

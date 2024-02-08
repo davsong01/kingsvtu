@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->string('name');
                 $table->string('status')->default('inactive');
                 $table->string('slug');
+                $table->string('unique_element')->default('phone');
                 $table->text('description')->nullable();
                 $table->text('seo_description')->nullable();
                 $table->text('seo_keywords')->nullable();

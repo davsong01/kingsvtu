@@ -26,6 +26,7 @@ class CategoryController extends Controller
             "name" => "required",
             "display_name" => "nullable",
             "slug" => "required",
+            "unique_element" => "required",
             "status" => "required",
             "order" => "required",
             "description" => "nullable",
@@ -44,6 +45,7 @@ class CategoryController extends Controller
             "seo_description" => $request->seo_description,
             "seo_title" => $request->seo_title,
             "seo_keywords" => $request->seo_keywords,
+            "unique_element" => $request->unique_element,
         ]);
 
         return redirect(route('category.index'))->with('message', 'Added successfully');
