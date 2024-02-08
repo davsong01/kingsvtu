@@ -15,6 +15,7 @@ return new class extends Migration
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('firstname')->nullable();
+                $table->integer('referral_id')->nullable();
                 $table->string('type')->default('customer');
                 $table->string('middlename')->nullable();
                 $table->string('lastname')->nullable();
@@ -26,8 +27,6 @@ return new class extends Migration
                 $table->string('secret_key')->nullable();
                 $table->string('public_key')->nullable();
                 $table->string('transaction_pin')->nullable();
-                $table->string('referal_wallet')->nullable();
-                $table->string('wallet')->nullable();
                 $table->string('app_version')->nullable();
                 $table->string('email')->unique();
                 $table->timestamp('email_verified_at')->nullable();

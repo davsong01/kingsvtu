@@ -85,4 +85,16 @@ class Controller extends BaseController
         return $location;
     }
 
+    public function getIpAddress(){
+
+    }
+
+    public function getDomainName(){
+
+    }
+
+    public function getAppVersion(){
+        return 1;
+    }
+
 }

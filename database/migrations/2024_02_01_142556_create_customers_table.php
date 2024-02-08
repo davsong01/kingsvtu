@@ -14,10 +14,11 @@ return new class extends Migration
         if (!Schema::hasTable('customers')) {
             Schema::create('customers', function (Blueprint $table) {
                 $table->id();
-                $table->integer('referral_id')->nullable();
-                $table->integer('customer_id');
+                $table->integer('user_id');
                 $table->integer('customer_level')->nullable();
                 $table->integer('callback_url')->nullable();
+                $table->double('referal_wallet', 11,2)->nullable();
+                $table->double('wallet', 11,2)->nullable();
                 $table->integer('app_version')->nullable();
                 $table->timestamps();
             });

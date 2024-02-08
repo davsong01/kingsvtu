@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class WalletController extends Controller
 {
     public function getWalletBalance($user){
-        return $user->wallet;
+        return $user->customer->wallet;
     }
 
     public function logWallet($data){

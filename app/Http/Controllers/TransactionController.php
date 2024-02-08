@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Variation;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\WalletController;
+use App\Models\TransactionLog;
 
 class TransactionController extends Controller
 {
@@ -111,37 +113,40 @@ class TransactionController extends Controller
 
     }
 
-    public function logTransaction($category, $product, $variation, $all_data)
+    public function logTransaction($data)
     {
-
         $pre = [
-            // 'convenience_fee'=>$convenience_fee ?? null,
             'status' => 'initiated',
             'reference_id' => $this->generateRequestId(),
             'transactionId' => base64_encode($this->generateRequestId()),
-            'payment_method' => null,
+            'payment_method' => $data['payment_method'],
             'customer_id' => auth()->user()->customer->id ?? null,
             'customer_email' => auth()->user()->email ?? null,
             'customer_phone' => auth()->user()->phone ?? null,
             'customer_name' => auth()->user()->name ?? null,
-            'discount' => $all_data['discount'] ?? null,
-            'unit_price' => $all_data['amount'],
-            'quantity' => $all_data['quantity'] ?? 1,
-            'amount' => $all_data['amount'] * ($all_data['quantity'] ?? 1),
-            'product_id' => $product->id ?? null,
-            'product_name' => $product->name ?? null,
-            'variation_id' => $variation->id ?? null,
-            'variation_name' => $variation->name ?? null,
-            'category_id' => $category ?? null,
-            'product_extras' => null,
-            'is_flagged' => 0,
-            'flagged_admin' => null,
-            'extras' => null,
-            'request_data' => json_encode($all_data),
-        ];
+            'discount' => $data['discount'] ?? null,
+            'unit_price' => $data['amount'],
+            'quantity' => $data['quantity'] ?? 1,
+            'total_amount' => $data['amount'] * ($data['quantity'] ?? 1),
+            'amount' => $data['amount'],
+            'balance_before' => auth()->user()->customer->wallet ?? 0,
+            
+            'product_id' => $data['product_d'] ?? null,
+            'product_name' => $data['product_name'] ?? null,
+            'variation_id' => $data['variation_id'] ?? null,
+            'variation_name' => $data['variation_name'] ?? null,
+            'category_id' => $data['category_id'] ?? null,
+            'unique_element' => $data['unique_element'],
 
-        return $pre;
+            'ip_address' => $this->getIpAddress(),
+            'domain_name' => $this->getDomainName(),
+            'app_version' => 1,
+        ];
+        
+        TransactionLog::create($data);
+        return $data;
     }
+
 
     public function removeCharsInAmount($code){
         $chars = str_split($code);
