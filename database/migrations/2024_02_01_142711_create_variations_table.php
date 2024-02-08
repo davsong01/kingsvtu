@@ -24,6 +24,10 @@ return new class extends Migration
                 $table->string('fixed_price')->nullable();
                 $table->integer('api_price')->nullable();
                 $table->integer('system_price')->nullable();
+
+                $table->integer('min')->nullable();
+                $table->integer('max')->nullable();
+
                 $table->timestamps();
             });
         }

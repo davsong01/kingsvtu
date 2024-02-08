@@ -26,6 +26,8 @@ return new class extends Migration
                 $table->text('description')->nullable();
                 $table->string('has_variations')->default('no');
                 $table->string('api_id');
+                $table->string('allow_meter_validation')->default('no');
+
                 $table->timestamps();
             });
         }

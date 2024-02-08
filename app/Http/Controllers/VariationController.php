@@ -19,6 +19,22 @@ class VariationController extends Controller
         return back()->with('message','Variations pulled successfully');
     }
 
+    public function getCustomerVariations(Product $product){
+        $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
+        
+        // foreach($variations as $variation){
+        //     if($variation->fixedPrice == 'Yes'){
+        //         if($user_level == 2){
+        //             $variation->variation_amount = $variation->variation_amount - $variation->level_2_offset;
+        //         }else if ($user_level == 3) {
+        //             $variation->variation_amount = $variation->variation_amount - $variation->level_3_offset;
+        //         }
+        //     }
+        // }
+
+        return response()->json($variations);
+    }
+
     public function updateVariations(Request $request){
         foreach($request->variation_id as $variation){
             $data = [

@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('customers')) {
-            Schema::create('customers', function (Blueprint $table) {
+        if (!Schema::hasTable('wallets')) {
+            Schema::create('wallets', function (Blueprint $table) {
                 $table->id();
-                $table->integer('referral_id')->nullable();
                 $table->integer('customer_id');
-                $table->integer('customer_level')->nullable();
-                $table->integer('callback_url')->nullable();
-                $table->integer('app_version')->nullable();
+                $table->double('amount', 11,2);
+                $table->string('type');
+                $table->string('transaction_id')->nullable();
                 $table->timestamps();
             });
         }
@@ -29,9 +28,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('customers')) {
-            Schema::dropIfExists('customers');
+        if (Schema::hasTable('wallets')) {
+            Schema::dropIfExists('wallets');
         }
-
     }
 };

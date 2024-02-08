@@ -13,6 +13,31 @@ return new class extends Migration
     {
         Schema::create('transaction_logs', function (Blueprint $table) {
             $table->id();
+            $table->string('status')->default('initiated');
+            $table->string('reference_id');
+            $table->string('transactionId');
+            $table->string('payment_method')->nullable();
+            $table->integer('customer_id');
+            $table->string('customer_email');
+            $table->string('customer_name');
+            $table->string('customer_phone');
+            $table->string('unique_element');
+            $table->double('discount', 11,2);
+            $table->double('unit_price', 11,2);
+            $table->double('amount', 11,2);
+            $table->double('total_amount', 11,2);
+            $table->double('balance_before', 11, 2);
+            $table->double('balance_after', 11, 2);
+            $table->string('qunatity');
+            $table->integer('product_id')->nullable();
+            $table->string('product_name')->nullable();
+            $table->string('variation_id')->nullable();
+            $table->string('variation_name')->nullable();
+            $table->string('category_id')->nullable();
+            $table->text('request_data')->nullable();
+            $table->string('extras');
+
+
             $table->timestamps();
         });
     }

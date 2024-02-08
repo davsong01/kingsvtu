@@ -14,9 +14,9 @@
             {{-- start --}}
             <li class=" navigation-header"><span>Make Payment</span>
             </li>
-            <li class=" nav-item"><a href="form-layout.html"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Buy data bundle</span></a>
+            <li class=" nav-item"><a href="{{ route('open.transaction.page', 'airtime')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Wizard">Buy airtime</span></a>
+            <li class=" nav-item"><a href="{{ route('open.transaction.page', 'data')}}"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Buy data bundle</span></a>
             </li>
-            <li class=" nav-item"><a href="form-wizard.html"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Wizard">Buy airtime VTU</span></a>
             </li>
             <li class=" nav-item"><a href="form-validation.html"><i class="menu-livicon" data-icon="check-alt"></i><span class="menu-title" data-i18n="Form Validation">TV Subscription</span></a>
             </li>

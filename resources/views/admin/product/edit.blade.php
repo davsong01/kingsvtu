@@ -70,11 +70,11 @@
                                                                         Variations
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item">
+                                                                {{-- <li class="nav-item">
                                                                     <a class="nav-link" id="messages-tab-fill" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">
                                                                         General Settings
                                                                     </a>
-                                                                </li>
+                                                                </li> --}}
                                                             </ul>
 
                                                             <!-- Tab panes -->
@@ -174,38 +174,38 @@
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="api_name">API Name</label>
-                                                                                            <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
+                                                                                            <input type="text" class="form-control-sm tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
                                                                                         </fieldset>
                                                                                     </div>
                                                                                    
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">System Name</label>
-                                                                                            <input type="text" class="form-control tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
+                                                                                            <input type="text" class="form-control-sm tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">Slug</label>
-                                                                                            <input type="text" class="form-control tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
+                                                                                            <input type="text" class="form-control-sm tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">API Price</label>
-                                                                                            <input type="text" class="form-control tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
+                                                                                            <input type="text" class="form-control-sm tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">SYSTEM Price</label>
-                                                                                            <input type="text" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
+                                                                                            <input type="text" class="form-control-sm tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-1">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="status">Status</label>
-                                                                                            <select class="form-control tiny" name="status[{{ $variation->id }}]" id="status" required>
+                                                                                            <select class="form-control-sm tiny" name="status[{{ $variation->id }}]" id="status" required>
                                                                                                 <option value="">Select</option>
                                                                                                 <option value="active" {{ $variation->status == 'active' ? 'selected' : ''}}>Active</option>
                                                                                                 <option value="inactive" {{ $variation->status == 'inactive' ? 'selected' : ''}}>InActive</option>
