@@ -55,11 +55,7 @@
                                                                         Variations
                                                                     </a>
                                                                 </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link" id="messages-tab-fill" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">
-                                                                        General Settings
-                                                                    </a>
-                                                                </li>
+                                                               
                                                             </ul>
 
                                                             <!-- Tab panes -->
@@ -130,6 +126,14 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
+                                                                                    <label for="has_variations">Has Variations</label>
+                                                                                    <select class="form-control" name="has_variations" id="has_variations" required>
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('has_variations') == 'active' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('has_variations') == 'inactive' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
                                                                                     <label for="seo_description">SEO Description</label>
                                                                                     <textarea class="form-control" id="seo_description" rows="3" name="seo_description" placeholder="SEO Description">{{ old('seo_description') }}</textarea>
                                                                                 </fieldset>
@@ -148,12 +152,6 @@
                                                                         gummi
                                                                         bears pudding pie apple pie cookie. Cheesecake jujubes lemon drops danish dessert I love caramels
                                                                         powder.
-                                                                    </p>
-                                                                </div>
-                                                                <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="messages-tab-fill">
-                                                                    <p>
-                                                                        Biscuit powder jelly beans. Lollipop candy canes croissant icing chocolate cake. Cake fruitcake powder
-                                                                        pudding pastry.
                                                                     </p>
                                                                 </div>
                                                                 

@@ -45,7 +45,11 @@
                                                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Enter name" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="name">Display Name</label>
+                                                        <label for="icon">Icon</label>
+                                                        <input type="text" class="form-control" id="icon" name="icon" value="{{ old('icon') }}" placeholder="Enter icon" required>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
+                                                        <label for="display_name">Display Name</label>
                                                         <input type="text" class="form-control" id="display_name" name="display_name" value="{{ old('display_name') }}" placeholder="Enter name" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">

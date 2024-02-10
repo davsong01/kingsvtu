@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\EmailMessages;
+use App\Models\Category;
 use Illuminate\Support\Facades\Mail;
 
 if (!function_exists("logEmails")) {
@@ -43,5 +44,22 @@ if (!function_exists("getUniqueElements")) {
             'iuc_number',
             'account_id'
         ];
+    }
+}
+
+if (!function_exists("verifiableUniqueElements")) {
+    function verifiableUniqueElements()
+    {
+        return ['meter_number', 'iuc_number'];
+    }
+}
+
+
+
+
+if (!function_exists("getCategories")) {
+    function getCategories()
+    {
+       return Category::where('status', 'active')->get();
     }
 }

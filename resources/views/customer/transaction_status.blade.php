@@ -7,6 +7,15 @@
         font-size: 10px;
         float: right;
     }
+    .item-progress{
+        overflow:auto !important
+    }
+    .key{
+        color:#1A233A;
+    }
+    .trans-details{
+        padding: 1.7rem 2px;
+    }
 </style>
 @endsection
 @section('content')
@@ -49,7 +58,7 @@
                                                                 
                                                                 <div class="col-md-12">
                                                                     @if(!empty($transaction->extras))
-                                                                    <h3 style="color:#D50000;font-weight: bold;font-size: 28px;line-height: 28px;text-align: center;"><strong>Token : 55155080249479205467</strong></h3>
+                                                                    <h3 style="color:#D50000;font-weight: bold;font-size: 28px;line-height: 28px;text-align: center;"><strong>{{ $transaction->extras }}</strong></h3>
                                                                     @endif
                                                                     <small style="display:block;font-family: Roboto;font-style: italic;font-weight: normal;font-size: 12px;line-height: 20px;color: #575A5F;text-align:center;">{{ $transaction->instruction }}</small>
                                                                 </div>
@@ -62,7 +71,7 @@
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name. ' | '. $transaction->variation->system_name}}</strong></h3></span>
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
                                                                     <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {{ number_format($transaction->amount) }}</strong></span> <br>
-                                                                    <a href="" target="_blank" class="btn btn-primary mt-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
+                                                                    <a href="" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
@@ -76,12 +85,97 @@
                                                                     <span >{{ ucfirst($transaction->reference_id) }}</span>
                                                                 </div>
                                                             </div>
-                                                            <div class="row mt-3" >
+                                                            <div class="row" >
                                                                 <div class="col-md-9">
-                                                                    <div class="card-head align-items-center">
-                                                                        <h4 class="card-title mb-0">Transaction Details</h4>
+                                                                    <div class="card-body trans-details">
+                                                                        <div class="mb-2 card-head align-items-center">
+                                                                            <h4 class="card-title mb-0">Transaction Details</h4>
+                                                                        </div>
+                                                                        <ul class="p-0 m-0">
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Description: </p>
+                                                                                </div>
+                                                                                <div class="item-progress value">{{ ucfirst($transaction->descr) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            @if(!empty($transaction->extras))
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Extras: </p>
+                                                                                </div>
+                                                                                <div class="item-progres value">{{ ucfirst($transaction->extras) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            @endif
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Payment method: </p>
+                                                                                </div>
+                                                                                <div class="item-progress value">{{ ucfirst($transaction->payment_method) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Service: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{$transaction->product->display_name}} ({{$transaction->variation->system_name}})</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Phone: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{$transaction->customer_phone}}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Email: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{$transaction->customer_email }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Amount Paid: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{ number_format($transaction->amount) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Initial Balance: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{ number_format($transaction->balance_before) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Final Balance: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{ number_format($transaction->balance_after) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                        </ul>
                                                                     </div>
-                                                                    <div class="table-responsive text-nowrap">
+                                                                    
+                                                                    {{-- <div class="table-responsive text-nowrap">
                                                                         <table class="table">
                                                                            
                                                                             <tbody class="table-border-bottom-0">
@@ -149,7 +243,7 @@
                                                                                 </tr>
                                                                             </tbody>
                                                                         </table>
-                                                                    </div>
+                                                                    </div> --}}
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -16,7 +16,7 @@ class TransactionController extends Controller
 {
     public function showProductsPage($slug){
         $category = Category::with('products')->where('slug', $slug)->first();
-        
+       
         if(!empty($category) && $category->status == 'active'){
             return view('customer.single_category_page', compact('category'));
         }else{
@@ -59,8 +59,6 @@ class TransactionController extends Controller
         $discount = $this->getDiscount($request['amount']) ?? 0;
         $request['discount'] = $discount;
 
-        // Check max and minimum amount
-       
         // Verify Meter
         if ($product->allow_meter_validation) {
             $meterValidation = $this->validateMeter($product);
@@ -70,7 +68,6 @@ class TransactionController extends Controller
         }
 
         $element = $product->category->unique_element;
-       
         $request['unique_element'] = $request->$element;
         
         // Log Wallet
@@ -94,7 +91,9 @@ class TransactionController extends Controller
         $request['category_id'] = $product->category->id;
         $request['api_id'] = $variation->api->id;
         $request['product_slug'] = $variation->product->slug;
-
+        $request['network'] = $variation->network ?? null;
+        $request['quantity'] = $request->quantity ?? 1;
+       
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
         
@@ -123,7 +122,7 @@ class TransactionController extends Controller
         $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
         $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
         Transaction Id: '.$transaction->transaction_id.'<br>
-        
+
         <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
 
         logEmails(auth()->user()->email, $subject, $body);
@@ -133,7 +132,7 @@ class TransactionController extends Controller
         $failure_reason = '';
         // Get Api
         $file_name = $variation->api->file_name;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $transaction,$variation->api);
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api);
 
         if(isset($query) && $query['status_code'] == 1){
             $res = [

@@ -37,13 +37,14 @@ class ProductController extends Controller
             "status" => "required",
             "seo_description" => "nullable",
             "route" => "required",
-            // "image" => "required|mimes:jpeg,png|max:1024",
+            "has_variations" => "required",
+            "image" => "required|mimes:jpeg,png|max:1024",
         ]);
 
         if (!empty($request->image)) {
-            // $image = $this->uploadFile( $request->image,'products');
+            $image = $this->uploadFile( $request->image,'products');
         }
-
+        
         $product = Product::updateOrCreate(
             [
                 "name" => $request->name,
@@ -53,6 +54,7 @@ class ProductController extends Controller
                 "seo_title" => $request->seo_title,
                 "seo_keywords" => $request->seo_keywords,
                 "slug" => $request->slug,
+                "has_variations" => $request->has_variations,
                 "api_id" => $request->api,
             ],
             [
@@ -65,6 +67,7 @@ class ProductController extends Controller
                 "slug" => $request->slug,
                 "api_id" => $request->api,
                 "status" => $request->status,
+                "has_variations" => $request->has_variations,
                 "seo_description" => $request->seo_description,
                 "image" => $image ?? null,
             ]
@@ -95,13 +98,14 @@ class ProductController extends Controller
             "status" => "required",
             "seo_description" => "nullable",
             "route" => "required",
+            "has_variations" => "required",
             "image" => "nullable|mimes:jpeg,png|max:1024",
         ]);
 
         if (!empty($request->image)) {
-            // $image = $this->uploadFile( $request->image,'products');
+            $image = $this->uploadFile( $request->image,'products');
         }
-
+       
         $product->update([
             "name" => $request->name,
             "display_name" => $request->display_name,
@@ -112,6 +116,7 @@ class ProductController extends Controller
             "slug" => $request->slug,
             "api_id" => $request->api,
             "status" => $request->status,
+            "has_variations" => $request->has_variations,
             "seo_description" => $request->seo_description,
             "image" => $image ?? null,
         ]);

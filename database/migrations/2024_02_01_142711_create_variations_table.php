@@ -22,12 +22,11 @@ return new class extends Migration
                 $table->string('slug')->unique();
                 $table->string('system_name')->nullable();
                 $table->string('fixed_price')->nullable();
-                $table->integer('api_price')->nullable();
-                $table->integer('system_price')->nullable();
-
+                $table->double('api_price', 11,2)->nullable();
+                $table->double('system_price', 11,2)->nullable();
+                $table->string('network')->nullable();
                 $table->integer('min')->nullable();
                 $table->integer('max')->nullable();
-
                 $table->timestamps();
             });
         }

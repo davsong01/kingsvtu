@@ -32,11 +32,13 @@ class CategoryController extends Controller
             "description" => "nullable",
             "seo_description" => "nullable",
             "seo_title" => "nullable",
+            "icon" => "nullable",
             "seo_keywords" => "nullable",
         ]);
 
         Category::updateOrCreate([
             "name" => $request->name,
+            "icon" => $request->icon,
             "display_name" => $request->display_name,
             "slug" => $request->slug,
             "status" => $request->status,
@@ -60,6 +62,7 @@ class CategoryController extends Controller
     {
         $this->validate($request, [
             "name" => "required",
+            "icon" => "required",
             "display_name" => "nullable",
             "slug" => "required",
             "status" => "required",
@@ -72,6 +75,7 @@ class CategoryController extends Controller
 
         $category->update([
             "name" => $request->name,
+            "icon" => $request->icon,
             "display_name" => $request->display_name,
             "slug" => $request->slug,
             "status" => $request->status,

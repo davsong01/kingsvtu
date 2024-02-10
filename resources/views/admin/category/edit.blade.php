@@ -45,6 +45,10 @@
                                                         <label for="name">Name</label>
                                                         <input type="text" class="form-control" id="name" name="name" value="{{ $category->name ?? old('name') }}" placeholder="Enter name" required>
                                                     </fieldset>
+                                                     <fieldset class="form-group">
+                                                        <label for="icon">Icon</label>
+                                                        <input type="text" class="form-control" id="icon" name="icon" value="{{ $category->icon ?? old('icon') }}" placeholder="Enter icon" required>
+                                                    </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="name">Display Name</label>
                                                         <input type="text" class="form-control" id="display_name" name="display_name" value="{{ $category->display_name ?? old('display_name') }}" placeholder="Enter name" required>
@@ -79,7 +83,7 @@
                                                         <select class="form-control" name="unique_element" id="unique_element" required>
                                                             <option value="">Select</option>
                                                             @foreach ( getUniqueElements() as $element )
-                                                                <option value="{{ $lement }}" {{ $category->unique_element == 'element' ? 'selected' : ''}}>{{ ucfirst($element)}}</option>
+                                                                <option value="{{ $element }}" {{ $category->unique_element == 'element' ? 'selected' : ''}}>{{ ucfirst($element)}}</option>
                                                             @endforeach
                                                         </select>
                                                     </fieldset>

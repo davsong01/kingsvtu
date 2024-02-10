@@ -60,10 +60,10 @@ class Controller extends BaseController
                 }
             }
         }
-
-        $imageFile->save(public_path() . '/' . $folder . '/' . $name);
-
-        return public_path() . '/' . $folder . '/' . $name;
+       
+        $imageFile->save($folder . '/' . $name);
+        
+        return $folder . '/' . $name;
     }
 
     public function getPathToSaveFile($location = null)
@@ -78,8 +78,8 @@ class Controller extends BaseController
             $location = $year . '/' . $month . '/' . $day;
         }
 
-        if (!is_dir(base_path() . '/' . config('app.upload_path') . '/' . $location)) {
-            mkdir(base_path() . '/' . config('app.upload_path') . '/' . $location, 0777, true);
+        if (!is_dir(public_path() . '/' . $location)) {
+            mkdir(public_path() . '/' . $location, 0777, true);
         }
 
         return $location;

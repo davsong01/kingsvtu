@@ -22,6 +22,11 @@ class Category extends Model
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'api_id');
+        return $this->hasMany(Product::class);
+    }
+
+    public function api()
+    {
+        return $this->hasMany(Product::class);
     }
 }

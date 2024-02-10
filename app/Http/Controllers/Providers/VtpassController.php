@@ -21,23 +21,25 @@ class VtpassController extends Controller
         ];
 
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
-        
+       
         if(isset($variations['response_description']) && $variations['response_description'] == '000'){
             $existingVariations = $product->variations->pluck('slug');
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
-           
+            
             foreach($variations as $variation){
                 // if(in_array($variation['variation_code'], $existingVariations)){
                 // }else{
                     Variation::updateOrCreate([
-                        'product_id' => $product['id'],
-                        'category_id' => $product['category_id'],
-                        'api_id' => $product['api']['id'],
+                        // 'product_id' => $product['id'],
+                        // 'category_id' => $product['category_id'],
+                        // 'api_id' => $product['api']['id'],
                         'api_name' => $variation['name'],
                         'slug' => $variation['variation_code'],
-                        'system_name' => $variation['name'],
-                        'fixed_price' => $variation['fixedPrice'],
+                        // 'system_name' => $variation['name'],
+                        // 'fixed_price' => $variation['fixedPrice'],
                         'api_price' => $variation['variation_amount'],
+                        'min' => $variation['minimum_amount'] ?? null,
+                        'max' => $variation['maximum_amount'] ?? null
                     ],[
                         'product_id' => $product['id'],
                         'category_id' => $product['category_id'],
@@ -48,6 +50,8 @@ class VtpassController extends Controller
                         'fixed_price' => $variation['fixedPrice'],
                         'api_price' => $variation['variation_amount'],
                         'system_price' => $variation['variation_amount'],
+                        'min' => $variation['minimum_amount'] ?? null,
+                        'max' => $variation['maximum_amount'] ?? null
                     ]);
                 // }
             }
@@ -59,7 +63,7 @@ class VtpassController extends Controller
 
     }
 
-    public function query($request, $transaction, $api){
+    public function query($request,$api){
         // Post data
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
@@ -200,5 +204,8 @@ class VtpassController extends Controller
         } 
     }
     
+    public function balance(){
+
+    }
 
 }

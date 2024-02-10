@@ -6,10 +6,10 @@
 @extends('layouts.app')
 @section('page-css')
 <style>
-    .tiny{
-        padding: 1.5px !important;
+    /* .tiny{ */
+        /* padding: 1.5px !important;
         font-size: 11px !important;
-    }
+    } */
 
 </style>
 @endsection
@@ -58,24 +58,26 @@
                                                                 
                                                             </p>
                                                             <!-- Nav tabs -->
-                                                           
-                                                            <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link {{ $page == 1 ? 'active' : ''}}" id="home-tab-fill" data-toggle="tab" href="#product-details" role="tab" aria-controls="product-details" aria-selected="true">
-                                                                        Product Details
-                                                                    </a>
-                                                                </li>
-                                                                <li class="nav-item">
-                                                                    <a class="nav-link {{ $page == 2 ? 'active' : ''}}" id="profile-tab-fill" data-toggle="tab" href="#variations" role="tab" aria-controls="variations" aria-selected="false">
-                                                                        Variations
-                                                                    </a>
-                                                                </li>
-                                                                {{-- <li class="nav-item">
-                                                                    <a class="nav-link" id="messages-tab-fill" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">
-                                                                        General Settings
-                                                                    </a>
-                                                                </li> --}}
-                                                            </ul>
+                                                            
+                                                            @if($product->has_variations == 'yes')
+                                                                <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link {{ $page == 1 ? 'active' : ''}}" id="home-tab-fill" data-toggle="tab" href="#product-details" role="tab" aria-controls="product-details" aria-selected="true">
+                                                                            Product Details
+                                                                        </a>
+                                                                    </li>
+                                                                    <li class="nav-item">
+                                                                        <a class="nav-link {{ $page == 2 ? 'active' : ''}}" id="profile-tab-fill" data-toggle="tab" href="#variations" role="tab" aria-controls="variations" aria-selected="false">
+                                                                            Variations ({{$product->variations->count()}})
+                                                                        </a>
+                                                                    </li>
+                                                                    {{-- <li class="nav-item">
+                                                                        <a class="nav-link" id="messages-tab-fill" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">
+                                                                            General Settings
+                                                                        </a>
+                                                                    </li> --}}
+                                                                </ul>
+                                                            @endif
 
                                                             <!-- Tab panes -->
                                                             <div class="tab-content pt-1">
@@ -146,6 +148,14 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
+                                                                                    <label for="has_variations">Has Variations</label>
+                                                                                    <select class="form-control" name="has_variations" id="has_variations" required>
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->has_variations == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->has_variations == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
                                                                                     <label for="seo_description">SEO Description</label>
                                                                                     <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $product->seo_description ?? old('seo_description') }}" placeholder="SEO Description">{{ $product->seo_description ?? old('seo_description') }}</textarea>
                                                                                 </fieldset>
@@ -158,10 +168,8 @@
                                                                     </form>
                                                                 </div>
 
-                                                                <div class="tab-pane {{ isset($page) && $page == 2 ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
-                                                                    @if($product->has_variations == 'yes')
-                                                                        
-
+                                                                @if($product->has_variations == 'yes')
+                                                                    <div class="tab-pane {{ isset($page) && $page == 2 ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
                                                                         @if($product->variations->count() < 1)
                                                                             <a href="{{ route('variations.pull', $product->id) }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</button></a>
                                                                         @else
@@ -171,41 +179,53 @@
                                                                                 @csrf
                                                                                 @foreach($product->variations as $variation)
                                                                                 <div class="row">
-                                                                                    <div class="col-md-2">
+                                                                                    <div class="col-md-3">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="api_name">API Name</label>
-                                                                                            <input type="text" class="form-control-sm tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
+                                                                                            <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                   
+                                                                                
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">System Name</label>
-                                                                                            <input type="text" class="form-control-sm tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
+                                                                                            <input type="text" class="form-control tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">Slug</label>
-                                                                                            <input type="text" class="form-control-sm tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
+                                                                                            <input type="text" class="form-control tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">API Price</label>
-                                                                                            <input type="text" class="form-control-sm tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
+                                                                                            <input type="text" class="form-control tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">SYSTEM Price</label>
-                                                                                            <input type="text" class="form-control-sm tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
+                                                                                            <input type="text" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                    <div class="col-md-1">
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="fixed_price">Fixed Price</label>
+                                                                                            <select class="form-control tiny" name="fixed_price[{{ $variation->id }}]" id="fixed_price" required>
+                                                                                                <option value="">Select</option>
+                                                                                                <option value="Yes" {{ $variation->fixed_price == 'Yes' ? 'selected' : ''}}>Yes</option>
+                                                                                                <option value="No" {{ $variation->fixed_price == 'No' ? 'selected' : ''}}>No</option>
+                                                                                                
+                                                                                            </select>
+                                                                                        </fieldset>
+                                                                                        
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="status">Status</label>
-                                                                                            <select class="form-control-sm tiny" name="status[{{ $variation->id }}]" id="status" required>
+                                                                                            <select class="form-control tiny" name="status[{{ $variation->id }}]" id="status" required>
                                                                                                 <option value="">Select</option>
                                                                                                 <option value="active" {{ $variation->status == 'active' ? 'selected' : ''}}>Active</option>
                                                                                                 <option value="inactive" {{ $variation->status == 'inactive' ? 'selected' : ''}}>InActive</option>
@@ -225,16 +245,8 @@
                                                                                 </div>
                                                                             </form>
                                                                         @endif
-                                                                        
-                                                                    @endif
-                                                                </div>
-                                                                <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="messages-tab-fill">
-                                                                    <p>
-                                                                        Biscuit powder jelly beans. Lollipop candy canes croissant icing chocolate cake. Cake fruitcake powder
-                                                                        pudding pastry.
-                                                                    </p>
-                                                                </div>
-                                                                
+                                                                    </div>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>

@@ -1,3 +1,6 @@
+<?php 
+    $verifiable = verifiableUniqueElements()
+?>
 @extends('layouts.app')
 @section('title', $category->seo_title)
 @section('keywords', $category->seo_keywords)
@@ -65,7 +68,19 @@
                                                                             <option value="">Select...</option>
                                                                         </select>
                                                                     </fieldset>
-                                                                    
+                                                                    @if($category->slug == 'electricity')
+                                                                    <fieldset class="form-group unique_element" style="display:none">
+                                                                        <label for="meter_number">Meter Number</label>
+                                                                        <input type="text" class="form-control" id="meter_number" name="meter_number" value="{{ old('meter_number')}}" required>
+                                                                    </fieldset>
+                                                                    @endif
+                                                                    @if($category->slug == 'dstv')
+                                                                    <fieldset class="form-group unique_element" style="display:none">
+                                                                        <label for="iuc_number">IUC Number</label>
+                                                                        <input type="text" class="form-control" id="iuc_number" name="iuc_number" value="{{ old('iuc_number')}}" required>
+                                                                    </fieldset>
+                                                                    @endif
+                                                                
                                                                     <fieldset class="form-group">
                                                                         <label for="email">Email Address</label>
                                                                         <input type="text" class="form-control" id="email" name="email" value="{{ auth()->user()->email ?? old('email')}}" required>
@@ -75,6 +90,7 @@
                                                                         <label for="phone">Phone Number</label>
                                                                         <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
                                                                     </fieldset>
+                                                                   
                                                                     <fieldset class="form-group">
                                                                         <label for="amount" class="">Amount</label>
                                                                         <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number">
@@ -84,10 +100,9 @@
                                                                         <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
                                                                         <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                     </fieldset>
-                                                                    
-                                                                    <button class="btn btn-primary" type="submit">Buy now</button>
-                        
                                                                    
+                                                                    <button class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" >Buy now</button>
+                                                                    <a href="#" id="verify-link" onclick="verify(e)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
                                                                 </div>
 
                                                                 <div class="col-md-3">
@@ -116,6 +131,9 @@
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
 <script>
     $(document).ready(function () {
+        function verify(e){
+            alert ('sdsd');
+        }
         var variations = [];
         
         $('#product').on('change', function () {
@@ -158,6 +176,8 @@
                                     );
                                 variations.push({
                                     "id": data[t].id,
+                                    "verifiable": data[t].verifiable,
+                                    "unique_element": data[t].unique_element,
                                     "max": data[t].max,
                                     "min": data[t].min,
                                     "fixedPrice": data[t].fixed_price,
@@ -177,7 +197,15 @@
             var selected = variations.filter((item) => {
                 return item.id == v;
             });
-            console.log('sss=>', selected[0]);
+            // console.log('sss=>', selected[0]);
+            if (selected[0].verifiable == 'yes') {
+                $("#verify-link").show();
+                $(".unique_element").show();
+            }else{
+                $("#verify-link").hide();
+                $(".unique_element").hide();
+            }
+           
             if (selected[0].fixedPrice == 'Yes') {
                 $("#amount").attr({
                     "max": "",
