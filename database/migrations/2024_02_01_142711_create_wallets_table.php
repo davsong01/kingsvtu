@@ -16,8 +16,11 @@ return new class extends Migration
                 $table->id();
                 $table->integer('customer_id');
                 $table->double('amount', 11,2);
+                $table->double('balance_before', 11,2)->nullable();
+                $table->double('balance_after', 11,2)->nullable();
                 $table->string('type');
                 $table->string('transaction_id')->nullable();
+                $table->string('reason')->nullable();
                 $table->timestamps();
             });
         }

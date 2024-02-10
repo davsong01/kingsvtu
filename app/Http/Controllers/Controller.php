@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Image;
+use App\Models\GeneralSetting;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -21,10 +22,10 @@ class Controller extends BaseController
             curl_setopt($ch, CURLOPT_HTTPGET, true);
         } elseif ($method == "POST") {
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         } elseif ($method == "PUT") {
             curl_setopt($ch, CURLOPT_PUT, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
         } elseif (!empty($timeout)) {
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         }
@@ -35,7 +36,6 @@ class Controller extends BaseController
         
         return json_decode($response, true);
     }
-
 
     public function uploadFile($file, $location = null, $width = null, $height = null)
     {
@@ -95,6 +95,10 @@ class Controller extends BaseController
 
     public function getAppVersion(){
         return 1;
+    }
+
+    public function settings(){
+        return GeneralSetting::first();
     }
 
 }

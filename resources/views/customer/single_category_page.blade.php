@@ -2,7 +2,14 @@
 @section('title', $category->seo_title)
 @section('keywords', $category->seo_keywords)
 @section('description', $category->seo_description)
-
+@section('page-css')
+<style>
+    .reset-pin {
+        font-size: 10px;
+        float: right;
+    }
+</style>
+@endsection
 @section('content')
 <!-- Content wrapper -->
  <div class="app-content content">
@@ -22,15 +29,18 @@
                                         <div class="col-sm-12">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h4 class="card-title">Top content</h4>
+                                                    <h4 class="card-title">{{ $category->description }}</h4>
+                                                    
                                                     @include('layouts.alerts')
                                                 </div>
                                                 <div class="card-content">
                                                     <div class="card-body">
                                                         <form action="{{route('initialize.transaction')}}" method="POST">
                                                             @csrf
+                                                            
                                                             <div class="row">
                                                                 <div class="col-md-9">
+                                                                    
                                                                     <div class="d-flex pb-1 justify-content-start align-items-center w-100">
                                                                         <img class="product-images" style="padding-right: 8px;height: 70px;" id="product-image" src="" alt="" class="product-image">
                                                                         <div>
@@ -39,7 +49,7 @@
                                                                             <p style="" id="product-description" style="line-height: 1.4;"></p>
                                                                         </div>
                                                                     </div>
-                                                                    
+                                                                   
                                                                     <fieldset class="form-group">
                                                                         <label for="product">Select Service</label>
                                                                         <select class="form-control" name="product" id="product" required>
@@ -70,7 +80,8 @@
                                                                         <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number">
                                                                     </fieldset>
                                                                     <fieldset class="form-group">
-                                                                        <label for="transaction_pin">Transaction PIN</label>
+                                                                        
+                                                                        <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
                                                                         <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                     </fieldset>
                                                                     

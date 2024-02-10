@@ -7,9 +7,10 @@ use App\Models\Category;
 use App\Models\Variation;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\WalletController;
 use App\Models\TransactionLog;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\WalletController;
 
 class TransactionController extends Controller
 {
@@ -26,9 +27,19 @@ class TransactionController extends Controller
     public function initializeTransaction(Request $request){
         // Check Transaction pin
         $pinCheck = $this->checkTransactionPin($request);
+        
         if(!$pinCheck){
             return back()->with('error', 'Invalid Transaction PIN!');
         }
+
+        // Get Wallet Balance
+        $wallet = new WalletController();
+        $balance = $wallet->getWalletBalance(auth()->user());
+
+        if ($balance < $request['amount']) {
+            return back()->with('error', 'Insufficient Wallet Balance, Please try again');
+        }
+        
         // Get product
         $product = Product::where('id', $request->product)->first();
         $category = $product->category_id;
@@ -58,15 +69,10 @@ class TransactionController extends Controller
             }
         }
 
-        // Get Wallet Balance
-        $wallet = new WalletController();
-        $balance = $wallet->getWalletBalance(auth()->user());
+        $element = $product->category->unique_element;
+       
+        $request['unique_element'] = $request->$element;
         
-        if($balance < $request['amount']){
-            return back()->with('error', 'Insufficient Wallet Balance, Please try again');
-        }
-        
-        $request['unique_element'] = $this->getUniqueElement($request->all(), $product);
         // Log Wallet
         $request_id = $this->generateRequestId();
         $request['type'] = 'debit';
@@ -74,19 +80,101 @@ class TransactionController extends Controller
         $request['transaction_id'] = 'KVTU-'. $request_id;
         $request['request_id'] = $request_id;
         $request['payment_method'] = 'wallet';
-        
-        $wallet->logWallet($request->all());
+        $request['balance_before'] = $balance;
+        $request['ip_address'] = $this->getIpAddress();
+        $request['domain_name'] = $this->getDomainName();
 
-        // Log basic data in transaction
-        $this->logTransaction($request->all());
+        $request['customer_email'] = auth()->user()->email;
+        $request['customer_phone'] = auth()->user()->phone;
+        $request['customer_name'] = auth()->user()->firstname;
+        $request['variation_id'] = $variation->id;
+        $request['product_id'] = $product->id;
+        $request['product_name'] = $product->name;
+        $request['variation_name'] = $variation->slug;
+        $request['category_id'] = $product->category->id;
+        $request['api_id'] = $variation->api->id;
+        $request['product_slug'] = $variation->product->slug;
+
+        // Log basic transaction
+        $transaction = $this->logTransaction($request->all());
         
-        dd($request->all());
+        // Log wallet
+        $wal = $wallet->logWallet($request->all());
+
+        // Update Customer Wallet
+        $wallet->updateCustomerWallet(auth()->user(), $request['amount'], $request['type']);
+
+        // Process Transaction
+        $transaction = $this->processTransaction($request->all(), $variation, $transaction);
+
+        // Log Transaction Email
+        $this->sendTransactionEmail($transaction);
+        return redirect(route('transaction.status', $transaction->transaction_id));
     }
 
-    public function getUniqueElement($request, $product){
-        $unique = $request['meter_number']$request['phone'];
+    public function transactionStatus($transaction_id){
+        $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
 
-        if($product->category)
+        return view('customer.transaction_status', compact('transaction'));
+    }
+
+    public function sendTransactionEmail($transaction){
+        $subject = "Transaction Alert";
+        $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
+        Transaction Id: '.$transaction->transaction_id.'<br>
+        
+        <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+
+        logEmails(auth()->user()->email, $subject, $body);
+    }
+
+    public function processTransaction($request, $variation, $transaction){
+        $failure_reason = '';
+        // Get Api
+        $file_name = $variation->api->file_name;
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $transaction,$variation->api);
+
+        if(isset($query) && $query['status_code'] == 1){
+            $res = [
+                'status' => $query['status'],
+                'message' => 'Transaction Successful!',
+                'extras' => 'Transaction Successful!',
+            ];
+
+            $balance_after = $request['balance_before'] - $request['amount'];
+        }else if(isset($query) && $query['status_code'] == 0){
+            // Log wallet
+            $wallet = new WalletController();
+            $request['type'] = 'credit';
+            $wallet->logWallet($request);
+            $failure_reason = $query['message'] ?? null;
+
+            // Update Customer Wallet
+            $wallet->updateCustomerWallet(auth()->user(), $request['amount'], 'credit');
+            $balance_after = $request['balance_before'];
+
+        }else{
+            $res = [
+                'status' => $query['status'],
+                'message' => 'Transaction Successful!',
+            ];
+
+            $balance_after = $request['balance_before'] - $request['amount'];
+        }
+
+        // Update Transaction
+        $transaction->update([
+            'balance_after' => $balance_after,
+            'request_data' => $query['payload'],
+            'api_response' => $query['api_response'] ?? null,
+            'failure_reason' => $failure_reason,
+            'extras' => $query['extras'] ?? null,
+            'status' => $query['user_status'] ?? 'attention-required',
+            'descr' => $query['description'],
+        ]);
+
+        return $transaction;
     }
 
     public function generateRequestId()
@@ -97,9 +185,12 @@ class TransactionController extends Controller
     }
 
     public function checkTransactionPin($request){
-        $pin = $request['transaction_pin'];
-        
-        return true;
+        $pin = base64_decode(base64_decode(base64_decode(auth()->user()->transaction_pin)));
+        if($pin == $request->transaction_pin){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function getDiscount($amount){
@@ -122,34 +213,33 @@ class TransactionController extends Controller
     {
         $pre = [
             'status' => 'initiated',
-            'reference_id' => $this->generateRequestId(),
-            'transactionId' => base64_encode($this->generateRequestId()),
+            'reference_id' => $data['request_id'],
+            'transaction_id' => $data['transaction_id'],
             'payment_method' => $data['payment_method'],
-            'customer_id' => auth()->user()->customer->id ?? null,
-            'customer_email' => auth()->user()->email ?? null,
-            'customer_phone' => auth()->user()->phone ?? null,
-            'customer_name' => auth()->user()->name ?? null,
+            'customer_id' => $data['customer_id'],
+            'customer_email' => $data['customer_email'],
+            'customer_phone' => $data['customer_phone'],
+            'customer_name' => $data['customer_name'],
             'discount' => $data['discount'] ?? null,
             'unit_price' => $data['amount'],
             'quantity' => $data['quantity'] ?? 1,
             'total_amount' => $data['amount'] * ($data['quantity'] ?? 1),
             'amount' => $data['amount'],
-            'balance_before' => auth()->user()->customer->wallet ?? 0,
-            
-            'product_id' => $data['product_d'] ?? null,
+            'balance_before' => $data['balance_before'],
+            'product_id' => $data['product_id'] ?? null,
             'product_name' => $data['product_name'] ?? null,
             'variation_id' => $data['variation_id'] ?? null,
             'variation_name' => $data['variation_name'] ?? null,
             'category_id' => $data['category_id'] ?? null,
             'unique_element' => $data['unique_element'],
-
-            'ip_address' => $this->getIpAddress(),
-            'domain_name' => $this->getDomainName(),
-            'app_version' => 1,
+            'ip_address' => $data['ip_address'] ?? null,
+            'domain_name' => $data['domain_name'] ?? null,
+            'app_version' => Session::get('app_version') ?? null,
+            'api_id' => $data['api_id'],
         ];
-        dd($pre, $data);
-        TransactionLog::create($pre);
-        return $data;
+
+        $trans = TransactionLog::create($pre);
+        return $trans;
     }
 
 

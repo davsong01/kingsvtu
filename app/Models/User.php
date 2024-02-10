@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Customer;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\TransactionPinResetToken;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,5 +43,10 @@ class User extends Authenticatable
 
     public function customer(){
         return $this->hasOne(Customer::class);
+    }
+
+    public function transaction_pin_token(){
+        return $this->hasMany(TransactionPinResetToken::class);
+        
     }
 }

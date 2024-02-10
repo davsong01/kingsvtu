@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('status')->default('initiated');
             $table->string('reference_id');
-            $table->string('transactionId');
+            $table->string('transaction_id');
             $table->string('payment_method')->nullable();
             $table->integer('customer_id');
             $table->string('customer_email');
@@ -26,9 +26,9 @@ return new class extends Migration
             $table->double('unit_price', 11,2);
             $table->double('amount', 11,2);
             $table->double('total_amount', 11,2);
-            $table->double('balance_before', 11, 2);
-            $table->double('balance_after', 11, 2);
-            $table->integer('quantity');
+            $table->double('balance_before', 11, 2)->nullable();
+            $table->double('balance_after', 11, 2)->nullable();
+            $table->integer('quantity')->nullable();
             $table->integer('product_id')->nullable();
             $table->string('product_name')->nullable();
             $table->string('variation_id')->nullable();
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('category_id')->nullable();
             $table->text('request_data')->nullable();
             $table->longtext('api_response')->nullable();
-            $table->string('extras');
+            $table->string('extras')->nullable();
             $table->string('ip_address')->nullable();
             $table->string('domain_name')->nullable();
             $table->text('failure_reason')->nullable();
