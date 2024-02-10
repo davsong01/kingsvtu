@@ -60,7 +60,7 @@ class EasyAccessController extends Controller
 
     public function esayAccessProductVariations(){
         $variations = [
-            'mtn-data' => [
+            'mtn-data-cg' => [
                 'variations' => [
                     [
                         'name' => '500MB (SME) 30days',
@@ -276,7 +276,80 @@ class EasyAccessController extends Controller
                 'variations' => [
 
                 ],
-            ]
+            ],
+            'glo-data-cg' => [
+                'variations' => [
+                    [
+                        'name' => 'GLO 200MB (CG) - 14days',
+                        'variation_code' => 158,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 46
+                    ],
+                    [
+                        'name' => 'GLO 500MB (CG) - 30days',
+                        'variation_code' => 159,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 113
+                    ],
+                    [
+                        'name' => '1GB (CG) - 30days',
+                        'variation_code' => 160,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 225
+                    ],
+                    [
+                        'name' => '2GB (CG) - 30days',
+                        'variation_code' => 161,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 450
+                    ],
+                    [
+                        'name' => '3GB (CG) - 30days',
+                        'variation_code' => 162,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 675
+                    ],
+                    [
+                        'name' => '5GB (CG) - 30days',
+                        'variation_code' => 163,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 1125
+                    ],
+                    [
+                        'name' => '10GB (CG) - 30days',
+                        'variation_code' => 164,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 2250
+                    ],
+                ],
+            ],
+
+            'airtel-data-cg' => [
+                'variations' => [
+                    [
+                        'name' => 'AIRTEL 100MB (CG) - 7days',
+                        'variation_code' => 104,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 27
+                    ],
+                    [
+                        'name' => 'AIRTEL 100MB (CG) - 7days',
+                        'variation_code' => 105,
+                        'fixedPrice' => 'Yes',
+                        'variation_amount' => 67
+                    ],
+
+                    // AIRTEL (104 => 100MB (CG) - N27 7days, 
+                    // 105 => 300MB (CG) - N67 7days, 
+                    // 106 => 500MB (CG) - N101 30days, 
+                    // 107 => 1GB (CG) - N200 30days, 
+                    // 108 => 2GB (CG) - N400 30days, 
+                    // 109 => 5GB (CG) - N1000 30days, 
+                    // 124 => 10GB (CG) - N2000 30days, 
+                    // 139 => 15GB (CG) - N3000 30days, 
+                    // 140 => 20GB (CG) - N4000 
+                ],
+            ],
         ];
     }
 
