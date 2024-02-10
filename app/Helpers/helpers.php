@@ -30,7 +30,7 @@ if (!function_exists("sendEmails")) {
         try {
             Mail::to($email_to,)->send(new EmailMessages($data));
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            \Log::info($e->getMessage());
         }
     }
 }
