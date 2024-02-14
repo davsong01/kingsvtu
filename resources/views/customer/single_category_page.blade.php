@@ -13,6 +13,7 @@
     }
 </style>
 @endsection
+
 @section('content')
 <!-- Content wrapper -->
  <div class="app-content content">
@@ -102,7 +103,7 @@
                                                                     </fieldset>
                                                                    
                                                                     <button class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" >Buy now</button>
-                                                                    <a href="#" id="verify-link" onclick="verify(e)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
+                                                                    <a href="#" id="verify-link" onclick="verify(this)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
                                                                 </div>
 
                                                                 <div class="col-md-3">
@@ -126,14 +127,68 @@
     </div>
 </div>
 @endsection
-
+<div class="modal fade" id="verifyModal" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+    <form class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="backDropModalTitle">Please confirm your  {{ ucfirst(str_replace("_"," ",$category->unique_element)) }} details are correct</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+        <div class="col mb-3">
+            <label for="nameBackdrop" class="form-label">Name</label>
+            <input type="text" id="nameBackdrop" class="form-control" placeholder="Enter Name">
+        </div>
+        </div>
+        <div class="row g-2">
+        <div class="col mb-0">
+            <label for="emailBackdrop" class="form-label">Email</label>
+            <input type="email" id="emailBackdrop" class="form-control" placeholder="xxxx@xxx.xx">
+        </div>
+        <div class="col mb-0">
+            <label for="dobBackdrop" class="form-label">DOB</label>
+            <input type="date" id="dobBackdrop" class="form-control">
+        </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Continue Payment</button>
+    </div>
+    </form>
+    </div>
+</div>
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script>
+    function verify(e){
+        // $.LoadingOverlay("show");
+        $('#verifyModal').modal('hide');
+        var url = "{{ url('customer-verify') }}";
+        var formData =  {
+            category_id: {{ $category->id }},
+            meter_number: $("#meter_number").val(),
+            iuc_number: $("#iuc_number").val(),
+            variation: $("#variation").val(),
+            // type: {{ $category->slug }},
+        };
+        
+        $.ajax({
+            url: url,
+            method: 'POST',
+            dataType: 'json',
+            data:formData,
+
+            success: function (data) {
+                console.log(url);
+                $.LoadingOverlay("hide");
+            }
+        });
+    }
     $(document).ready(function () {
-        function verify(e){
-            alert ('sdsd');
-        }
+        
         var variations = [];
         
         $('#product').on('change', function () {
@@ -229,8 +284,8 @@
     
         });
     
-    
         $('.select2').select2();
+
     });
 </script>
 

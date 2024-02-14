@@ -176,6 +176,54 @@ class TransactionController extends Controller
         return $transaction;
     }
 
+    public function verify(Request $request)
+    {
+        $category = Category::where('id', $request->category_id);
+        dd($category);
+        // Get Api
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api);
+
+        if (isset($query) && $query['status_code'] == 1) {
+            $res = [
+                'status' => $query['status'],
+                'message' => 'Transaction Successful!',
+                'extras' => 'Transaction Successful!',
+            ];
+
+            $balance_after = $request['balance_before'] - $request['amount'];
+        } else if (isset($query) && $query['status_code'] == 0) {
+            // Log wallet
+            $wallet = new WalletController();
+            $request['type'] = 'credit';
+            $wallet->logWallet($request);
+            $failure_reason = $query['message'] ?? null;
+
+            // Update Customer Wallet
+            $wallet->updateCustomerWallet(auth()->user(), $request['amount'], 'credit');
+            $balance_after = $request['balance_before'];
+        } else {
+            $res = [
+                'status' => $query['status'],
+                'message' => 'Transaction Successful!',
+            ];
+
+            $balance_after = $request['balance_before'] - $request['amount'];
+        }
+
+        // Update Transaction
+        $transaction->update([
+            'balance_after' => $balance_after,
+            'request_data' => $query['payload'],
+            'api_response' => $query['api_response'] ?? null,
+            'failure_reason' => $failure_reason,
+            'extras' => $query['extras'] ?? null,
+            'status' => $query['user_status'] ?? 'attention-required',
+            'descr' => $query['description'],
+        ]);
+
+        return $transaction;
+    }
+
     public function generateRequestId()
     {
         date_default_timezone_set("Africa/Lagos");

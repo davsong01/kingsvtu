@@ -54,7 +54,6 @@ class LoginRequest extends FormRequest
         
         if(auth()->user()->type == 'customer'){
             logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
-
         }
         
 

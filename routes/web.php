@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
     Route::get('customer-get-variations/{product}', [VariationController::class, 'getCustomerVariations'])->name('get.customer.variations');
     Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
+    Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
     Route::get('transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
 
 });
