@@ -47,6 +47,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function transaction_pin_token(){
         return $this->hasMany(TransactionPinResetToken::class);
+    }
 
+    function admin () {
+        return $this->hasOne(Admin::class, 'user_id', 'id');
     }
 }

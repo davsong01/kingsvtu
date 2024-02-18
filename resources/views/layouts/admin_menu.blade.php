@@ -39,6 +39,22 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">User Management</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('admins.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/admins"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" >All Admins</span></a>
+                    </li>
+                    {{-- <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/active"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Active Customers</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/api"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">API Customers</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/suspended"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Suspended</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/email-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Emails</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
+                    </li> --}}
+                </ul>
+            </li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
             <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a href="{{ route('settings.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">General Settings</span></a></li>
 
