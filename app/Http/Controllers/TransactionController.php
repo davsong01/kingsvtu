@@ -123,14 +123,16 @@ class TransactionController extends Controller
 
     public function sendTransactionEmail($transaction)
     {
-        $subject = "Transaction Alert";
-        $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
-        $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
-        Transaction Id: ' . $transaction->transaction_id . '<br>
-
-        <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
-
-        logEmails(auth()->user()->email, $subject, $body);
+        if (getSettings()->transaction_email_notification == 'yes') {
+            $subject = "Transaction Alert";
+            $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
+            $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
+            Transaction Id: ' . $transaction->transaction_id . '<br>
+    
+            <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+    
+            logEmails(auth()->user()->email, $subject, $body);
+        }
     }
 
     public function processTransaction($request, $variation, $transaction)

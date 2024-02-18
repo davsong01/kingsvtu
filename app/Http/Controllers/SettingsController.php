@@ -45,7 +45,7 @@ class SettingsController extends Controller
     public function edit(Settings $settings)
     {
         $settings = Settings::first();
-        if(!$settings){
+        if (!$settings) {
             $settings = Settings::create([
                 'logo' => '',
                 'favicon' => '',
@@ -71,7 +71,21 @@ class SettingsController extends Controller
      */
     public function update(Request $request, Settings $settings)
     {
-        $settings->update($request->all());
+        $settings = Settings::first();
+        
+        $data = $request->except(['_token', 'logo', 'favicon']);
+
+        if (!empty($request->logo)) {
+            $data['logo'] = $this->uploadFile($request->logo, 'site');
+        }
+
+        if (!empty($request->favicon)) {
+            $data['favicon'] = $this->uploadFile($request->favicon, 'site');
+        }
+
+        $settings->update($data);
+
+        return back()->with('message', 'Operation successful');
     }
 
     /**

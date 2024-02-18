@@ -2,12 +2,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="@yield('description')">
+    <meta name="description" content="{{ getSettings()->seo_description }}">
     <meta name="keywords" content="@yield('keywords')">
     <meta name="author" content="{{ config('app.name')}}">
-    <title>{{config('app.name')}} - @yield('title')</title>
-    <link rel="apple-touch-icon" href="{{ asset('app-assets/images/ico/apple-icon-120.png') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('app-assets/images/ico/favicon.ico') }}">
+    <title>{{config('app.name')}} - {{ getSettings()->seo_title }}</title>
+    <link rel="apple-touch-icon" href="{{ asset(getSettings()->favicon) }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset(getSettings()->favicon) }}">
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
 
     <!-- BEGIN: Vendor CSS-->

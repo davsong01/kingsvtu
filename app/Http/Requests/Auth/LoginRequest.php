@@ -50,10 +50,11 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        $body = 'Dear '. auth()->user()->first_name. '<br>A new sign in has occured on your account at: ' . Carbon::now() . ' If this was not you, please get in touch with us as quick as possible';
-        
         if(auth()->user()->type == 'customer'){
-            logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
+            if(getSettings()->login_email_notification == 'yes'){
+                $body = 'Dear '. auth()->user()->first_name. '<br>A new sign in has occured on your account at: ' . Carbon::now() . ' If this was not you, please get in touch with us as quick as possible';
+                logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
+            }
         }
         
 

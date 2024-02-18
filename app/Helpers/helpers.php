@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\WalletController;
-use App\Mail\EmailMessages;
 use App\Models\Category;
+use App\Models\Settings;
+use App\Mail\EmailMessages;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\WalletController;
 
 if (!function_exists("logEmails")) {
     function logEmails($email_to, $subject, $body){
@@ -68,5 +69,12 @@ if (!function_exists("walletBalance")) {
     {
         $wallet = new WalletController();
         return $wallet->getWalletBalance($user);
+    }
+}
+
+if (!function_exists("getSettings")) {
+    function getSettings()
+    {
+        return Settings::first();
     }
 }
