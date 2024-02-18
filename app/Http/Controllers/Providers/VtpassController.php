@@ -11,8 +11,8 @@ class VtpassController extends Controller
     public function getVariations($product)
     {
         $url = env('ENV') == 'local' ? $product->api->sandbox_base_url : $product->api->live_url;
-        $url = $url."service-variations?serviceID=".$product->slug;
-        
+        $url = $url . "service-variations?serviceID=" . $product->slug;
+
         $headers = [
             'Content-Type' => 'application/json',
             'Accept' =>  'application/json',
@@ -21,49 +21,49 @@ class VtpassController extends Controller
         ];
 
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
-       
-        if(isset($variations['response_description']) && $variations['response_description'] == '000'){
+
+        if (isset($variations['response_description']) && $variations['response_description'] == '000') {
             $existingVariations = $product->variations->pluck('slug');
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
-            
-            foreach($variations as $variation){
+
+            foreach ($variations as $variation) {
                 // if(in_array($variation['variation_code'], $existingVariations)){
                 // }else{
-                    Variation::updateOrCreate([
-                        // 'product_id' => $product['id'],
-                        // 'category_id' => $product['category_id'],
-                        // 'api_id' => $product['api']['id'],
-                        'api_name' => $variation['name'],
-                        'slug' => $variation['variation_code'],
-                        // 'system_name' => $variation['name'],
-                        // 'fixed_price' => $variation['fixedPrice'],
-                        'api_price' => $variation['variation_amount'],
-                        'min' => $variation['minimum_amount'] ?? null,
-                        'max' => $variation['maximum_amount'] ?? null
-                    ],[
-                        'product_id' => $product['id'],
-                        'category_id' => $product['category_id'],
-                        'api_id' => $product['api']['id'],
-                        'api_name' => $variation['name'],
-                        'slug' => $variation['variation_code'],
-                        'system_name' => $variation['name'],
-                        'fixed_price' => $variation['fixedPrice'],
-                        'api_price' => $variation['variation_amount'],
-                        'system_price' => $variation['variation_amount'],
-                        'min' => $variation['minimum_amount'] ?? null,
-                        'max' => $variation['maximum_amount'] ?? null
-                    ]);
+                Variation::updateOrCreate([
+                    // 'product_id' => $product['id'],
+                    // 'category_id' => $product['category_id'],
+                    // 'api_id' => $product['api']['id'],
+                    'api_name' => $variation['name'],
+                    'slug' => $variation['variation_code'],
+                    // 'system_name' => $variation['name'],
+                    // 'fixed_price' => $variation['fixedPrice'],
+                    'api_price' => $variation['variation_amount'],
+                    'min' => $variation['minimum_amount'] ?? null,
+                    'max' => $variation['maximum_amount'] ?? null
+                ], [
+                    'product_id' => $product['id'],
+                    'category_id' => $product['category_id'],
+                    'api_id' => $product['api']['id'],
+                    'api_name' => $variation['name'],
+                    'slug' => $variation['variation_code'],
+                    'system_name' => $variation['name'],
+                    'fixed_price' => $variation['fixedPrice'],
+                    'api_price' => $variation['variation_amount'],
+                    'system_price' => $variation['variation_amount'],
+                    'min' => $variation['minimum_amount'] ?? null,
+                    'max' => $variation['maximum_amount'] ?? null
+                ]);
                 // }
             }
 
             return true;
-        }else{
+        } else {
             return false;
         }
-
     }
 
-    public function query($request,$api){
+    public function query($request, $api)
+    {
         // Post data
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
@@ -89,7 +89,7 @@ class VtpassController extends Controller
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
             $successCodes = ['000'];
             $failCodes = ['016'];
-           
+
             if (isset($response['code']) && in_array($response['code'], $successCodes)) {
                 // success
                 $format = [
@@ -100,7 +100,8 @@ class VtpassController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 1,
-                    'extras' => $response['purchase_code'] ?? null
+                    'extras' => $response['purchased_code'] ?? null
+                    
                 ];
             } elseif (isset($response['code']) && in_array($response['code'], $failCodes)) {
                 // fail
@@ -112,7 +113,7 @@ class VtpassController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 0,
-                    'extras' => $response['purchase_code'] ?? null
+                    'extras' => $response['purchased_code'] ?? null
                 ];
             } else {
                 // attention required
@@ -136,11 +137,12 @@ class VtpassController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-        
+
         return $format;
     }
 
-    public function requery($api, $request_id){
+    public function requery($api, $request_id)
+    {
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
             $url = $url . "requery";
@@ -201,11 +203,74 @@ class VtpassController extends Controller
                 'payload' => $payload,
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
-        } 
-    }
-    
-    public function balance(){
-
+        }
     }
 
+    public function balance()
+    {
+    }
+
+    public function verify($data)
+    {
+        // Post data
+        try {
+            $url = env('ENV') == 'local' ? $data['api']->sandbox_base_url : $data['api']->live_url;
+            $url = $url . "merchant-verify";
+
+            $headers = [
+                'api-key: ' . $data['api']->api_key,
+                'public-key: ' . $data['api']->public_key,
+                'secret-key: ' . $data['api']->secret_key,
+            ];
+
+
+            $payload = [
+                'serviceID' => $data['request']['product_slug'],
+                'type' => $data['request']['variation_name'],
+                'billersCode' => $data['request']['unique_element'],
+                'url' => $url
+            ];
+
+            $response = $this->basicApiCall($url, $payload, $headers, 'POST');
+            
+            if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
+                $final_response = [
+                    'status' => 'success',
+                    'provider' => 'VTPASS',
+                    'status_code' => '1',
+                    'customerName' => $response['content']['Customer_Name'] ?? '',
+                    'customerAddress' => $response['content']['Address'] ?? '',
+                    'message' => 'Account Name: ' . $response['content']['Customer_Name'] . '<br/>Address: ' . $response['content']['Address'] . ' <br/><br/>',
+                    'title' => '<strong>Please confirm that the details are correct before you click continue payment</strong>',
+                    'raw_response' => $response,
+                ];
+            } else {
+                $fail_response =  $fail_response = 'Validation Error: ' . $response['content']['error'] ?? 'Unable to verify at the moment, please try again';
+
+                $final_response = [
+                    'status' => 'failed',
+                    'status_code' => '0',
+                    'customerName' => '',
+                    'customerAddress' => '',
+                    'message' => $fail_response,
+                    'title' => 'Verification Failed',
+                    'raw_response' => $response,
+                ];
+            }
+        } catch (\Throwable $th) {
+            // $fail_response =  $fail_response = 'Validation Error: ' . $response->content->error ?? 'Unable to verify at the moment, please try again';
+           
+            $final_response = [
+                'status' => 'failed',
+                'status_code' => '500',
+                'customerName' => '',
+                'customerAddress' => '',
+                'message' => $fail_response,
+                'title' => 'Verification Failed',
+                'raw_response' => $response,
+            ];
+        }
+
+        return $final_response;
+    }
 }

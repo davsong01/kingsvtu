@@ -34,17 +34,15 @@
                                             <div class="card">
                                                 <div class="card-header">
                                                     <h4 class="card-title">{{ $category->description }}</h4>
-                                                    
                                                     @include('layouts.alerts')
                                                 </div>
                                                 <div class="card-content">
                                                     <div class="card-body">
-                                                        <form action="{{route('initialize.transaction')}}" method="POST">
+                                                        <form action="{{route('initialize.transaction')}}" method="POST"  id="initialize">
                                                             @csrf
                                                             
                                                             <div class="row">
                                                                 <div class="col-md-9">
-                                                                    
                                                                     <div class="d-flex pb-1 justify-content-start align-items-center w-100">
                                                                         <img class="product-images" style="padding-right: 8px;height: 70px;" id="product-image" src="" alt="" class="product-image">
                                                                         <div>
@@ -59,7 +57,7 @@
                                                                         <select class="form-control" name="product" id="product" required>
                                                                             <option value="">Select</option>
                                                                             @foreach ($category->products as $item)
-                                                                                <option value="{{ $item->id  }}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
+                                                                                <option value="{{ $item->id  }}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
                                                                             @endforeach
                                                                         </select>
                                                                     </fieldset>
@@ -101,16 +99,17 @@
                                                                         <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
                                                                         <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                     </fieldset>
-                                                                   
-                                                                    <button class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" >Buy now</button>
+                                                                  </form>
+                                                                    <button class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button>
                                                                     <a href="#" id="verify-link" onclick="verify(this)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
                                                                 </div>
 
                                                                 <div class="col-md-3">
-                                                                    Sidebar Advert
+                                                                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pubxxx" crossorigin="anonymous"></script>
+                                                                    <script>(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;</script><script>(adsbygoogle = window.adsbygoogle || []).push({});</script> 
                                                                 </div>
                                                             </div>
-                                                        </form>
+                                                      
                                                     </div>
                                                 </div>
                                             </div>
@@ -127,34 +126,19 @@
     </div>
 </div>
 @endsection
-<div class="modal fade" id="verifyModal" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
+<div class="modal fade" id="verify-modal" data-bs-backdrop="static" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
     <form class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title" id="backDropModalTitle">Please confirm your  {{ ucfirst(str_replace("_"," ",$category->unique_element)) }} details are correct</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="verify-title"></h5>
     </div>
     <div class="modal-body">
-        <div class="row">
-        <div class="col mb-3">
-            <label for="nameBackdrop" class="form-label">Name</label>
-            <input type="text" id="nameBackdrop" class="form-control" placeholder="Enter Name">
-        </div>
-        </div>
-        <div class="row g-2">
-        <div class="col mb-0">
-            <label for="emailBackdrop" class="form-label">Email</label>
-            <input type="email" id="emailBackdrop" class="form-control" placeholder="xxxx@xxx.xx">
-        </div>
-        <div class="col mb-0">
-            <label for="dobBackdrop" class="form-label">DOB</label>
-            <input type="date" id="dobBackdrop" class="form-control">
-        </div>
+        <div id="verify-details">
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Continue Payment</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Continue Payment</button>
     </div>
     </form>
     </div>
@@ -164,15 +148,16 @@
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script>
     function verify(e){
-        // $.LoadingOverlay("show");
-        $('#verifyModal').modal('hide');
+        $.LoadingOverlay("show");
+        $('#verify-modal').modal('hide');
+
         var url = "{{ url('customer-verify') }}";
         var formData =  {
             category_id: {{ $category->id }},
             meter_number: $("#meter_number").val(),
             iuc_number: $("#iuc_number").val(),
             variation: $("#variation").val(),
-            // type: {{ $category->slug }},
+            product_id: $("#product").val(),
         };
         
         $.ajax({
@@ -182,11 +167,22 @@
             data:formData,
 
             success: function (data) {
-                console.log(url);
+                // console.log(data);
                 $.LoadingOverlay("hide");
+                $("#verify-title").html(data.title);
+                $("#verify-details").html(data.message);
+            
+                // $("#amount").prop('readonly', false);
+                $('#verify-modal').modal('show');
             }
         });
     }
+
+    function submitForm(){
+        $.LoadingOverlay("show");
+        document.forms["initialize"].submit();
+    }
+
     $(document).ready(function () {
         
         var variations = [];
@@ -222,7 +218,6 @@
                 $.ajax({
                     url: "{{ url('customer-get-variations') }}/" + product,
                     success: function (data) {
-                        
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
                                 console.log(data[t]);

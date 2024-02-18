@@ -11,24 +11,27 @@ use App\Models\TransactionLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\WalletController;
+use Spatie\FlareClient\Api;
 
 class TransactionController extends Controller
 {
-    public function showProductsPage($slug){
+    public function showProductsPage($slug)
+    {
         $category = Category::with('products')->where('slug', $slug)->first();
-       
-        if(!empty($category) && $category->status == 'active'){
+
+        if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
-        }else{
+        } else {
             return back();
         }
     }
 
-    public function initializeTransaction(Request $request){
+    public function initializeTransaction(Request $request)
+    {
         // Check Transaction pin
         $pinCheck = $this->checkTransactionPin($request);
-        
-        if(!$pinCheck){
+
+        if (!$pinCheck) {
             return back()->with('error', 'Invalid Transaction PIN!');
         }
 
@@ -39,7 +42,7 @@ class TransactionController extends Controller
         if ($balance < $request['amount']) {
             return back()->with('error', 'Insufficient Wallet Balance, Please try again');
         }
-        
+
         // Get product
         $product = Product::where('id', $request->product)->first();
         $category = $product->category_id;
@@ -49,7 +52,7 @@ class TransactionController extends Controller
         }
 
         $variation = Variation::where('id', $request->variation)->where('product_id', $product->id)->first();
-       
+
         if ($variation->fixedPrice == 'Yes') {
             $request['amount'] = $variation->system_price;
         } else {
@@ -69,12 +72,12 @@ class TransactionController extends Controller
 
         $element = $product->category->unique_element;
         $request['unique_element'] = $request->$element;
-        
+
         // Log Wallet
         $request_id = $this->generateRequestId();
         $request['type'] = 'debit';
         $request['customer_id'] = auth()->user()->customer->id;
-        $request['transaction_id'] = 'KVTU-'. $request_id;
+        $request['transaction_id'] = 'KVTU-' . $request_id;
         $request['request_id'] = $request_id;
         $request['payment_method'] = 'wallet';
         $request['balance_before'] = $balance;
@@ -93,10 +96,10 @@ class TransactionController extends Controller
         $request['product_slug'] = $variation->product->slug;
         $request['network'] = $variation->network ?? null;
         $request['quantity'] = $request->quantity ?? 1;
-       
+
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
-        
+
         // Log wallet
         $wal = $wallet->logWallet($request->all());
 
@@ -111,76 +114,30 @@ class TransactionController extends Controller
         return redirect(route('transaction.status', $transaction->transaction_id));
     }
 
-    public function transactionStatus($transaction_id){
+    public function transactionStatus($transaction_id)
+    {
         $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
 
         return view('customer.transaction_status', compact('transaction'));
     }
 
-    public function sendTransactionEmail($transaction){
+    public function sendTransactionEmail($transaction)
+    {
         $subject = "Transaction Alert";
         $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
         $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
-        Transaction Id: '.$transaction->transaction_id.'<br>
+        Transaction Id: ' . $transaction->transaction_id . '<br>
 
         <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
 
         logEmails(auth()->user()->email, $subject, $body);
     }
 
-    public function processTransaction($request, $variation, $transaction){
+    public function processTransaction($request, $variation, $transaction)
+    {
         $failure_reason = '';
         // Get Api
         $file_name = $variation->api->file_name;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api);
-
-        if(isset($query) && $query['status_code'] == 1){
-            $res = [
-                'status' => $query['status'],
-                'message' => 'Transaction Successful!',
-                'extras' => 'Transaction Successful!',
-            ];
-
-            $balance_after = $request['balance_before'] - $request['amount'];
-        }else if(isset($query) && $query['status_code'] == 0){
-            // Log wallet
-            $wallet = new WalletController();
-            $request['type'] = 'credit';
-            $wallet->logWallet($request);
-            $failure_reason = $query['message'] ?? null;
-
-            // Update Customer Wallet
-            $wallet->updateCustomerWallet(auth()->user(), $request['amount'], 'credit');
-            $balance_after = $request['balance_before'];
-
-        }else{
-            $res = [
-                'status' => $query['status'],
-                'message' => 'Transaction Successful!',
-            ];
-
-            $balance_after = $request['balance_before'] - $request['amount'];
-        }
-
-        // Update Transaction
-        $transaction->update([
-            'balance_after' => $balance_after,
-            'request_data' => $query['payload'],
-            'api_response' => $query['api_response'] ?? null,
-            'failure_reason' => $failure_reason,
-            'extras' => $query['extras'] ?? null,
-            'status' => $query['user_status'] ?? 'attention-required',
-            'descr' => $query['description'],
-        ]);
-
-        return $transaction;
-    }
-
-    public function verify(Request $request)
-    {
-        $category = Category::where('id', $request->category_id);
-        dd($category);
-        // Get Api
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api);
 
         if (isset($query) && $query['status_code'] == 1) {
@@ -224,6 +181,54 @@ class TransactionController extends Controller
         return $transaction;
     }
 
+    public function verify(Request $request)
+    {
+        $variation = Variation::where('id', $request->variation)->first();
+        $product = $variation->product;
+        $api = $variation->api;
+        $file_name = $variation->api->file_name;
+
+        $request['product_name'] = $product->name;
+        $request['variation_name'] = $variation->slug;
+        $request['category_id'] = $product->category->id;
+        $request['product_slug'] = $variation->product->slug;
+        $request['network'] = $variation->network ?? null;
+
+        $element = $product->category->unique_element;
+        $request['unique_element'] = $request->$element;
+
+        $data = [
+            'variation' => $variation,
+            'product' => $product,
+            'api' => $api,
+            'request' => $request
+        ];
+        // Get Api
+        $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
+        
+        if (isset($verify) && $verify['status_code'] == 1) {
+            $res = [
+                'status' => $verify['status_code'],
+                'message' => $verify['message'],
+                'title' => $verify['title'],
+            ];
+        } else if (isset($query) && $query['status_code'] == 0) {
+            $res = [
+                'status' => $verify['status_code'],
+                'message' => $verify['message'],
+                'title' => $verify['title'],
+            ];
+        } else {
+            $res = [
+                'status' => $verify['status_code'] ?? 0,
+                'message' => $verify['message'] ?? 'Biller not reachable at the moment, please try again later',
+                'title' => $verify['title'] ?? 'Not Reachable',
+            ];
+        }
+
+        return response()->json($res);
+    }
+
     public function generateRequestId()
     {
         date_default_timezone_set("Africa/Lagos");
@@ -231,29 +236,31 @@ class TransactionController extends Controller
         return $trx;
     }
 
-    public function checkTransactionPin($request){
+    public function checkTransactionPin($request)
+    {
         $pin = base64_decode(base64_decode(base64_decode(auth()->user()->transaction_pin)));
-        if($pin == $request->transaction_pin){
+        if ($pin == $request->transaction_pin) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getDiscount($amount){
+    public function getDiscount($amount)
+    {
         $total_discount = 0;
 
         $discount = auth()->user()->customerlevel->percentage_discount ?? null;
 
-        if($discount){
-            $total_discount = ($discount/100) * $amount;
+        if ($discount) {
+            $total_discount = ($discount / 100) * $amount;
         }
 
         return $total_discount;
     }
 
-    public function validateMeter(){
-
+    public function validateMeter()
+    {
     }
 
     public function logTransaction($data)
@@ -289,18 +296,21 @@ class TransactionController extends Controller
         return $trans;
     }
 
-
-    public function removeCharsInAmount($code){
+    public function removeCharsInAmount($code)
+    {
         $chars = str_split($code);
         $str2 = "";
-        foreach($chars as $char){
-          if($char != '#'){
-              $str2 .= $char;
-          }
+        foreach ($chars as $char) {
+            if ($char != '#') {
+                $str2 .= $char;
+            }
         }
         $code = trim(preg_replace('/[^0-9\.]+/i', '', $str2));
         return $code;
     }
 
-
+    public function customerTransactionHistory(){
+        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id)->paginate();
+        return view('customer.mytransactions', compact('transactions'));
+    }
 }

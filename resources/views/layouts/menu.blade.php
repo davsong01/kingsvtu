@@ -16,24 +16,17 @@
             </li>
             <?php $categories = getCategories() ?>
             @foreach($categories as $category)
-           
                 <li class="{{ Request::path() == 'customer/'.$category->slug ? 'active' : '' }}"><a href="{{ route('open.transaction.page', $category->slug)}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">{{ $category->display_name }}</span></a>
                 </li>
             @endforeach
-            {{-- <li class=" nav-item"><a href="{{ route('open.transaction.page', 'airtime')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Wizard">Buy airtime</span></a>
-            <li class=" nav-item"><a href="{{ route('open.transaction.page', 'data')}}"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Buy data bundle</span></a>
-            </li>
-            </li>
-            <li class=" nav-item"><a href="form-validation.html"><i class="menu-livicon" data-icon="check-alt"></i><span class="menu-title" data-i18n="Form Validation">TV Subscription</span></a>
-            </li>
-            <li class=" nav-item"><a href="form-repeater.html"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Repeater">Electricity Bills</span></a>
-            </li>
-            <li class=" nav-item"><a href="table.html"><i class="menu-livicon" data-icon="thumbnails-big"></i><span class="menu-title" data-i18n="Table">Table</span></a>
-            </li>
-            <li class=" nav-item"><a href="table-extended.html"><i class="menu-livicon" data-icon="thumbnails-small"></i><span class="menu-title" data-i18n="Table extended">Education services</span></a>
-            </li> --}}
-            
-            <li class=" nav-item"><a href="#"><i class="menu-livicon" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Settings</span></a>
+            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
+            <li class="{{ Request::path() == 'customer-transactions' ? 'active' : '' }}"><a href="{{ route('customer.transaction.history')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Transactions</span></a></li>
+            <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>  
+
+            {{-- <li class=" nav-item"><a href="#"><i class="menu-livicon" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Settings</span></a>
                 <ul class="menu-content">
                     <li><a href="form-inputs.html"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Input</span></a>
                     </li>
@@ -58,7 +51,7 @@
                     <li><a href="form-date-time-picker.html"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Date &amp; Time Picker">Date &amp; Time Picker</span></a>
                     </li>
                 </ul>
-            </li>
+            </li> --}}
 
             {{-- end  --}}
             

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\WalletController;
 use App\Mail\EmailMessages;
 use App\Models\Category;
 use Illuminate\Support\Facades\Mail;
@@ -55,12 +56,17 @@ if (!function_exists("verifiableUniqueElements")) {
     }
 }
 
-
-
-
 if (!function_exists("getCategories")) {
     function getCategories()
     {
        return Category::where('status', 'active')->get();
+    }
+}
+
+if (!function_exists("walletBalance")) {
+    function walletBalance($user)
+    {
+        $wallet = new WalletController();
+        return $wallet->getWalletBalance($user);
     }
 }

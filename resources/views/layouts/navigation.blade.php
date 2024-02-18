@@ -11,25 +11,14 @@
                 <ul class="nav navbar-nav float-right">
                     
                     <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-expand"><i class="ficon bx bx-fullscreen"></i></a></li>
+                    <?php 
+                        $balance = auth()->user()->type == 'customer' ? number_format(walletBalance(auth()->user())) : 0;
+                    ?>
+                    @if(auth()->user()->type == 'customer')
+                    <li class="nav-item d-lg-block"><a class="nav-link nav-link-expand"><i class="ficon bx bx-wallet"></i>{{ $balance }}</a></li>
+                    @endif
                     
                     
-                    <li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown">
-                            <div class="user-nav d-sm-flex d-none"><span class="user-name">{{ auth()->user()->firstname . ' '. auth()->user()->lastname}}</span>
-                                {{-- <span class="user-status">Level {{ auth()->user()->customer->customer_level }}</span> --}}
-                            </div>
-                            {{-- <span><img class="round" src="{{ asset('app-assets/images/portrait/small/avatar-s-11.jpg')}}" alt="avatar" height="40" width="40"></span> --}}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right pb-0"><a class="dropdown-item" href="page-user-profile.html"><i class="bx bx-user mr-50"></i>Profile</a>
-                        <a class="dropdown-item" href="app-email.html"><i class="bx bx-envelope mr-50"></i> My Transactions</a>
-                        
-                        {{-- <a class="dropdown-item" href="app-chat.html"><i class="bx bx-message mr-50"></i> Chats</a> --}}
-                        <div class="dropdown-divider mb-0"></div><a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50"></i> Logout</a>
-                        </div>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>  
-
-                    </li>
                 </ul>
             </div>
         </div>

@@ -5,10 +5,11 @@ use App\Http\Controllers\APIController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\TransactionController;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
-    
+
     Route::get('/reset-transaction-pin', [DashboardController::class, 'resetTransactionPin'])->name('customer.reset.pin');
     Route::post('/process-transaction-pin-reset', [DashboardController::class, 'processResetTransactionPin'])->name('process.transaction.pin.reset');
     Route::get('confirm_reset_pin', [DashboardController::class, 'resetPin2']);
@@ -36,8 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('customer-get-variations/{product}', [VariationController::class, 'getCustomerVariations'])->name('get.customer.variations');
     Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
     Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
+    Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
     Route::get('transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
-
 });
 
 Route::middleware('auth')->group(function () {
@@ -47,7 +48,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin
-Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::resource('product', ProductController::class);
     Route::resource('api', APIController::class);
     Route::resource('category', CategoryController::class);
@@ -55,6 +56,10 @@ Route::middleware(['auth', 'verified','admin'])->prefix('admin')->group(function
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
 
+    Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');
+
+    
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

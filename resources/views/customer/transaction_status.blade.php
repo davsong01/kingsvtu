@@ -1,3 +1,13 @@
+<?php 
+
+    if($transaction->status == 'failed'){
+        $color = 'red';
+    }elseif($transaction->status == 'initiated'){
+        $color = '#FDAC41';
+    }else {
+        $color = 'green';
+    }
+?>
 @extends('layouts.app')
 @section('title', 'Transaction Completed')
 
@@ -43,10 +53,11 @@
                                                             <div class="alert alert-success" role="alert" style="margin-bottom: 5px !important; margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
                                                             </div>
-                                                        @else
+                                                        @elseif($transaction->status == 'failed')
                                                             <div class="alert alert-danger" role="alert" style="margin-bottom: 5px !important;margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
                                                             </div>
+                                                        
                                                         @endif
                                                     </div>
                                                 </div>
@@ -75,7 +86,8 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
-                                                                    <span style="color:{{ $transaction->status == 'failed' ? 'red':'green' }}">{{ ucfirst($transaction->status) }}</span><br><br>
+                                                                    
+                                                                    <span style="color:{{ $color }}">{{ ucfirst($transaction->status) }}</span><br><br>
                                                                     {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
                                                                 </div>
                                                                 <div class="col-md-3">
@@ -92,6 +104,7 @@
                                                                             <h4 class="card-title mb-0">Transaction Details</h4>
                                                                         </div>
                                                                         <ul class="p-0 m-0">
+                                                                            @if(!empty($transaction->descr))
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
@@ -100,6 +113,7 @@
                                                                                 <div class="item-progress value">{{ ucfirst($transaction->descr) }}</div>
                                                                                 </div>
                                                                             </li>
+                                                                            @endif
                                                                             @if(!empty($transaction->extras))
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
