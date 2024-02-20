@@ -12,12 +12,11 @@ class EasyAccessController extends Controller
     public function getVariations($product)
     {
         $variations = $this->esayAccessProductVariations($product->slug);
-        
+
         $existingVariations = $product->variations->pluck('slug');
         $variations = $variations['variations'];
-       
+
         foreach ($variations as $variation) {
-            
             Variation::updateOrCreate([
                 'product_id' => $product['id'],
                 'category_id' => $product['category_id'],
@@ -40,14 +39,15 @@ class EasyAccessController extends Controller
                 'network' => $variation['network'] ?? null,
             ]);
 
-            
+
             // }
         }
 
         return true;
     }
 
-    public function esayAccessProductVariations($product){
+    public function esayAccessProductVariations($product)
+    {
         $variations = [
             'response_description' => '000',
             'variations' => [
@@ -61,22 +61,22 @@ class EasyAccessController extends Controller
                             'network' => 01,
                         ],
                         [
-                            'variation_code' => 51, 
-                            'fixedPrice' => 'Yes', 
+                            'variation_code' => 51,
+                            'fixedPrice' => 'Yes',
                             'variation_amount' => 257,
                             'name' => '1GB (SME) - 30days',
                             'network' => 01,
                         ],
-                        [    
-                            'variation_code' => 52, 
-                            'fixedPrice' => 'Yes', 
+                        [
+                            'variation_code' => 52,
+                            'fixedPrice' => 'Yes',
                             'name' => '2GB (SME) - 30days',
                             'variation_amount' => 514,
                             'network' => 01,
                         ],
                         [
-                            'variation_code' => 53, 
-                            'fixedPrice' => 'Yes', 
+                            'variation_code' => 53,
+                            'fixedPrice' => 'Yes',
                             'name' => '3GB (SME) - 30days',
                             'variation_amount' => 771,
                             'network' => 01,
@@ -124,13 +124,13 @@ class EasyAccessController extends Controller
                         //     'network' => 01,
                         // ],
                         [
-                            'variation_code' => 83, 
-                            'fixedPrice' => 'Yes', 
+                            'variation_code' => 83,
+                            'fixedPrice' => 'Yes',
                             'name' => '1.5GB (Direct) - 30days',
                             'variation_amount' => 965,
                             'network' => 01,
                         ],
-                         //         [
+                        //         [
                         //             'variation_code' => 54, 'fixedPrice' => 'Yes', 'name' => '5GB (SME) - N1285 30days'
                         //         ', varition_amount' =>],
                         //     [
@@ -269,7 +269,7 @@ class EasyAccessController extends Controller
                         //     'variation_code' => 155, 'fixedPrice' => 'Yes', 'name' => '120GB (Direct) - N21233.3' 30days, 156 => 200GB (Direct) - N28954.5 30days.],
                     ],
                 ],
-                
+
                 'glo-data-cg' => [
                     'variations' => [
                         [
@@ -285,7 +285,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 113,
                             'network' => 02,
-    
+
                         ],
                         [
                             'name' => '1GB (CG) - 30days',
@@ -293,7 +293,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 225,
                             'network' => 02,
-    
+
                         ],
                         [
                             'name' => '2GB (CG) - 30days',
@@ -301,7 +301,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 450,
                             'network' => 02,
-    
+
                         ],
                         [
                             'name' => '3GB (CG) - 30days',
@@ -309,7 +309,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 675,
                             'network' => 02,
-    
+
                         ],
                         [
                             'name' => '5GB (CG) - 30days',
@@ -317,7 +317,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 1125,
                             'network' => 02,
-    
+
                         ],
                         [
                             'name' => '10GB (CG) - 30days',
@@ -325,11 +325,11 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 2250,
                             'network' => 02,
-    
+
                         ],
                     ],
                 ],
-    
+
                 'airtel-data-cg' => [
                     'variations' => [
                         [
@@ -338,7 +338,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 27,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 300MB (CG) - 7days',
@@ -346,7 +346,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 67,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 500MB (CG) - 30days',
@@ -354,7 +354,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 101,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 1GB (CG) - 30days',
@@ -362,7 +362,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 200,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 2GB (CG) - 30days',
@@ -370,7 +370,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 400,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 5GB (CG) - 30days',
@@ -378,7 +378,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 1000,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 10GB (CG) - 30days',
@@ -386,7 +386,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 2000,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 15GB (CG) - 30days',
@@ -394,7 +394,7 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 3000,
                             'network' => 03,
-    
+
                         ],
                         [
                             'name' => 'AIRTEL 20GB (CG) - 30days',
@@ -402,64 +402,64 @@ class EasyAccessController extends Controller
                             'fixedPrice' => 'Yes',
                             'variation_amount' => 4000,
                             'network' => 03,
-    
-                        ], 
+
+                        ],
                     ],
                 ],
-    
+
                 'etisalat-sme' => [
                     'variations' => [
                         [
-                            'variation_code' => 166, 
+                            'variation_code' => 166,
                             'name' => '100MB (SME) - 30days',
                             'fixedPrice' => 'Yes',
-                            'variation_amount' => 18 ,
+                            'variation_amount' => 18,
                             'network' => 04,
                         ],
                         [
-                            'variation_code' => 167, 
+                            'variation_code' => 167,
                             'name' => '300MB (SME) - 30days',
                             'variation_amount' => 48,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 168, 
+                            'variation_code' => 168,
                             'name' => '500MB (SME) - 30days',
                             'variation_amount' => 68,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 128, 
-                            'name' => '1GB (SME) - 30days', 
+                            'variation_code' => 128,
+                            'name' => '1GB (SME) - 30days',
                             'variation_amount' => 135,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 129, 
+                            'variation_code' => 129,
                             'name' => '1.5GB (SME) 30days',
                             'variation_amount' => 203,
                             'network' => 04,
                             'fixedPrice' => 'Yes'
                         ],
                         [
-                            'variation_code' => 130, 
+                            'variation_code' => 130,
                             'name' => '2GB (SME) - 30days',
                             'variation_amount' => 270,
                             'network' => 04,
-                            'fixedPrice' => 'Yes',    
+                            'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 131, 
+                            'variation_code' => 131,
                             'name' => '2.5GB (SME) - 30days',
                             'variation_amount' => 3942000,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 132, 
+                            'variation_code' => 132,
                             'name' => '3GB (SME) - 30days',
                             'variation_amount' => 405,
                             'network' => 04,
@@ -472,90 +472,90 @@ class EasyAccessController extends Controller
                         //     'network' => 04,
                         // ],
                         [
-                            'variation_code' => 169, 
+                            'variation_code' => 169,
                             'name' => '4GB (SME) - 30days',
                             'variation_amount' => 540,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 134, 
+                            'variation_code' => 134,
                             'name' => '5GB (SME) - 30days',
                             'variation_amount' => 675,
                             'network' => 04,
-                            'fixedPrice' => 'Yes',    
+                            'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 135, 
+                            'variation_code' => 135,
                             'name' => '6GB (SME) - 30days',
                             'variation_amount' => 810,
                             'network' => 04,
-    
+                            'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 170, 
+                            'variation_code' => 170,
                             'name' => '7.5GB (SME) 30days',
-                            'variation_amount' => - 1014,
+                            'variation_amount' => -1014,
                             'network' => 01,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 136, 
+                            'variation_code' => 136,
                             'name' => '10GB (SME) - 30days',
                             'variation_amount' => 1350,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
                         ],
                         [
-                            'variation_code' => 171, 
+                            'variation_code' => 171,
                             'name' => '11GB (SME) - 30days',
                             'variation_amount' => 1485,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 137, 
+                            'variation_code' => 137,
                             'name' => '15GB (SME) - 30days',
                             'variation_amount' => 2025,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 138, 
+                            'variation_code' => 138,
                             'name' => '20GB (SME) - 30days',
                             'variation_amount' => 2700,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 172, 
+                            'variation_code' => 172,
                             'name' => '25GB (SME) - 30days',
-                            'variation_amount' => 352316250 ,
+                            'variation_amount' => 352316250,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 173, 
+                            'variation_code' => 173,
                             'name' => '30GB (SME) - 30days',
                             'variation_amount' => 42277950,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 174, 
+                            'variation_code' => 174,
                             'name' => '40GB (SME) - 30days',
                             'variation_amount' => 563706000,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-    
+
                         ],
                         [
-                            'variation_code' => 175, 
+                            'variation_code' => 175,
                             'name' => '50GB (SME) - 30days',
                             'variation_amount' => 704632500,
                             'network' => 04,
@@ -563,18 +563,17 @@ class EasyAccessController extends Controller
 
                         ],
                         [
-                            'variation_code' => 176, 
-                            'name ' => '100GB (SME) - 30days',
+                            'variation_code' => 176,
+                            'name' => '100GB (SME) - 30days',
                             'variation_amount' => 1409265000,
                             'network' => 04,
                             'fixedPrice' => 'Yes',
-
-                        ],
+                        ]
                     ],
                 ],
             ],
         ];
-    
+
 
         if (!empty($product)) {
             $response = $variations['variations'][$product];
@@ -587,12 +586,12 @@ class EasyAccessController extends Controller
         // Post data
         try {
             $url = "https://easyaccess.com.ng/api/data.php";
-            
+
             $headers = [
                 "AuthorizationToken: " . $api->api_key,
                 'cache-control: no-cache'
             ];
-            
+
             $payload = [
                 'url' => $url,
                 'network' => $request['network'],
@@ -601,13 +600,13 @@ class EasyAccessController extends Controller
                 'client_reference' => $request['request_id'],
                 'no_of_pins' => $request['quantity'] ?? '',
             ];
-           
+
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            
-            if(env('ENT') == 'local'){
+
+            if (env('ENT') == 'local') {
                 $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
             }
-           
+
             if (empty($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
@@ -616,10 +615,10 @@ class EasyAccessController extends Controller
                 $message = 'Something went wrong, please try again later';
                 $payload = $payload;
                 $status_code = 0;
-            }else{
+            } else {
                 $result = json_decode($response);
                 $pinsx = [];
-    
+
                 if (isset($result) && !empty($result)) {
                     foreach ($result as $key => $value) {
                         if (strpos($key, 'pin') !== false) {
@@ -664,7 +663,7 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
                 'extras' => $extras ?? null
             ];
-             // dd($resX, $postdata['payload'], $postdata['headers']);
+            // dd($resX, $postdata['payload'], $postdata['headers']);
         } catch (\Throwable $th) {
             $format = [
                 'status' => 'attention-required',
@@ -675,11 +674,11 @@ class EasyAccessController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-       
+
         return $format;
     }
 
-    public function balance(){
-        
+    public function balance()
+    {
     }
 }
