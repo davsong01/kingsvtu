@@ -80,4 +80,12 @@ class APIController extends Controller
 
         return back()->with('message', 'Updated successfully');
     }
+
+    public function getApiBalance($api_id){
+        $api = API::where('id', $api_id)->first();
+        $file_name = $api->file_name;
+        $balance = app("App\Http\Controllers\Providers\\" . $file_name)->balance($api);
+
+        return $balance;
+    }
 }

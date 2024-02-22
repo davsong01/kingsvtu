@@ -51,12 +51,20 @@ class TransactionController extends Controller
             return back()->with('error', 'The selected product/service does not seem to exist, kindly check your selection');
         }
 
-        $variation = Variation::where('id', $request->variation)->where('product_id', $product->id)->first();
+        if ($product->has_variations == 'yes') {
+            $variation = Variation::where('id', $request->variation)->where('product_id', $product->id)->first();
 
-        if ($variation->fixedPrice == 'Yes') {
-            $request['amount'] = $variation->system_price;
+            if ($variation->fixedPrice == 'Yes') {
+                $request['amount'] = $variation->system_price;
+            } else {
+                $request['amount'] = $this->removeCharsInAmount($request->amount);
+            }
         } else {
-            $request['amount'] = $this->removeCharsInAmount($request->amount);
+            if ($product->fixed_price == 'yes') {
+                $request['amount'] = $product->system_price;
+            } else {
+                $request['amount'] = $this->removeCharsInAmount($request->amount);
+            }
         }
 
         $discount = $this->getDiscount($request['amount']) ?? 0;
@@ -83,17 +91,17 @@ class TransactionController extends Controller
         $request['balance_before'] = $balance;
         $request['ip_address'] = $this->getIpAddress();
         $request['domain_name'] = $this->getDomainName();
-
         $request['customer_email'] = auth()->user()->email;
         $request['customer_phone'] = auth()->user()->phone;
         $request['customer_name'] = auth()->user()->firstname;
-        $request['variation_id'] = $variation->id;
+        $request['variation_id'] = $variation->id ?? null;
         $request['product_id'] = $product->id;
         $request['product_name'] = $product->name;
-        $request['variation_name'] = $variation->slug;
+        $request['variation_name'] = $variation->slug ?? null;
         $request['category_id'] = $product->category->id;
-        $request['api_id'] = $variation->api->id;
-        $request['product_slug'] = $variation->product->slug;
+        $request['api_id'] = $variation->api->id ?? $product->api_id;
+        $request['product_slug'] = $variation->product->slug ?? $product->slug;
+        $request['variation_slug'] = $variation->slug ?? null;
         $request['network'] = $variation->network ?? null;
         $request['quantity'] = $request->quantity ?? 1;
 
@@ -107,7 +115,7 @@ class TransactionController extends Controller
         $wallet->updateCustomerWallet(auth()->user(), $request['amount'], $request['type']);
 
         // Process Transaction
-        $transaction = $this->processTransaction($request->all(), $variation, $transaction);
+        $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
 
         // Log Transaction Email
         $this->sendTransactionEmail($transaction);
@@ -117,7 +125,7 @@ class TransactionController extends Controller
     public function transactionStatus($transaction_id)
     {
         $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
-
+        // dd($transaction);
         return view('customer.transaction_status', compact('transaction'));
     }
 
@@ -130,17 +138,20 @@ class TransactionController extends Controller
             Transaction Id: ' . $transaction->transaction_id . '<br>
     
             <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
-    
+
             logEmails(auth()->user()->email, $subject, $body);
         }
     }
 
-    public function processTransaction($request, $variation, $transaction)
+    public function processTransaction($request, $transaction, $product, $variation)
     {
+
         $failure_reason = '';
+        $api = $variation->api ?? $product->api;
         // Get Api
-        $file_name = $variation->api->file_name;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api);
+        $file_name = $api->file_name;
+
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
 
         if (isset($query) && $query['status_code'] == 1) {
             $res = [
@@ -207,7 +218,7 @@ class TransactionController extends Controller
         ];
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
-        
+
         if (isset($verify) && $verify['status_code'] == 1) {
             $res = [
                 'status' => $verify['status_code'],
@@ -311,7 +322,8 @@ class TransactionController extends Controller
         return $code;
     }
 
-    public function customerTransactionHistory(){
+    public function customerTransactionHistory()
+    {
         $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id)->paginate();
         return view('customer.mytransactions', compact('transactions'));
     }

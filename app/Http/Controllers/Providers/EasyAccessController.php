@@ -584,8 +584,22 @@ class EasyAccessController extends Controller
     public function query($request, $api)
     {
         // Post data
-        try {
+        $slug = $request['variation_slug'] ?? $request['product_slug'];
+
+        if (in_array($slug, ['waec-registration', 'waec'])) {
+            $url = "https://easyaccess.com.ng/api/waec_v2.php";
+        } elseif (in_array($slug, ['neco-registration', 'neco'])) {
+            $url = "https://easyaccess.com.ng/api/neco_v2.php";
+        } elseif (in_array($slug, ['nabteb-registration', 'nabteb'])) {
+            $url = "https://easyaccess.com.ng/api/nabteb_v2.php";
+        } elseif (in_array($slug, ['nbais-registration', 'nbais'])) {
+            $url = "https://easyaccess.com.ng/api/nbais_v2.php";
+        } else {
             $url = "https://easyaccess.com.ng/api/data.php";
+        }
+
+        try {
+
 
             $headers = [
                 "AuthorizationToken: " . $api->api_key,
@@ -602,7 +616,7 @@ class EasyAccessController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-
+            
             if (env('ENT') == 'local') {
                 $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
             }
@@ -678,7 +692,52 @@ class EasyAccessController extends Controller
         return $format;
     }
 
-    public function balance()
+    public function balance($api)
     {
+
+        try {
+            $url = "https://easyaccess.com.ng/api/wallet_balance.php";
+
+            $headers = [
+                "AuthorizationToken: " . $api->api_key,
+                'cache-control: no-cache'
+            ];
+
+            $response = $this->basicApiCall($url, [], $headers, 'GET');
+
+            if (env('ENT') == 'local') {
+                $response = '{"success":"true","message":"Wallet balance check was successful","email":"example@gmail.com","balance":12450","funding_acctno1":2001245621","funding_bank1":Sterling Bank","funding_acctno2":2001245622","funding_bank2":Wema Bank","funding_acctno3":2001245623","funding_bank3":Moniepoint Microfinance Bank","funding_acctno4":"2001245624","funding_bank4":Fidelity Bank","funding_acctno5":"2001245625","funding_bank5":GTBank","funding_acctname":Easy Access - Exa","checked_date":"11-10-2021 08:06:52 am","reference_no":"ID96703055397","status":"Successful"}';
+            }
+
+            if (empty($response)) {
+                $status = 'failed';
+                $api_response = $response;
+                $message = null;
+                $status_code = 0;
+            } else {
+                $result = json_decode($response);
+                $api_response = $response;
+                $message = $result->balance;
+                $status = 'success';
+                $status_code = 1;
+            }
+
+            $format = [
+                'status' => $status,
+                'api_response' => $api_response ?? null,
+                'description' => $description ?? null,
+                'message' => $message ?? null,
+                'status_code' => $status_code,
+            ];
+        } catch (\Throwable $th) {
+            $format = [
+                'status' => 'failed',
+                'response' => '',
+                'status_code' => 0,
+                'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
+            ];
+        }
+
+        return $format;
     }
 }

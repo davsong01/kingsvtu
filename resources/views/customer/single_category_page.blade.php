@@ -51,13 +51,13 @@
                                                                             <p style="" id="product-description" style="line-height: 1.4;"></p>
                                                                         </div>
                                                                     </div>
-                                                                   
+                                                                    
                                                                     <fieldset class="form-group">
                                                                         <label for="product">Select Service</label>
                                                                         <select class="form-control" name="product" id="product" required>
                                                                             <option value="">Select</option>
                                                                             @foreach ($category->products as $item)
-                                                                                <option value="{{ $item->id  }}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
+                                                                                <option value="{{ $item->id  }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
                                                                             @endforeach
                                                                         </select>
                                                                     </fieldset>
@@ -90,12 +90,17 @@
                                                                         <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
                                                                     </fieldset>
                                                                    
-                                                                    <fieldset class="form-group">
+                                                                    <fieldset class="form-group" id="amount-div" style="display:none">
                                                                         <label for="amount" class="">Amount</label>
                                                                         <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number">
                                                                     </fieldset>
+                                                                    <fieldset class="form-group" id="quantity-div" style="display:none">
+                                                                        <label for="name" class="">Select quantity </label>
+                                                                        <select class="form-control" id="quantity" name="quantity" required="">
+                                                                            <option value="">Select...</option>
+                                                                        </select>
+                                                                    </fieldset>
                                                                     <fieldset class="form-group">
-                                                                        
                                                                         <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
                                                                         <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                     </fieldset>
@@ -188,42 +193,57 @@
         var variations = [];
         
         $('#product').on('change', function () {
-            $('#variation-div').show();
-            $('#amount-div').hide();
-    
-            $("#amount").prop('readonly', false);
-            $("#amount").val('');
-    
-            $('#variation').find('option').not(':first').remove();
-    
+            var fixed_price = $('#product').find(':selected').data('fixed_price');
+            var has_variation= $('#product').find(':selected').data('has_variation');
+            var system_price = $('#product').find(':selected').data('system_price');
+            var allow_quantity = $('#product').find(':selected').data('allow_quantity');
+            var max = $('#product').find(':selected').data('max');
+            var min = $('#product').find(':selected').data('min');
+            var quantity_graduation = $('#product').find(':selected').data('quantity_graduation');
+            console.log(fixed_price, has_variation, system_price, allow_quantity,min,max, quantity_graduation);
             var product = $('#product').val();
+            
             if (product == '') {
+                $('#variation-div').hide();
+                $('#amount-div').hide();
+                $('#quantity-div').hide();
+                $('#amount').hide();
+                $('#quantity').hide();
                 return;
+            } 
+
+            var image = $('#product').find(':selected').data('image');
+            var title = $('#product').find(':selected').data('name');
+            var description = $('#product').find(':selected').data('description');
+            var bulk = $('#product').find(':selected').data('bulk');
+            if (bulk == 'yes') {
+                $("#bulk-purchase").show();
             } else {
-                var image = $('#product').find(':selected').data('image');
-                var title = $('#product').find(':selected').data('name');
-                var description = $('#product').find(':selected').data('description');
-                var bulk = $('#product').find(':selected').data('bulk');
-                if (bulk == 'yes') {
-                    $("#bulk-purchase").show();
-                } else {
-                    $("#bulk-purchase").hide();
-                }
-    
-                $('#product-image-div').show();
-                $("#product-image").attr("src", image);
-                $("#product-title").html(title);
-                $("#product-description").html(description);
-    
+                $("#bulk-purchase").hide();
+            }
+
+            $('#product-image-div').show();
+            $("#product-image").attr("src", image);
+            $("#product-title").html(title);
+            $("#product-description").html(description);
+
+            if(has_variation == 'yes'){
+                $('#variation-div').show();
+                $('#amount-div').hide();
+        
+                $("#amount").prop('readonly', false);
+                $("#amount").val('');
+        
+                $('#variation').find('option').not(':first').remove();
+        
                 $.ajax({
                     url: "{{ url('customer-get-variations') }}/" + product,
                     success: function (data) {
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
-                                console.log(data[t]);
-                                $('#variation').append(
-                                    `<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`
-                                    );
+                                // console.log(data[t]);
+                                $('#variation').append(`<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
+
                                 variations.push({
                                     "id": data[t].id,
                                     "verifiable": data[t].verifiable,
@@ -237,8 +257,44 @@
                         }
                     }
                 });
+            }else{
+                $('#amount-div').show();
+                $('#amount').show();
+
+                if(fixed_price == 'yes'){
+                    $("#amount").attr({
+                        "max": "",
+                        "min": ""
+                    });
+        
+                    $('#amount').val(system_price);
+                    $("#amount").attr({
+                        "readonly": "true",
+                    });
+                }else{
+                    $("#amount").prop('readonly', false);
+                    $("#amount").attr({
+                        "max": max,
+                        "min": min,
+                    });
+                }
+
+                if(allow_quantity == 'yes'){
+                    $('#quantity-div').show();
+                    $('#quantity').show();
+                    var data = quantity_graduation.split(",");
+                    
+                    if (data && data.length > 0) {
+                        for (t = 0; t < data.length; t++) {
+                            console.log(data[t]);
+                            $('#quantity').append(`<option value="${data[t]}"> ${data[t]}</option>`);
+                        }
+                    }
+                }else{
+                    $('#quantity-div').hide();
+                    $('#quantity').hide();
+                }
             }
-    
         });
     
         $('#variation').on('change', function (e) {
@@ -247,7 +303,7 @@
             var selected = variations.filter((item) => {
                 return item.id == v;
             });
-            // console.log('sss=>', selected[0]);
+
             if (selected[0].verifiable == 'yes') {
                 $("#verify-link").show();
                 $(".unique_element").show();
@@ -263,7 +319,6 @@
                 });
     
                 $('#amount').val(selected[0].variation_amount);
-                // $('#amount-label').text(selected[0].charged_currency+selected[0].charged_amount);
                 $("#amount").attr({
                     "readonly": "true",
                 });
@@ -274,9 +329,7 @@
                     "max": selected[0].max,
                     "min": selected[0].min,
                 });
-            }
-    
-    
+            }    
         });
     
         $('.select2').select2();

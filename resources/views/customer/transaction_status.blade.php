@@ -79,7 +79,7 @@
                                                                     <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 </div>
                                                                 <div class="col-md-4">
-                                                                    <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name. ' | '. $transaction->variation->system_name}}</strong></h3></span>
+                                                                    <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif </strong></h3></span>
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
                                                                     <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {{ number_format($transaction->amount) }}</strong></span> <br>
                                                                     <a href="" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
@@ -138,7 +138,7 @@
                                                                                     <p class="mb-0 lh-1 key">Service: </p>
                                                                                 </div>
                                                                                 
-                                                                                <div class="item-progress value">{{$transaction->product->display_name}} ({{$transaction->variation->system_name}})</div>
+                                                                                <div class="item-progress value">{{$transaction->product->display_name}} @if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">

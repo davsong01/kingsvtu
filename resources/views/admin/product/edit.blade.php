@@ -49,8 +49,9 @@
                                             <div class="col-sm-12">
                                                 <div class="card">
                                                     <div class="card-header">
-                                                        <h4 class="card-title">Edit {{$product->name}}</h4>
                                                         @include('layouts.alerts')
+                                                        <h4 class="card-title">Edit {{$product->name}}</h4>
+                                                        <img src="{{asset($product->image)}}" alt="" style="width: 70px;">
                                                     </div>
                                                     <div class="card-content">
                                                         <div class="card-body">
@@ -77,8 +78,8 @@
                                                                         </a>
                                                                     </li> --}}
                                                                 </ul>
+                                                           
                                                             @endif
-
                                                             <!-- Tab panes -->
                                                             <div class="tab-content pt-1">
                                                                 <div class="tab-pane {{ $page == 1 ? 'active' : ''}}" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
@@ -94,6 +95,17 @@
                                                                                 <fieldset class="form-group">
                                                                                     <label for="display_name">Display Name</label>
                                                                                     <input type="text" class="form-control" id="display_name" name="display_name" placeholder="Enter display name" value="{{ $product->display_name ?? old('display_name')}}" required>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="slug">Slug</label>
+                                                                                    <input type="text" class="form-control" name="slug" placeholder="Enter slug" id="slug" value="{{ $product->slug ?? old('slug')}}" required>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="basicInputFile">Display Image</label>
+                                                                                    <div class="custom-file">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
+                                                                                        <label class="custom-file-label" for="image">Replace file</label>
+                                                                                    </div>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="category">Category</label>
@@ -117,19 +129,13 @@
                                                                                     <label for="seo_keywords">SEO Keywords</label>
                                                                                     <input type="text" class="form-control"  name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords" value="{{ $product->seo_keywords ?? old('seo_keywords')}}">
                                                                                 </fieldset>
+                                                                                 <fieldset class="form-group">
+                                                                                    <label for="seo_description">SEO Description</label>
+                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $product->seo_description ?? old('seo_description') }}" placeholder="SEO Description">{{ $product->seo_description ?? old('seo_description') }}</textarea>
+                                                                                </fieldset>
                                                                             </div>
                                                                             <div class="col-md-6">
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="slug">Slug</label>
-                                                                                    <input type="text" class="form-control" name="slug" placeholder="Enter slug" id="slug" value="{{ $product->slug ?? old('slug')}}" required>
-                                                                                </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="basicInputFile">Display Image</label>
-                                                                                    <div class="custom-file">
-                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
-                                                                                        <label class="custom-file-label" for="image">Replace file</label>
-                                                                                    </div>
-                                                                                </fieldset>
+                                                                                
                                                                                 <fieldset class="form-group">
                                                                                     <label for="helperText">API to use</label>
                                                                                     <select class="form-control" name="api" id="api" required>
@@ -148,6 +154,26 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
+                                                                                    <label for="fixed_price">Fixed Price</label>
+                                                                                    <select class="form-control tiny" name="fixed_price" id="fixed_price" required>
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->fixed_price == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->fixed_price == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">System Price</label>
+                                                                                    <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="min">Minimun Amount</label>
+                                                                                    <input type="number" class="form-control tiny" id="min" name="min"  value="{{ $product->min }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="max">Maimum Amount</label>
+                                                                                    <input type="number" class="form-control tiny" id="max" name="max"  value="{{ $product->max }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
                                                                                     <label for="has_variations">Has Variations</label>
                                                                                     <select class="form-control" name="has_variations" id="has_variations" required>
                                                                                         <option value="">Select</option>
@@ -155,10 +181,21 @@
                                                                                         <option value="no" {{ $product->has_variations == 'no' ? 'selected' : ''}}>No</option>
                                                                                     </select>
                                                                                 </fieldset>
+                                                                               
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="seo_description">SEO Description</label>
-                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $product->seo_description ?? old('seo_description') }}" placeholder="SEO Description">{{ $product->seo_description ?? old('seo_description') }}</textarea>
+                                                                                    <label for="name">Allow Quantity</label>
+                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->allow_quantity == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->allow_quantity == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
                                                                                 </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Quantity Graduation</label>
+                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ $product->quantity_graduation }}">
+                                                                                </fieldset>
+                                                                                @if($product->has_variations == 'yes')
+                                                                                @endif
                                                                                 <input type="hidden" value="page1" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">
@@ -206,7 +243,7 @@
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
-                                                                                            <label for="name">SYSTEM Price</label>
+                                                                                            <label for="name">System Price</label>
                                                                                             <input type="text" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>

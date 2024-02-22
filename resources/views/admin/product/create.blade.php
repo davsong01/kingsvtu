@@ -95,6 +95,10 @@
                                                                                     <label for="seo_keywords">SEO Keywords</label>
                                                                                     <input type="text" class="form-control"  name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords" value="{{ old('seo_keywords')}}">
                                                                                 </fieldset>
+                                                                                 <fieldset class="form-group">
+                                                                                    <label for="seo_description">SEO Description</label>
+                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" placeholder="SEO Description">{{ old('seo_description') }}</textarea>
+                                                                                </fieldset>
                                                                             </div>
                                                                             <div class="col-md-6">
                                                                                 <fieldset class="form-group">
@@ -134,8 +138,36 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="seo_description">SEO Description</label>
-                                                                                    <textarea class="form-control" id="seo_description" rows="3" name="seo_description" placeholder="SEO Description">{{ old('seo_description') }}</textarea>
+                                                                                    <label for="fixed_price">Fixed Price</label>
+                                                                                    <select class="form-control tiny" name="fixed_price" id="fixed_price" required>
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('fixed_price') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('fixed_price') == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">System Price</label>
+                                                                                    <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ old('system_price') }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="min">Minimun Amount</label>
+                                                                                    <input type="number" class="form-control tiny" id="min" name="min"  value="{{ old('min') }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="max">Maimum Amount</label>
+                                                                                    <input type="number" class="form-control tiny" id="max" name="max"  value="{{ old('max') }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Quantity</label>
+                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('allow_quantity') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('allow_quantity') == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Quantity Graduation</label>
+                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ old('quantity_graduation') }}">
                                                                                 </fieldset>
                                                                                 <input type="hidden" value="product.store" name="route">
                                                                             </div>

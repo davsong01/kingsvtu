@@ -38,13 +38,15 @@ class ProductController extends Controller
             "seo_description" => "nullable",
             "route" => "required",
             "has_variations" => "required",
+            "fixed_price" => "nullable",
+            "system_price" => "nullable",
             "image" => "required|mimes:jpeg,png|max:1024",
         ]);
 
         if (!empty($request->image)) {
-            $image = $this->uploadFile( $request->image,'products');
+            $image = $this->uploadFile($request->image, 'products');
         }
-        
+
         $product = Product::updateOrCreate(
             [
                 "name" => $request->name,
@@ -70,6 +72,12 @@ class ProductController extends Controller
                 "has_variations" => $request->has_variations,
                 "seo_description" => $request->seo_description,
                 "image" => $image ?? null,
+                "fixed_price" => $request->fixed_price,
+                "system_price" => $request->system_price,
+                "allow_quantity" => $request->allow_quantity,
+                "quantity_graduation" => $request->quantity_graduation,
+                "min" => $request->min,
+                "max" => $request->max,
             ]
         );
 
@@ -100,12 +108,18 @@ class ProductController extends Controller
             "route" => "required",
             "has_variations" => "required",
             "image" => "nullable|mimes:jpeg,png|max:1024",
+            "fixed_price" => 'nullable',
+            "system_price" => 'nullable',
+            "allow_qantity" => 'nullable',
+            "quantity_graduation" => 'nullable',
+            "min" => 'nullable',
+            "max" => 'nullable',
         ]);
 
         if (!empty($request->image)) {
-            $image = $this->uploadFile( $request->image,'products');
+            $image = $this->uploadFile($request->image, 'products');
         }
-       
+
         $product->update([
             "name" => $request->name,
             "display_name" => $request->display_name,
@@ -118,7 +132,13 @@ class ProductController extends Controller
             "status" => $request->status,
             "has_variations" => $request->has_variations,
             "seo_description" => $request->seo_description,
-            "image" => $image ?? null,
+            "image" => $image ?? $product->image,
+            "fixed_price" => $request->fixed_price,
+            "min" => $request->min,
+            "max" => $request->max,
+            "system_price" => $request->system_price,
+            "allow_quantity" => $request->allow_quantity,
+            "quantity_graduation" => $request->quantity_graduation
         ]);
 
         return back()->with('message', 'Update Successfull');
