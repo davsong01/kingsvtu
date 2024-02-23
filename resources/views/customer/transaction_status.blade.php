@@ -81,7 +81,7 @@
                                                                 <div class="col-md-4">
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif </strong></h3></span>
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
-                                                                    <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {{ number_format($transaction->amount) }}</strong></span> <br>
+                                                                    <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</strong></span> <br>
                                                                     <a href="" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
@@ -153,10 +153,47 @@
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Biller: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{$transaction->unique_element}}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Email: </p>
                                                                                 </div>
                                                                                 
                                                                                 <div class="item-progress value">{{$transaction->customer_email }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Unit Price: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->unit_price) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Quantity: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{{ number_format($transaction->quantity) }}</div>
+                                                                                </div>
+                                                                            </li>
+                                                                            <li class="d-flex mb-1">
+                                                                                 <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                <div class="me-2">
+                                                                                    <p class="mb-0 lh-1 key">Discount Applied: </p>
+                                                                                </div>
+                                                                                
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->discount) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">
@@ -165,7 +202,7 @@
                                                                                     <p class="mb-0 lh-1 key">Amount Paid: </p>
                                                                                 </div>
                                                                                 
-                                                                                <div class="item-progress value">{{ number_format($transaction->amount) }}</div>
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">
@@ -174,7 +211,7 @@
                                                                                     <p class="mb-0 lh-1 key">Initial Balance: </p>
                                                                                 </div>
                                                                                 
-                                                                                <div class="item-progress value">{{ number_format($transaction->balance_before) }}</div>
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->balance_before) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">
@@ -183,81 +220,12 @@
                                                                                     <p class="mb-0 lh-1 key">Final Balance: </p>
                                                                                 </div>
                                                                                 
-                                                                                <div class="item-progress value">{{ number_format($transaction->balance_after) }}</div>
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->balance_after) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                         </ul>
                                                                     </div>
-                                                                    
-                                                                    {{-- <div class="table-responsive text-nowrap">
-                                                                        <table class="table">
-                                                                           
-                                                                            <tbody class="table-border-bottom-0">
-                                                                                <tr>
-                                                                                    <td><span class="fw-medium">Description</span></td>
-                                                                                    <td>{{ ucfirst($transaction->descr) }}</td>
-                                                                                </tr>
-                                                                                @if(!empty($transaction->extras))
-                                                                                <tr>
-                                                                                    <td><span class="fw-medium">Extras</span></td>
-                                                                                    <td>{{ ucfirst($transaction->extras) }}</td>
-                                                                                </tr>
-                                                                                @endif
-                                                                                <tr>
-                                                                                    <td><span class="fw-medium">Payment method</span></td>
-                                                                                    <td>{{ ucfirst($transaction->payment_method) }}</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Service
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        {{$transaction->product->display_name}} ({{$transaction->variation->system_name}})
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Phone
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        {{$transaction->customer_phone}}
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Email
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        {{$transaction->customer_email}}
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Amount Paid
-                                                                                    </td>
-                                                                                    <td>
-                                                                                       {{ number_format($transaction->amount) }}
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Initial Balance
-                                                                                    </td>
-                                                                                    <td>
-                                                                                       {{ number_format($transaction->balance_before) }}
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td>
-                                                                                        Final Balance
-                                                                                    </td>
-                                                                                    <td>
-                                                                                       {{ number_format($transaction->balance_after) }}
-                                                                                    </td>
-                                                                                </tr>
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div> --}}
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>

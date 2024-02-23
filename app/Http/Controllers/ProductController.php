@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with(['api', 'variations'])->get();
+        $products = Product::with(['api', 'variations'])->orderBy('created_at', 'DESC')->get();
         return view('admin.product.index', compact('products'));
     }
 
@@ -82,6 +82,17 @@ class ProductController extends Controller
         );
 
         return redirect(route('product.edit', $product->id))->with('message', 'Product Added Successfully');
+    }
+
+    public function duplicateProduct(Request $request, Product $product)
+    {
+        $newProduct = $product->replicate();
+        $newProduct->name = $product->name . '_copy';
+        $newProduct->display_name = $product->display_name . '_copy';
+        $newProduct->slug = $product->slug . '_copy';
+        $newProduct->save();
+
+        return back()->with('message', 'Product Duplicated succesfully');
     }
 
     public function edit(Product $product)

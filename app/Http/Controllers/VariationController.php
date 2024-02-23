@@ -24,7 +24,8 @@ class VariationController extends Controller
     {
         $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
         foreach ($variations as $key => $variation) {
-            if (in_array($variation->category->unique_element, verifiableUniqueElements())) {
+            // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
+            if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->verifiable = 'yes';
             } else {
                 $variation->verifiable = 'no';
@@ -34,7 +35,11 @@ class VariationController extends Controller
                 unset($variations[$key]);
             }
 
-            $variation->unique_element = $variation->category->unique_element;
+            if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
+                $variation->unique_element = specialVerifiableVariations()[$variation->slug];
+            }else{
+                $variation->unique_element = $variation->category->unique_element;
+            }
         }
 
         return response()->json($variations);

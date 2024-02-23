@@ -6,18 +6,22 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Variation;
 use App\Models\Transaction;
+use Spatie\FlareClient\Api;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
-use Spatie\FlareClient\Api;
 
 class TransactionController extends Controller
 {
     public function showProductsPage($slug)
     {
-        $category = Category::with('products')->where('slug', $slug)->first();
+        $category = Category::with(['products' => function ($query) {
+            return $query->where('status', 'active')->get();
+        }])->where('slug', $slug)->first();
+
 
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
@@ -105,6 +109,7 @@ class TransactionController extends Controller
         $request['network'] = $variation->network ?? null;
         $request['quantity'] = $request->quantity ?? 1;
 
+        $request['total_amount'] = $request['amount'] * $request['quantity'];
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
 
@@ -112,7 +117,7 @@ class TransactionController extends Controller
         $wal = $wallet->logWallet($request->all());
 
         // Update Customer Wallet
-        $wallet->updateCustomerWallet(auth()->user(), $request['amount'], $request['type']);
+        $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], $request['type']);
 
         // Process Transaction
         $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
@@ -132,13 +137,27 @@ class TransactionController extends Controller
     public function sendTransactionEmail($transaction)
     {
         if (getSettings()->transaction_email_notification == 'yes') {
+            $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
+            $product =  $transaction->product->name .  $variation_name;
+
             $subject = "Transaction Alert";
             $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
-            $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction:<hr/>
-            Transaction Id: ' . $transaction->transaction_id . '<br>
-    
-            <br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+            $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
+            <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
+            <strong>Transaction Date:</strong> ' . date("M jS, Y g:iA", strtotime($transaction->created_at)) . '<br>
+            <strong>Transaction Status:</strong> ' . ucfirst($transaction->status) . '<br>
+            <strong>Biller:</strong> ' . $transaction->unique_element . '<br>
+            <strong>Product:</strong> ' . $product . '<br>
+            <strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
+            <strong>Quantity:</strong> ' . $transaction->quantity . '<br>
+            <strong>Discount Applied:</strong> ' . getSettings()->currency . $transaction->discount . '<br>
+            <strong>Total Amount Paid:</strong> ' . getSettings()->currency . $transaction->total_amount . '<br>
+            <strong>Initial Balance:</strong> ' . getSettings()->currency . $transaction->balance_before . '<br>
+            <strong>Final Balance: </strong>' . getSettings()->currency . $transaction->balance_after . '<br>
+            <br>Warm Regards. (' . config('app.name') . ')<br/>
+            </p>';
 
+            \Log::info(['email' => $body]);
             logEmails(auth()->user()->email, $subject, $body);
         }
     }
@@ -160,7 +179,7 @@ class TransactionController extends Controller
                 'extras' => 'Transaction Successful!',
             ];
 
-            $balance_after = $request['balance_before'] - $request['amount'];
+            $balance_after = $request['balance_before'] - $request['total_amount'];
         } else if (isset($query) && $query['status_code'] == 0) {
             // Log wallet
             $wallet = new WalletController();
@@ -169,7 +188,7 @@ class TransactionController extends Controller
             $failure_reason = $query['message'] ?? null;
 
             // Update Customer Wallet
-            $wallet->updateCustomerWallet(auth()->user(), $request['amount'], 'credit');
+            $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
             $balance_after = $request['balance_before'];
         } else {
             $res = [
@@ -177,7 +196,7 @@ class TransactionController extends Controller
                 'message' => 'Transaction Successful!',
             ];
 
-            $balance_after = $request['balance_before'] - $request['amount'];
+            $balance_after = $request['balance_before'] - $request['total_amount'];
         }
 
         // Update Transaction
@@ -197,6 +216,28 @@ class TransactionController extends Controller
     public function verify(Request $request)
     {
         $variation = Variation::where('id', $request->variation)->first();
+
+        if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
+            $element = specialVerifiableVariations()[$variation->slug];
+        } else {
+            $element = $variation->category->unique_element;
+        }
+
+        $unique_elementX = ucfirst(str_replace("_", " ", $element));
+
+        $validator = Validator::make($request->all(), [
+            'unique_element' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $res = [
+                'status' => '0',
+                'message' => $unique_elementX . ' is required',
+                'title' => 'Please fill all fields',
+            ];
+
+            return response()->json($res);
+        }
         $product = $variation->product;
         $api = $variation->api;
         $file_name = $variation->api->file_name;
@@ -207,15 +248,15 @@ class TransactionController extends Controller
         $request['product_slug'] = $variation->product->slug;
         $request['network'] = $variation->network ?? null;
 
-        $element = $product->category->unique_element;
-        $request['unique_element'] = $request->$element;
-
+        $request['unique_element'] = $request->unique_element;
+       
         $data = [
             'variation' => $variation,
             'product' => $product,
             'api' => $api,
             'request' => $request
         ];
+
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
 
@@ -290,7 +331,7 @@ class TransactionController extends Controller
             'discount' => $data['discount'] ?? null,
             'unit_price' => $data['amount'],
             'quantity' => $data['quantity'] ?? 1,
-            'total_amount' => $data['amount'] * ($data['quantity'] ?? 1),
+            'total_amount' => $data['total_amount'],
             'amount' => $data['amount'],
             'balance_before' => $data['balance_before'],
             'product_id' => $data['product_id'] ?? null,

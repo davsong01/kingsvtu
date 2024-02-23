@@ -25,6 +25,7 @@ return new class extends Migration
                 $table->double('api_price', 11,2)->nullable();
                 $table->double('system_price', 11,2)->nullable();
                 $table->string('network')->nullable();
+                $table->string('verifiable')->default('no');
                 $table->integer('min')->nullable();
                 $table->integer('max')->nullable();
                 $table->timestamps();

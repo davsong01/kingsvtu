@@ -60,6 +60,14 @@
                                                         <label for="warning_threshold">Balance Warning Threshold</label>
                                                         <input type="number" class="form-control" name="warning_threshold" value="{{ $api->warning_threshold ?? old('warning_threshold') }}" placeholder="Enter warning threshold" id="warning_threshold">
                                                     </fieldset>
+                                                     <fieldset class="form-group">
+                                                        <label for="sandbox_base_url">Sandbox Base URL</label>
+                                                        <input type="text" class="form-control" name="sandbox_base_url" value="{{ $api->sandbox_base_url }}" placeholder="Enter sandbox base url" id="sandbox_base_url">
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
+                                                        <label for="live_base_url">Live Base URL</label>
+                                                        <input type="text" class="form-control" name="live_base_url" value="{{ $api->live_base_url }}" placeholder="Enter live base url" id="live_base_url">
+                                                    </fieldset>
                                                 </div>
                                                 <div class="col-md-6">
                                                    

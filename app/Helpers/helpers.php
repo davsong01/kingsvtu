@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\WalletController;
 
 if (!function_exists("logEmails")) {
-    function logEmails($email_to, $subject, $body){
+    function logEmails($email_to, $subject, $body)
+    {
         $data = [
             'subject' => $subject,
             'body' => $body,
@@ -16,7 +17,6 @@ if (!function_exists("logEmails")) {
         try {
             Mail::to($email_to,)->send(new EmailMessages($data));
         } catch (\Exception $e) {
-           
         }
     }
 }
@@ -53,14 +53,14 @@ if (!function_exists("getUniqueElements")) {
 if (!function_exists("verifiableUniqueElements")) {
     function verifiableUniqueElements()
     {
-        return ['meter_number', 'iuc_number'];
+        return ['meter_number', 'iuc_number', 'profile_id'];
     }
 }
 
 if (!function_exists("getCategories")) {
     function getCategories()
     {
-       return Category::where('status', 'active')->get();
+        return Category::where('status', 'active')->get();
     }
 }
 
@@ -73,7 +73,17 @@ if (!function_exists("walletBalance")) {
 }
 
 if (!function_exists("getSettings")) {
-    function getSettings(){
+    function getSettings()
+    {
         return Settings::first();
+    }
+}
+
+if (!function_exists("specialVerifiableVariations")) {
+    function specialVerifiableVariations()
+    {
+        return $specialVerifiableVariations = [
+            'utme-no-mock' => 'profile_id', 'utme-mock' => 'profile_id', 'de' => 'profile_id'
+        ];
     }
 }

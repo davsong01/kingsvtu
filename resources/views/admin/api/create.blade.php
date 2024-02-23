@@ -56,9 +56,17 @@
                                                             <option value="inactive" {{ old('warning_threshold_status') == 'inactive' ? 'selected' : ''}}>InActive</option>
                                                         </select>
                                                     </fieldset>
-                                                     <fieldset class="form-group">
+                                                    <fieldset class="form-group">
                                                         <label for="warning_threshold">Balance Warning Threshold</label>
                                                         <input type="number" class="form-control" name="warning_threshold" value="{{ old('warning_threshold') }}" placeholder="Enter warning threshold" id="warning_threshold">
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
+                                                        <label for="sandbox_base_url">Sandbox Base URL</label>
+                                                        <input type="text" class="form-control" name="sandbox_base_url" value="{{ old('sandbox_base_url') }}" placeholder="Enter warning threshold" id="warning_threshold">
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
+                                                        <label for="live_base_url">Live Base URL</label>
+                                                        <input type="text" class="form-control" name="live_base_url" value="{{ old('live_base_url') }}" placeholder="Enter warning threshold" id="warning_threshold">
                                                     </fieldset>
                                                 </div>
                                                 <div class="col-md-6">

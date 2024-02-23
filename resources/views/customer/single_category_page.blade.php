@@ -1,5 +1,5 @@
 <?php 
-    $verifiable = verifiableUniqueElements()
+    $verifiable = verifiableUniqueElements();
 ?>
 @extends('layouts.app')
 @section('title', $category->seo_title)
@@ -10,6 +10,9 @@
     .reset-pin {
         font-size: 10px;
         float: right;
+    }
+    #verify-link{
+        text-transform: capitalize;
     }
 </style>
 @endsection
@@ -54,6 +57,7 @@
                                                                     
                                                                     <fieldset class="form-group">
                                                                         <label for="product">Select Service</label>
+                                                                       
                                                                         <select class="form-control" name="product" id="product" required>
                                                                             <option value="">Select</option>
                                                                             @foreach ($category->products as $item)
@@ -69,17 +73,20 @@
                                                                     </fieldset>
                                                                     @if($category->slug == 'electricity')
                                                                     <fieldset class="form-group unique_element" style="display:none">
-                                                                        <label for="meter_number">Meter Number</label>
-                                                                        <input type="text" class="form-control" id="meter_number" name="meter_number" value="{{ old('meter_number')}}" required>
+                                                                        <label for="unique_element">Meter Number</label>
+                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
                                                                     </fieldset>
                                                                     @endif
-                                                                    @if($category->slug == 'dstv')
+                                                                    @if($category->slug == 'dstv' || $category->slug == 'gotv')
                                                                     <fieldset class="form-group unique_element" style="display:none">
-                                                                        <label for="iuc_number">IUC Number</label>
-                                                                        <input type="text" class="form-control" id="iuc_number" name="iuc_number" value="{{ old('iuc_number')}}" required>
+                                                                        <label for="unique_element">IUC Number</label>
+                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
                                                                     </fieldset>
                                                                     @endif
-                                                                
+                                                                    <fieldset class="form-group" id="profile_id" style="display:none">
+                                                                        <label for="unique_element">Profile ID</label>
+                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}">
+                                                                    </fieldset>
                                                                     <fieldset class="form-group">
                                                                         <label for="email">Email Address</label>
                                                                         <input type="text" class="form-control" id="email" name="email" value="{{ auth()->user()->email ?? old('email')}}" required>
@@ -89,10 +96,9 @@
                                                                         <label for="phone">Phone Number</label>
                                                                         <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
                                                                     </fieldset>
-                                                                   
                                                                     <fieldset class="form-group" id="amount-div" style="display:none">
                                                                         <label for="amount" class="">Amount</label>
-                                                                        <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number">
+                                                                        <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
                                                                     </fieldset>
                                                                     <fieldset class="form-group" id="quantity-div" style="display:none">
                                                                         <label for="name" class="">Select quantity </label>
@@ -105,10 +111,10 @@
                                                                         <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                     </fieldset>
                                                                   </form>
-                                                                    <button class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button>
+                                                                    <button id="buy-button" class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button>
                                                                     <a href="#" id="verify-link" onclick="verify(this)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
                                                                 </div>
-
+                                                                
                                                                 <div class="col-md-3">
                                                                     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pubxxx" crossorigin="anonymous"></script>
                                                                     <script>(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;</script><script>(adsbygoogle = window.adsbygoogle || []).push({});</script> 
@@ -143,7 +149,7 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="submitForm()">Continue Payment</button>
+        <button style="display:none" id="continue_payment" type="button" class="btn btn-primary" onclick="submitForm()">Continue Payment</button>
     </div>
     </form>
     </div>
@@ -151,16 +157,34 @@
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 <script>
+
+    
     function verify(e){
+        // $("#initialize").validate({
+        //     rules: {
+        //         unique_element: "required",
+        //     },
+        //     messages:{
+        //         unique_element:{
+        //             required:"To pole jest wymagane!"
+        //         }
+        //     }
+        // }),
+         $("#amount").attr({
+            "required": true,
+        });
+        
         $.LoadingOverlay("show");
         $('#verify-modal').modal('hide');
 
         var url = "{{ url('customer-verify') }}";
         var formData =  {
             category_id: {{ $category->id }},
-            meter_number: $("#meter_number").val(),
-            iuc_number: $("#iuc_number").val(),
+            unique_element: $("#unique_element").val(),
+            // iuc_number: $("#iuc_number").val(),
+            // profile_id: $("#profile_id").val(),
             variation: $("#variation").val(),
             product_id: $("#product").val(),
         };
@@ -172,11 +196,15 @@
             data:formData,
 
             success: function (data) {
-                // console.log(data);
                 $.LoadingOverlay("hide");
                 $("#verify-title").html(data.title);
                 $("#verify-details").html(data.message);
-            
+                if(data.status == '1'){
+                    $("#continue_payment").show();
+                }else{
+                    $("#continue_payment").hide();
+                    
+                }
                 // $("#amount").prop('readonly', false);
                 $('#verify-modal').modal('show');
             }
@@ -200,8 +228,12 @@
             var max = $('#product').find(':selected').data('max');
             var min = $('#product').find(':selected').data('min');
             var quantity_graduation = $('#product').find(':selected').data('quantity_graduation');
-            console.log(fixed_price, has_variation, system_price, allow_quantity,min,max, quantity_graduation);
+            // console.log(fixed_price, has_variation, system_price, allow_quantity,min,max, quantity_graduation);
             var product = $('#product').val();
+
+            $("#buy-button").show();
+            $("#verify-link").hide();
+            $(".unique_element").hide();
             
             if (product == '') {
                 $('#variation-div').hide();
@@ -229,6 +261,7 @@
 
             if(has_variation == 'yes'){
                 $('#variation-div').show();
+                $('#variation').show();
                 $('#amount-div').hide();
         
                 $("#amount").prop('readonly', false);
@@ -241,7 +274,6 @@
                     success: function (data) {
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
-                                // console.log(data[t]);
                                 $('#variation').append(`<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
 
                                 variations.push({
@@ -260,6 +292,9 @@
             }else{
                 $('#amount-div').show();
                 $('#amount').show();
+                $('#quantity option:not(:first)').remove();
+                $("#variation").hide();
+                $("#variation-div").hide();
 
                 if(fixed_price == 'yes'){
                     $("#amount").attr({
@@ -278,40 +313,57 @@
                         "min": min,
                     });
                 }
-
-                if(allow_quantity == 'yes'){
-                    $('#quantity-div').show();
-                    $('#quantity').show();
-                    var data = quantity_graduation.split(",");
-                    
-                    if (data && data.length > 0) {
-                        for (t = 0; t < data.length; t++) {
-                            console.log(data[t]);
-                            $('#quantity').append(`<option value="${data[t]}"> ${data[t]}</option>`);
-                        }
-                    }
-                }else{
-                    $('#quantity-div').hide();
-                    $('#quantity').hide();
-                }
             }
+
+            if(allow_quantity == 'yes'){
+                $('#quantity-div').show();
+                $('#quantity').show();
+                var data = quantity_graduation.split(",");
+                
+                if (data && data.length > 0) {
+                    for (t = 0; t < data.length; t++) {
+                        $('#quantity').append(`<option value="${data[t]}"> ${data[t]}</option>`);
+                    }
+                }
+            }else{
+                $('#quantity-div').hide();
+                $('#quantity').hide();
+            }
+
         });
     
         $('#variation').on('change', function (e) {
             $('#amount-div').show();
+            $('#amount').show();
+            $("#profile_id").hide();
+            
             var v = e.target.value;
             var selected = variations.filter((item) => {
                 return item.id == v;
             });
-
-            if (selected[0].verifiable == 'yes') {
-                $("#verify-link").show();
-                $(".unique_element").show();
-            }else{
-                $("#verify-link").hide();
-                $(".unique_element").hide();
-            }
            
+            if (selected[0].verifiable == 'yes') {
+                showAllUniqueElement();
+                // var element = ;
+                $("#verify-link").html('Verify '+ selected[0].unique_element.replace("_", " "));
+                if (selected[0].unique_element == 'profile_id') {
+                    $("#buy-button").hide();
+                    $("#profile_id").show();
+                }
+            }else{
+                hideAllUniqueElement();
+            }
+
+            // if (selected[0].unique_element == 'profile_id') {
+            //     $("#verify-link").show();
+            //     $("#buy-button").hide();
+            //     $(".unique_element").show();
+            // }else{
+            //     $("#verify-link").hide();
+            //     $("#buy-button").show();
+            //     $(".unique_element").show();
+            // }
+            
             if (selected[0].fixedPrice == 'Yes') {
                 $("#amount").attr({
                     "max": "",
@@ -332,6 +384,25 @@
             }    
         });
     
+        function showAllUniqueElement(){
+            $("#verify-link").show();
+            $(".unique_element").show();
+            $("#buy-button").hide();
+            $("#unique_element").attr({
+                "required": "true",
+            });
+        }
+
+        function hideAllUniqueElement(){
+            $("#profile_id").hide();
+            $("#verify-link").hide();
+            $(".unique_element").hide();
+            $("#buy-button").show();
+            $("#unique_element").attr({
+                "required": "false",
+            });
+        }
+
         $('.select2').select2();
 
     });

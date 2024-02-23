@@ -10,7 +10,7 @@ class VtpassController extends Controller
 {
     public function getVariations($product)
     {
-        $url = env('ENV') == 'local' ? $product->api->sandbox_base_url : $product->api->live_url;
+        $url = env('ENV') != 'local' ? $product->api->sandbox_base_url : $product->api->live_base_url;
         $url = $url . "service-variations?serviceID=" . $product->slug;
 
         $headers = [
@@ -30,17 +30,6 @@ class VtpassController extends Controller
                 // if(in_array($variation['variation_code'], $existingVariations)){
                 // }else{
                 Variation::updateOrCreate([
-                    // 'product_id' => $product['id'],
-                    // 'category_id' => $product['category_id'],
-                    // 'api_id' => $product['api']['id'],
-                    'api_name' => $variation['name'],
-                    'slug' => $variation['variation_code'],
-                    // 'system_name' => $variation['name'],
-                    // 'fixed_price' => $variation['fixedPrice'],
-                    'api_price' => $variation['variation_amount'],
-                    'min' => $variation['minimum_amount'] ?? null,
-                    'max' => $variation['maximum_amount'] ?? null
-                ], [
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
@@ -101,7 +90,7 @@ class VtpassController extends Controller
                     'payload' => $payload,
                     'status_code' => 1,
                     'extras' => $response['purchased_code'] ?? null
-                    
+
                 ];
             } elseif (isset($response['code']) && in_array($response['code'], $failCodes)) {
                 // fail
@@ -232,7 +221,7 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            
+
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
                 $final_response = [
                     'status' => 'success',
@@ -258,8 +247,8 @@ class VtpassController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
-            // $fail_response =  $fail_response = 'Validation Error: ' . $response->content->error ?? 'Unable to verify at the moment, please try again';
-           
+            $fail_response = 'Unable to verify at the moment, please try again';
+
             $final_response = [
                 'status' => 'failed',
                 'status_code' => '500',
@@ -267,7 +256,7 @@ class VtpassController extends Controller
                 'customerAddress' => '',
                 'message' => $fail_response,
                 'title' => 'Verification Failed',
-                'raw_response' => $response,
+                'raw_response' => $th->getMessage(),
             ];
         }
 

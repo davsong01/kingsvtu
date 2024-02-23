@@ -208,9 +208,9 @@
                                                                 @if($product->has_variations == 'yes')
                                                                     <div class="tab-pane {{ isset($page) && $page == 2 ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
                                                                         @if($product->variations->count() < 1)
-                                                                            <a href="{{ route('variations.pull', $product->id) }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</button></a>
+                                                                            <a style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
                                                                         @else
-                                                                            <a href="{{ route('variations.pull', $product->id) }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</button></a>
+                                                                            <a  style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
 
                                                                             <form action="{{route('variations.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                                 @csrf

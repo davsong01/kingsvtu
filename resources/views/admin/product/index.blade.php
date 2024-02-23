@@ -39,6 +39,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
+                                @include('layouts.alerts')
                                 <div class="card-header">
                                     <h4 class="card-title">All products</h4> <br>
                                     <a href="{{ route('product.create') }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Add Product</button></a>
@@ -51,6 +52,7 @@
                                                     <tr>
                                                         <th>Name</th>
                                                         <th>Category</th>
+                                                        <th>Variations</th>
                                                         <th>Active API</th>
                                                         <th>Status</th>
                                                         <th>Date Added</th>
@@ -60,13 +62,15 @@
                                                 <tbody>
                                                     @foreach ( $products as $product )
                                                     <tr>
-                                                        <td>{{ $product->name }}</td>
+                                                        <td><img src="{{asset($product->image)}}" alt="{{$product->image}}" style="width: 50px;float:left">{{ $product->name }}</td>
                                                         <td>{{ $product->category->name }}</td>
+                                                        <td>{{ $product->variations->where('status','active')->count() }}</td>
                                                         <td>{{ $product->api->name }}</td>
                                                         <td>{{ $product->status }}</td>
                                                         <td>{{ $product->created_at }}</td>
                                                         <td>
                                                             <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button></a>
+                                                            <a class="btn btn-info btn-sm mr-1 mb-1" onclick="return confirm('{{$product->name}} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Duplicate</span></button></a>
                                                         </td>
                                                     </tr>
                                                     @endforeach
