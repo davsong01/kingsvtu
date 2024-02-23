@@ -64,18 +64,14 @@ if (!function_exists("getCategories")) {
     }
 }
 
-if (!function_exists("walletBalance")) {
-    function walletBalance($user)
+if (!function_exists("adminPermission")) {
+    function adminPermission()
     {
-        $wallet = new WalletController();
-        return $wallet->getWalletBalance($user);
-    }
-}
-
-if (!function_exists("getSettings")) {
-    function getSettings()
-    {
-        return Settings::first();
+       return [
+        1 => 'View Customer',
+        2 => 'Add Customer',
+        3 => 'View Transactions',
+       ];
     }
 }
 

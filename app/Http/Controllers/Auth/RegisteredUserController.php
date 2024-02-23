@@ -47,6 +47,7 @@ class RegisteredUserController extends Controller
             'referral' => $request->referral,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'status' => 'active',
         ]);
 
         $user->sendEmailVerificationNotification();

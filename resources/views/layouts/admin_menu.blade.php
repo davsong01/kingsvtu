@@ -23,13 +23,29 @@
                     </li>
                 </ul>
             </li>
-            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="user"></i><span class="menu-title">My Profile</span></a></li>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Customers</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" >All customers</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/active"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Active Customers</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/api"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">API Customers</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/suspended"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Suspended</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/email-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Emails</span></a>
+                    </li>
+                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
             <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a href="{{ route('settings.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">General Settings</span></a></li>
-           
+
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
-            </form>  
+            </form>
         </ul>
     </div>
 </div>
