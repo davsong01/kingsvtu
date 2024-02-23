@@ -34,10 +34,10 @@ class VariationController extends Controller
             if (($variation->fixed_price == 'Yes') && empty($variation->system_price) || $variation->system_price < 0) {
                 unset($variations[$key]);
             }
-
+            
             if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->unique_element = specialVerifiableVariations()[$variation->slug];
-            }else{
+            } else {
                 $variation->unique_element = $variation->category->unique_element;
             }
         }

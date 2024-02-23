@@ -39,14 +39,6 @@ class TransactionController extends Controller
             return back()->with('error', 'Invalid Transaction PIN!');
         }
 
-        // Get Wallet Balance
-        $wallet = new WalletController();
-        $balance = $wallet->getWalletBalance(auth()->user());
-
-        if ($balance < $request['amount']) {
-            return back()->with('error', 'Insufficient Wallet Balance, Please try again');
-        }
-
         // Get product
         $product = Product::where('id', $request->product)->first();
         $category = $product->category_id;
@@ -55,11 +47,29 @@ class TransactionController extends Controller
             return back()->with('error', 'The selected product/service does not seem to exist, kindly check your selection');
         }
 
+        $element = $product->category->unique_element;
+        $request['unique_element'] = $request->unique_element ?? $request->$element;
+
         if ($product->has_variations == 'yes') {
             $variation = Variation::where('id', $request->variation)->where('product_id', $product->id)->first();
 
             if ($variation->fixedPrice == 'Yes') {
                 $request['amount'] = $variation->system_price;
+            } elseif ($product->allow_subscription_type == 'yes' && $variation->category->unique_element == 'iuc_number') {
+                if (!empty($request->bouquet) && $request->bouquet == 'renew') {
+                    $req = new Request([
+                        'unique_element' => $request['unique_element'],
+                        'variation' => $variation->id,
+                    ]);
+                    $res = $this->verify($req);
+                    if (isset($res['renewal_amount'])) {
+                        $request['amount'] = $res['renewal_amount'];
+                    } else {
+                        $request['amount'] = $variation->system_price;
+                    }
+                } else {
+                    $request['amount'] = $variation->system_price;
+                }
             } else {
                 $request['amount'] = $this->removeCharsInAmount($request->amount);
             }
@@ -81,9 +91,17 @@ class TransactionController extends Controller
                 return back()->with('error', $meterValidation['error']);
             }
         }
+        $request['quantity'] = $request->quantity ?? 1;
 
-        $element = $product->category->unique_element;
-        $request['unique_element'] = $request->$element;
+        $request['total_amount'] = $request['amount'] * $request['quantity'];
+
+        // Get Wallet Balance
+        $wallet = new WalletController();
+        $balance = $wallet->getWalletBalance(auth()->user());
+
+        if ($balance < $request['total_amount']) {
+            return back()->with('error', 'Insufficient Wallet Balance, Please try again');
+        }
 
         // Log Wallet
         $request_id = $this->generateRequestId();
@@ -107,9 +125,7 @@ class TransactionController extends Controller
         $request['product_slug'] = $variation->product->slug ?? $product->slug;
         $request['variation_slug'] = $variation->slug ?? null;
         $request['network'] = $variation->network ?? null;
-        $request['quantity'] = $request->quantity ?? 1;
 
-        $request['total_amount'] = $request['amount'] * $request['quantity'];
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
 
@@ -130,7 +146,6 @@ class TransactionController extends Controller
     public function transactionStatus($transaction_id)
     {
         $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
-        // dd($transaction);
         return view('customer.transaction_status', compact('transaction'));
     }
 
@@ -139,13 +154,14 @@ class TransactionController extends Controller
         if (getSettings()->transaction_email_notification == 'yes') {
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
             $product =  $transaction->product->name .  $variation_name;
-
+            $extras = isset($transaction->extras) ? $transaction->extras : '';
             $subject = "Transaction Alert";
             $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
             $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
             <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
             <strong>Transaction Date:</strong> ' . date("M jS, Y g:iA", strtotime($transaction->created_at)) . '<br>
             <strong>Transaction Status:</strong> ' . ucfirst($transaction->status) . '<br>
+            <strong>Extras:</strong> ' . $extras . '<br>
             <strong>Biller:</strong> ' . $transaction->unique_element . '<br>
             <strong>Product:</strong> ' . $product . '<br>
             <strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
@@ -224,7 +240,6 @@ class TransactionController extends Controller
         }
 
         $unique_elementX = ucfirst(str_replace("_", " ", $element));
-
         $validator = Validator::make($request->all(), [
             'unique_element' => 'required'
         ]);
@@ -242,14 +257,14 @@ class TransactionController extends Controller
         $api = $variation->api;
         $file_name = $variation->api->file_name;
 
-        $request['product_name'] = $product->name;
-        $request['variation_name'] = $variation->slug;
-        $request['category_id'] = $product->category->id;
-        $request['product_slug'] = $variation->product->slug;
+        $request['product_name'] = $product->name ?? null;
+        $request['variation_name'] = $variation->slug ?? null;
+        $request['category_id'] = $product->category->id ?? null;
+        $request['product_slug'] = $variation->product->slug ?? null;
         $request['network'] = $variation->network ?? null;
 
         $request['unique_element'] = $request->unique_element;
-       
+
         $data = [
             'variation' => $variation,
             'product' => $product,
@@ -265,6 +280,7 @@ class TransactionController extends Controller
                 'status' => $verify['status_code'],
                 'message' => $verify['message'],
                 'title' => $verify['title'],
+                'renewal_amount' => $verify['renewal_amount']
             ];
         } else if (isset($query) && $query['status_code'] == 0) {
             $res = [
@@ -280,7 +296,11 @@ class TransactionController extends Controller
             ];
         }
 
-        return response()->json($res);
+        if ($request->ajax()) {
+            return response()->json($res);
+        } else {
+            return $res;
+        }
     }
 
     public function generateRequestId()

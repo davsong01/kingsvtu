@@ -67,18 +67,20 @@ class CategoryController extends Controller
             "slug" => "required",
             "status" => "required",
             "order" => "required",
+            "unique_element" => "required",
             "description" => "nullable",
             "seo_description" => "nullable",
             "seo_title" => "nullable",
             "seo_keywords" => "nullable",
         ]);
-
+       
         $category->update([
             "name" => $request->name,
             "icon" => $request->icon,
             "display_name" => $request->display_name,
             "slug" => $request->slug,
             "status" => $request->status,
+            "unique_element" => $request->unique_element,
             "order" => $request->order,
             "description" => $request->description,
             "seo_description" => $request->seo_description,
@@ -88,5 +90,4 @@ class CategoryController extends Controller
 
         return back()->with('message', 'Updated successfully');
     }
-
 }

@@ -82,7 +82,7 @@
                                                         <select class="form-control" name="unique_element" id="unique_element" required>
                                                             <option value="">Select</option>
                                                             @foreach ( getUniqueElements() as $element )
-                                                                <option value="{{ $element }}" {{ old('unique_element') == 'element' ? 'selected' : ''}}>{{ ucfirst($element)}}</option>
+                                                                <option value="{{ $element }}" {{ old('unique_element') == 'element' ? 'selected' : ''}}>{{ ucfirst(str_replace("_"," ",$element))}}</option>
                                                             @endforeach
                                                         </select>
                                                     </fieldset>

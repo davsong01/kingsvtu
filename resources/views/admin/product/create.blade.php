@@ -169,6 +169,14 @@
                                                                                     <label for="name">Quantity Graduation</label>
                                                                                     <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ old('quantity_graduation') }}">
                                                                                 </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Subscription Type</label>
+                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('allow_subscription_type') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('allow_subscription_type') == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
                                                                                 <input type="hidden" value="product.store" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">

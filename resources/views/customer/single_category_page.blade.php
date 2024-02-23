@@ -13,6 +13,7 @@
     }
     #verify-link{
         text-transform: capitalize;
+        text-decoration: underline;
     }
 </style>
 @endsection
@@ -54,65 +55,97 @@
                                                                             <p style="" id="product-description" style="line-height: 1.4;"></p>
                                                                         </div>
                                                                     </div>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="product">Select Service</label>
+                                                                            
+                                                                                <select class="form-control" name="product" id="product" required>
+                                                                                    <option value="">Select</option>
+                                                                                    @foreach ($category->products as $item)
+                                                                                        <option value="{{ $item->id  }}" data-allow_subscription_type="{{ $item->allow_subscription_type }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6" id="variation-div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="name" class="">Select Variation </label>
+                                                                                <select class="form-control" id="variation" name="variation" required="">
+                                                                                    <option value="">Select...</option>
+                                                                                </select>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        
+                                                                        @if($category->slug == 'electricity')
+                                                                        <div class="col-md-6 unique_element_div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="unique_element">Meter Number  &nbsp;&nbsp;<a href="#" id="verify-link" onclick="verify(this)" class="" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a></label>
+                                                                                <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        @elseif($category->slug == 'tv')
+                                                                        <div class="col-md-6 unique_element_div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="unique_element">IUC Number &nbsp;&nbsp;<a href="#" id="verify-link" onclick="verify(this)" class="" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a></label>
+                                                                                <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        @else
+                                                                        <div class="col-md-6 unique_element_div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="unique_element">Profile ID &nbsp;&nbsp;<a href="#" id="verify-link" onclick="verify(this)" class="" type="submit" style="display:none"></a></label>
+                                                                                <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}">
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        @endif
+                                                                        <div class="col-md-6" id="bouquet-div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="name" class="">Select Subscription Type</label>
+                                                                                <select class="form-control" id="bouquet" name="bouquet" required="">
+                                                                                    <option value="">Select</option>
+                                                                                </select>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="email">Email Address</label>
+                                                                                <input type="text" class="form-control" id="email" name="email" value="{{ auth()->user()->email ?? old('email')}}" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="phone">Phone Number</label>
+                                                                                <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6" id="amount-div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="amount" class="">Amount</label>
+                                                                                <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6" id="quantity-div" style="display:none">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="name" class="">Select quantity </label>
+                                                                                <select class="form-control" id="quantity" name="quantity" required="">
+                                                                                    <option value="">Select...</option>
+                                                                                </select>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <fieldset class="form-group">
+                                                                                <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
+                                                                                <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                    </div>
                                                                     
-                                                                    <fieldset class="form-group">
-                                                                        <label for="product">Select Service</label>
-                                                                       
-                                                                        <select class="form-control" name="product" id="product" required>
-                                                                            <option value="">Select</option>
-                                                                            @foreach ($category->products as $item)
-                                                                                <option value="{{ $item->id  }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </fieldset>
-                                                                    <fieldset class="form-group" id="variation-div" style="display:none">
-                                                                        <label for="name" class="">Select Variation </label>
-                                                                        <select class="form-control" id="variation" name="variation" required="">
-                                                                            <option value="">Select...</option>
-                                                                        </select>
-                                                                    </fieldset>
-                                                                    @if($category->slug == 'electricity')
-                                                                    <fieldset class="form-group unique_element" style="display:none">
-                                                                        <label for="unique_element">Meter Number</label>
-                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
-                                                                    </fieldset>
-                                                                    @endif
-                                                                    @if($category->slug == 'dstv' || $category->slug == 'gotv')
-                                                                    <fieldset class="form-group unique_element" style="display:none">
-                                                                        <label for="unique_element">IUC Number</label>
-                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}" required>
-                                                                    </fieldset>
-                                                                    @endif
-                                                                    <fieldset class="form-group" id="profile_id" style="display:none">
-                                                                        <label for="unique_element">Profile ID</label>
-                                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" value="{{ old('unique_element')}}">
-                                                                    </fieldset>
-                                                                    <fieldset class="form-group">
-                                                                        <label for="email">Email Address</label>
-                                                                        <input type="text" class="form-control" id="email" name="email" value="{{ auth()->user()->email ?? old('email')}}" required>
-                                                                    </fieldset>
-
-                                                                    <fieldset class="form-group">
-                                                                        <label for="phone">Phone Number</label>
-                                                                        <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
-                                                                    </fieldset>
-                                                                    <fieldset class="form-group" id="amount-div" style="display:none">
-                                                                        <label for="amount" class="">Amount</label>
-                                                                        <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
-                                                                    </fieldset>
-                                                                    <fieldset class="form-group" id="quantity-div" style="display:none">
-                                                                        <label for="name" class="">Select quantity </label>
-                                                                        <select class="form-control" id="quantity" name="quantity" required="">
-                                                                            <option value="">Select...</option>
-                                                                        </select>
-                                                                    </fieldset>
-                                                                    <fieldset class="form-group">
-                                                                        <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
-                                                                        <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
-                                                                    </fieldset>
+                                                                    
+                                                                    
                                                                   </form>
-                                                                    <button id="buy-button" class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button>
-                                                                    <a href="#" id="verify-link" onclick="verify(this)" class="btn btn-info" type="submit" style="display:none">Verify {{ ucfirst(str_replace("_"," ",$category->unique_element)) }}</a>
+                                                                    {{-- <button id="buy-buttonx" class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button> --}}
+                                                                    <button id="buy-buttonx" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
                                                                 </div>
                                                                 
                                                                 <div class="col-md-3">
@@ -149,7 +182,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        <button style="display:none" id="continue_payment" type="button" class="btn btn-primary" onclick="submitForm()">Continue Payment</button>
     </div>
     </form>
     </div>
@@ -159,36 +191,34 @@
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 <script>
-
-    
     function verify(e){
-        // $("#initialize").validate({
-        //     rules: {
-        //         unique_element: "required",
-        //     },
-        //     messages:{
-        //         unique_element:{
-        //             required:"To pole jest wymagane!"
-        //         }
-        //     }
-        // }),
-         $("#amount").attr({
+        $("#amount").attr({
             "required": true,
         });
+
+        var unique_element = $("#unique_element").val();
+        var category_slug = $("#category_slug").val();
         
+        if(unique_element == ''){
+            alert("Please enter biller to verify");
+            return;
+        }
+       
         $.LoadingOverlay("show");
         $('#verify-modal').modal('hide');
+        var amount = $('#amount').val();
 
         var url = "{{ url('customer-verify') }}";
+        var element = "{{ $category->unique_element }}";
+        var allow_subscription_type = $('#product').find(':selected').data('allow_subscription_type');
+        
         var formData =  {
             category_id: {{ $category->id }},
             unique_element: $("#unique_element").val(),
-            // iuc_number: $("#iuc_number").val(),
-            // profile_id: $("#profile_id").val(),
             variation: $("#variation").val(),
             product_id: $("#product").val(),
         };
-        
+       
         $.ajax({
             url: url,
             method: 'POST',
@@ -199,27 +229,51 @@
                 $.LoadingOverlay("hide");
                 $("#verify-title").html(data.title);
                 $("#verify-details").html(data.message);
+
                 if(data.status == '1'){
+                    if(allow_subscription_type == 'yes' && element == 'iuc_number'){
+                        $('#bouquet').append(`<option value="change" data-amount="${amount}">Change Bouquet</option><option data-amount="${data.renewal_amount}" value="renew">Renew Bouquet</option>`);
+                        $("#bouquet-div").show();
+                        $("#bouquet").attr({
+                            "required":true
+                        });
+                    }else{
+                        $("#bouquet-div").hide();
+                        $("#bouquet").attr({
+                            "required":false
+                        });
+                    }
+    
                     $("#continue_payment").show();
+
                 }else{
                     $("#continue_payment").hide();
-                    
                 }
-                // $("#amount").prop('readonly', false);
                 $('#verify-modal').modal('show');
             }
         });
     }
 
     function submitForm(){
+        var inputs = document.getElementById("initialize").getElementsByTagName("input");
+        // Loop through each input and perform validation
+        for (var i = 0; i < inputs.length; i++) {
+            var input = inputs[i];
+
+            // Check if the input is required and empty
+            if (input.hasAttribute("required") && input.value.trim() === "") {
+                alert("Please fill all inputs");
+                return;
+            }
+        }
+        
         $.LoadingOverlay("show");
         document.forms["initialize"].submit();
     }
 
     $(document).ready(function () {
-        
         var variations = [];
-        
+       
         $('#product').on('change', function () {
             var fixed_price = $('#product').find(':selected').data('fixed_price');
             var has_variation= $('#product').find(':selected').data('has_variation');
@@ -231,9 +285,8 @@
             // console.log(fixed_price, has_variation, system_price, allow_quantity,min,max, quantity_graduation);
             var product = $('#product').val();
 
-            $("#buy-button").show();
             $("#verify-link").hide();
-            $(".unique_element").hide();
+            $(".unique_element_div").hide();
             
             if (product == '') {
                 $('#variation-div').hide();
@@ -275,7 +328,7 @@
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
                                 $('#variation').append(`<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
-
+                                
                                 variations.push({
                                     "id": data[t].id,
                                     "verifiable": data[t].verifiable,
@@ -301,7 +354,7 @@
                         "max": "",
                         "min": ""
                     });
-        
+                    
                     $('#amount').val(system_price);
                     $("#amount").attr({
                         "readonly": "true",
@@ -331,39 +384,42 @@
             }
 
         });
-    
+
+        $('#bouquet').on('change', function (e) {
+            var amount = $('#bouquet').find(':selected').data('amount');
+            var old_amount = $('#amount').val();
+            if($('#bouquet') == 'change'){
+                $('#amount').val(old_amount); 
+            }else{
+                $('#amount').val(amount); 
+            }
+        });
+
         $('#variation').on('change', function (e) {
             $('#amount-div').show();
             $('#amount').show();
-            $("#profile_id").hide();
+            $("#bouquet-div").hide();
+            $("#bouquet").attr({
+                "required":false
+            });
+            // $("#unique_element").hide();
             
             var v = e.target.value;
             var selected = variations.filter((item) => {
                 return item.id == v;
             });
-           
+            // console.log(selected[0].unique_element);
             if (selected[0].verifiable == 'yes') {
                 showAllUniqueElement();
-                // var element = ;
                 $("#verify-link").html('Verify '+ selected[0].unique_element.replace("_", " "));
                 if (selected[0].unique_element == 'profile_id') {
-                    $("#buy-button").hide();
                     $("#profile_id").show();
+                    $("#unique_element").show();
                 }
             }else{
                 hideAllUniqueElement();
             }
 
-            // if (selected[0].unique_element == 'profile_id') {
-            //     $("#verify-link").show();
-            //     $("#buy-button").hide();
-            //     $(".unique_element").show();
-            // }else{
-            //     $("#verify-link").hide();
-            //     $("#buy-button").show();
-            //     $(".unique_element").show();
-            // }
-            
             if (selected[0].fixedPrice == 'Yes') {
                 $("#amount").attr({
                     "max": "",
@@ -386,20 +442,19 @@
     
         function showAllUniqueElement(){
             $("#verify-link").show();
-            $(".unique_element").show();
-            $("#buy-button").hide();
+            $(".unique_element_div").show();
             $("#unique_element").attr({
-                "required": "true",
+                "required": true,
             });
         }
 
         function hideAllUniqueElement(){
             $("#profile_id").hide();
             $("#verify-link").hide();
-            $(".unique_element").hide();
+            $(".unique_element_div").hide();
             $("#buy-button").show();
             $("#unique_element").attr({
-                "required": "false",
+                "required": false,
             });
         }
 

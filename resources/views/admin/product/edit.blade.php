@@ -155,7 +155,7 @@
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="fixed_price">Fixed Price</label>
-                                                                                    <select class="form-control tiny" name="fixed_price" id="fixed_price" required>
+                                                                                    <select class="form-control tiny" name="fixed_price" id="fixed_price">
                                                                                         <option value="">Select</option>
                                                                                         <option value="yes" {{ $product->fixed_price == 'yes' ? 'selected' : ''}}>Yes</option>
                                                                                         <option value="no" {{ $product->fixed_price == 'no' ? 'selected' : ''}}>No</option>
@@ -193,6 +193,14 @@
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">Quantity Graduation</label>
                                                                                     <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ $product->quantity_graduation }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Subscription Type</label>
+                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->allow_subscription_type == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->allow_subscription_type == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
                                                                                 </fieldset>
                                                                                 @if($product->has_variations == 'yes')
                                                                                 @endif

@@ -41,6 +41,7 @@ class ProductController extends Controller
             "fixed_price" => "nullable",
             "system_price" => "nullable",
             "image" => "required|mimes:jpeg,png|max:1024",
+            "allow_subscription_type" => 'nullable'
         ]);
 
         if (!empty($request->image)) {
@@ -78,6 +79,7 @@ class ProductController extends Controller
                 "quantity_graduation" => $request->quantity_graduation,
                 "min" => $request->min,
                 "max" => $request->max,
+                "allow_subscription_type" => $request->allow_subscription_type
             ]
         );
 
@@ -125,6 +127,7 @@ class ProductController extends Controller
             "quantity_graduation" => 'nullable',
             "min" => 'nullable',
             "max" => 'nullable',
+            "allow_subscription_type" => "nullable"
         ]);
 
         if (!empty($request->image)) {
@@ -149,7 +152,8 @@ class ProductController extends Controller
             "max" => $request->max,
             "system_price" => $request->system_price,
             "allow_quantity" => $request->allow_quantity,
-            "quantity_graduation" => $request->quantity_graduation
+            "quantity_graduation" => $request->quantity_graduation,
+            "allow_subscription_type" => $request->allow_subscription_type
         ]);
 
         return back()->with('message', 'Update Successfull');

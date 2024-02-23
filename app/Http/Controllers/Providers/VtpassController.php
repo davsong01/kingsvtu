@@ -23,7 +23,8 @@ class VtpassController extends Controller
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
 
         if (isset($variations['response_description']) && $variations['response_description'] == '000') {
-            $existingVariations = $product->variations->pluck('slug');
+            $deleteExistingVariations = Variation::where('product_id', $product->id)->delete();
+
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
 
             foreach ($variations as $variation) {
@@ -212,7 +213,6 @@ class VtpassController extends Controller
                 'secret-key: ' . $data['api']->secret_key,
             ];
 
-
             $payload = [
                 'serviceID' => $data['request']['product_slug'],
                 'type' => $data['request']['variation_name'],
@@ -223,14 +223,24 @@ class VtpassController extends Controller
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
 
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
+                $message = '';
+                $message .= isset($response['content']['Customer_Name']) ? 'Account Name: ' . $response['content']['Customer_Name'] : '';
+                $message .= isset($response['content']['Address']) ? '<br/>Address: ' . $response['content']['Address'] : '';
+                $message .= isset($response['content']['Status']) ? '<br/>Status: ' . $response['content']['Status'] : '';
+                $message .= isset($response['content']['Customer_Number']) ? '<br/>Customer Number: ' . $response['content']['Customer_Number'] : '';
+                $message .= isset($response['content']['Current_Bouquet']) ? '<br/>Current Bouquet: ' . $response['content']['Current_Bouquet'] : '';
+                $message .= isset($response['content']['Renewal_Amount']) ? '<br/>Renewal Amount: ' . $response['content']['Renewal_Amount'] : '';
+                $message .= isset($response['content']['Due_Date']) ? '<br/>Due Date: ' . $response['content']['Due_Date'] : '';
+
                 $final_response = [
                     'status' => 'success',
                     'provider' => 'VTPASS',
                     'status_code' => '1',
                     'customerName' => $response['content']['Customer_Name'] ?? '',
                     'customerAddress' => $response['content']['Address'] ?? '',
-                    'message' => 'Account Name: ' . $response['content']['Customer_Name'] . '<br/>Address: ' . $response['content']['Address'] . ' <br/><br/>',
-                    'title' => '<strong>Please confirm that the details are correct before you click continue payment</strong>',
+                    'message' => $message . ' <br/><br/>',
+                    'title' => '<strong>Please confirm that the details are correct before you make payment</strong>',
+                    'renewal_amount' => $response['content']['Renewal_Amount'] ?? '',
                     'raw_response' => $response,
                 ];
             } else {
@@ -247,7 +257,7 @@ class VtpassController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
-            $fail_response = 'Unable to verify at the moment, please try again';
+            $fail_response = 'An error occured while trying to verify, please try again';
 
             $final_response = [
                 'status' => 'failed',

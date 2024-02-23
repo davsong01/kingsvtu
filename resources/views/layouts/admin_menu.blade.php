@@ -23,7 +23,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
+            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="user"></i><span class="menu-title">My Profile</span></a></li>
             <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a href="{{ route('settings.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">General Settings</span></a></li>
            
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
