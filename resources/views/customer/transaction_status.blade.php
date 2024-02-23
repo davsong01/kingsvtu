@@ -1,4 +1,4 @@
-<?php 
+<?php
 
     if($transaction->status == 'failed'){
         $color = 'red';
@@ -45,10 +45,10 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="card">
-                                                <div class="col-md-12"> 
+                                                <div class="col-md-12">
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
                                                         <h4 class="card-title">Transaction Status Page</h4>
-                                                        
+
                                                         @if(in_array($transaction->status, ['completed','delivered','pending']))
                                                             <div class="alert alert-success" role="alert" style="margin-bottom: 5px !important; margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
@@ -57,7 +57,7 @@
                                                             <div class="alert alert-danger" role="alert" style="margin-bottom: 5px !important;margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
                                                             </div>
-                                                        
+
                                                         @endif
                                                     </div>
                                                 </div>
@@ -66,7 +66,7 @@
                                                         <div class="card content-area">
                                                         <div class="card-innr">
                                                             <div class="row">
-                                                                
+
                                                                 <div class="col-md-12">
                                                                     @if(!empty($transaction->extras))
                                                                     <h3 style="color:#D50000;font-weight: bold;font-size: 28px;line-height: 28px;text-align: center;"><strong>{{ $transaction->extras }}</strong></h3>
@@ -74,7 +74,7 @@
                                                                     <small style="display:block;font-family: Roboto;font-style: italic;font-weight: normal;font-size: 12px;line-height: 20px;color: #575A5F;text-align:center;">{{ $transaction->instruction }}</small>
                                                                 </div>
                                                             </div>
-                                                            <div class="row">                                         
+                                                            <div class="row">
                                                                 <div class="col-md-1">
                                                                     <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 </div>
@@ -86,7 +86,7 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
-                                                                    
+
                                                                     <span style="color:{{ $color }}">{{ ucfirst($transaction->status) }}</span><br><br>
                                                                     {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
                                                                 </div>
@@ -137,7 +137,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Service: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{{$transaction->product->display_name}} @if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif</div>
                                                                                 </div>
                                                                             </li>
@@ -146,7 +146,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Phone: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{{$transaction->customer_phone}}</div>
                                                                                 </div>
                                                                             </li>
@@ -155,7 +155,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Biller: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{{$transaction->unique_element}}</div>
                                                                                 </div>
                                                                             </li>
@@ -164,17 +164,17 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Email: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{{$transaction->customer_email }}</div>
                                                                                 </div>
                                                                             </li>
-                                                                            
+
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Unit Price: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->unit_price) }}</div>
                                                                                 </div>
                                                                             </li>
@@ -183,7 +183,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Quantity: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{{ number_format($transaction->quantity) }}</div>
                                                                                 </div>
                                                                             </li>
@@ -192,7 +192,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Discount Applied: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->discount) }}</div>
                                                                                 </div>
                                                                             </li>
@@ -201,7 +201,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Amount Paid: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</div>
                                                                                 </div>
                                                                             </li>
@@ -210,7 +210,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Initial Balance: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->balance_before) }}</div>
                                                                                 </div>
                                                                             </li>
@@ -219,13 +219,13 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Final Balance: </p>
                                                                                 </div>
-                                                                                
+
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->balance_after) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                         </ul>
                                                                     </div>
-                                                                   
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -233,7 +233,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </section>
                                 <!-- Nav Filled Ends -->
