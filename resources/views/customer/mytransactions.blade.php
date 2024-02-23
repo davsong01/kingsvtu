@@ -37,7 +37,62 @@
                             <div class="card-body pb-0">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        ssdds
+                                        <form action="{{ route('customer.transaction.history') }}" method="GET">
+                                            @csrf
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <fieldset class="form-group">
+                                                        <label for="service">Service</label>
+                                                        <select class="form-control" name="service" id="service">
+                                                            <option value="">Select</option>
+                                                            @foreach ($products as $product)
+                                                                <option value="{{ $product->id }}" {{ \Request::get('service') == $product->id ? 'selected' : ''}}>{{ $product->display_name }}</option>  
+                                                            @endforeach
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <fieldset class="form-group">
+                                                        <label for="transaction_id">Transaction ID</label>
+                                                        <input type="text" class="form-control" id="transaction_id" name="transaction_id" placeholder="Enter transaction ID" value="{{ \Request::get('transaction_id')}}">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <fieldset class="form-group">
+                                                        <label for="unique_element">Unique Element</label>
+                                                        <input type="text" class="form-control" id="unique_element" name="unique_element" placeholder="Enter unique element" value="{{ \Request::get('unique_element') }}">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <fieldset class="form-group">
+                                                        <label for="status">Status</label>
+                                                        <select class="form-control" name="status" id="status">
+                                                            <option value="">Select</option>
+                                                            <option value="delivered" {{ \Request::get('status') == 'delivered' ? 'selected' : ''}}>Delivered</option>
+                                                            <option value="failed" {{ \Request::get('status') == 'failed' ? 'selected' : ''}}>Failed</option>
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <fieldset class="form-group">
+                                                        <label for="from">From</label>
+                                                        <input type="date" class="form-control" value="{{ \Request::get('from')}}" name="from">
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <fieldset class="form-group">
+                                                        <label for="to">To</label>
+                                                        <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
+                                                    </fieldset>
+                                                </div>
+                                                    
+                                                <div class="col-md-2">
+                                                    <label for="to"></label>
+                                                    <input type="submit" class="form-control btn btn-primary" value="Search">
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <hr>
                                     </div>
                                     @foreach ($transactions as $transaction)
                                     <div class="col-md-6" style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;padding-top:10px">
@@ -52,7 +107,7 @@
                                                         <span class="title">Service</span> <br>
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
-                                                                <strong>{{ $transaction->product->name}}</strong>{{ ' | '. $transaction->variation->system_name }}
+                                                                <strong>{{ $transaction->product->name}}</strong>@if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif
                                                                 @if($transaction->status == 'failed')
                                                                     <span class="text-danger">{{ ucfirst($transaction->status) }}</span>
                                                                 @elseif($transaction->status == 'initiated')
@@ -66,7 +121,7 @@
                                                         </small><br>
                                                         <span class="title">Amount Paid</span> <br>
                                                         <small>
-                                                            {{ number_format($transaction->amount) }}</strong>
+                                                            {!! getSettings()['currency']!!}{{ number_format($transaction->total_amount) }}</strong>
                                                         </small> <br>
                                                         <span class="title">Transaction Id</span> <br>
                                                         <small>
@@ -92,6 +147,9 @@
                                     <hr>
                                     @endforeach
                                 </div>
+                            </div>
+                            <div class="card-footer">
+                                {!! $transactions->appends($_GET)->links() !!}
                             </div>
                         </div>
                     </div>

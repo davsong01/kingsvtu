@@ -125,6 +125,7 @@ class TransactionController extends Controller
         $request['product_slug'] = $variation->product->slug ?? $product->slug;
         $request['variation_slug'] = $variation->slug ?? null;
         $request['network'] = $variation->network ?? null;
+        $request['subscription_type'] = $variation->bouquet ?? 'change';
 
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
@@ -385,7 +386,8 @@ class TransactionController extends Controller
 
     public function customerTransactionHistory()
     {
-        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id)->paginate();
-        return view('customer.mytransactions', compact('transactions'));
+        $products = Product::where('status', 'active')->get();
+        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id)->orderBy('created_at', 'DESC')->paginate(20);
+        return view('customer.mytransactions', compact('transactions', 'products'));
     }
 }

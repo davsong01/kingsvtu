@@ -66,6 +66,7 @@ class VtpassController extends Controller
             ];
 
             $payload = [
+                'subscription_type' => $request['subscription_type'],
                 'serviceID' => $request['product_slug'],
                 'variation_code' => $request['variation_name'],
                 'request_id' => $request['request_id'],
