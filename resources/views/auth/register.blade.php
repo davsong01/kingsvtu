@@ -59,8 +59,8 @@
                         <button type="submit" class="btn btn-primary glow w-100 position-relative">Register</button>
                     </form>
                     <hr>
-                    <div class="text-center"><small class="mr-25">Don't have an account?</small><a
-                            href="{{ route('register') }}"><small>Sign up</small></a></div>
+                    <div class="text-center"><small class="mr-25">Already have an account?</small><a
+                            href="{{ route('login') }}"><small>Login</small></a></div>
                 </div>
             </div>
         </div>
