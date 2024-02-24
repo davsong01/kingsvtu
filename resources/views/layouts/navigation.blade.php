@@ -9,16 +9,21 @@
                     </ul>
                 </div>
                 <ul class="nav navbar-nav float-right">
-                    
+
                     <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-expand"><i class="ficon bx bx-fullscreen"></i></a></li>
-                    <?php 
+                    <?php
                         $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user())) : 0;
+                        $ref = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(referralBalance(auth()->user())) : 0;
                     ?>
                     @if(auth()->user()->type == 'customer')
-                    <li class="nav-item d-lg-block"><a class="nav-link nav-link-expand"><strong>Balance: </strong>{!! $balance !!}</a></li>
+                    <li class="nav-item d-lg-block"><a class="nav-link nav-link-expand">
+                        <strong>Balance: </strong>{!! $balance !!}
+                        <br/>
+                        <strong>Referral Earning: </strong>{!! $ref !!}</a>
+                    </a></li>
                     @endif
-                    
-                    
+
+
                 </ul>
             </div>
         </div>

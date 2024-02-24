@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
+use App\Models\ReferralEarning;
+use App\Models\User;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
@@ -194,15 +196,15 @@ class TransactionController extends Controller
 
     public function processTransaction($request, $transaction, $product, $variation)
     {
-
         $failure_reason = '';
         $api = $variation->api ?? $product->api;
         // Get Api
         $file_name = $api->file_name;
 
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
-
         if (isset($query) && $query['status_code'] == 1) {
+            $user = auth()->user();
+            $this->referralReward($user->referral, $request['amount'], $user->customer->id, $request['transaction_id']);
             $res = [
                 'status' => $query['status'],
                 'message' => 'Transaction Successful!',
@@ -435,5 +437,48 @@ class TransactionController extends Controller
 
         $products = Product::where('status', 'active')->get();
         return view('customer.mytransactions', compact('transactions', 'products'));
+    }
+
+    function referralReward ($ref, $amount, $customer_id, $transaction_id) {
+        if ($ref) {
+            $user = User::where('username', $ref)->first();
+            if ($user) {
+                $sett = getSettings();
+                if ($sett->referral_system_status == 'active') {
+                    $cut  = $sett->referral_percentage;
+                    $cal = $cut / 100 * $amount;
+
+                    $customer =  $user->customer;
+                    $current = $customer->referal_wallet;
+
+                    $sum = $current + $cal;
+                    $this->logEarnings(
+                        'credit',
+                        $customer->id,
+                        $customer_id,
+                        $cal,
+                        $current,
+                        $sum,
+                        $transaction_id,
+                    );
+                    $customer->referal_wallet = $sum;
+                    $customer->save();
+                }
+            }
+        }
+    }
+
+    public function logEarnings ($type, $customer, $referred, $amount, $before, $after, $transaction_id) {
+        $ref = ReferralEarning::create([
+            'type' => $type,
+            'customer_id' => $customer,
+            'referred_customer_id' => $referred,
+            'amount' => $amount,
+            'balance_before' => $before,
+            'balance_after' => $after,
+            'transaction_id' => $transaction_id,
+        ]);
+
+        return $ref;
     }
 }

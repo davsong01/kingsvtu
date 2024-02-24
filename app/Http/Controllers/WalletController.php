@@ -11,6 +11,10 @@ class WalletController extends Controller
         return $user->customer->wallet;
     }
 
+    public function getReferralBalance($user){
+        return $user->customer->referral_wallet;
+    }
+
     public function logWallet($data){
         $wallet = Wallet::create([
             'customer_id' => $data['customer_id'],
@@ -19,7 +23,7 @@ class WalletController extends Controller
             'transaction_id' => $data['transaction_id'] ?? null,
             'reason' => $data['reason'] ?? null,
         ]);
-        
+
         return $wallet;
     }
 
