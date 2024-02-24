@@ -30,6 +30,11 @@
                             value="{{ old('email') }}" placeholder="Enter your email address" required>
                         </div>
                         <div class="form-group mb-50">
+                            <label class="text-bold-600" for="phone">Phone Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                            value="{{ old('phone') }}" placeholder="Enter your phone number" required>
+                        </div>
+                        <div class="form-group mb-50">
                             <label class="text-bold-600" for="username">Username <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="username" name="username"
                                 value="{{ old('username') }}" placeholder="Username" required>
