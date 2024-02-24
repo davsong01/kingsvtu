@@ -29,6 +29,11 @@
                                 value="{{ old('email') }}" placeholder="Enter your email address" required>
                             </div>
                             <div class="form-group col-sm-6 col-12 mb-50">
+                                <label class="text-bold-600" for="phone">Phone Number <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                value="{{ old('phone') }}" placeholder="Enter your phone number" required>
+                            </div>
+                            <div class="form-group col-sm-6 col-12 mb-50">
                                 <label class="text-bold-600" for="username">Username <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="username" name="username"
                                     value="{{ old('username') }}" placeholder="Username" required>
@@ -47,15 +52,15 @@
                         <div class="form-group mb-50 mt-2 ">
                             <div class="checkbox checkbox-success checkbox-glow">
                                 <input type="checkbox" id="checkboxGlow3" name="privacy" required>
-                                <label for="checkboxGlow3"><p>I agree to the <a href="privacy-policy">privacy policy</a> of the KingVtu</p></label>
+                                <label for="checkboxGlow3"><p>I agree to the <a href="privacy-policy">privacy policy</a> of {{ config('app.name')}}</p></label>
                             </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary glow w-100 position-relative">Register</button>
                     </form>
                     <hr>
-                    <div class="text-center"><small class="mr-25">Have an account?</small><a
-                            href="{{ route('login') }}"><small>Sign in</small></a></div>
+                    <div class="text-center"><small class="mr-25">Already have an account?</small><a
+                            href="{{ route('login') }}"><small>Login</small></a></div>
                 </div>
             </div>
         </div>
