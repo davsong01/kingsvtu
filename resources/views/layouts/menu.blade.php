@@ -16,6 +16,7 @@
                 $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user())) : 0;
             ?>
             <li style="color: #fff;" class="navigation-header"><span>Wallet Balance</span><br>{!! $balance !!}</li>
+            <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br>{!! $balance !!}</li>
 
            
             <li class=" navigation-header"><span>Make Payment</span></li>

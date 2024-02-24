@@ -45,7 +45,7 @@ class RegisteredUserController extends Controller
             'firstname' => $request->first_name,
             'lastname' => $request->last_name,
             'username' => $request->username,
-            'referral' => $request->referral,
+            'referral' => $request->referral ?? '',
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => 'active',

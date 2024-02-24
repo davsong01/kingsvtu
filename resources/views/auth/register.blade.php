@@ -23,39 +23,39 @@
                                 <label class="text-bold-600" for="lastName">Last Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="lastName" name="last_name" value="{{ old('last_name') }}" placeholder="Last name" required>
                             </div>
+                            <div class="form-group col-sm-6 col-12 mb-50">
+                                <label class="text-bold-600" for="email">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                value="{{ old('email') }}" placeholder="Enter your email address" required>
+                            </div>
+                            <div class="form-group col-sm-6 col-12 mb-50">
+                                <label class="text-bold-600" for="username">Username <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    value="{{ old('username') }}" placeholder="Username" required>
+                            </div>
+                            <div class="form-group mb-50 col-sm-6 col-12 mb-50">
+                                <label class="text-bold-600" for="ref">Referral ID</label>
+                                <input type="text" class="form-control" id="referral" name="referral"
+                                    value="{{ request()->referral }}" placeholder="Enter referral id">
+                            </div>
+                            <div class="form-group mb-50 col-sm-6 col-12 mb-50">
+                                <label class="text-bold-600" for="password">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Password" required>
+                            </div>
                         </div>
-                        <div class="form-group mb-50">
-                            <label class="text-bold-600" for="email">Email Address <span class="text-danger">*</span></label>
-                            <input type="email" class="form-control" id="email" name="email"
-                            value="{{ old('email') }}" placeholder="Enter your email address" required>
-                        </div>
-                        <div class="form-group mb-50">
-                            <label class="text-bold-600" for="username">Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                value="{{ old('username') }}" placeholder="Username" required>
-                        </div>
-                        <div class="form-group mb-50">
-                            <label class="text-bold-600" for="ref">Your Referral</label>
-                            <input type="text" class="form-control" id="email" name="referral"
-                                value="{{ request()->referral }}" placeholder="Referral Your">
-                        </div>
-                        <div class="form-group">
-                            <label class="text-bold-600" for="password">Password <span class="text-danger">*</span></label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Password" required>
-                        </div>
-                        <div class="form-group mb-50 mt-2">
-                                <div class="checkbox checkbox-success checkbox-glow">
-                                    <input type="checkbox" id="checkboxGlow3" name="privacy" required>
-                                    <label for="checkboxGlow3"><p>I agree to the <a href="privacy-policy">privacy policy</a> of the KingVtu</p></label>
-                                </div>
+                        <div class="form-group mb-50 mt-2 ">
+                            <div class="checkbox checkbox-success checkbox-glow">
+                                <input type="checkbox" id="checkboxGlow3" name="privacy" required>
+                                <label for="checkboxGlow3"><p>I agree to the <a href="privacy-policy">privacy policy</a> of the KingVtu</p></label>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary glow w-100 position-relative">Register</button>
                     </form>
                     <hr>
-                    <div class="text-center"><small class="mr-25">Don't have an account?</small><a
-                            href="{{ route('register') }}"><small>Sign up</small></a></div>
+                    <div class="text-center"><small class="mr-25">Have an account?</small><a
+                            href="{{ route('login') }}"><small>Sign in</small></a></div>
                 </div>
             </div>
         </div>

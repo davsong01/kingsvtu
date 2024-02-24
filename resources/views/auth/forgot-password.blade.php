@@ -31,7 +31,7 @@
     <div class="card disable-rounded-right d-flex justify-content-center">
         <div class="card-header pb-1">
             <div class="card-title">
-                <h4 class="text-center mb-2">'Forgot your password?</h4>
+                <h4 class="text-center mb-2">Forgot your password?</h4>
                 <p> No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one</p>
             </div>
         </div>
