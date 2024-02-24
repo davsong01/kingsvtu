@@ -1,16 +1,17 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\CustomerLevelController;
 
 
 /*
@@ -60,7 +61,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customer/edit/{id}', [CustomerController::class, 'singleCustomer'])->name('customers');
     Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers');
-
+    Route::resource('customerlevel', CustomerLevelController::class);
+    
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
 

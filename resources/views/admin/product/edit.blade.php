@@ -195,7 +195,7 @@
                                                                                     <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ $product->quantity_graduation }}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="name">Allow Subscription Type</label>
+                                                                                    <label for="name">Allow Subscription Type (For DSTV and GOTV purchses)</label>
                                                                                     <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
                                                                                         <option value="">Select</option>
                                                                                         <option value="yes" {{ $product->allow_subscription_type == 'yes' ? 'selected' : ''}}>Yes</option>

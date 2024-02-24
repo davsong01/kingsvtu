@@ -37,6 +37,9 @@
                     </li>
                     <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
                     </li>
+
+                    <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customerlevel"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Customer Levels</span></a>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">User Management</span></a>

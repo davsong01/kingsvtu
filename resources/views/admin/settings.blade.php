@@ -64,6 +64,18 @@
                                                                                 @endforeach
                                                                             </select>
                                                                         </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="referral_system_status">Referral System Status</label>
+                                                                            <select name="referral_system_status" class="form-control" id="referral_system_status">
+                                                                                <option value="">Select</option>
+                                                                                <option value="active"{{ $settings->referral_system_status == 'active' ? 'selected' : ''}}>Active</option>
+                                                                                <option value="inactive" {{ $settings->referral_system_status == 'inactive' ? 'selected' : ''}}>InActive</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
+                                                                            <label for="referral_percentage">Referral Percentage</label>
+                                                                            <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $settings->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
+                                                                        </fieldset>
                                                                     </div>
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
@@ -118,5 +130,25 @@
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script>
+    $('#referral_system_status').on('change', function (e) {
+        var referral_system_status = $('#referral_system_status').val();
+       
+        if (referral_system_status == '' || referral_system_status == 'inactive') {
+            $('#referral_percentage_div').hide();
+            $("#referral_percentage").attr({
+                "required": false,
+            });
+            return;
+        }else if(referral_system_status == 'active'){
+            $('#referral_percentage_div').show();
+
+            $("#referral_percentage").attr({
+                "required": true,
+            });
+        }
+    });
+   
+</script>
 
 @endsection

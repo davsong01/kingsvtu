@@ -43,7 +43,7 @@ class SettingsController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Settings $settings)
-    {
+    {   
         $settings = Settings::first();
         if (!$settings) {
             $settings = Settings::create([
