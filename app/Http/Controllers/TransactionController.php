@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Variation;
-use App\Models\Transaction;
-use Spatie\FlareClient\Api;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
-use Illuminate\Support\Facades\Auth;
+use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
@@ -148,6 +146,18 @@ class TransactionController extends Controller
     {
         $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
         return view('customer.transaction_status', compact('transaction'));
+    }
+
+    public function transactionReceipt($transaction_id)
+    {
+        $transaction = TransactionLog::where('id', $transaction_id)->first();
+        Pdf::view('customer.receipts.transaction_receipt', ['transaction' => $transaction])
+            ->format('a4')
+            ->save('ii.pdf');
+
+    
+        // dd($transaction, $transaction_id);
+        // return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
     public function sendTransactionEmail($transaction)
@@ -384,10 +394,35 @@ class TransactionController extends Controller
         return $code;
     }
 
-    public function customerTransactionHistory()
+    public function customerTransactionHistory(Request $request)
     {
+        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id);
+
+        if (!empty($request->service)) {
+            $transactions = $transactions->where('product_id', $request->service);
+        }
+
+        if (!empty($request->unique_element)) {
+            $transactions = $transactions->where('unique_element', $request->unique_element);
+        }
+
+        if (!empty($request->status)) {
+            $transactions = $transactions->where('status', $request->status);
+        }
+
+        if (!empty($request->transaction_id)) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+
+        if (!empty($request->from) && !empty($request->to)) {
+            $from = $request->from . " 00:00:00";
+            $to = $request->to . " 23:59:59";
+            $transactions = $transactions->whereBetween('created_at', [$from, $to]);
+        }
+        // dd($transactions->get());
+        $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
+
         $products = Product::where('status', 'active')->get();
-        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id)->orderBy('created_at', 'DESC')->paginate(20);
         return view('customer.mytransactions', compact('transactions', 'products'));
     }
 }
