@@ -31,7 +31,7 @@ class TransactionController extends Controller
     public function initializeTransaction(Request $request)
     {
         // Check Transaction pin
-        $pinCheck = $this->checkTransactionPin($request);
+        // $pinCheck = $this->checkTransactionPin($request);
 
         if (!$pinCheck) {
             return back()->with('error', 'Invalid Transaction PIN!');

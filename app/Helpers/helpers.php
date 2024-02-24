@@ -79,6 +79,17 @@ if (!function_exists("getSettings")) {
     }
 }
 
+if (!function_exists("adminPermission")) {
+    function adminPermission()
+    {
+       return [
+        1 => 'View Customer',
+        2 => 'Add Customer',
+        3 => 'View Transactions',
+       ];
+    }
+}
+
 if (!function_exists("specialVerifiableVariations")) {
     function specialVerifiableVariations()
     {

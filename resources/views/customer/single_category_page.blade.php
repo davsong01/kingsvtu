@@ -1,4 +1,4 @@
-<?php 
+<?php
     $verifiable = verifiableUniqueElements();
 ?>
 @extends('layouts.app')
@@ -23,7 +23,7 @@
  <div class="app-content content">
     <div class="content-overlay"></div>
     <div class="content-wrapper">
-        
+
         <div class="content-body">
             <!-- Basic Inputs start -->
             <section id="basic-input">
@@ -44,7 +44,7 @@
                                                     <div class="card-body">
                                                         <form action="{{route('initialize.transaction')}}" method="POST"  id="initialize">
                                                             @csrf
-                                                            
+
                                                             <div class="row">
                                                                 <div class="col-md-9">
                                                                     <div class="d-flex pb-1 justify-content-start align-items-center w-100">
@@ -59,7 +59,7 @@
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
                                                                                 <label for="product">Select Service</label>
-                                                                            
+
                                                                                 <select class="form-control" name="product" id="product" required>
                                                                                     <option value="">Select</option>
                                                                                     @foreach ($category->products as $item)
@@ -76,7 +76,7 @@
                                                                                 </select>
                                                                             </fieldset>
                                                                         </div>
-                                                                        
+
                                                                         @if($category->slug == 'electricity')
                                                                         <div class="col-md-6 unique_element_div" style="display:none">
                                                                             <fieldset class="form-group">
@@ -140,20 +140,20 @@
                                                                             </fieldset>
                                                                         </div>
                                                                     </div>
-                                                                    
-                                                                    
-                                                                    
+
+
+
                                                                   </form>
                                                                     {{-- <button id="buy-buttonx" class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button> --}}
                                                                     <button id="buy-buttonx" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
                                                                 </div>
-                                                                
+
                                                                 <div class="col-md-3">
                                                                     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pubxxx" crossorigin="anonymous"></script>
-                                                                    <script>(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;</script><script>(adsbygoogle = window.adsbygoogle || []).push({});</script> 
+                                                                    <script>(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;</script><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
                                                                 </div>
                                                             </div>
-                                                      
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -198,12 +198,12 @@
 
         var unique_element = $("#unique_element").val();
         var category_slug = $("#category_slug").val();
-        
+
         if(unique_element == ''){
             alert("Please enter biller to verify");
             return;
         }
-       
+
         $.LoadingOverlay("show");
         $('#verify-modal').modal('hide');
         var amount = $('#amount').val();
@@ -211,14 +211,14 @@
         var url = "{{ url('customer-verify') }}";
         var element = "{{ $category->unique_element }}";
         var allow_subscription_type = $('#product').find(':selected').data('allow_subscription_type');
-        
+
         var formData =  {
             category_id: {{ $category->id }},
             unique_element: $("#unique_element").val(),
             variation: $("#variation").val(),
             product_id: $("#product").val(),
         };
-       
+
         $.ajax({
             url: url,
             method: 'POST',
@@ -243,7 +243,7 @@
                             "required":false
                         });
                     }
-    
+
                     $("#continue_payment").show();
 
                 }else{
@@ -266,14 +266,14 @@
                 return;
             }
         }
-        
+
         $.LoadingOverlay("show");
         document.forms["initialize"].submit();
     }
 
     $(document).ready(function () {
         var variations = [];
-       
+
         $('#product').on('change', function () {
             var fixed_price = $('#product').find(':selected').data('fixed_price');
             var has_variation= $('#product').find(':selected').data('has_variation');
@@ -287,7 +287,7 @@
 
             $("#verify-link").hide();
             $(".unique_element_div").hide();
-            
+
             if (product == '') {
                 $('#variation-div').hide();
                 $('#amount-div').hide();
@@ -295,7 +295,7 @@
                 $('#amount').hide();
                 $('#quantity').hide();
                 return;
-            } 
+            }
 
             var image = $('#product').find(':selected').data('image');
             var title = $('#product').find(':selected').data('name');
@@ -316,19 +316,19 @@
                 $('#variation-div').show();
                 $('#variation').show();
                 $('#amount-div').hide();
-        
+
                 $("#amount").prop('readonly', false);
                 $("#amount").val('');
-        
+
                 $('#variation').find('option').not(':first').remove();
-        
+
                 $.ajax({
                     url: "{{ url('customer-get-variations') }}/" + product,
                     success: function (data) {
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
                                 $('#variation').append(`<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
-                                
+
                                 variations.push({
                                     "id": data[t].id,
                                     "verifiable": data[t].verifiable,
@@ -354,7 +354,7 @@
                         "max": "",
                         "min": ""
                     });
-                    
+
                     $('#amount').val(system_price);
                     $("#amount").attr({
                         "readonly": "true",
@@ -372,7 +372,7 @@
                 $('#quantity-div').show();
                 $('#quantity').show();
                 var data = quantity_graduation.split(",");
-                
+
                 if (data && data.length > 0) {
                     for (t = 0; t < data.length; t++) {
                         $('#quantity').append(`<option value="${data[t]}"> ${data[t]}</option>`);
@@ -389,9 +389,9 @@
             var amount = $('#bouquet').find(':selected').data('amount');
             var old_amount = $('#amount').val();
             if($('#bouquet') == 'change'){
-                $('#amount').val(old_amount); 
+                $('#amount').val(old_amount);
             }else{
-                $('#amount').val(amount); 
+                $('#amount').val(amount);
             }
         });
 
@@ -403,7 +403,7 @@
                 "required":false
             });
             // $("#unique_element").hide();
-            
+
             var v = e.target.value;
             var selected = variations.filter((item) => {
                 return item.id == v;
@@ -425,21 +425,21 @@
                     "max": "",
                     "min": ""
                 });
-    
+
                 $('#amount').val(selected[0].variation_amount);
                 $("#amount").attr({
                     "readonly": "true",
                 });
-    
+
             } else {
                 $("#amount").prop('readonly', false);
                 $("#amount").attr({
                     "max": selected[0].max,
                     "min": selected[0].min,
                 });
-            }    
+            }
         });
-    
+
         function showAllUniqueElement(){
             $("#verify-link").show();
             $(".unique_element_div").show();

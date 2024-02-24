@@ -46,7 +46,7 @@
                                                         <select class="form-control" name="service" id="service">
                                                             <option value="">Select</option>
                                                             @foreach ($products as $product)
-                                                                <option value="{{ $product->id }}" {{ \Request::get('service') == $product->id ? 'selected' : ''}}>{{ $product->display_name }}</option>  
+                                                                <option value="{{ $product->id }}" {{ \Request::get('service') == $product->id ? 'selected' : ''}}>{{ $product->display_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </fieldset>
@@ -85,7 +85,7 @@
                                                         <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
                                                     </fieldset>
                                                 </div>
-                                                    
+
                                                 <div class="col-md-2">
                                                     <label for="to"></label>
                                                     <input type="submit" class="form-control btn btn-primary" value="Search">
@@ -100,24 +100,24 @@
                                             <!-- chart-1   -->
                                             <div class="d-flex market-statistics-1" style="position: relative;">
                                                 <!-- chart-statistics-1 -->
-                                                
+
                                                 <!-- data -->
                                                 <div class="statistics-data my-auto">
                                                     <div class="statistics">
                                                         <span class="title">Service</span> <br>
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
-                                                                <strong>{{ $transaction->product->name}}</strong>@if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif
+                                                                <strong>{{ $transaction->product->name}}</strong>}@if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} @endif
                                                                 @if($transaction->status == 'failed')
                                                                     <span class="text-danger">{{ ucfirst($transaction->status) }}</span>
                                                                 @elseif($transaction->status == 'initiated')
                                                                     <span class="text-warning">{{ ucfirst($transaction->status) }}</span>
-                                                                @else 
+                                                                @else
                                                                     <span class="text-success">{{ ucfirst($transaction->status) }}</span>
                                                                 @endif
                                                             </span> <br>
                                                             {{ $transaction->unique_element }}
-                                                            
+
                                                         </small><br>
                                                         <span class="title">Amount Paid</span> <br>
                                                         <small>
@@ -153,7 +153,7 @@
                             </div>
                         </div>
                     </div>
-                </div>      
+                </div>
             </div>
         </div>
     </div>
@@ -161,5 +161,5 @@
 @endsection
 
 @section('page-script')
-<script src="{{asset('asset/js/app-logistics-dashboard.js')}}"></script>  
+<script src="{{asset('asset/js/app-logistics-dashboard.js')}}"></script>
 @endsection

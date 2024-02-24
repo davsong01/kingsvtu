@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\ProductController;
@@ -55,13 +57,25 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('api', APIController::class);
     Route::resource('category', CategoryController::class);
 
+    Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
+    Route::get('customer/edit/{id}', [CustomerController::class, 'singleCustomer'])->name('customers');
+    Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers');
+
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
+
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('admins', 'index')->name('admins');
+        Route::get('admin/new', 'create')->name('newAdmin');
+        Route::post('admin/save', 'store')->name('adminSave');
+        Route::get('admin/view', 'view')->name('viewAdmin');
+        Route::post('admin/update', 'update')->name('updateAdmin');
+    });
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');
 
-    
+
 });
 
 require __DIR__ . '/auth.php';
