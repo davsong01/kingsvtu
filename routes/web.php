@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
     Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
     Route::get('transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
+    Route::get('download-transaction-receipt/{transaction_id}', [TransactionController::class, 'transactionReceipt'])->name('transaction.receipt.download');
 });
 
 Route::middleware('auth')->group(function () {

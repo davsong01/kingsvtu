@@ -82,7 +82,7 @@
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif </strong></h3></span>
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
                                                                     <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</strong></span> <br>
-                                                                    <a href="" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
+                                                                    <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
