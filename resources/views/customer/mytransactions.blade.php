@@ -107,7 +107,7 @@
                                                         <span class="title">Service</span> <br>
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
-                                                                <strong>{{ $transaction->product->name}}</strong>}@if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} @endif
+                                                                <strong>{{ $transaction->product->name}}</strong>@if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} @endif
                                                                 @if($transaction->status == 'failed')
                                                                     <span class="text-danger">{{ ucfirst($transaction->status) }}</span>
                                                                 @elseif($transaction->status == 'initiated')

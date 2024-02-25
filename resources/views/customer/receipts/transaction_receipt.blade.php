@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>{{ $transaction->product_name}}</title>
+		<title>{{ $transaction['product_name']}}</title>
 
 		<style>
 			.invoice-box {
@@ -47,9 +47,10 @@
 			}
 
 			.invoice-box table tr.heading td {
-				background: #eee;
+				background: #1a233a;;
 				border-bottom: 1px solid #ddd;
 				font-weight: bold;
+				color:white
 			}
 
 			.invoice-box table tr.details td {
@@ -108,13 +109,11 @@
 							<tr>
 								<td class="title">
 									<img src="{{ asset(getSettings()['logo'])}}" style="width: 10%; max-width: 300px"/>
-									<img src="{{ asset($transaction->product->image )}}" style="width: 10%; max-width: 300px"/>
+									<img src="{{ asset($transaction['product']['image'] )}}" style="width: 10%; max-width: 300px"/>
 								</td>
 
-								<td>
-									Transaction ID #: 123<br />
-									Created: January 1, 2023<br />
-									Due: February 1, 2023
+								<td style="width: 50%;">
+									<strong>{{ date("M jS, Y g:iA", strtotime($transaction['created_at'])) }} </strong><br />
 								</td>
 							</tr>
 						</table>
@@ -125,63 +124,84 @@
 					<td colspan="2">
 						<table>
 							<tr>
-								<td>
-									Sparksuite, Inc.<br />
-									12345 Sunny Road<br />
-									Sunnyville, CA 12345
+								<td style="padding-left: 0px;">
+									Payment for: <br />
+									 <strong>{{ $transaction['product']['name']}}</strong>@if(!empty($transaction['variation']['system_name'])) {{ " | ". $transaction['variation']['system_name'] }}@endif
 								</td>
 
-								<td>
+								{{-- <td>
 									Acme Corp.<br />
 									John Doe<br />
-									john@example.com
-								</td>
+									john@example.com --}}
+								{{-- </td> --}}
 							</tr>
 						</table>
 					</td>
 				</tr>
-
 				<tr class="heading">
-					<td>Payment Method</td>
+					<td>Transaction Details</td>
 
-					<td>Check #</td>
-				</tr>
-
-				<tr class="details">
-					<td>Check</td>
-
-					<td>1000</td>
-				</tr>
-
-				<tr class="heading">
-					<td>Item</td>
-
-					<td>Price</td>
-				</tr>
-
-				<tr class="item">
-					<td>Website design</td>
-
-					<td>$300.00</td>
-				</tr>
-
-				<tr class="item">
-					<td>Hosting (3 months)</td>
-
-					<td>$75.00</td>
-				</tr>
-
-				<tr class="item last">
-					<td>Domain name (1 year)</td>
-
-					<td>$10.00</td>
-				</tr>
-
-				<tr class="total">
 					<td></td>
-
-					<td>Total: $385.00</td>
 				</tr>
+				@if(!empty($transaction['descr']))
+				<tr class="item">
+					<td>Description</td>
+					<td>{{ $transaction['descr'] }}</td>
+				</tr>
+				@endif
+				@if(!empty($transaction['extras']))
+				<tr class="item">
+					<td>Extras</td>
+					<td>{{ ucfirst($transaction['extras']) }}</td>
+				</tr>                                                        
+				@endif
+
+				<tr class="item">
+					<td>Payment Method</td>
+					<td>{{ ucfirst($transaction['payment_method']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Service</td>
+					<td>{{$transaction['product']['display_name']}} @if(!empty($transaction['variation']['system_name'])) ({{$transaction['variation']['system_name']}})@endif</td>
+				</tr>
+				<tr class="item">
+					<td>Phone</td>
+					<td>{{$transaction['customer_phone']}}</td>
+				</tr>
+				<tr class="item">
+					<td>Biller</td>
+					<td>{{$transaction['unique_element']}}</td>
+				</tr>
+				<tr class="item">
+					<td>Email</td>
+					<td>{{$transaction['customer_email']}}</td>
+				</tr>
+				<tr class="item">
+					<td>Unit Price</td>
+					<td>{!! getSettings()->currency !!}{{ number_format($transaction['unit_price']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Quantity</td>
+					<td>{{ number_format($transaction['quantity']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Discount Applied</td>
+					<td>{!! getSettings()->currency !!}{{ number_format($transaction['discount']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Total Amount Paid</td>
+					<td>{!! getSettings()->currency !!}{{ number_format($transaction['total_amount']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Initial Balance</td>
+					<td>{!! getSettings()->currency !!}{{ number_format($transaction['balance_before']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Final Balance</td>
+					<td>{!! getSettings()->currency !!}{{ number_format($transaction['balance_after']) }}</td>
+				</tr>
+
+
 			</table>
 		</div>
 	</body>

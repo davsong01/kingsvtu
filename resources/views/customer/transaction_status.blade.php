@@ -49,7 +49,7 @@
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
                                                         <h4 class="card-title">Transaction Status Page</h4>
 
-                                                        @if(in_array($transaction->status, ['completed','delivered','pending']))
+                                                        @if(in_array($transaction->status, ['completed','delivered','pending','attention-required']))
                                                             <div class="alert alert-success" role="alert" style="margin-bottom: 5px !important; margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
                                                             </div>
@@ -57,7 +57,6 @@
                                                             <div class="alert alert-danger" role="alert" style="margin-bottom: 5px !important;margin-top:10px">
                                                                 <strong>{{ strtoupper($transaction->descr) }}</strong>
                                                             </div>
-
                                                         @endif
                                                     </div>
                                                 </div>
@@ -86,8 +85,7 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
-
-                                                                    <span style="color:{{ $color }}">{{ ucfirst($transaction->status) }}</span><br><br>
+                                                                    <span style="color:{{ $color }}">{{ ucfirst($transaction->descr) }}</span><br><br>
                                                                     {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
                                                                 </div>
                                                                 <div class="col-md-3">

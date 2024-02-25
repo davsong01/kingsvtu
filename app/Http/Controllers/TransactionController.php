@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
-use App\Models\ReferralEarning;
-use App\Models\User;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
-use Spatie\LaravelPdf\Facades\Pdf;
+use App\Models\ReferralEarning;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
@@ -157,12 +157,12 @@ class TransactionController extends Controller
 
     public function transactionReceipt($transaction_id)
     {
-        $transaction = TransactionLog::where('id', $transaction_id)->first();
-        Pdf::view('customer.receipts.transaction_receipt', ['transaction' => $transaction])
-            ->format('a4')
-            ->save('ii.pdf');
+        $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
+
+        // $pdf = Pdf::loadView('customer.receipts.transaction_receipt', $transaction)->setPaper('a4', 'portrait');
+        // return $pdf->download('invoice.pdf');
         // dd($transaction, $transaction_id);
-        // return view('customer.receipts.transaction_receipt', compact('transaction'));
+        return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
     public function sendTransactionEmail($transaction)
@@ -438,7 +438,8 @@ class TransactionController extends Controller
         return view('customer.mytransactions', compact('transactions', 'products'));
     }
 
-    function referralReward ($ref, $amount, $customer_id, $transaction_id) {
+    function referralReward($ref, $amount, $customer_id, $transaction_id)
+    {
         if ($ref) {
             $user = User::where('username', $ref)->first();
             if ($user) {
@@ -467,7 +468,8 @@ class TransactionController extends Controller
         }
     }
 
-    public function logEarnings ($type, $customer, $referred, $amount, $before, $after, $transaction_id) {
+    public function logEarnings($type, $customer, $referred, $amount, $before, $after, $transaction_id)
+    {
         $ref = ReferralEarning::create([
             'type' => $type,
             'customer_id' => $customer,
