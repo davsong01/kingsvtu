@@ -141,12 +141,14 @@
                                                                                 </select>
                                                                             </fieldset>
                                                                         </div>
+                                                                        @if (auth()->user()->transaction_pin)
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
                                                                                 <label for="transaction_pin">Transaction PIN</label><span class="reset-pin"><a href="{{ route('customer.reset.pin') }}"> Reset Transaction Pin</a></span>
                                                                                 <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
                                                                             </fieldset>
                                                                         </div>
+                                                                        @endif
                                                                     </div>
 
 
