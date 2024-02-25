@@ -2,15 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Discount;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerLevel extends Model
 {
     use HasFactory;
     protected $guarded = [];
     
-    public function customer(){
+    public function customers(){
         return $this->hasMany(Customer::class, 'customer_level');
+    }
+
+    public function variation_price($variation_id)
+    {
+        $price = null;
+        $price = Discount::where('variation_id', $variation_id)->value('price');
+        return $price;
     }
 }

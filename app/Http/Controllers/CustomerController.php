@@ -62,4 +62,5 @@ class CustomerController extends Controller
             return back()->with('error', 'Failed to update profile');
         }
     }
+
 }

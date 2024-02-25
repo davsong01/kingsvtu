@@ -119,10 +119,18 @@
                                                                                 <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
                                                                             </fieldset>
                                                                         </div>
+                                                                        {{-- <fieldset class="form-group position-relative has-icon-left">
+                                                                            <input type="text" class="form-control" id="iconLeft1" placeholder="Icon Left, Default Input">
+                                                                            <div class="form-control-position">
+                                                                                <i class="bx bx-user"></i>
+                                                                            </div>
+                                                                        </fieldset> --}}
                                                                         <div class="col-md-6" id="amount-div" style="display:none">
                                                                             <fieldset class="form-group">
-                                                                                <label for="amount" class="">Amount</label>
+                                                                                <label for="amount" class="">Amount {!! getSettings()['currency'] !!}</label>
                                                                                 <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
+                                                                                
+                                                                                <small ><span id="discount" style="display:none;color: red;"></span></small>
                                                                             </fieldset>
                                                                         </div>
                                                                         <div class="col-md-6" id="quantity-div" style="display:none">
@@ -336,7 +344,8 @@
                                     "max": data[t].max,
                                     "min": data[t].min,
                                     "fixedPrice": data[t].fixed_price,
-                                    "variation_amount": data[t].system_price
+                                    "variation_amount": data[t].system_price,
+                                    "discount": data[t].discount
                                 });
                             }
                         }
@@ -419,7 +428,15 @@
             }else{
                 hideAllUniqueElement();
             }
-
+            var currency = "{!! getSettings()['currency'] !!}";
+            console.log(currency);
+            if (selected[0].discount > 0) {
+                $("#discount").html("You get a discount of "+currency+selected[0].discount);
+                $("#discount").show();
+            }else{
+                $("#discount").html("");
+                $("#discount").hide();
+            }
             if (selected[0].fixedPrice == 'Yes') {
                 $("#amount").attr({
                     "max": "",

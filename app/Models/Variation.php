@@ -27,4 +27,11 @@ class Variation extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function customer_level_price($level)
+    {
+        $price = null;
+        $price = Discount::where(['variation_id' => $this->id, 'customer_level' => $level])->value('price');
+        return $price;
+    }
 }

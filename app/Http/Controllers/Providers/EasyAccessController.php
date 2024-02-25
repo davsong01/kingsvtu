@@ -23,9 +23,6 @@ class EasyAccessController extends Controller
                 'api_id' => $product['api']['id'],
                 'api_name' => $variation['name'],
                 'slug' => $variation['variation_code'],
-                'system_name' => $variation['name'],
-                'fixed_price' => $variation['fixedPrice'],
-                'api_price' => $variation['variation_amount'],
             ], [
                 'product_id' => $product['id'],
                 'category_id' => $product['category_id'],

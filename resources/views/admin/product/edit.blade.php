@@ -10,7 +10,21 @@
         /* padding: 1.5px !important;
         font-size: 11px !important;
     } */
-
+    .form-control {
+            display: block;
+            width: 100%;
+            height: calc(1.4em + 0.94rem + 3.7px);
+            padding: 0.47rem 0.8rem;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 0;
+            color: black;
+            background-color: #FFFFFF;
+            background-clip: padding-box;
+            border: 1px solid #DFE3E7;
+            border-radius: 1px;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
 </style>
 @endsection
 @section('content')
@@ -162,15 +176,15 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="name">System Price</label>
+                                                                                    <label for="name">System Price ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="min">Minimun Amount</label>
+                                                                                    <label for="min">Minimun Amount ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="min" name="min"  value="{{ $product->min }}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="max">Maimum Amount</label>
+                                                                                    <label for="max">Maimum Amount ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="max" name="max"  value="{{ $product->max }}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
@@ -218,41 +232,34 @@
                                                                         @if($product->variations->count() < 1)
                                                                             <a style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
                                                                         @else
-                                                                            <a  style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
+                                                                            <a  style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-info mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
 
                                                                             <form action="{{route('variations.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                                 @csrf
                                                                                 @foreach($product->variations as $variation)
-                                                                                <div class="row">
+                                                                                <div class="row" style="margin-bottom:10px">
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="api_name">API Name</label>
                                                                                             <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                
-                                                                                    <div class="col-md-3">
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">API Price ({!! getSettings()['currency']!!})</label>
+                                                                                            <input type="text" class="form-control tiny" disabled id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">System Name</label>
                                                                                             <input type="text" class="form-control tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                    <div class="col-md-2">
+                                                                                    <div class="col-md-1">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">Slug</label>
                                                                                             <input type="text" class="form-control tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
-                                                                                        </fieldset>
-                                                                                    </div>
-                                                                                    <div class="col-md-2">
-                                                                                        <fieldset class="form-group">
-                                                                                            <label for="name">API Price</label>
-                                                                                            <input type="text" class="form-control tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
-                                                                                        </fieldset>
-                                                                                    </div>
-                                                                                    <div class="col-md-2">
-                                                                                        <fieldset class="form-group">
-                                                                                            <label for="name">System Price</label>
-                                                                                            <input type="text" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
@@ -261,11 +268,9 @@
                                                                                             <select class="form-control tiny" name="fixed_price[{{ $variation->id }}]" id="fixed_price" required>
                                                                                                 <option value="">Select</option>
                                                                                                 <option value="Yes" {{ $variation->fixed_price == 'Yes' ? 'selected' : ''}}>Yes</option>
-                                                                                                <option value="No" {{ $variation->fixed_price == 'No' ? 'selected' : ''}}>No</option>
-                                                                                                
+                                                                                                <option value="No" {{ $variation->fixed_price == 'No' ? 'selected' : ''}}>No</option> 
                                                                                             </select>
                                                                                         </fieldset>
-                                                                                        
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
@@ -274,17 +279,31 @@
                                                                                                 <option value="">Select</option>
                                                                                                 <option value="active" {{ $variation->status == 'active' ? 'selected' : ''}}>Active</option>
                                                                                                 <option value="inactive" {{ $variation->status == 'inactive' ? 'selected' : ''}}>InActive</option>
-                                                                                                
                                                                                             </select>
                                                                                         </fieldset>
-                                                                                        
                                                                                     </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">System Price ({!! getSettings()['currency']!!})</label>
+                                                                                            <input type="number" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    @foreach($customerlevel as $level)
+                                                                                    {{-- {{dd($variation->customer_level_price($level->id))}} --}}
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
+                                                                                            <input type="number" class="form-control tiny" id="level" name="level[{{ $level->id }}][{{ $variation->id }}]"  value="{{ $variation->customer_level_price($level->id) }}">
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    @endforeach
                                                                                 </div>
                                                                                 <input type="hidden" name="variation_id[{{$variation->id}}]" value="{{$variation->id}}">
+                                                                                 <hr style="height: 0px;border-color: #00cfdd;">
                                                                                 @endforeach
+                                                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                                                 <div class="row">
                                                                                     <div class="col-md-12">
-                                                                                        
                                                                                         <button class="btn btn-primary" type="submit">Submit</button>
                                                                                     </div>
                                                                                 </div>

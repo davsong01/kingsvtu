@@ -37,6 +37,29 @@
         .btn-group{
             display: none !important;
         }
+
+        .table th, .table td {
+            padding: 0.9rem 1rem !important;
+        }
+
+        .mb-1, .my-1 {
+            margin-bottom: 2px !important;
+        }
+        .bx {
+            font-size: 15px !important;
+        }
+        label {
+            text-transform: none !important;
+            font-weight: 400  !important;
+        }
+        .btn i {
+            top: 0px !important;
+        }
+
+        textarea.form-control {
+            height: 105px !important;
+            padding: 10px !important;
+        }
     </style>
     @yield('page-css')
 </head>

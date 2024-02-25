@@ -16,12 +16,10 @@
                             <table id="table-extended-success" class="table mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
+                                        <th>Details</th>
                                         <th>Username</th>
                                         <th>Status</th>
-                                        <th>Account Type</th>
+                                        <th>Level</th>
                                         <th>Joined</th>
                                         <th>Action</th>
                                     </tr>
@@ -29,18 +27,18 @@
                                 <tbody>
                                     @foreach ($customers as $customer)
                                         <tr>
-                                            <td class="text-bold-600 pr-0">
-                                                <img class="rounded-circle mr-1" src="{{ $customer->avatart }}"
-                                                    alt="image">
-                                                <a
-                                                    href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
-                                                    {{ $customer->fisrtname . ' ' . $customer->lastname }}</a>
+                                            <td>
+                                                {{-- <img class="rounded-circle mr-1" src="{{ $customer->avatar }}"
+                                                    alt="image"> --}}
+                                                Name:<a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
+                                                    {{ $customer->firstname . ' ' . $customer->lastname }}</a> <br>
+                                                   Email:  {{ $customer->email }} <br>
+                                                   Phone Number: {{ $customer->phone }}
                                             </td>
-                                            <td>{{ $customer->email }}</td>
-                                            <td>{{ $customer->phone }}</td>
+                                           
                                             <td>{{ $customer->username }}</td>
-                                            <td>{{ $customer->status }}</td>
-                                            <td>{{ ucfirst($customer->type) }}</td>
+                                            <td>{{ ucfirst($customer->status) }}</td>
+                                            <td>{{ $customer->customer->level->name ?? 'N/A' }}</td>
                                             <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
                                             <td>
                                                 <div class="dropdown">

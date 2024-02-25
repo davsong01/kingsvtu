@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Edit Profile')
+@section('title', 'Upgrade Level')
 
 @section('page-css')
 <style>
@@ -24,59 +24,31 @@
                                 <!-- Nav Filled Starts -->
                                 <section id="nav-filled">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-9">
                                             <div class="card">
                                                 <div class="col-md-12"> 
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
-                                                        <h4 class="card-title">Edit Profile</h4>
+                                                        <h4 class="card-title">Upgrade Level</h4>
                                                         @include('layouts.alerts')
                                                     </div>
                                                 </div>
                                                 <div class="card-content">
                                                     <div class="card-body">
-                                                        <form action="{{route('profile.update')}}" method="POST" autocomplete="off">
+                                                        <form action="{{route('customer.level.upgrade.process')}}" method="POST" autocomplete="off">
                                                             @csrf
                                                             <div class="row">
-                                                                <div class="col-md-6">   
+                                                                <div class="col-md-12">   
                                                                     <fieldset class="form-group">
-                                                                        <label for="firstname">First Name</label>
-                                                                        <input autocomplete="false" type="firstname" class="form-control" id="firstname" name="firstname" value="{{ auth()->user()->firstname }}" required>
+                                                                        <label for="level">Select Level to upgrade to</label>
+                                                                        <select class="form-control" name="level" id="level" required>
+                                                                        <option value="">Select</option>
+                                                                        @foreach ($levels as $level)
+                                                                            <option value="{{ $level->id  }}" {{ auth()->user()->customer->level->id == $level->id ? 'selected' : ''}}>{{ $level->name }}({!!getSettings()['currency']!!}{{ $level->upgrade_amount }})</option>
+                                                                        @endforeach
+                                                                    </select>
                                                                     </fieldset>
-                                                                </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="middlename">Middle Name</label>
-                                                                        <input autocomplete="false" type="middlename" class="form-control" id="middlename" name="middlename" value="{{ auth()->user()->middlename }}" required>
-                                                                    </fieldset>
-                                                                </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="lastname">Last Name</label>
-                                                                        <input autocomplete="false" type="lastname" class="form-control" id="lastname" name="lastname" value="{{ auth()->user()->lastname }}" required>
-                                                                    </fieldset>
-                                                                </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="phone">Phone Number</label>
-                                                                        <input autocomplete="false" type="phone" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
-                                                                    </fieldset>
-                                                                </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="email">Email Address</label>
-                                                                        <input autocomplete="false" type="phone" class="form-control" disabled value="{{ auth()->user()->email }}">
-                                                                    </fieldset>
-                                                                </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="email">Customer Level</label> <a target="_blank" href="{{ route('customer.level.upgrade')}}" style="font-size: smaller;">&nbsp;&nbsp;Upgrade</a>
-                                                                        <input autocomplete="false" type="phone" class="form-control" disabled value="Level {{ auth()->user()->customer->level->name }}">
-                                                                    </fieldset>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12"> 
-                                                                    <button class="btn btn-primary" type="submit">Update Profile</button>
+                                                                    
+                                                                    <button class="btn btn-primary" type="submit">Upgrade</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -84,9 +56,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-3">
+                                        <div class="col-md-3">
                                             Sidebar Advert
-                                        </div> --}}
+                                        </div>
                                     </div>
                                 </section>
                                 <!-- Nav Filled Ends -->

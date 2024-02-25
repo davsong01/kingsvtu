@@ -62,6 +62,7 @@ class RegisteredUserController extends Controller
         Customer::create([
             'user_id' => $user->id,
             'wallet' => 0,
+            'customer_level' => config('app.default_customer_level_id'),
         ]);
 
         return redirect(RouteServiceProvider::HOME);

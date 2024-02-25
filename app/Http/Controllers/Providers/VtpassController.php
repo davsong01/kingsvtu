@@ -23,14 +23,18 @@ class VtpassController extends Controller
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
 
         if (isset($variations['response_description']) && $variations['response_description'] == '000') {
-            $deleteExistingVariations = Variation::where('product_id', $product->id)->delete();
+            // $deleteExistingVariations = Variation::where('product_id', $product->id)->delete();
 
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
-
             foreach ($variations as $variation) {
                 // if(in_array($variation['variation_code'], $existingVariations)){
                 // }else{
-                Variation::updateOrCreate([
+                Variation::updateOrCreate(['product_id' => $product['id'],
+                    'category_id' => $product['category_id'],
+                    'api_id' => $product['api']['id'],
+                    'api_name' => $variation['name'],
+                    'slug' => $variation['variation_code'],
+                ],[
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],

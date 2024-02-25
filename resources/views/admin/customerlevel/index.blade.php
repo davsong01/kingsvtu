@@ -63,11 +63,11 @@
                                                     <tr>
                                                         <td>{{ $level->name }}</td>
                                                         <td>{{ $level->order }}</td>
-                                                        <td>{{ $level->customer_count }}</td>
-                                                        <td>{!! getSettings()['currency'] !!}{{ $level->upgrade_amount }}</td>
+                                                        <td>{{ $level->customers_count }}</td>
+                                                        <td>{!! getSettings()['currency'] !!}{{ number_format($level->upgrade_amount) }}</td>
                                                         <td>
                                                             <a href="{{ route('customerlevel.edit', $level->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><span class="align-middle ml-25">View/Edit</span></button></a>
-                                                            
+                                                            @if($level->customers_count < 1)
                                                             <form action="{{ route('customerlevel.destroy', $level->id) }}"
                                                                 class="btn btn-custon-four btn-bg-cl-social" method="POST"
                                                                 onsubmit="return confirm('Are you sure you want to delete forever?');">
@@ -78,6 +78,7 @@
                                                                     data-toggle="tooltip" title="Delete Customer Level">Delete Customer Level
                                                                 </button>
                                                             </form>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach

@@ -81,7 +81,7 @@
                                                                 <div class="col-md-4">
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">{{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif </strong></h3></span>
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
-                                                                    <span class="data-details-info"><strong style="color:#174159;">Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</strong></span> <br>
+                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</strong></span> <br>
                                                                     <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
@@ -199,7 +199,7 @@
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
-                                                                                    <p class="mb-0 lh-1 key">Amount Paid: </p>
+                                                                                    <p class="mb-0 lh-1 key">Total Amount Paid: </p>
                                                                                 </div>
 
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</div>

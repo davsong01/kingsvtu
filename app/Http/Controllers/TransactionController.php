@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Discount;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
@@ -20,7 +21,6 @@ class TransactionController extends Controller
             return $query->where('status', 'active')->get();
         }])->where('slug', $slug)->first();
 
-
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {
@@ -31,7 +31,7 @@ class TransactionController extends Controller
     public function initializeTransaction(Request $request)
     {
         // Check Transaction pin
-        // $pinCheck = $this->checkTransactionPin($request);
+        $pinCheck = $this->checkTransactionPin($request);
 
         if (!$pinCheck) {
             return back()->with('error', 'Invalid Transaction PIN!');
@@ -79,9 +79,6 @@ class TransactionController extends Controller
             }
         }
 
-        $discount = $this->getDiscount($request['amount']) ?? 0;
-        $request['discount'] = $discount;
-
         // Verify Meter
         if ($product->allow_meter_validation) {
             $meterValidation = $this->validateMeter($product);
@@ -89,9 +86,17 @@ class TransactionController extends Controller
                 return back()->with('error', $meterValidation['error']);
             }
         }
-        $request['quantity'] = $request->quantity ?? 1;
+        $discountedPrice = $this->getDiscount($product->id, $variation->id ?? null) ?? 0;
+        $request['discount'] = 0;
+        $discountedAmount = $request['amount'];
 
-        $request['total_amount'] = $request['amount'] * $request['quantity'];
+        if ($discountedPrice > 0) {
+            $request['discount'] = $request['amount'] - $discountedPrice;
+            $discountedAmount = $discountedPrice;
+        }
+
+        $request['quantity'] = $request->quantity ?? 1;
+        $request['total_amount'] = $discountedPrice * $request['quantity'];
 
         // Get Wallet Balance
         $wallet = new WalletController();
@@ -154,8 +159,6 @@ class TransactionController extends Controller
         Pdf::view('customer.receipts.transaction_receipt', ['transaction' => $transaction])
             ->format('a4')
             ->save('ii.pdf');
-
-    
         // dd($transaction, $transaction_id);
         // return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
@@ -331,17 +334,25 @@ class TransactionController extends Controller
         }
     }
 
-    public function getDiscount($amount)
+    public function getDiscount($product_id, $variation_id = null)
     {
-        $total_discount = 0;
+        $discount = 0;
+        $level = auth()->user()->customer->customer_level;
 
-        $discount = auth()->user()->customerlevel->percentage_discount ?? null;
 
-        if ($discount) {
-            $total_discount = ($discount / 100) * $amount;
+        $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $product_id]);
+
+        if (!empty($variation_id)) {
+            $findDiscount = $findDiscount->where('variation_id', $variation_id);
         }
 
-        return $total_discount;
+        $findDiscount = $findDiscount->first();
+
+        if (!empty($findDiscount)) {
+            $discount = $findDiscount->price;
+        }
+
+        return $discount;
     }
 
     public function validateMeter()

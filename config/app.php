@@ -17,7 +17,8 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-
+    'default_customer_level_id' => env('DEFAULT_CUSTOMER_LEVEL_ID', 1),
+    
     /*
     |--------------------------------------------------------------------------
     | Application Environment
