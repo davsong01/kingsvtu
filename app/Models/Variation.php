@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Api;
+use App\Models\API;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +20,7 @@ class Variation extends Model
 
     public function api()
     {
-        return $this->belongsTo(Api::class);
+        return $this->belongsTo(API::class);
     }
 
     public function category()
