@@ -35,10 +35,10 @@
                     </li>
                     <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/email-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Emails</span></a>
                     </li>
-                    <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
+                    <li class="{{ Route::is('customers/.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
                     </li>
 
-                    <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customerlevel"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Customer Levels</span></a>
+                    <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ route('customerlevel.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Customer Levels</span></a>
                     </li>
                 </ul>
             </li>

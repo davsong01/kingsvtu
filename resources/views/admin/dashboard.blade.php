@@ -13,18 +13,12 @@
                         <!-- Greetings Content Starts -->
                         <div class="col-md-6 col-12 dashboard-greetings">
                             <div class="card">
-                                <div class="card-header">
-                                    <h3 class="greeting-text">Wallet Balance</h3>
-                                    {{-- <p class="mb-0">Best seller of the month</p> --}}
-                                </div>
-                                <div class="card-content">
+                                
+                                {{-- <div class="card-content">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
-                                                <?php
-                                                $balance = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(walletBalance(auth()->user())) : 0;
-                                                $ref = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(referralBalance(auth()->user())) : 0;
-                                                ?>
+                                              
                                                 <h1 class="text-primary font-large-2 text-bold-500">{!! $balance !!}</h1>
                                                 <div class="text-muted line-ellipsis">Referral Earnings</div>
                                                 <h3 class="mb-2">{!! $ref !!}</h3>
@@ -40,7 +34,7 @@
                             </div>
                         </div>
                         <!-- Multi Radial Chart Starts -->
-                        <div class="col-md-6 col-12 dashboard-visit">
+                        {{-- <div class="col-md-6 col-12 dashboard-visit">
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title">Refer and Earn</h4>
@@ -55,7 +49,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-xl-4 col-12 dashboard-users">
                             <div class="row  ">
                                 <!-- Statistics Cards Starts -->

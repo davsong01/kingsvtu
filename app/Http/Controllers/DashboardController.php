@@ -18,7 +18,7 @@ class DashboardController extends Controller
         if (auth()->user()->type == 'admin') {
             return view('admin.dashboard');
         } else {
-            return view('admin.dashboard');
+            return view('customer.dashboard');
         }
     }
 

@@ -16,7 +16,7 @@
                         $ref = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(referralBalance(auth()->user())) : 0;
                     ?>
                     @if(auth()->user()->type == 'customer')
-                    <li class="nav-item d-lg-block"><a class="nav-link nav-link-expand">
+                    <li class="nav-item d-lg-block"><a class="nav-link">
                         <strong>Balance: </strong>{!! $balance !!}
                         <br/>
                         <strong>Referral Earning: </strong>{!! $ref !!}</a>

@@ -98,7 +98,7 @@ class TransactionController extends Controller
         }
 
         $request['quantity'] = $request->quantity ?? 1;
-        $request['total_amount'] = $discountedPrice * $request['quantity'];
+        $request['total_amount'] = $discountedAmount * $request['quantity'];
 
         // Get Wallet Balance
         $wallet = new WalletController();
@@ -189,7 +189,6 @@ class TransactionController extends Controller
             <br>Warm Regards. (' . config('app.name') . ')<br/>
             </p>';
 
-            \Log::info(['email' => $body]);
             logEmails(auth()->user()->email, $subject, $body);
         }
     }
@@ -204,11 +203,11 @@ class TransactionController extends Controller
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
         if (isset($query) && $query['status_code'] == 1) {
             $user = auth()->user();
-            $this->referralReward($user->referral, $request['amount'], $user->customer->id, $request['transaction_id']);
+            $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id']);
             $res = [
                 'status' => $query['status'],
                 'message' => 'Transaction Successful!',
-                'extras' => 'Transaction Successful!',
+                // 'extras' => 'Transaction Successful!',
             ];
 
             $balance_after = $request['balance_before'] - $request['total_amount'];
