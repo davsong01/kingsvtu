@@ -7,15 +7,18 @@ use Illuminate\Http\Request;
 
 class WalletController extends Controller
 {
-    public function getWalletBalance($user){
+    public function getWalletBalance($user)
+    {
         return $user->customer->wallet ?? 0.00;
     }
 
-    public function getReferralBalance($user){
-        return $user->customer->referral_wallet ?? 0;
+    public function getReferralBalance($user)
+    {
+        return $user->customer->referal_wallet ?? 0;
     }
 
-    public function logWallet($data){
+    public function logWallet($data)
+    {
         $wallet = Wallet::create([
             'customer_id' => $data['customer_id'],
             'amount' => $data['amount'],
@@ -27,12 +30,13 @@ class WalletController extends Controller
         return $wallet;
     }
 
-    public function updateCustomerWallet($user, $amount, $type){
-        if($type == 'credit'){
+    public function updateCustomerWallet($user, $amount, $type)
+    {
+        if ($type == 'credit') {
             $user->customer->update([
                 'wallet' => $user->customer->wallet + $amount,
             ]);
-        }else{
+        } else {
             $user->customer->update([
                 'wallet' => $user->customer->wallet - $amount,
             ]);
