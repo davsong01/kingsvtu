@@ -12,7 +12,7 @@ class WalletController extends Controller
     }
 
     public function getReferralBalance($user){
-        return $user->customer->referral_wallet;
+        return $user->customer->referral_wallet ?? 0;
     }
 
     public function logWallet($data){
