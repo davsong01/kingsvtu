@@ -29,12 +29,13 @@ class VtpassController extends Controller
             foreach ($variations as $variation) {
                 // if(in_array($variation['variation_code'], $existingVariations)){
                 // }else{
-                Variation::updateOrCreate(['product_id' => $product['id'],
+                Variation::updateOrCreate([
+                    'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
                     'api_name' => $variation['name'],
                     'slug' => $variation['variation_code'],
-                ],[
+                ], [
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
@@ -82,8 +83,22 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
+
             $successCodes = ['000'];
             $failCodes = ['016'];
+
+            $extra_info = array_filter([
+                "Token Amount" => $response["tokenAmount"] ?? null,
+                "Exchange Reference" => $response["exchangeReference"] ?? null,
+                "Reset Token" => $response["resetToken"] ?? null,
+                "Configure Token" => $response["configureToken"] ?? null,
+                "Units" => $response["units"] ?? null,
+                "Fix Charge Amount" => $response["fixChargeAmount"] ?? null,
+                "Tariff" => $response["tariff"] ?? null,
+                "Tax Amount" => $response["taxAmount"] ?? null,
+                "KCT 1" => $response["KCT 1"] ?? null,
+                "KCT 2" => $response["KCT 2"] ?? null
+            ]);
 
             if (isset($response['code']) && in_array($response['code'], $successCodes)) {
                 // success
@@ -95,8 +110,8 @@ class VtpassController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 1,
-                    'extras' => $response['purchased_code'] ?? null
-
+                    'extras' => $response['purchased_code'] ?? null,
+                    'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
                 ];
             } elseif (isset($response['code']) && in_array($response['code'], $failCodes)) {
                 // fail
@@ -120,6 +135,7 @@ class VtpassController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 2,
+                    'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
                 ];
             }
         } catch (\Throwable $th) {
@@ -132,7 +148,7 @@ class VtpassController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-
+        
         return $format;
     }
 

@@ -108,8 +108,8 @@
 						<table>
 							<tr>
 								<td class="title">
-									<img src="{{ asset(getSettings()['logo'])}}" style="width: 10%; max-width: 300px"/>
-									<img src="{{ asset($transaction['product']['image'] )}}" style="width: 10%; max-width: 300px"/>
+									<img src="{{ url('/').'/'.getSettings()['logo']}}" style="width: 10%; max-width: 300px"/>
+									<img src="{{ url('/').'/'.$transaction['product']['image'] }}" style="width: 10%; max-width: 300px"/>
 								</td>
 
 								<td style="width: 50%;">
@@ -155,7 +155,14 @@
 					<td>{{ ucfirst($transaction['extras']) }}</td>
 				</tr>                                                        
 				@endif
-
+				@if(!empty($transaction['extra_info']))
+					@foreach ( json_decode($transaction['extra_info']) as $key=>$value )
+					<tr class="item">
+						<td>{{ $key }}</td>
+						<td>{{ ucfirst($value) }}</td>
+					</tr>
+					@endforeach
+				@endif
 				<tr class="item">
 					<td>Payment Method</td>
 					<td>{{ ucfirst($transaction['payment_method']) }}</td>

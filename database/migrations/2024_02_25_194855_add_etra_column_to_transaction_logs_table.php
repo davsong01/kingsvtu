@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('transaction_logs', 'extra_info')) {
             Schema::table('transaction_logs', function (Blueprint $table) {
-                $table->text('extra_info')->nullable()->after('extra');
+                $table->text('extra_info')->nullable()->after('extras');
             });
         }
     }

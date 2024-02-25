@@ -122,6 +122,18 @@
                                                                                 </div>
                                                                             </li>
                                                                             @endif
+                                                                            @if(!empty($transaction->extra_info))
+                                                                                @foreach ( json_decode($transaction->extra_info) as $key=>$value )
+                                                                                    <li class="d-flex mb-1">
+                                                                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                    <div class="me-2">
+                                                                                        <p class="mb-0 lh-1 key">{{ $key }} </p>
+                                                                                    </div>
+                                                                                    <div class="item-progres value">{{ ucfirst($value) }}</div>
+                                                                                    </div>
+                                                                                </li>
+                                                                                @endforeach
+                                                                            @endif
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">

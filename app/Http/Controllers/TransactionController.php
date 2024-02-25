@@ -159,10 +159,10 @@ class TransactionController extends Controller
     {
         $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
 
-        // $pdf = Pdf::loadView('customer.receipts.transaction_receipt', $transaction)->setPaper('a4', 'portrait');
-        // return $pdf->download('invoice.pdf');
+        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction'=>$transaction])->setPaper('a4', 'portrait');
+        return $pdf->download($transaction['transaction_id'] . '.pdf');
         // dd($transaction, $transaction_id);
-        return view('customer.receipts.transaction_receipt', compact('transaction'));
+        // return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
     public function sendTransactionEmail($transaction)
@@ -237,8 +237,9 @@ class TransactionController extends Controller
             'api_response' => $query['api_response'] ?? null,
             'failure_reason' => $failure_reason,
             'extras' => $query['extras'] ?? null,
-            'status' => $query['user_status'] ?? 'attention-required',
+            'status' => $query['status'] ?? 'attention-required',
             'descr' => $query['description'],
+            'extra_info' => $query['extra_info'] ?? null,
         ]);
 
         return $transaction;
