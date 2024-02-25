@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class WalletController extends Controller
 {
     public function getWalletBalance($user){
-        return $user->customer->wallet;
+        return $user->customer->wallet ?? 0.00;
     }
 
     public function getReferralBalance($user){
