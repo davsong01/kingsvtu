@@ -12,8 +12,8 @@
 
                     <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-expand"><i class="ficon bx bx-fullscreen"></i></a></li>
                     <?php
-                        $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user())) : 0;
-                        $ref = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(referralBalance(auth()->user())) : 0;
+                        $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user()), 2) : 0;
+                        $ref = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(referralBalance(auth()->user()), 2) : 0;
                     ?>
                     @if(auth()->user()->type == 'customer')
                     <li class="nav-item d-lg-block"><a class="nav-link">

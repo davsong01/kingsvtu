@@ -97,8 +97,14 @@ class Controller extends BaseController
         return 1;
     }
 
-    public function settings(){
-        return GeneralSetting::first();
+    // public function settings(){
+    //     return GeneralSetting::first();
+    // }
+    public function generateRequestId()
+    {
+        date_default_timezone_set("Africa/Lagos");
+        $trx = date("YmdHi") . rand(1000000, 9999999);
+        return $trx;
     }
 
 }

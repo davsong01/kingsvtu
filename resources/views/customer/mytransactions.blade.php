@@ -107,21 +107,27 @@
                                                         <span class="title">Service</span> <br>
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
+                                                                @if($transaction->reason == 'LEVEL-UPGRADE')
+                                                                LEVEL UPGRADE
+                                                                @else
                                                                 <strong>{{ $transaction->product->name}}</strong>@if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} @endif
-                                                                @if($transaction->status == 'failed')
+                                                                @endif
+                                                                (@if($transaction->status == 'failed')
                                                                     <span class="text-danger">{{ ucfirst($transaction->status) }}</span>
                                                                 @elseif($transaction->status == 'initiated')
                                                                     <span class="text-warning">{{ ucfirst($transaction->status) }}</span>
                                                                 @else
-                                                                    <span class="text-success">{{ ucfirst($transaction->status) }}</span>
-                                                                @endif
-                                                            </span> <br>
-                                                            {{ $transaction->unique_element }}
-
+                                                                    <span class="text-success">{{ ucfirst($transaction->descr) }}</span>
+                                                                @endif)
+                                                            </span> 
                                                         </small><br>
+                                                        <span class="title">Biller</span> <br>
+                                                        <small>
+                                                            {{ $transaction->unique_element }}</strong>
+                                                        </small> <br>
                                                         <span class="title">Amount Paid</span> <br>
                                                         <small>
-                                                            {!! getSettings()['currency']!!}{{ number_format($transaction->total_amount) }}</strong>
+                                                            {!! getSettings()['currency']!!}{{ number_format($transaction->total_amount, 2) }}</strong>
                                                         </small> <br>
                                                         <span class="title">Transaction Id</span> <br>
                                                         <small>

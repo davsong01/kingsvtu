@@ -108,8 +108,14 @@
 						<table>
 							<tr>
 								<td class="title">
+									<?php 
+										$image = !empty($transaction['product']) ? $transaction['product']['image'] : 'site/upgrade.jpg';
+									?>
 									<img src="{{ url('/').'/'.getSettings()['logo']}}" style="width: 20%; max-width: 500px"/>
-									<img src="{{ url('/').'/'.$transaction['product']['image'] }}" style="width: 20%; max-width: 500px"/>
+									@if($transaction['reason'] == 'LEVEL-UPGRADE')
+									@else
+									<img src="{{ url('/').'/'.$image  }}" style="width: 20%; max-width: 500px"/>
+									@endif
 								</td>
 
 								<td style="width: 50%;">
@@ -126,7 +132,11 @@
 							<tr>
 								<td style="padding-left: 0px;">
 									Payment for: <br />
+									@if($transaction['reason'] == 'LEVEL-UPGRADE')
+										LEVEL UPGRADE
+									@else
 									 <strong>{{ $transaction['product']['name']}}</strong>@if(!empty($transaction['variation']['system_name'])) {{ " | ". $transaction['variation']['system_name'] }}@endif
+									@endif
 								</td>
 
 								{{-- <td>
@@ -169,7 +179,13 @@
 				</tr>
 				<tr class="item">
 					<td>Service</td>
-					<td>{{$transaction['product']['display_name']}} @if(!empty($transaction['variation']['system_name'])) ({{$transaction['variation']['system_name']}})@endif</td>
+					<td>
+						@if($transaction['reason'] == 'LEVEL-UPGRADE')
+						LEVEL UPGRADE
+						@else
+						{{$transaction['product']['display_name']}} @if(!empty($transaction['variation']['system_name'])) ({{$transaction['variation']['system_name']}})@endif
+						@endif
+					</td>
 				</tr>
 				<tr class="item">
 					<td>Phone</td>
@@ -185,7 +201,7 @@
 				</tr>
 				<tr class="item">
 					<td>Unit Price</td>
-					<td>{!! getSettings()->currency !!}{{ number_format($transaction['unit_price']) }}</td>
+					<td>#{{ number_format($transaction['unit_price']) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Quantity</td>
@@ -193,19 +209,19 @@
 				</tr>
 				<tr class="item">
 					<td>Discount Applied</td>
-					<td>{!! getSettings()->currency !!}{{ number_format($transaction['discount']) }}</td>
+					<td>#{{ number_format($transaction['discount']) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Total Amount Paid</td>
-					<td>{!! getSettings()->currency !!}{{ number_format($transaction['total_amount']) }}</td>
+					<td>#{{ number_format($transaction['total_amount']) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Initial Balance</td>
-					<td>{!! getSettings()->currency !!}{{ number_format($transaction['balance_before']) }}</td>
+					<td>#{{ number_format($transaction['balance_before']) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Final Balance</td>
-					<td>{!! getSettings()->currency !!}{{ number_format($transaction['balance_after']) }}</td>
+					<td>#{{ number_format($transaction['balance_after']) }}</td>
 				</tr>
 
 

@@ -14,7 +14,7 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             {{-- start --}}
             <?php 
-                $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user())) : 0;
+                $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user()), 2) : 0;
             ?>
             <li style="color: #fff;" class="navigation-header"><span>Wallet Balance</span><br>{!! $balance !!}</li>
             <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br><strong>{{ auth()->user()->customer->level->name }}</strong></li>
@@ -27,19 +27,11 @@
                 <li class="{{ Request::path() == 'customer/'.$category->slug ? 'active' : '' }}"><a href="{{ route('open.transaction.page', $category->slug)}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">{{ $category->display_name }}</span></a>
                 </li>
             @endforeach
-            {{-- <li class=" nav-item"><a href="{{ route('open.transaction.page', 'airtime')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Wizard">Buy airtime</span></a>
-            <li class=" nav-item"><a href="{{ route('open.transaction.page', 'data')}}"><i class="menu-livicon" data-icon="settings"></i><span class="menu-title" data-i18n="Form Layout"> Buy data bundle</span></a>
-            </li>
-            </li>
-            <li class=" nav-item"><a href="form-validation.html"><i class="menu-livicon" data-icon="check-alt"></i><span class="menu-title" data-i18n="Form Validation">TV Subscription</span></a>
-            </li>
-            <li class=" nav-item"><a href="form-repeater.html"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title" data-i18n="Form Repeater">Electricity Bills</span></a>
-            </li>
-            <li class=" nav-item"><a href="table.html"><i class="menu-livicon" data-icon="thumbnails-big"></i><span class="menu-title" data-i18n="Table">Table</span></a>
-            </li>
-            <li class=" nav-item"><a href="table-extended.html"><i class="menu-livicon" data-icon="thumbnails-small"></i><span class="menu-title" data-i18n="Table extended">Education services</span></a>
-            </li> --}}
+            <li class=" navigation-header"><span>Self Service</span></li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
+             <li class="{{ Request::path() == 'level-upgrade' ? 'active' : '' }}"><a href="{{ route('customer.level.upgrade')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Upgrade Account</span></a></li>
+            
+            <li class="{{ Request::path() == 'load-wallet' ? 'active' : '' }}"><a href="{{ route('customer.load.wallet')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Load Wallet</span></a></li>
             <li class="{{ Request::path() == 'customer-transactions' ? 'active' : '' }}"><a href="{{ route('customer.transaction.history')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Transactions</span></a></li>
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

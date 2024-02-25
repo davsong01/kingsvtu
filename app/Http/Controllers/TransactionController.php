@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use App\Models\ReferralEarning;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
@@ -130,6 +131,7 @@ class TransactionController extends Controller
         $request['product_slug'] = $variation->product->slug ?? $product->slug;
         $request['variation_slug'] = $variation->slug ?? null;
         $request['network'] = $variation->network ?? null;
+        $request['reason'] = 'Product Purchase';
         $request['subscription_type'] = $variation->bouquet ?? 'change';
 
         // Log basic transaction
@@ -142,7 +144,13 @@ class TransactionController extends Controller
         $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], $request['type']);
 
         // Process Transaction
-        $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
+        try {
+            //code...
+            $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
+        } catch (\Throwable $th) {
+            \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
+            return back()->with('error', 'An error occured, please try again later');
+        }
 
         // Log Transaction Email
         $this->sendTransactionEmail($transaction);
@@ -159,7 +167,7 @@ class TransactionController extends Controller
     {
         $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
 
-        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction'=>$transaction])->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
         return $pdf->download($transaction['transaction_id'] . '.pdf');
         // dd($transaction, $transaction_id);
         // return view('customer.receipts.transaction_receipt', compact('transaction'));
@@ -169,18 +177,34 @@ class TransactionController extends Controller
     {
         if (getSettings()->transaction_email_notification == 'yes') {
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
-            $product =  $transaction->product->name .  $variation_name;
+            $product =  $transaction->product->name ?? '' .  $variation_name;
             $extras = isset($transaction->extras) ? $transaction->extras : '';
             $subject = "Transaction Alert";
             $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
             $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
             <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
             <strong>Transaction Date:</strong> ' . date("M jS, Y g:iA", strtotime($transaction->created_at)) . '<br>
-            <strong>Transaction Status:</strong> ' . ucfirst($transaction->status) . '<br>
-            <strong>Extras:</strong> ' . $extras . '<br>
-            <strong>Biller:</strong> ' . $transaction->unique_element . '<br>
-            <strong>Product:</strong> ' . $product . '<br>
-            <strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
+            <strong>Transaction Status:</strong> ' . ucfirst($transaction->descr);
+
+            if (!empty($transaction->extras)) {
+                $body .= '<br> <strong>Extras:</strong> ' . $extras . '<br>';
+            }
+
+            if (!empty($transaction->unique_element)) {
+                $body .= '<strong>Biller:</strong> ' . $transaction->unique_element . '<br>';
+            }
+
+            if (!empty($product)) {
+                $body .= '<strong>Product:</strong> ' . $product . '<br>';
+            }
+
+            if (!empty($transaction->extra_info)) {
+                foreach (json_decode($transaction->extra_info) as $key => $info) {
+                    $body .= '<strong>' . $key . '</strong> ' . $product . '<br>';
+                }
+            }
+
+            $body .= '<strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
             <strong>Quantity:</strong> ' . $transaction->quantity . '<br>
             <strong>Discount Applied:</strong> ' . getSettings()->currency . $transaction->discount . '<br>
             <strong>Total Amount Paid:</strong> ' . getSettings()->currency . $transaction->total_amount . '<br>
@@ -201,18 +225,54 @@ class TransactionController extends Controller
         $file_name = $api->file_name;
 
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
-        if (isset($query) && $query['status_code'] == 1) {
-            $user = auth()->user();
-            $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id']);
-            $res = [
-                'status' => $query['status'],
-                'message' => 'Transaction Successful!',
-                // 'extras' => 'Transaction Successful!',
-            ];
 
-            $balance_after = $request['balance_before'] - $request['total_amount'];
-        } else if (isset($query) && $query['status_code'] == 0) {
-            // Log wallet
+        try {
+            //code...
+            DB::beginTransaction();
+            if (isset($query) && $query['status_code'] == 1) {
+                $user = auth()->user();
+                $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id']);
+                $res = [
+                    'status' => $query['status'],
+                    'message' => 'Transaction Successful!',
+                    // 'extras' => 'Transaction Successful!',
+                ];
+
+                $balance_after = $request['balance_before'] - $request['total_amount'];
+            } else if (isset($query) && $query['status_code'] == 0) {
+                // Log wallet
+                $wallet = new WalletController();
+                $request['type'] = 'credit';
+                $wallet->logWallet($request);
+                $failure_reason = $query['message'] ?? null;
+
+                // Update Customer Wallet
+                $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
+                $balance_after = $request['balance_before'];
+            } else {
+                $res = [
+                    'status' => $query['status'],
+                    'message' => 'Transaction Successful!',
+                ];
+
+                $balance_after = $request['balance_before'] - $request['total_amount'];
+            }
+
+            // Update Transaction
+            $transaction->update([
+                'balance_after' => $balance_after,
+                'request_data' => $query['payload'],
+                'api_response' => $query['api_response'] ?? null,
+                'failure_reason' => $failure_reason,
+                'extras' => $query['extras'] ?? null,
+                'status' => $query['status'] ?? 'attention-required',
+                'descr' => $query['description'],
+                'extra_info' => $query['extra_info'] ?? null,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
             $wallet = new WalletController();
             $request['type'] = 'credit';
             $wallet->logWallet($request);
@@ -221,26 +281,12 @@ class TransactionController extends Controller
             // Update Customer Wallet
             $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
             $balance_after = $request['balance_before'];
-        } else {
-            $res = [
-                'status' => $query['status'],
-                'message' => 'Transaction Successful!',
-            ];
 
-            $balance_after = $request['balance_before'] - $request['total_amount'];
+            $transaction->update([
+                'balance_after' => $balance_after
+            ]);
+            \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
         }
-
-        // Update Transaction
-        $transaction->update([
-            'balance_after' => $balance_after,
-            'request_data' => $query['payload'],
-            'api_response' => $query['api_response'] ?? null,
-            'failure_reason' => $failure_reason,
-            'extras' => $query['extras'] ?? null,
-            'status' => $query['status'] ?? 'attention-required',
-            'descr' => $query['description'],
-            'extra_info' => $query['extra_info'] ?? null,
-        ]);
 
         return $transaction;
     }
@@ -319,13 +365,6 @@ class TransactionController extends Controller
         }
     }
 
-    public function generateRequestId()
-    {
-        date_default_timezone_set("Africa/Lagos");
-        $trx = date("YmdHi") . rand(1000000, 9999999);
-        return $trx;
-    }
-
     public function checkTransactionPin($request)
     {
         $pin = base64_decode(base64_decode(base64_decode(auth()->user()->transaction_pin)));
@@ -387,7 +426,8 @@ class TransactionController extends Controller
             'ip_address' => $data['ip_address'] ?? null,
             'domain_name' => $data['domain_name'] ?? null,
             'app_version' => Session::get('app_version') ?? null,
-            'api_id' => $data['api_id'],
+            'api_id' => $data['api_id'] ?? null,
+            'reason' => $data['reason'] ?? null,
         ];
 
         $trans = TransactionLog::create($pre);

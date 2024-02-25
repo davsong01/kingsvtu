@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
-use App\Models\GeneralSetting;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\TransactionPinResetToken;
 use Illuminate\Support\Facades\Validator;
@@ -33,18 +33,78 @@ class DashboardController extends Controller
         return view('customer.upgrade_level', compact('levels'));
     }
 
-    public function upgradeAccount(Request $request){
+    public function showLoadWalletPge()
+    {
+    }
+
+    public function upgradeAccount(Request $request)
+    {
         $level = CustomerLevel::where('id', $request->level)->first();
-        if(!$level){
+        if (!$level) {
             return back()->with('error', 'Level not found');
         }
 
         $price = $level->upgrade_amount;
+        $wallet = new WalletController();
+        $balance = $wallet->getWalletBalance(auth()->user());
 
-        // Check balance
-        // Log wallet
-        // Log Transaction
+        if ($balance < $price) {
+            return back()->with('error', 'Insufficient Wallet Balance, Please try again');
+        }
+
+        // Log Wallet
+        $request_id = $this->generateRequestId();
+        $request['type'] = 'debit';
+        $request['customer_id'] = auth()->user()->customer->id;
+        $request['transaction_id'] = 'KVTUPGRD-' . $request_id;
+        $request['request_id'] = $request_id;
+        $request['payment_method'] = 'wallet';
+        $request['balance_before'] = $balance;
+        $request['ip_address'] = $this->getIpAddress();
+        $request['domain_name'] = $this->getDomainName();
+        $request['customer_email'] = auth()->user()->email;
+        $request['customer_phone'] = auth()->user()->phone;
+        $request['customer_name'] = auth()->user()->firstname;
+        $request['reason'] = 'LEVEL-UPGRADE';
+        $request['amount'] = $price;
+        $request['total_amount'] = $price;
+        $request['discount'] = 0;
+        $request['quantity'] = 1;
+        $request['unique_element'] = 'LEVEL-UPGRADE';
+
+        try {
+            DB::beginTransaction();
+            // Log basic transaction
+            $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
+
+            $transaction->update([
+                'balance_after' => $balance - $price,
+                'status' => 'success',
+                'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was successful',
+            ]);
+
+            // Log wallet
+            $wal = $wallet->logWallet($request->all());
+
+            // Update Customer Wallet
+            $wallet->updateCustomerWallet(auth()->user(), $price, $request['type']);
+
+            // Update customer level
+            auth()->user()->customer->update([
+                'customer_level' => $level->id
+            ]);
+
+            DB::commit();
+            
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Log::error(['Upgrade Error' => 'Message: '.$th->getMessage().' File: '.$th->getFile().' Line: '.$th->getLine()]);
+            return redirect(route('dashboard'))->with('error', 'An error occured while trying to upgrade, please try again later');
+        }
+
         // Log transaction email
+        app('App\Http\Controllers\TransactionController')->sendTransactionEmail($transaction);
+        return redirect(route('dashboard'))->with('message', 'Upgrade successful');
     }
 
     public function processResetTransactionPin(Request $request)
