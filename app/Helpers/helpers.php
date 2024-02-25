@@ -72,6 +72,14 @@ if (!function_exists("walletBalance")) {
     }
 }
 
+if (!function_exists("referralBalance")) {
+    function referralBalance($user)
+    {
+        $wallet = new WalletController();
+        return $wallet->getReferralBalance($user);
+    }
+}
+
 if (!function_exists("getSettings")) {
     function getSettings()
     {
