@@ -429,7 +429,7 @@
                 hideAllUniqueElement();
             }
             var currency = "{!! getSettings()['currency'] !!}";
-            console.log(currency);
+            // console.log(currency);
             if (selected[0].discount > 0) {
                 $("#discount").html("You get a discount of "+currency+selected[0].discount);
                 $("#discount").show();

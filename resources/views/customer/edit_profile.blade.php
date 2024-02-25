@@ -67,12 +67,14 @@
                                                                         <input autocomplete="false" type="phone" class="form-control" disabled value="{{ auth()->user()->email }}">
                                                                     </fieldset>
                                                                 </div>
+                                                                @if(auth()->user()->type == 'customer')
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         <label for="email">Customer Level</label> <a target="_blank" href="{{ route('customer.level.upgrade')}}" style="font-size: smaller;">&nbsp;&nbsp;Upgrade</a>
                                                                         <input autocomplete="false" type="phone" class="form-control" disabled value="Level {{ auth()->user()->customer->level->name }}">
                                                                     </fieldset>
                                                                 </div>
+                                                                @endif
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-12"> 
