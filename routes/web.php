@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
     Route::get('level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
     Route::post('level-upgrade', [DashboardController::class, 'upgradeAccount'])->name('customer.level.upgrade.process');
-    
+
     Route::get('download-transaction-receipt/{transaction_id}', [TransactionController::class, 'transactionReceipt'])->name('transaction.receipt.download');
 });
 
@@ -62,10 +62,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('category', CategoryController::class);
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
-    Route::get('customer/edit/{id}', [CustomerController::class, 'singleCustomer'])->name('customers');
-    Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers');
+    Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');
+    Route::get('customers-suspended/{status}', [CustomerController::class, 'customers'])->name('customers.suspended');
+    Route::get('customer/edit/{id}', [CustomerController::class, 'singleCustomer'])->name('customers.edit');
+    Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers.update');
     Route::resource('customerlevel', CustomerLevelController::class);
-    
+
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
 
@@ -79,8 +81,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');
-
-
 });
 
 require __DIR__ . '/auth.php';

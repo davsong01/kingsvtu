@@ -108,8 +108,8 @@
 						<table>
 							<tr>
 								<td class="title">
-									<img src="{{ url('/').'/'.getSettings()['logo']}}" style="width: 10%; max-width: 300px"/>
-									<img src="{{ url('/').'/'.$transaction['product']['image'] }}" style="width: 10%; max-width: 300px"/>
+									<img src="{{ url('/').'/'.getSettings()['logo']}}" style="width: 20%; max-width: 500px"/>
+									<img src="{{ url('/').'/'.$transaction['product']['image'] }}" style="width: 20%; max-width: 500px"/>
 								</td>
 
 								<td style="width: 50%;">

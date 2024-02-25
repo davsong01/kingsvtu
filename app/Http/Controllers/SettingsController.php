@@ -59,7 +59,7 @@ class SettingsController extends Controller
         }
 
         $currencies = [
-            '&#8358;',
+            '₦',
             '$'
         ];
 
