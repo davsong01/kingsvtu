@@ -167,54 +167,10 @@ class TransactionController extends Controller
     {
         $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
 
-        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
-        return $pdf->download($transaction['transaction_id'] . '.pdf');
+        // $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
+        // return $pdf->download($transaction['transaction_id'] . '.pdf');
         // dd($transaction, $transaction_id);
-        // return view('customer.receipts.transaction_receipt', compact('transaction'));
-    }
-
-    public function sendTransactionEmail($transaction)
-    {
-        if (getSettings()->transaction_email_notification == 'yes') {
-            $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
-            $product =  $transaction->product->name ?? '' .  $variation_name;
-            $extras = isset($transaction->extras) ? $transaction->extras : '';
-            $subject = "Transaction Alert";
-            $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
-            $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
-            <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
-            <strong>Transaction Date:</strong> ' . date("M jS, Y g:iA", strtotime($transaction->created_at)) . '<br>
-            <strong>Transaction Status:</strong> ' . ucfirst($transaction->descr);
-
-            if (!empty($transaction->extras)) {
-                $body .= '<br> <strong>Extras:</strong> ' . $extras . '<br>';
-            }
-
-            if (!empty($transaction->unique_element)) {
-                $body .= '<strong>Biller:</strong> ' . $transaction->unique_element . '<br>';
-            }
-
-            if (!empty($product)) {
-                $body .= '<strong>Product:</strong> ' . $product . '<br>';
-            }
-
-            if (!empty($transaction->extra_info)) {
-                foreach (json_decode($transaction->extra_info) as $key => $info) {
-                    $body .= '<strong>' . $key . '</strong> ' . $product . '<br>';
-                }
-            }
-
-            $body .= '<strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
-            <strong>Quantity:</strong> ' . $transaction->quantity . '<br>
-            <strong>Discount Applied:</strong> ' . getSettings()->currency . $transaction->discount . '<br>
-            <strong>Total Amount Paid:</strong> ' . getSettings()->currency . $transaction->total_amount . '<br>
-            <strong>Initial Balance:</strong> ' . getSettings()->currency . $transaction->balance_before . '<br>
-            <strong>Final Balance: </strong>' . getSettings()->currency . $transaction->balance_after . '<br>
-            <br>Warm Regards. (' . config('app.name') . ')<br/>
-            </p>';
-
-            logEmails(auth()->user()->email, $subject, $body);
-        }
+        return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
     public function processTransaction($request, $transaction, $product, $variation)
@@ -428,6 +384,7 @@ class TransactionController extends Controller
             'app_version' => Session::get('app_version') ?? null,
             'api_id' => $data['api_id'] ?? null,
             'reason' => $data['reason'] ?? null,
+            'wallet_funding_provider' => $request['wallet_funding_provider'] ?? null
         ];
 
         $trans = TransactionLog::create($pre);

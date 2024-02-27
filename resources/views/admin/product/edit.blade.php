@@ -92,7 +92,6 @@
                                                                         </a>
                                                                     </li> --}}
                                                                 </ul>
-                                                           
                                                             @endif
                                                             <!-- Tab panes -->
                                                             <div class="tab-content pt-1">

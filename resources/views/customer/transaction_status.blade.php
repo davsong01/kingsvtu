@@ -75,7 +75,7 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-1">
-                                                                    @if($transaction->reason == 'LEVEL-UPGRADE')
+                                                                    @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
                                                                     <img id="product-image" width="60" height="60" src="{{ asset('site/upgrade.jpg') }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                     @else 
                                                                     <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
@@ -84,8 +84,8 @@
                                                                 <div class="col-md-4">
                                                                    
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">
-                                                                        @if($transaction->reason == 'LEVEL-UPGRADE')
-                                                                            LEVEL UPGRADE
+                                                                        @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                            {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                         @else
                                                                         {{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif 
                                                                         @endif
@@ -100,9 +100,9 @@
                                                                     <span style="color:{{ $color }}">{{ ucfirst($transaction->descr) }}</span><br><br>
                                                                     {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
                                                                 </div>
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-4">
                                                                     <strong>Transaction ID</strong> <br>
-                                                                    <span >{{ ucfirst($transaction->transaction_id) }}</span>
+                                                                    <span >{{ ucfirst($transaction->transaction_id) }}</span> <br>
                                                                     <strong>Reference ID</strong> <br>
                                                                     <span >{{ ucfirst($transaction->reference_id) }}</span>
                                                                 </div>
@@ -159,8 +159,8 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Service: </p>
                                                                                 </div>
-                                                                                @if($transaction->reason == 'LEVEL-UPGRADE')
-                                                                                LEVEL UPGRADE
+                                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                                    {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                                 @else
                                                                                 <div class="item-progress value">{{$transaction->product->display_name}} @if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif</div>
                                                                                 @endif

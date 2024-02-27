@@ -112,7 +112,8 @@
 										$image = !empty($transaction['product']) ? $transaction['product']['image'] : 'site/upgrade.jpg';
 									?>
 									<img src="{{ url('/').'/'.getSettings()['logo']}}" style="width: 20%; max-width: 500px"/>
-									@if($transaction['reason'] == 'LEVEL-UPGRADE')
+									@if(in_array($transaction['reason'], ['LEVEL-UPGRADE','WALLET-FUNDING']))
+								
 									@else
 									<img src="{{ url('/').'/'.$image  }}" style="width: 20%; max-width: 500px"/>
 									@endif
@@ -132,8 +133,8 @@
 							<tr>
 								<td style="padding-left: 0px;">
 									Payment for: <br />
-									@if($transaction['reason'] == 'LEVEL-UPGRADE')
-										LEVEL UPGRADE
+									@if(in_array($transaction['reason'], ['LEVEL-UPGRADE','WALLET-FUNDING']))
+										{{ ucfirst(str_replace("-"," ",$transaction['reason']))}}
 									@else
 									 <strong>{{ $transaction['product']['name']}}</strong>@if(!empty($transaction['variation']['system_name'])) {{ " | ". $transaction['variation']['system_name'] }}@endif
 									@endif
@@ -180,8 +181,8 @@
 				<tr class="item">
 					<td>Service</td>
 					<td>
-						@if($transaction['reason'] == 'LEVEL-UPGRADE')
-						LEVEL UPGRADE
+						@if(in_array($transaction['reason'], ['LEVEL-UPGRADE','WALLET-FUNDING']))
+							{{ ucfirst(str_replace("-"," ",$transaction['reason']))}}
 						@else
 						{{$transaction['product']['display_name']}} @if(!empty($transaction['variation']['system_name'])) ({{$transaction['variation']['system_name']}})@endif
 						@endif

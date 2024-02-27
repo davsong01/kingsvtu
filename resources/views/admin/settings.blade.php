@@ -1,3 +1,6 @@
+<?php 
+use App\Models\PaymentGateway;
+?>
 @extends('layouts.app')
 @section('page-css')
 @endsection
@@ -65,6 +68,22 @@
                                                                             </select>
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
+                                                                            <label for="allow_fund_with_card">Allow Wallet Funding with card</label>
+                                                                            <select name="allow_fund_with_card" class="form-control" id="allow_fund_with_card">
+                                                                                <option value="">Select</option>
+                                                                                <option value="yes"{{ $settings->allow_fund_with_card == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                <option value="no" {{ $settings->allow_fund_with_card == 'no' ? 'selected' : ''}}>No</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="allow_fund_with_reserved_account">Allow Wallet Funding with reserved account</label>
+                                                                            <select name="allow_fund_with_reserved_account" class="form-control" id="allow_fund_with_reserved_account">
+                                                                                <option value="">Select</option>
+                                                                                <option value="yes"{{ $settings->allow_fund_with_reserved_account == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                <option value="no" {{ $settings->allow_fund_with_reserved_account == 'no' ? 'selected' : ''}}>No</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
                                                                             <label for="referral_system_status">Referral System Status</label>
                                                                             <select name="referral_system_status" class="form-control" id="referral_system_status">
                                                                                 <option value="">Select</option>
@@ -78,6 +97,10 @@
                                                                         </fieldset>
                                                                     </div>
                                                                     <div class="col-md-6">
+                                                                        <fieldset class="form-group">
+                                                                            <label for="">Payment Gateway</label>
+                                                                            <input type="text" class="form-control" id="" value="{{ PaymentGateway::where('status', 'active')->value('name') }}" disabled>
+                                                                        </fieldset>
                                                                         <fieldset class="form-group">
                                                                             <label for="basicInputFile">Logo</label>
                                                                             <div class="custom-file">
@@ -93,6 +116,14 @@
                                                                                 <label class="custom-file-label" for="image">Replace Favicon</label>
                                                                             </div>
                                                                         </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="basicInputFile">Dashboard Logo</label>
+                                                                            <div class="custom-file">
+                                                                                <input type="file" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
+                                                                                <label class="custom-file-label" for="image">Replace Dashboard Logo</label>
+                                                                            </div>
+                                                                        </fieldset>
+                                                                       
                                                                         <fieldset class="form-group">
                                                                             <label for="seo_title">SEO Title</label>
                                                                             <input type="text" class="form-control" id="seo_title" name="seo_title" value="{{ $settings->seo_title ?? old('seo_title') }}" placeholder="SEO Title">

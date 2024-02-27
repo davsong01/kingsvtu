@@ -10,6 +10,9 @@
                 <!-- Dashboard Ecommerce Starts -->
                 <section id="dashboard-ecommerce">
                     <div class="row">
+                        <div class="col-md-12">
+                            @include('layouts.alerts')
+                        </div>
                         <!-- Greetings Content Starts -->
                         <div class="col-md-6 col-12 dashboard-greetings">
                             <div class="card">

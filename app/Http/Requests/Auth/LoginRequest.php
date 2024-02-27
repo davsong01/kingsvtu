@@ -52,7 +52,8 @@ class LoginRequest extends FormRequest
 
         if(auth()->user()->type == 'customer'){
             if(getSettings()->login_email_notification == 'yes'){
-                $body = 'Dear '. auth()->user()->first_name. '<br>A new sign in has occured on your account at: ' . Carbon::now() . ' If this was not you, please get in touch with us as quick as possible';
+                $name = auth()->user()->first_name ?? auth()->user()->username;
+                $body = 'Dear '. $name . '<br>A new sign in has occured on your account at: ' . Carbon::now() . '.<br> If this was not you, please get in touch with us as quick as possible';
                 logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
             }
         }

@@ -79,6 +79,10 @@ class SettingsController extends Controller
             $data['logo'] = $this->uploadFile($request->logo, 'site');
         }
 
+        if (!empty($request->dashboard_logo)) {
+            $data['dashboard_logo'] = $this->uploadFile($request->dashboard_logo, 'site');
+        }
+
         if (!empty($request->favicon)) {
             $data['favicon'] = $this->uploadFile($request->favicon, 'site');
         }

@@ -53,17 +53,22 @@ class RegisteredUserController extends Controller
             'status' => 'active',
         ]);
 
-        $user->sendEmailVerificationNotification();
-
         event(new Registered($user));
-
-        Auth::login($user);
 
         Customer::create([
             'user_id' => $user->id,
             'wallet' => 0,
-            'customer_level' => config('app.default_customer_level_id'),
+            'referal_wallet' => 0,
+            'customer_level' => env('DEFAULT_CUSTOMER_LEVEL_ID') ?? 1,
         ]);
+        Auth::login($user);
+
+        try {
+            //code...
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
         return redirect(RouteServiceProvider::HOME);
     }

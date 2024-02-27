@@ -107,10 +107,13 @@
                                                         <span class="title">Service</span> <br>
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
-                                                                @if($transaction->reason == 'LEVEL-UPGRADE')
-                                                                LEVEL UPGRADE
+                                                               
+                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                    {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                 @else
-                                                                <strong>{{ $transaction->product->name}}</strong>@if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} @endif
+                                                                <strong>{{ $transaction->product->name}}</strong>
+                                                                    @if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} 
+                                                                    @endif
                                                                 @endif
                                                                 (@if($transaction->status == 'failed')
                                                                     <span class="text-danger">{{ ucfirst($transaction->status) }}</span>

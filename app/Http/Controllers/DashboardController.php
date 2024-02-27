@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
+use App\Models\PaymentGateway;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +36,8 @@ class DashboardController extends Controller
 
     public function showLoadWalletPge()
     {
+        $gateway = PaymentGateway::where('status', 'active')->first();
+        return view('customer.load_wallet', compact('gateway'));
     }
 
     public function upgradeAccount(Request $request)

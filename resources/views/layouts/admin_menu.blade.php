@@ -2,8 +2,8 @@
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
-                    {{-- <div class="brand-logo"><img class="logo" src="{{ asset(getSettings()->logo ) }}" /></div> --}}
-                    <div class="brand-logo"><img style="height: auto;" class="logo" src="{{ asset('site/dashboard_logo.jpeg')}}" /></div>
+                    <div class="brand-logo"><img style="width: 180px;" src="{{ asset(getSettings()->dashboard_logo ) }}" /></div>
+                    {{-- <div class="brand-logo"><img style="height: auto;" class="logo" src="{{ asset('site/dashboard_logo.jpeg')}}" /></div> --}}
 
                     <h2 class="brand-text mb-0"></h2>
                 </a></li>
@@ -59,6 +59,7 @@
                 </ul>
             </li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
+            <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a href="{{ route('paymentgateway.index')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Payment Gateway Settings</span></a></li>
             <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a href="{{ route('settings.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">General Settings</span></a></li>
 
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
