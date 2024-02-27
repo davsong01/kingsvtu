@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlackList;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Category;
@@ -33,10 +34,18 @@ class TransactionController extends Controller
 
     public function initializeTransaction(Request $request)
     {
+        $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, $request->email);
+
+        if ($blacklist) {
+            return back()->with('error', 'Couldn\'t perform transaction, kindly reach out to us!');
+        }
+
+
         // Check Transaction pin
         $pinCheck = $this->checkTransactionPin($request);
 
         if (!$pinCheck) {
+            return back()->with('error', 'Invalid Transaction PIN!');
             return back()->with('error', 'Invalid Transaction PIN!');
         }
 
@@ -479,5 +488,13 @@ class TransactionController extends Controller
         ]);
 
         return $ref;
+    }
+
+    function bounceBlacklist ($phone, $mail = null) {
+        $blacklist = BlackList::where('status', 'active')->Where('value', $phone)
+        ->orWhere('value', $mail)->first(['id']);
+
+        if ($blacklist) return true;
+        return false;
     }
 }

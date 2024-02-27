@@ -30,8 +30,8 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Add Provider</h4>
-                                    <p>Add new provider</p>
+                                    <h4 class="card-title">Add New Blacklist</h4>
+                                    <p>Add new item to the black list</p>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">
