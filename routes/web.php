@@ -64,6 +64,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('api', APIController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('customer-blacklist', BlackListController::class);
+    Route::get('black-list-status', [BlackListController::class, 'status']);
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');

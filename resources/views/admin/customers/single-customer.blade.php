@@ -28,8 +28,9 @@
                                     <option value="">Select Status</option>
                                     <option value="active" @selected($customer->status == 'active')>Active</option>
                                     <option value="suspended" @selected($customer->status == 'suspended')>Suspended</option>
-                                    <option value="email-blacklist" @selected($customer->status == 'email-blacklist')>Email Blacklist</option>
-                                    <option value="phone-blacklist" @selected($customer->status == 'phone-blacklist')>Phone Blacklist</option>
+                                    <option value="delete" @selected($customer->status == 'delete')>Delete</option>
+                                    {{-- <option value="email-blacklist" @selected($customer->status == 'email-blacklist')>Email Blacklist</option> --}}
+                                    {{-- <option value="phone-blacklist" @selected($customer->status == 'phone-blacklist')>Phone Blacklist</option> --}}
                                 </select>
                             </fieldset>
                             <fieldset class="form-group">

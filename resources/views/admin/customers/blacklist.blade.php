@@ -20,7 +20,8 @@
                             <table id="table-extended-success" class="table mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Details</th>
+                                        <th>Blacklist Item</th>
+                                        <th>Status</th>
                                         <th>Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -38,19 +39,13 @@
                                             </td> --}}
 
                                             <td>{{ $customer->value }}</td>
-                                            {{-- <td>{{ ucfirst($customer->status) }}</td> --}}
+                                            <td>{{ ucfirst($customer->status) }}</td>
                                             <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
                                             <td>
-                                                <div class="dropdown">
-                                                    <span
-                                                        class="bx bx-dots-vertical-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
-                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                                        role="menu"></span>
-                                                    <div class="dropdown-menku dropdown-menu-right">
-                                                        <a
-                                                            href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}"><i
-                                                                class="bx bx-eye-alt mr-1"></i> View</a>
-                                                    </div>
+                                                <div class="custom-control custom-switch custom-switch-success custom-switch-glow custom-control-inline mb-1">
+                                                    <input type="checkbox" class="custom-control-input" id="customSwitchGlow2" @checked($customer->status == 'active') onchange="toggleStatus()" data-id="{{ $customer->id }}" data-value="{{ $customer->status }}">
+                                                    <label class="custom-control-label" for="customSwitchGlow2">
+                                                    </label>
                                                 </div>
                                             </td>
                                         </tr>
@@ -65,3 +60,26 @@
             </section>
         </div>
     </div>
+
+    <script>
+        function toggleStatus () {
+            let check = confirm('Are you sure you want to perform this action?');
+
+            if (check) {
+                let status = $('#customSwitchGlow2').attr('data-value');
+                let id = $('#customSwitchGlow2').attr('data-id');
+
+                $.ajax({
+                    url: 'black-list-status',
+                    data: {status, id},
+                    success: e => {
+                        alert(e.messages)
+                        if (e.code == 1) {
+                            let status = $('#customSwitchGlow2').attr('data-value', e.status);
+                        }
+                    },
+                    error: () => alert('Request could not be completed!'),
+                });
+            }
+        }
+    </script>

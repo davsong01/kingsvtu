@@ -35,7 +35,6 @@ class BlackListController extends Controller
         ]);
 
         BlackList::create($request->except('token'));
-
         return back()->with('message', 'Item added to blacklist successfully');
     }
 
@@ -69,5 +68,21 @@ class BlackListController extends Controller
     public function destroy(BlackList $blackList)
     {
         //
+    }
+
+    public function status (Request $request) {
+        $request->validate([
+            'status' => 'required',
+            'id' => 'required|integer'
+        ]);
+
+        $status = $request->status == 'active' ? 'in-active' : 'active';
+        $black = BlackList::find($request->id)->update(['status' => $status]);
+
+        if ($black) {
+            return ['code' => 1, 'status' => $status, 'message' => 'Success'];
+        } else {
+            return ['code' => 0, 'message' => 'Failed to set status'];
+        }
     }
 }
