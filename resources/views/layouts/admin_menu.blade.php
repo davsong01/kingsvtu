@@ -33,11 +33,10 @@
                     </li>
                     <li class="{{ Request::is('customers-suspended/suspended') ? 'active' : '' }}"><a href="{{ route('customers.suspended','suspended') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Suspended</span></a>
                     </li>
-                    <li class=""><a href="{{ request()->route()->getPrefix() }}/customers/email-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Emails</span></a>
+                    <li class=""><a href="{{ request()->route()->getPrefix() }}/customer-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklisted Customers</span></a>
                     </li>
-                    <li class="{{ Route::is('customers/.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
-                    </li>
-
+                    {{-- <li class="{{ Route::is('customers/.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
+                    </li> --}}
                     <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ route('customerlevel.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Customer Levels</span></a>
                     </li>
                 </ul>

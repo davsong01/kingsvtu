@@ -27,6 +27,16 @@ class CustomerController extends Controller
             }
         }
 
+        if (isset($request->search)) {
+            $key = "%{$request->search}%";
+            $customers = $customers->where('firstname', 'like', $key)
+                ->orWhere('lastname', 'like', $key)
+                ->orWhere('middlename', 'like', $key)
+                ->orWhere('username', 'like', $key)
+                ->orWhere('phone', 'like', $key)
+
+        }
+
         $customers = $customers->latest()->paginate(20);
 
         return view('admin.customers.index', ['customers' => $customers]);
