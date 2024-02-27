@@ -33,8 +33,7 @@ class CustomerController extends Controller
                 ->orWhere('lastname', 'like', $key)
                 ->orWhere('middlename', 'like', $key)
                 ->orWhere('username', 'like', $key)
-                ->orWhere('phone', 'like', $key)
-
+                ->orWhere('phone', 'like', $key);
         }
 
         $customers = $customers->latest()->paginate(20);
