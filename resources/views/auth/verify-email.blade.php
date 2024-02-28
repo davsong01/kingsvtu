@@ -1,33 +1,27 @@
-@extends('layouts.auth')
-@section('body')
+@extends('layouts.app')
+@section('content')
 
-    <div class="col-md-12 col-12 px-0">
-        <div class="card disable-rounded-right d-flex justify-content-center">
+    <div class="col-md-12 col-12 px-5">
+        <div class="card disable-rounded-right d-flex justify-content-center" style="margin: 10rem">
             <div class="card-header pb-1">
                 <div class="card-title">
-                    <h4 class="text-center mb-2">Create An Account</h4>
+                    <h4 class="text-center my-2">Email Verification</h4>
                 </div>
             </div>
             <div class="card-content">
                 <div class="card-body">
                     @include('layouts.alerts')
-                    <div class="mb-4 text-sm text-gray-600">
-                        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-                    </div>
-                    @if (session('status') == 'verification-link-sent')
-                        <div class="mb-4 font-medium text-sm text-green-600">
-                            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-                        </div>
-                    @endif
 
-                    <div class="mt-4 flex items-center justify-between">
-                        <form method="POST" action="{{ route('verification.send') }}">
+                    <div class="mt-4">
+                        <form method="POST" action="{{ route('verification.send') }}" class="text-center center">
                             @csrf
-
+                            <p class="text-center text-muted">
+                                Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.
+                            </p>
                             <div>
-                                <x-primary-button>
-                                    {{ __('Resend Verification Email') }}
-                                </x-primary-button>
+                                <button class="btn btn-primary btn-large mt-3" type="submit">
+                                    Resend Verification Email
+                                </button>
                             </div>
                         </form>
                     </div>

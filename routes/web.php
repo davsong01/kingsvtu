@@ -66,6 +66,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('customer-blacklist', BlackListController::class);
     Route::get('black-list-status', [BlackListController::class, 'status']);
 
+    // transactions route
+    Route::get('transactions', [TransactionController::class, 'transView'])->name('admin.trans');
+
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');
     Route::get('customers-suspended/{status}', [CustomerController::class, 'customers'])->name('customers.suspended');

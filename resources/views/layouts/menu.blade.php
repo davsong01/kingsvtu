@@ -1,4 +1,5 @@
- <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
+@if (auth()->user()->email_verified_at)
+<div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
@@ -70,3 +71,4 @@
         </ul>
     </div>
 </div>
+@endif

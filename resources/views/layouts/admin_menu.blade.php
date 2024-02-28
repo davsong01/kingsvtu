@@ -57,6 +57,12 @@
                     </li> --}}
                 </ul>
             </li>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Transactions</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a href="{{ route('admin.trans') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Transactions</span></a>
+                    </li>
+                </ul>
+            </li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
             <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a href="{{ route('paymentgateway.index')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Payment Gateway Settings</span></a></li>
             <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a href="{{ route('settings.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">General Settings</span></a></li>

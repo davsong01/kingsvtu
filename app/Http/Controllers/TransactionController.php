@@ -21,9 +21,11 @@ class TransactionController extends Controller
 {
     public function showProductsPage($slug)
     {
-        $category = Category::with(['products' => function ($query) {
-            return $query->where('status', 'active')->get();
-        }])->where('slug', $slug)->first();
+        $category = Category::with([
+            'products' => function ($query) {
+                return $query->where('status', 'active')->get();
+            }
+        ])->where('slug', $slug)->first();
 
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
@@ -452,10 +454,10 @@ class TransactionController extends Controller
             if ($user) {
                 $sett = getSettings();
                 if ($sett->referral_system_status == 'active') {
-                    $cut  = $sett->referral_percentage;
+                    $cut = $sett->referral_percentage;
                     $cal = $cut / 100 * $amount;
 
-                    $customer =  $user->customer;
+                    $customer = $user->customer;
                     $current = $customer->referal_wallet;
 
                     $sum = $current + $cal;
@@ -490,11 +492,30 @@ class TransactionController extends Controller
         return $ref;
     }
 
-    function bounceBlacklist ($phone, $mail = null) {
+    function bounceBlacklist($phone, $mail = null)
+    {
         $blacklist = BlackList::where('status', 'active')->Where('value', $phone)
-        ->orWhere('value', $mail)->first(['id']);
+            ->orWhere('value', $mail)->first(['id']);
 
-        if ($blacklist) return true;
+        if ($blacklist)
+            return true;
         return false;
+    }
+
+    function transView(Request $request)
+    {
+        $transactions = TransactionLog::latest()->paginate(20);
+        $totalTransSuccess = TransactionLog::where('status', 'delivered')->sum('amount');
+        $totalTransFailed = TransactionLog::where('status', 'failed')->sum('amount');
+        $totalTransPending = TransactionLog::where('status', 'pending')->sum('amount');
+        $products = Product::all();
+
+        return view('admin.transaction.index', [
+            'transactions' => $transactions,
+            'products' => $products,
+            'success' => $totalTransSuccess,
+            'failed' => $totalTransFailed,
+            'pending' => $totalTransPending,
+        ]);
     }
 }
