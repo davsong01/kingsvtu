@@ -1,4 +1,5 @@
- <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
+@if (auth()->user()->email_verified_at)
+<div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
@@ -13,13 +14,13 @@
     <div class="main-menu-content" style="margin-top: 20px;" >
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             {{-- start --}}
-            <?php 
+            <?php
                 $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user()), 2) : 0;
             ?>
             <li style="color: #fff;" class="navigation-header"><span>Wallet Balance</span><br>{!! $balance !!}</li>
-            <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br><strong>{{ auth()->user()->customer->level->name }}</strong></li>
+            <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br><strong>{{ auth()->user()->customer?->level?->name }}</strong></li>
 
-           
+
             <li class=" navigation-header"><span>Make Payment</span></li>
             <?php $categories = getCategories() ?>
             @foreach($categories as $category)
@@ -30,7 +31,7 @@
             <li class=" navigation-header"><span>Self Service</span></li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>
              <li class="{{ Request::path() == 'level-upgrade' ? 'active' : '' }}"><a href="{{ route('customer.level.upgrade')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Upgrade Account</span></a></li>
-            
+
             <li class="{{ Request::path() == 'load-wallet' ? 'active' : '' }}"><a href="{{ route('customer.load.wallet')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Load Wallet</span></a></li>
             <li class="{{ Request::path() == 'customer-transactions' ? 'active' : '' }}"><a href="{{ route('customer.transaction.history')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Transactions</span></a></li>
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
@@ -70,3 +71,4 @@
         </ul>
     </div>
 </div>
+@endif
