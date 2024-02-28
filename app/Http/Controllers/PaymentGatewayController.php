@@ -87,7 +87,8 @@ class PaymentGatewayController extends Controller
             "contract_id" => "nullable",
             "merchant_email" => "nullable",
             "base_url" => "nullable",
-            "status" => "nullable"
+            "status" => "nullable",
+            "charge" => "required"
         ]);
 
         $paymentgateway->update([
@@ -100,6 +101,7 @@ class PaymentGatewayController extends Controller
             "merchant_email" => $request->merchant_email,
             "base_url" => $request->base_url,
             "status" => $request->status,
+            "charge" => $request->charge,
         ]);
 
         return back()->with('message', 'Updated successfully');

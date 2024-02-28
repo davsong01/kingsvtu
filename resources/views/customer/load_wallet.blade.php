@@ -53,21 +53,20 @@
                                                             <div class="tab-content pt-1">
                                                                 @if(getSettings()->allow_fund_with_card == 'yes')
                                                                 <div class="tab-pane {{ getSettings()->allow_fund_with_card == 'yes' ? 'active' : ''}}" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
-                                                                    <p>Credit your wallet now, and spend from it later. No Need to enter card details everytime you want to make a Payment. Make Faster Payments. </p>
-                                                                    <form action="" method="POST" enctype="multipart/form-data">
+                                                                    <p>Credit your wallet now, and spend from it later. No Need to enter card details everytime you want to make a Payment. Make Faster Payments. 
+                                                                      <br>  <small style="color:red"><b>NOTE: </b>A charge of {!! getSettings()->currency !!}{{number_format($gateway->charge, )}} is applicable to this method of wallet funding</small>
+                                                                    </p>
+                                                                    <form action="{{ route('process-customer-load-wllet') }}" method="POST" id="wallet_load">
                                                                         @csrf
-                                                                        @method('PATCH')
                                                                         <div class="row">
                                                                             <div class="col-md-12">
                                                                                 <fieldset class="form-group">
                                                                                     <label for="amount">Enter Amount</label>
                                                                                     <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" value="{{ old('amount')}}" required>
                                                                                 </fieldset>
-                                                                                
                                                                             </div>
-                                                                           
                                                                             <div class="col-md-12">
-                                                                                <a class="btn btn-primary" style="color:white" onclick="payWithMonnify()">Pay now</a>
+                                                                                <a class="btn btn-primary" style="color:white" onclick="loadWallet()">Pay now</a>
                                                                             </div>
                                                                         </div>
                                                                     </form>
@@ -77,7 +76,7 @@
                                                                     <div class="tab-pane {{ getSettings()->allow_fund_with_card  !== 'yes' ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
                                                                         @if(empty(auth()->user()->customer->kyc_status) || auth()->user()->customer->kyc_status == 'unverified')
                                                                         Hang on a second! You need to fill in your KYC information for verification before you can fund via a reserved account number <br>
-                                                                        <a href="" class="btn btn-primary btn-sm">Update KYC details here</a>
+                                                                        <a href="{{ route('update.kyc.details') }}" class="btn btn-info btn-sm">Update KYC details here</a>
                                                                         @else
                                                                             <p>To fund your wallet, make payment into this account. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.
                                                                                 IMPORTANT: payments made into this account are automated. This means that once you transfer, your wallet is credited automatically.
@@ -139,51 +138,55 @@
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script type="text/javascript" src="https://sdk.monnify.com/plugin/monnify.js"></script>
 <script>
-        function payWithMonnify() {
-            amount = $('#amount').val();
+    function loadWallet(){
+        $.LoadingOverlay("show");
+        document.forms["wallet_load"].submit();
+    }
+        // function payWithMonnify() {
+        //     amount = $('#amount').val();
             
-            MonnifySDK.initialize({
-                amount: amount ,
-                currency: "NGN",
-                reference: new String((new Date()).getTime()),
-                customerFullName: "{{auth()->user()->firstname}}"+" "+"{{auth()->user()->middlename}}"+" "+"{{auth()->user()->lastname}}",
-                customerEmail: "{{ auth()->user()->email }}",
-                apiKey: "{{ $gateway->api_key}}",
-                contractCode: "{{ $gateway->contract_id}}",
-                paymentDescription: "Wallet Funding",
-                metadata: {
-                    "customer_id": "{{ auth()->user()->customer->id }}",
-                    "reason": "Wallet Funding",
-                },
+        //     MonnifySDK.initialize({
+        //         amount: amount ,
+        //         currency: "NGN",
+        //         reference: new String((new Date()).getTime()),
+        //         customerFullName: "{{auth()->user()->firstname}}"+" "+"{{auth()->user()->middlename}}"+" "+"{{auth()->user()->lastname}}",
+        //         customerEmail: "{{ auth()->user()->email }}",
+        //         apiKey: "{{ $gateway->api_key}}",
+        //         contractCode: "{{ $gateway->contract_id}}",
+        //         paymentDescription: "Wallet Funding",
+        //         metadata: {
+        //             "customer_id": "{{ auth()->user()->customer->id }}",
+        //             "reason": "Wallet Funding",
+        //         },
                 
-                onLoadStart: () => {
+        //         onLoadStart: () => {
                    
-                },
-                onLoadComplete: () => {
-                    alert.log("Something went wrong");
-                },
+        //         },
+        //         onLoadComplete: () => {
+        //             alert.log("Something went wrong");
+        //         },
 
-                onComplete: function(response) {
-                    $.LoadingOverlay("show");
-                    $.ajax({
-                        url: "{{url('/log-p-callback')}}"+"/{{ $gateway->id}}",
-                        method: 'POST',
-                        dataType: 'json',
-                        data:response,
+        //         onComplete: function(response) {
+        //             $.LoadingOverlay("show");
+        //             $.ajax({
+        //                 url: "{{url('/log-p-callback')}}"+"/{{ $gateway->id}}",
+        //                 method: 'POST',
+        //                 dataType: 'json',
+        //                 data:response,
 
-                        success: function (data) {
-                            if(data.message){
-                                window.location.href = "{{ url('customer-transaction_status/') }}"+"/"+data.transaction_id;
-                            }else{
-                                $.LoadingOverlay("hide");
-                                alert(data.error);
-                            }
-                        }
-                    });
-                },
-                onClose: function(data) {
-                }
-            });
-        }
-    </script>
+        //                 success: function (data) {
+        //                     if(data.message){
+        //                         window.location.href = "{{ url('customer-transaction_status/') }}"+"/"+data.transaction_id;
+        //                     }else{
+        //                         $.LoadingOverlay("hide");
+        //                         alert(data.error);
+        //                     }
+        //                 }
+        //             });
+        //         },
+        //         onClose: function(data) {
+        //         }
+        //     });
+        // }
+</script>
 @endsection

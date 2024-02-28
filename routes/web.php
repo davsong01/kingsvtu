@@ -26,7 +26,7 @@ use App\Http\Controllers\PaymentGatewayController;
 |
 */
 
-Route::post('log-p-callback/{provider}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
+Route::post('log-p-callback/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -45,6 +45,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
     Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
     Route::get('customer-load-wllet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
+    Route::post('process-customer-load-wllet', [PaymentController::class, 'redirectToUrl'])->name('process-customer-load-wllet');
+    Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
+    Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
+    Route::post('customer-update-kyc-info', [DashboardController::class, 'processUpdateKycInfo'])->name('update.kyc.details.process');
+    
+    Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 
     Route::post('level-upgrade', [DashboardController::class, 'upgradeAccount'])->name('customer.level.upgrade.process');
 

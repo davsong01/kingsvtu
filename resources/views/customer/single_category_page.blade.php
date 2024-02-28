@@ -154,7 +154,6 @@
 
 
                                                                   </form>
-                                                                    {{-- <button id="buy-buttonx" class="btn btn-primary" type="submit" style="display:{{ in_array($category->unique_element, $verifiable) ? 'none' : '' }}" onclick="submitForm()">Buy now</button> --}}
                                                                     <button id="buy-buttonx" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
                                                                 </div>
 

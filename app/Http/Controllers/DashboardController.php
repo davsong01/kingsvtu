@@ -101,7 +101,7 @@ class DashboardController extends Controller
             
         } catch (\Throwable $th) {
             DB::rollBack();
-            \Log::error(['Upgrade Error' => 'Message: '.$th->getMessage().' File: '.$th->getFile().' Line: '.$th->getLine()]);
+            // \Log::error(['Upgrade Error' => 'Message: '.$th->getMessage().' File: '.$th->getFile().' Line: '.$th->getLine()]);
             return redirect(route('dashboard'))->with('error', 'An error occured while trying to upgrade, please try again later');
         }
 
@@ -197,5 +197,9 @@ class DashboardController extends Controller
         logEmails(auth()->user()->email, $subject, $body);
 
         return redirect(route('dashboard'))->with('message', 'Transaction PIN changed successfully');
+    }
+
+    public function updateKycInfo(){
+        return view('customer.edit_kyc_details');
     }
 }

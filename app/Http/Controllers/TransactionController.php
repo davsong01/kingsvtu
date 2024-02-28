@@ -384,7 +384,8 @@ class TransactionController extends Controller
             'app_version' => Session::get('app_version') ?? null,
             'api_id' => $data['api_id'] ?? null,
             'reason' => $data['reason'] ?? null,
-            'wallet_funding_provider' => $request['wallet_funding_provider'] ?? null
+            'wallet_funding_provider' => $data['wallet_funding_provider'] ?? null,
+            'provider_charge' => $data['provider_charge'] ?? null,
         ];
 
         $trans = TransactionLog::create($pre);

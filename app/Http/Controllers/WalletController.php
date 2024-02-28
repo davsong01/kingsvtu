@@ -20,13 +20,13 @@ class WalletController extends Controller
     public function logWallet($data)
     {
         $wallet = Wallet::create([
-            'customer_id' => $data['customer_id'],
+            'customer_id' => $data['customer_id'] ?? auth()->user()->customer->id,
             'amount' => $data['amount'],
             'type' => $data['type'],
             'transaction_id' => $data['transaction_id'] ?? null,
             'reason' => $data['reason'] ?? null,
         ]);
-
+        
         return $wallet;
     }
 

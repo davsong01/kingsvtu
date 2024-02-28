@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Edit Profile')
+@section('title', 'Edit KYC data')
 
 @section('page-css')
 <style>
@@ -28,15 +28,14 @@
                                             <div class="card">
                                                 <div class="col-md-12"> 
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
-                                                        <h4 class="card-title">Edit Profile</h4>
+                                                        <h4 class="card-title">Update KYC data</h4>
                                                         @include('layouts.alerts')
                                                     </div>
                                                 </div>
                                                 <div class="card-content">
                                                     <div class="card-body">
-                                                        <form action="{{route('profile.update')}}" method="POST" autocomplete="off">
+                                                        <form action="{{route('update.kyc.details.process')}}" method="POST" autocomplete="off">
                                                             @csrf
-                                                            @method('PATCH')
                                                             <div class="row">
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
@@ -47,7 +46,7 @@
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         <label for="middlename">Middle Name</label>
-                                                                        <input autocomplete="false" type="middlename" class="form-control" id="middlename" name="middlename" value="{{ auth()->user()->middlename }}">
+                                                                        <input autocomplete="false" type="middlename" class="form-control" id="middlename" name="middlename" value="{{ auth()->user()->middlename }}" required>
                                                                     </fieldset>
                                                                 </div>
                                                                 <div class="col-md-6">   
@@ -102,6 +101,99 @@
     </div>
 </div>
 @endsection
+
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        var variations = [];
+        
+        $('#product').on('change', function () {
+            $('#variation-div').show();
+            $('#amount-div').hide();
+    
+            $("#amount").prop('readonly', false);
+            $("#amount").val('');
+    
+            $('#variation').find('option').not(':first').remove();
+    
+            var product = $('#product').val();
+            if (product == '') {
+                return;
+            } else {
+                var image = $('#product').find(':selected').data('image');
+                var title = $('#product').find(':selected').data('name');
+                var description = $('#product').find(':selected').data('description');
+                var bulk = $('#product').find(':selected').data('bulk');
+                if (bulk == 'yes') {
+                    $("#bulk-purchase").show();
+                } else {
+                    $("#bulk-purchase").hide();
+                }
+    
+                $('#product-image-div').show();
+                $("#product-image").attr("src", image);
+                $("#product-title").html(title);
+                $("#product-description").html(description);
+    
+                $.ajax({
+                    url: "{{ url('customer-get-variations') }}/" + product,
+                    success: function (data) {
+                        
+                        if (data && data.length > 0) {
+                            for (t = 0; t <= data.length; t++) {
+                                console.log(data[t]);
+                                $('#variation').append(
+                                    `<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`
+                                    );
+                                variations.push({
+                                    "id": data[t].id,
+                                    "max": data[t].max,
+                                    "min": data[t].min,
+                                    "fixedPrice": data[t].fixed_price,
+                                    "variation_amount": data[t].system_price
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+    
+        });
+    
+        $('#variation').on('change', function (e) {
+            $('#amount-div').show();
+            var v = e.target.value;
+            var selected = variations.filter((item) => {
+                return item.id == v;
+            });
+            console.log('sss=>', selected[0]);
+            if (selected[0].fixedPrice == 'Yes') {
+                $("#amount").attr({
+                    "max": "",
+                    "min": ""
+                });
+    
+                $('#amount').val(selected[0].variation_amount);
+                // $('#amount-label').text(selected[0].charged_currency+selected[0].charged_amount);
+                $("#amount").attr({
+                    "readonly": "true",
+                });
+    
+            } else {
+                $("#amount").prop('readonly', false);
+                $("#amount").attr({
+                    "max": selected[0].max,
+                    "min": selected[0].min,
+                });
+            }
+    
+    
+        });
+    
+    
+        $('.select2').select2();
+    });
+</script>
+
 @endsection
