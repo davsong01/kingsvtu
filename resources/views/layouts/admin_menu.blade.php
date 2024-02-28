@@ -33,11 +33,10 @@
                     </li>
                     <li class="{{ Request::is('customers-suspended/suspended') ? 'active' : '' }}"><a href="{{ route('customers.suspended','suspended') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Suspended</span></a>
                     </li>
-                    <li class=""><a href="{{ request()->route()->getPrefix() }}/customers/email-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Emails</span></a>
+                    <li class=""><a href="{{ request()->route()->getPrefix() }}/customer-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklisted Customers</span></a>
                     </li>
-                    <li class="{{ Route::is('customers/.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
-                    </li>
-
+                    {{-- <li class="{{ Route::is('customers/.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
+                    </li> --}}
                     <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ route('customerlevel.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Customer Levels</span></a>
                     </li>
                 </ul>
@@ -56,6 +55,12 @@
                     </li>
                     <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/phone-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Blacklist Phones</span></a>
                     </li> --}}
+                </ul>
+            </li>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Transactions</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a href="{{ route('admin.trans') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Transactions</span></a>
+                    </li>
                 </ul>
             </li>
             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Profile</span></a></li>

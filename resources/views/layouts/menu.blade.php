@@ -1,4 +1,5 @@
- <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
+@if (auth()->user()->email_verified_at)
+<div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
@@ -13,13 +14,13 @@
     <div class="main-menu-content" style="margin-top: 20px;" >
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             {{-- start --}}
-            <?php 
+            <?php
                 $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user()), 2) : 0;
             ?>
             <li style="color: #fff;" class="navigation-header"><span>Wallet Balance</span><br>{!! $balance !!}</li>
-            <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br><strong>{{ auth()->user()->customer->level->name }}</strong></li>
+            <li style="color: #fff;" class="navigation-header"><span>Customer Level</span><br><strong>{{ auth()->user()->customer?->level?->name }}</strong></li>
 
-           
+
             <li class=" navigation-header"><span>Make Payment</span></li>
             <?php $categories = getCategories() ?>
             @foreach($categories as $category)
@@ -70,3 +71,4 @@
         </ul>
     </div>
 </div>
+@endif
