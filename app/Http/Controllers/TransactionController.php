@@ -178,10 +178,10 @@ class TransactionController extends Controller
     {
         $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
 
-        // $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
-        // return $pdf->download($transaction['transaction_id'] . '.pdf');
+        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
+        return $pdf->download($transaction['transaction_id'] . '.pdf');
         // dd($transaction, $transaction_id);
-        return view('customer.receipts.transaction_receipt', compact('transaction'));
+        // return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
     public function processTransaction($request, $transaction, $product, $variation)
