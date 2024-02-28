@@ -25,6 +25,7 @@ use App\Http\Controllers\PaymentGatewayController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -83,6 +84,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');
+
+    Route::get('verify-transaction/{reference}/{provider_id?}', [PaymentController::class, 'verifyPayment'])->name('transaction.verify');
 
     Route::resource('paymentgateway', PaymentGatewayController::class);
 });

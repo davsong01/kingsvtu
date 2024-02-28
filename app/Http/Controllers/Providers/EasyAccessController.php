@@ -596,8 +596,6 @@ class EasyAccessController extends Controller
         }
 
         try {
-
-
             $headers = [
                 "AuthorizationToken: " . $api->api_key,
                 'cache-control: no-cache'
@@ -616,6 +614,7 @@ class EasyAccessController extends Controller
             
             if (env('ENT') == 'local') {
                 $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
+                $result = json_decode($response);
             }
 
             if (empty($response)) {
@@ -627,7 +626,6 @@ class EasyAccessController extends Controller
                 $payload = $payload;
                 $status_code = 0;
             } else {
-                $result = json_decode($response);
                 $pinsx = [];
 
                 if (isset($result) && !empty($result)) {
@@ -639,10 +637,10 @@ class EasyAccessController extends Controller
                 }
 
                 $pins = (isset($pinsx) && !empty($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
-                $true_response = $result->true_response ?? ($result->message ?? '');
+                $true_response = $result->true_response ?? ($result['message'] ?? '');
 
-                $status = isset($result->status) ? strtolower($result->status) : 'failed';
-                $auto_refund_status = isset($result->auto_refund_status) ? strtolower($result->auto_refund_status) : 'nil';
+                $status = isset($result['status']) ? strtolower($result['status']) : 'failed';
+                $auto_refund_status = isset($result['auto_refund_status']) ? strtolower($result['auto_refund_status']) : 'nil';
 
                 if (isset($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
                     $user_status = 'delivered';
@@ -657,10 +655,10 @@ class EasyAccessController extends Controller
                     $user_status = 'failed';
                     $status = 'failed';
                     $api_response = $response;
-                    $message = isset($result->true_response) ? str_replace("'", "", $result->true_response) : ($result->true_response ?? '');
+                    $message = isset($result['true_response']) ? str_replace("'", "", $result['true_response']) : ($result['true_response'] ?? '');
                     $payload = $payload;
                     $status_code = 0;
-                    $description = $result->message ?? $true_response ?? '';
+                    $description = $result['message'] ?? $true_response ?? '';
                 }
             }
 

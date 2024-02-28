@@ -241,7 +241,7 @@ class TransactionController extends Controller
             $transaction->update([
                 'balance_after' => $balance_after
             ]);
-            \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
+            // \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
         }
 
         return $transaction;

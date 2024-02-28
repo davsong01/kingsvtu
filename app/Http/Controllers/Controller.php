@@ -33,14 +33,14 @@ class Controller extends BaseController
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
-        
+  
         return json_decode($response, true);
+     
     }
 
     public function uploadFile($file, $location = null, $width = null, $height = null)
     {
         $folder = $this->getPathToSaveFile($location);
-       
         $name = uniqid(11) . '.' . $file->getClientOriginalExtension();
 
         if (substr($file->getMimeType(), 0, 5) == 'image') {
@@ -60,9 +60,9 @@ class Controller extends BaseController
                 }
             }
         }
-       
+
         $imageFile->save($folder . '/' . $name);
-        
+
         return $folder . '/' . $name;
     }
 
@@ -85,15 +85,16 @@ class Controller extends BaseController
         return $location;
     }
 
-    public function getIpAddress(){
-
+    public function getIpAddress()
+    {
     }
 
-    public function getDomainName(){
-
+    public function getDomainName()
+    {
     }
 
-    public function getAppVersion(){
+    public function getAppVersion()
+    {
         return 1;
     }
 
@@ -151,6 +152,4 @@ class Controller extends BaseController
             logEmails(auth()->user()->email, $subject, $body);
         }
     }
-
-
 }

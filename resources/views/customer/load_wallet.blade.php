@@ -157,10 +157,10 @@
                 },
                 
                 onLoadStart: () => {
-                    console.log("loading has started");
+                   
                 },
                 onLoadComplete: () => {
-                    console.log("SDK is UP");
+                    alert.log("Something went wrong");
                 },
 
                 onComplete: function(response) {
@@ -172,36 +172,16 @@
                         data:response,
 
                         success: function (data) {
-                            // $("#verify-title").html(data.title);
-                            // $("#verify-details").html(data.message);
-
-                            // if(data.status == '1'){
-                            //     if(allow_subscription_type == 'yes' && element == 'iuc_number'){
-                            //         $('#bouquet').append(`<option value="change" data-amount="${amount}">Change Bouquet</option><option data-amount="${data.renewal_amount}" value="renew">Renew Bouquet</option>`);
-                            //         $("#bouquet-div").show();
-                            //         $("#bouquet").attr({
-                            //             "required":true
-                            //         });
-                            //     }else{
-                            //         $("#bouquet-div").hide();
-                            //         $("#bouquet").attr({
-                            //             "required":false
-                            //         });
-                            //     }
-
-                            //     $("#continue_payment").show();
-
-                            // }else{
-                            //     $("#continue_payment").hide();
-                            // }
-                            // $('#verify-modal').modal('show');
+                            if(data.message){
+                                window.location.href = "{{ url('customer-transaction_status/') }}"+"/"+data.transaction_id;
+                            }else{
+                                $.LoadingOverlay("hide");
+                                alert(data.error);
+                            }
                         }
                     });
-                    
                 },
                 onClose: function(data) {
-                    //Implement what should happen when the modal is closed here
-                    console.log(data);
                 }
             });
         }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PaymentGateway;
 use Illuminate\Http\Request;
+use App\Models\PaymentGateway;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PaymentProccessors\MonnifyController;
 
 class PaymentController extends Controller
 {
@@ -34,34 +35,75 @@ class PaymentController extends Controller
             $request['quantity'] = 1;
             $request['unique_element'] = 'WALLET-FUNDING';
             $request['wallet_funding_provider'] = $provider;
+            
+            $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
 
-            try {
-                DB::beginTransaction();
-                // Log basic transaction
-                $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
+            // Verify Transaction
+            $verify = $this->verifyPayment($request->transactionReference, 1);
+            if (isset($verify) && $verify['status'] == 'success' && $verify['data']['customer']['email'] == auth()->user()->email){
+                try {
+                    DB::beginTransaction();
+                    // Log basic transaction
+                    
+                    $transaction->update([
+                        'balance_after' => $balance + $request->authorizedAmount,
+                        'status' => 'success',
+                        'descr' => 'Wallet Funding of ' . getSettings()->currency . number_format($request->authorizedAmount, 2) . ' was successful',
+                    ]);
 
+                    // Log wallet
+                    $wal = $wallet->logWallet($request->all());
+
+                    // Update Customer Wallet
+                    $wallet->updateCustomerWallet(auth()->user(), $request->authorizedAmount, $request['type']);
+
+                    DB::commit();
+                    app('App\Http\Controllers\TransactionController')->sendTransactionEmail($transaction);
+                    $route = route('transaction.status', $transaction->id);
+
+                    $return = [
+                        'status' => 'success',
+                        'transaction_id' => $transaction->transaction_id,
+                        'message' => 'Wallet funding successful',
+                        'redirect' => $route,
+                    ];
+                } catch (\Throwable $th) {
+                }
+            }else{
                 $transaction->update([
-                    'balance_after' => $balance + $request->authorizedAmount,
-                    'status' => 'success',
-                    'descr' => 'Wallet Funding of ' . getSettings()->currency.number_format($request->authorizedAmount,2) . ' was successful',
+                    'balance_after' => $balance,
+                    'status' => 'failed',
+                    'descr' => 'Wallet Funding of ' . getSettings()->currency . number_format($request->authorizedAmount, 2) . ' failed. Transaction unverified',
                 ]);
+                $return = [
+                    'status' => 'failed',
+                    'error' => 'Transaction couldn\'t be verified, please contact support',
+                ];
 
-                // Log wallet
-                $wal = $wallet->logWallet($request->all());
-
-                // Update Customer Wallet
-                $wallet->updateCustomerWallet(auth()->user(), $request->authorizedAmount, $request['type']);
-
-                DB::commit();
-                app('App\Http\Controllers\TransactionController')->sendTransactionEmail($transaction);
-
-                return redirect(route('dashboard'))->with('message', 'Wallet funding successful');
-            } catch (\Throwable $th) {
             }
 
+            return response()->json($return);
             // Log transaction email
         } else {
-            return redirect(route('customer.load.wallet'))->with('error', 'Wallet funding successful');
+            $return = [
+                'status' => 'failed',
+                'error' => 'Something went wrong during funding, please contact support',
+            ];
+
+            return response()->json($return);
         }
+    }
+
+    public function verifyPayment($reference, $provider_id = null)
+    {
+        $provider = PaymentGateway::where('id', $provider_id)->first();
+
+        if (empty($provider)) {
+            return false;
+        }
+
+        $verify = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($reference);
+
+        return $verify;
     }
 }
