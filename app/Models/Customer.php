@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\KycData;
+use App\Models\CustomerLevel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Model
 {
@@ -12,5 +14,10 @@ class Customer extends Model
     
     public function level(){
         return $this->belongsTo(CustomerLevel::class, 'customer_level');
+    }
+
+    public function kycdata()
+    {
+        return $this->belongsTo(KycData::class, 'customer_id');
     }
 }

@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\KycData;
+use Illuminate\Http\Request;
+
+class KycDataController extends Controller
+{
+
+    public function verifyBVN($bvn)
+    {
+        $verify = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyBvn($bvn);
+
+        return $verify;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(KycData $kycData)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(KycData $kycData)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, KycData $kycData)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(KycData $kycData)
+    {
+        //
+    }
+}

@@ -55,30 +55,54 @@
                                                                         <input autocomplete="false" type="lastname" class="form-control" id="lastname" name="lastname" value="{{ auth()->user()->lastname }}" required>
                                                                     </fieldset>
                                                                 </div>
-                                                                <div class="col-md-6">   
-                                                                    <fieldset class="form-group">
-                                                                        <label for="phone">Phone Number</label>
-                                                                        <input autocomplete="false" type="phone" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
-                                                                    </fieldset>
-                                                                </div>
+                                                                
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         <label for="email">Email Address</label>
                                                                         <input autocomplete="false" type="phone" class="form-control" disabled value="{{ auth()->user()->email }}">
                                                                     </fieldset>
                                                                 </div>
-                                                                @if(auth()->user()->type == 'customer')
+                                                                @if($kyc['bvn'] == 'verified')
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
-                                                                        <label for="email">Customer Level</label> <a target="_blank" href="{{ route('customer.level.upgrade')}}" style="font-size: smaller;">&nbsp;&nbsp;Upgrade</a>
-                                                                        <input autocomplete="false" type="phone" class="form-control" disabled value="Level {{ auth()->user()->customer->level->name }}">
+                                                                        <label for="bvn">BVN <a target="_blank" href="{{ route('customer.level.upgrade')}}" style="font-size: smaller;">&nbsp;&nbsp;Request BVN update</a></label>
+                                                                        <p>BVN {{ auth()->user()->customer->kycdata->bvn }}</p>
+                                                                    </fieldset>
+                                                                </div>
+                                                                @else
+                                                                <div class="col-md-6">   
+                                                                    <fieldset class="form-group">
+                                                                        <label for="nin">BVN</label>
+                                                                        <input type="text" class="form-control" name="bvn" value="{{ old('bvn')}}">
                                                                     </fieldset>
                                                                 </div>
                                                                 @endif
+                                                                {{-- @if($kyc['nin'] == 'verified')
+                                                                <div class="col-md-6">   
+                                                                    <fieldset class="form-group">
+                                                                        <label for="nin">NIN <a href="{{ route('customer.level.upgrade')}}" style="font-size: smaller;">&nbsp;&nbsp;Request NIN update</a></label>
+                                                                        <p>{{ auth()->user()->customer->kycdata->nin }}</p>
+
+                                                                    </fieldset>
+                                                                </div>
+                                                                @else   
+                                                                <div class="col-md-6">   
+                                                                    <fieldset class="form-group">
+                                                                        <label for="nin">NIN</label>
+                                                                        <input type="nin" class="form-control" value="{{ old('nin')}} ">
+                                                                    </fieldset>
+                                                                </div>
+                                                                @endif --}}
+                                                                <div class="col-md-6">   
+                                                                    <fieldset class="form-group">
+                                                                        <label for="phone">Phone Number</label>
+                                                                        <input autocomplete="false" type="phone" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone }}">
+                                                                    </fieldset>
+                                                                </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-12"> 
-                                                                    <button class="btn btn-primary" type="submit">Update Profile</button>
+                                                                    <button class="btn btn-primary" type="submit">Submit</button>
                                                                 </div>
                                                             </div>
                                                         </form>

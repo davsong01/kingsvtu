@@ -47,7 +47,7 @@ class MonnifyController extends Controller
             ];
 
             $response = $this->basicApiCall($url, [], $headers, 'GET');
-           
+
             if (
                 $response && $response['responseCode'] == 0 && $response['responseBody']['paymentStatus'] == 'PAID' &&
                 $response['responseMessage'] == 'success'
@@ -65,6 +65,10 @@ class MonnifyController extends Controller
 
             return $real;
         }
+    }
+
+    public function verifyBvn($bvn)
+    {
     }
 
     public function redirectToGateway(Request $request, $transaction)

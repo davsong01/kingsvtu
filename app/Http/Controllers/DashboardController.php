@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
+use App\Models\KycData;
 use App\Models\PaymentGateway;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -98,7 +99,6 @@ class DashboardController extends Controller
             ]);
 
             DB::commit();
-            
         } catch (\Throwable $th) {
             DB::rollBack();
             // \Log::error(['Upgrade Error' => 'Message: '.$th->getMessage().' File: '.$th->getFile().' Line: '.$th->getLine()]);
@@ -199,7 +199,43 @@ class DashboardController extends Controller
         return redirect(route('dashboard'))->with('message', 'Transaction PIN changed successfully');
     }
 
-    public function updateKycInfo(){
-        return view('customer.edit_kyc_details');
+    public function updateKycInfo()
+    {
+        $kyc = $this->getKycStatus(auth()->user());
+        return view('customer.edit_kyc_details', compact('kyc'));
+    }
+
+    public function processUpdateKycInfo(Request $request){
+        $this->validate($request, [
+            "firstname" => "required",
+            "middlename" => "required",
+            "lastname" => "required",
+            "bvn" => "required",
+            "phone" => "required"
+        ]);
+
+        auth()->user()->update([
+            "firstname" => $request->firstname,
+            "middlename" => $request->middlename,
+            "lastname" => $request->lastname,
+        ]);
+
+        dd('verify');
+        KycData::create([
+
+        ]);
+        dd($request->all());
+    }
+
+    public function getKycStatus($user)
+    {
+        $kyc_data = KycData::where(['customer_id' => $user->customer->id])->first();
+
+        return [
+            'nin' => $kyc_data->nin ?? 'unverified',
+            'bvn' => $kyc_data->bvn ?? 'unverified',
+            'email' => $kyc_data->email ?? 'unverified',
+            'phone' => $kyc_data->phone ?? 'unverified',
+        ];
     }
 }
