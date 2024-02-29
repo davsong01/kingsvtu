@@ -54,7 +54,7 @@
                                                                 @if(getSettings()->allow_fund_with_card == 'yes')
                                                                 <div class="tab-pane {{ getSettings()->allow_fund_with_card == 'yes' ? 'active' : ''}}" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
                                                                     <p>Credit your wallet now, and spend from it later. No Need to enter card details everytime you want to make a Payment. Make Faster Payments. 
-                                                                      <br>  <small style="color:red"><b>NOTE: </b>A charge of {!! getSettings()->currency !!}{{number_format($gateway->charge, )}} is applicable to this method of wallet funding</small>
+                                                                      <br>  <small style="color:red"><b>NOTE: </b>A charge of <strong>{{number_format($gateway->charge, 1)}}% </strong>is applicable to this method of wallet funding</small>
                                                                     </p>
                                                                     <form action="{{ route('process-customer-load-wllet') }}" method="POST" id="wallet_load">
                                                                         @csrf
@@ -74,41 +74,43 @@
                                                                 @endif
                                                                 @if(getSettings()->allow_fund_with_reserved_account == 'yes')
                                                                     <div class="tab-pane {{ getSettings()->allow_fund_with_card  !== 'yes' ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
-                                                                        @if(empty(auth()->user()->customer->kyc_status) || auth()->user()->customer->kyc_status == 'unverified')
+                                                                        @if(getFinalKycStatus(auth()->user()->customer->id) == 'unverified')
                                                                         Hang on a second! You need to fill in your KYC information for verification before you can fund via a reserved account number <br>
                                                                         <a href="{{ route('update.kyc.details') }}" class="btn btn-info btn-sm">Update KYC details here</a>
                                                                         @else
-                                                                            <p>To fund your wallet, make payment into this account. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.
-                                                                                IMPORTANT: payments made into this account are automated. This means that once you transfer, your wallet is credited automatically.
+                                                                            @if(auth()->user()->customer->reserved_accounts->count() > 0)
+                                                                                <p>To fund your wallet, make payment into any of the accounts below. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.<br><br><strong style="color:red">IMPORTANT:</strong><br> payments made into this account are automated. This means that once you transfer, your wallet is credited automatically.
                                                                                 P.S: Just like every other transfers, you could experience a slight delay in wallet funding. You only need to hold on patiently as your wallet would be credited once processed. You do not need to contact support after funding your wallet, It is automated. 
-                                                                            </p>    
-                                                                            <div>
-                                                                                <h5>Wallet Funding Account Details</h5>
-                                                                                <div class="table-responsive mt-2 d-lg-block d-none">
-                                                                                    <table class="table table-striped">
-                                                                                        <thead>
-                                                                                            <tr>
-                                                                                                <th style="color:#495463;">Account Name</th>
-                                                                                                <th style="color:#495463;">Bank Name</th>
-                                                                                                <th style="color:#495463;">Account Number</th>
-                                                                                            </tr>
-                                                                                        </thead>
-                                                                                        <tbody>
-                                                                                                                                                        <tr>
-                                                                                                    <td style="color:#173D52;">David Oghi</td>
-                                                                                                    <td style="color:#173D52;">Providus Bank</td>
-                                                                                                    <td style="color:#173D52;">9989018147</td>
+                                                                                </p>    
+                                                                                <div>
+                                                                                    <h5>Wallet Funding Account Details</h5>
+                                                                                    <div class="table-responsive mt-2 d-lg-block d-none">
+                                                                                        <table class="table table-striped">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th style="color:#495463;">Account Name</th>
+                                                                                                    <th style="color:#495463;">Bank Name</th>
+                                                                                                    <th style="color:#495463;">Account Number</th>
                                                                                                 </tr>
-                                                                                                                                                        <tr>
-                                                                                                    <td style="color:#173D52;">David Oghi</td>
-                                                                                                    <td style="color:#173D52;">Wema bank</td>
-                                                                                                    <td style="color:#173D52;">7159221111</td>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                @foreach(auth()->user()->customer->reserved_accounts as $account)
+                                                                                                <tr>
+                                                                                                    <td style="color:#173D52;">{{$account->account_name}}</td>
+                                                                                                    <td style="color:#173D52;">{{$account->bank_name}}</td>
+                                                                                                    <td style="color:#173D52;">{{$account->account_number}}</td>
                                                                                                 </tr>
-                                                                                                                                                </tbody>
-                                                                                    </table>
-                                                                                </div>
-                                                                            </div> 
-                                                                        
+                                                                                                @endforeach                                                       
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </div>
+                                                                                </div> 
+                                                                            @else
+                                                                              <p>
+                                                                                <span style="color:red"><b>SORRY!</b></span>
+                                                                                    No Account Number found, please contact us via on <a target="_blank" href="https://wa.me/{{ getSettings()->whatsapp_number }}?text="{{ urlencode('Hi, I could nor find a reserved account number after completing my KYC verification') }}"> Whatsapp on {{ getSettings()->whatsapp_number }}  </a>to attend to this as soon as possible.
+                                                                                </p>
+                                                                            @endif
                                                                         @endif
                                                                     </div>
                                                                 @endif

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\KycData;
 use App\Models\CustomerLevel;
+use App\Models\ReservedAccountNumber;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -19,5 +20,10 @@ class Customer extends Model
     public function kycdata()
     {
         return $this->belongsTo(KycData::class, 'customer_id');
+    }
+
+    public function reserved_accounts()
+    {
+        return $this->hasMany(ReservedAccountNumber::class, 'customer_id');
     }
 }

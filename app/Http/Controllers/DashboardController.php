@@ -205,26 +205,87 @@ class DashboardController extends Controller
         return view('customer.edit_kyc_details', compact('kyc'));
     }
 
-    public function processUpdateKycInfo(Request $request){
-        $this->validate($request, [
-            "firstname" => "required",
-            "middlename" => "required",
-            "lastname" => "required",
-            "bvn" => "required",
-            "phone" => "required"
+    public function processUpdateKycInfo(Request $request)
+    {
+        $input = $this->validate($request, [
+            "FIRST_NAME" => "nullable",
+            "MIDDLE_NAME" => "nullable",
+            "LAST_NAME" => "nullable",
+            "PHONE_NUMBER" => "nullable",
+            "COUNTRY" => "nullable",
+            "STATE" => "nullable",
+            "LGA" => "nullable",
+            "DOB" => "nullable",
+            "BVN" => "nullable"
         ]);
+
+        $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'BVN', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA'];
+        foreach ($input as $key => $value) {
+            if (in_array($key, $instantVerify)) {
+                $this->updateKycData($key, $value, auth()->user()->customer->id, 'verified');
+            } else {
+                $this->updateKycData($key, $value, auth()->user()->customer->id, 'unverified');
+            }
+        }
+
+
+        // if (!empty($request->BVN)) {
+        //     // Verify BVN first
+        //     $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
+        //     $lastname = $input['LAST_NAME'] ?? auth()->user()->lastname;
+        //     $middlename = $input['MIDDLE_NAME'] ?? auth()->user()->middlename;
+
+        //     $data = [
+        //         'name' => $firstname . ' ' . $lastname . ' ' . $middlename,
+        //         'bvn' => $input['BVN'],
+        //         'dateOfBirth' => $input['DOB'],
+        //         'mobileNo' => $input['PHONE_NUMBER']
+        //     ];
+
+        //     $verify = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyBVN($data);
+        //     dd($verify);
+        // }
+        $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
+        $lastname = $input['LAST_NAME'] ?? auth()->user()->lastname;
+        $middlename = $input['MIDDLE_NAME'] ?? auth()->user()->middlename;
 
         auth()->user()->update([
-            "firstname" => $request->firstname,
-            "middlename" => $request->middlename,
-            "lastname" => $request->lastname,
+            "firstname" => $firstname,
+            "middlename" => $middlename,
+            "lastname" => $lastname,
         ]);
 
-        dd('verify');
-        KycData::create([
+        // Create reserved account
+        $name = $firstname . ' ' . $lastname . ' ' . $middlename;
 
-        ]);
-        dd($request->all());
+        $data = [
+            'BVN' => $request->BVN ?? kycStatus('BVN', auth()->user()->customer->id)['value'],
+            'customerName' => $name,
+            'customerEmail' => auth()->user()->email,
+            'customer_id' => auth()->user()->customer->id,
+        ];
+
+        app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
+
+        return back()->with('message', 'KYC Update completed');
+    }
+
+    public function updateKycData($key, $value, $customer_id, $status)
+    {
+        $check = KycData::where(['customer_id' => $customer_id, 'key' => $key, 'status' => 'verified'])->first();
+        if (!$check) {
+            KycData::updateOrCreate([
+                'customer_id' => $customer_id,
+                'key' => $key,
+            ], [
+                'customer_id' => $customer_id,
+                'key' => $key,
+                'value' => $value,
+                'status' => $status
+            ]);
+        }
+
+        return;
     }
 
     public function getKycStatus($user)

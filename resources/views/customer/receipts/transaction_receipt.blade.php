@@ -202,7 +202,7 @@
 				</tr>
 				<tr class="item">
 					<td>Unit Price</td>
-					<td>#{{ number_format($transaction['unit_price']) }}</td>
+					<td>#{{ number_format($transaction['unit_price'], 2) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Quantity</td>
@@ -210,19 +210,19 @@
 				</tr>
 				<tr class="item">
 					<td>Discount Applied</td>
-					<td>#{{ number_format($transaction['discount']) }}</td>
+					<td>#{{ number_format($transaction['discount'], 2) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Total Amount Paid</td>
-					<td>#{{ number_format($transaction['total_amount']) }}</td>
+					<td>#{{ number_format($transaction['total_amount'], 2) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Initial Balance</td>
-					<td>#{{ number_format($transaction['balance_before']) }}</td>
+					<td>#{{ number_format($transaction['balance_before'], 2) }}</td>
 				</tr>
 				<tr class="item">
 					<td>Final Balance</td>
-					<td>#{{ number_format($transaction['balance_after']) }}</td>
+					<td>#{{ number_format($transaction['balance_after'], 2) }}</td>
 				</tr>
 
 

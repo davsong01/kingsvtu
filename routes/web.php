@@ -14,6 +14,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\CustomerLevelController;
+use App\Http\Controllers\KycDataController;
 use App\Http\Controllers\PaymentGatewayController;
 
 /*
@@ -50,6 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
     Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
     Route::post('customer-update-kyc-info', [DashboardController::class, 'processUpdateKycInfo'])->name('update.kyc.details.process');
+    Route::get('get-lga-by-statename/{state}', [KycDataController::class, 'getLgaByStateName'])->name('kyc-get-lga-by-state');
     
     Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 

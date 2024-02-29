@@ -77,8 +77,8 @@
                                                         <input type="text" class="form-control" id="base_url" name="base_url" value="{{ $paymentgateway->base_url ?? old('base_url') }}" placeholder="Enter base URL" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="charge">Gateway Charge</label>
-                                                        <input type="number" class="form-control" id="charge" name="charge" value="{{ $paymentgateway->charge ?? old('charge') }}" placeholder="Enter gatway charge" required>
+                                                        <label for="charge">Gateway Charge <span style="color:red">(%)</span></label>
+                                                        <input type="number" class="form-control" id="charge" name="charge" step=".10" value="{{ $paymentgateway->charge ?? old('charge') }}" placeholder="Enter gatway charge in percentage" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="status">Gateway Status</label>

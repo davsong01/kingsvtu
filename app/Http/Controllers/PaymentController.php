@@ -22,9 +22,10 @@ class PaymentController extends Controller
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
         $reference = $this->generateRequestId();
-        $amount = $request->amount - $provider->charge;
+        $provider_charge = ($provider->charge / 100) * $request->amount;
+        $amount = $request->amount - $provider_charge;
         $original_amount = $request->amount;
-
+        
         $request['type'] = 'credit';
         $request['customer_id'] = auth()->user()->customer->id;
         $request['request_id'] = $reference;
@@ -37,15 +38,15 @@ class PaymentController extends Controller
         $request['customer_phone'] = auth()->user()->phone;
         $request['customer_name'] = auth()->user()->firstname;
         $request['reason'] = 'WALLET-FUNDING';
-        $request['amount'] = $amount;
+        $request['amount'] = $original_amount;
         $request['total_amount'] = $amount;
         $request['discount'] = 0;
         $request['unit_price'] =  $amount;
         $request['quantity'] = 1;
         $request['unique_element'] = 'WALLET-FUNDING';
-        $request['provider_charge'] = $provider->charge;
+        $request['provider_charge'] = $provider_charge;
         $request['wallet_funding_provider'] = $provider->id;
-        
+
         $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
 
         $request['reference'] = $reference;
@@ -75,11 +76,12 @@ class PaymentController extends Controller
         $verify = $this->verifyPayment($transaction->transaction_id, 1);
 
         if (isset($verify) && $verify['status'] == 'success') {
-            $paid = ($verify['data']['amountPaid'] - $providerDetails->charge);
+            $paid = $transaction->total_amount;
+            
             try {
                 DB::beginTransaction();
                 // Log basic transaction
-
+             
                 $transaction->update([
                     'balance_after' => $balance + $paid,
                     'status' => 'success',
@@ -98,6 +100,7 @@ class PaymentController extends Controller
                 $wallet->updateCustomerWallet(auth()->user(), $paid, $request['type']);
 
                 DB::commit();
+
                 app('App\Http\Controllers\TransactionController')->sendTransactionEmail($transaction);
 
                 return redirect(route('transaction.status', $transaction->transaction_id));

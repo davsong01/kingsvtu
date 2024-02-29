@@ -6,6 +6,7 @@ namespace App\Http\Controllers\PaymentProcessors;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\PaymentGateway;
+use App\Models\ReservedAccountNumber;
 
 class MonnifyController extends Controller
 {
@@ -67,8 +68,115 @@ class MonnifyController extends Controller
         }
     }
 
-    public function verifyBvn($bvn)
+    public function verifyBVN(array $data)
     {
+        $token = $this->login();
+
+        if (empty($token)) {
+            return [
+                'status' => 'failed',
+                'status_code' => 0,
+            ];
+        } else {
+            $url = $this->api->base_url . 'v2/vas/bvn-details-match';
+            $headers = [
+                "Content-Type: application/json",
+                "Authorization: Bearer " . $token . "",
+            ];
+
+            $response = $this->basicApiCall($url, $data, $headers, 'POST');
+
+            dd($url, $response);
+            // if (
+            //     $response && $response['responseCode'] == 0 && $response['responseBody']['paymentStatus'] == 'PAID' &&
+            //     $response['responseMessage'] == 'success'
+            // ) {
+            //     $real = [
+            //         'status' => 'success',
+            //         'data' => $response['responseBody'],
+            //     ];
+            // } else {
+            //     $real = [
+            //         'status' => 'failed',
+            //         'data' => $response['responseBody'],
+            //     ];
+            // }
+
+            // return $real;
+        }
+    }
+
+    public function createReservedAccount(array $data)
+    {
+        $token = $this->login();
+
+        if (empty($token)) {
+            return [
+                'status' => 'failed',
+                'status_code' => 0,
+            ];
+        } else {
+            $url = $this->api->base_url . 'v2/bank-transfer/reserved-accounts';
+            $headers = [
+                "Content-Type: application/json",
+                "Authorization: Bearer " . $token . "",
+            ];
+
+            $payload = json_encode([
+                "customer_id" => $data["customer_id"],
+                "bvn" => $data["BVN"],
+                // "customerName" => config('app.name').'-'.$data["customerName"],
+                "customerEmail" => $data["customerEmail"],
+                "accountName" => config('app.name') . '-' . $data["customerName"],
+                "currencyCode" => "NGN",
+                "contractCode" => $this->api->contract_id,
+                "getAllAvailableBanks" => true,
+                "accountReference" => $this->generateRequestId(),
+            ]);
+           
+            $response = $this->basicApiCall($url, $payload, $headers, 'POST');
+
+            if (
+                $response && $response['responseCode'] == 0 &&
+                $response['responseMessage'] == 'success'
+            ) {
+                if (isset($response['responseBody']['accounts']) && isset($response['responseBody']['bvn'])) {
+                    foreach ($response['responseBody']['accounts'] as $account) {
+                        ReservedAccountNumber::updateOrCreate([
+                            'customer_id' => $data["customer_id"] ?? null,
+                            'account_number' => $account['accountNumber'] ?? null,
+                            'account_name' => $account['accountName'] ?? null,
+                            'bank_name' => $account['bankName'] ?? null,
+                            'bank_code' => $account['bankCode'] ?? null,
+                        ], [
+                            'customer_id' => $data["customer_id"] ?? null,
+                            'account_reference' => $response['responseBody']['accountReference'] ?? null,
+                            'account_number' => $account['accountNumber'] ?? null,
+                            'account_name' => $account['accountName'] ?? null,
+                            'bank_name' => $account['bankName'] ?? null,
+                            'bank_code' => $account['bankCode'] ?? null,
+                            'paymentgateway_id' => 1,
+                            'status' => $response['responseBody']['status'] ?? null,
+                            'purpose' => 'WALLET-FUNDING',
+                            'bvn' => $response['responseBody']['bvn'],
+                            'response' => json_encode($response)
+                        ]);
+                    }
+                }
+
+                $data = [
+                    'status' => 'success',
+                    'data' => '',
+                ];
+            } else {
+                $data = [
+                    'status' => 'failed',
+                    'data' => $response['responseBody'],
+                ];
+            }
+
+            return $data;
+        }
     }
 
     public function redirectToGateway(Request $request, $transaction)

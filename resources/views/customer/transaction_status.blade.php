@@ -92,8 +92,8 @@
                                                                     </strong></h3></span>
                                                                    
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
-                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</strong></span> <br>
-                                                                    <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:255px;"><i class="fas fa-download"></i>Download Transaction Receipt</a>
+                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</strong></span> <br>
+                                                                    <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:100%;"><i class="fa fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     Transaction Status <br>
@@ -218,7 +218,7 @@
                                                                                     <p class="mb-0 lh-1 key">Discount Applied: </p>
                                                                                 </div>
 
-                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->discount) }}</div>
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->discount, 2) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">
@@ -227,7 +227,7 @@
                                                                                     <p class="mb-0 lh-1 key">Total Amount Paid: </p>
                                                                                 </div>
 
-                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount) }}</div>
+                                                                                <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</div>
                                                                                 </div>
                                                                             </li>
                                                                             <li class="d-flex mb-1">

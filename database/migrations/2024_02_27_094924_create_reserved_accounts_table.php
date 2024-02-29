@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('trans_lower_amt')->nullable();
             $table->string('trans_upper_amt')->nullable();
             $table->double('charge')->nullable();
-            $table->string('verification_status');
             $table->string('status')->nullable();
             $table->integer('admin_id')->nullable();
             $table->string('purpose')->default('Wallet Funding');

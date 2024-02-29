@@ -15,6 +15,20 @@ class KycDataController extends Controller
         return $verify;
     }
 
+    public function getLgaByStateName($state){
+        $lgas = getLgas($state);
+        $res = '';
+
+        if (!empty($lgas)) {
+            foreach ($lgas as $lga) {
+                $res .= '<option value="' . $lga . '">' . $lga . '</option>';
+            }
+        }
+
+        return response()->json($res);
+    }
+
+
     /**
      * Display a listing of the resource.
      */
