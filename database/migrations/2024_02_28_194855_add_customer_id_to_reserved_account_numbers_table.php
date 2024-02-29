@@ -31,7 +31,7 @@ return new class extends Migration
 
         if (Schema::hasColumn('reserved_account_numbers', 'verification_status')) {
             Schema::table('reserved_account_numbers', function (Blueprint $table) {
-                $table->dropColumn('reserved_account_numbers');
+                $table->dropColumn('verification_status');
             });
         }
     }
