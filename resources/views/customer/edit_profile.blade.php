@@ -88,7 +88,7 @@
                                             </div>
                                         </div>
                                         {{-- <div class="col-md-3">
-                                            Sidebar Advert
+                                            {!! getSettings()->google_ad_code !!}
                                         </div> --}}
                                     </div>
                                 </section>

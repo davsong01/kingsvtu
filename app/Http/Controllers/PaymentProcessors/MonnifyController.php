@@ -34,7 +34,7 @@ class MonnifyController extends Controller
     public function verifyTransaction($reference)
     {
         $token = $this->login();
-
+        
         if (empty($token)) {
             return [
                 'status' => 'failed',
@@ -133,7 +133,7 @@ class MonnifyController extends Controller
                 "getAllAvailableBanks" => true,
                 "accountReference" => $this->generateRequestId(),
             ]);
-           
+
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
 
             if (
