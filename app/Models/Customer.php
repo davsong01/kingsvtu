@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\KycData;
 use App\Models\CustomerLevel;
 use App\Models\ReservedAccountNumber;
@@ -12,8 +13,9 @@ class Customer extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    
-    public function level(){
+
+    public function level()
+    {
         return $this->belongsTo(CustomerLevel::class, 'customer_level');
     }
 
@@ -25,5 +27,10 @@ class Customer extends Model
     public function reserved_accounts()
     {
         return $this->hasMany(ReservedAccountNumber::class, 'customer_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

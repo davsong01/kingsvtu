@@ -397,6 +397,7 @@ class TransactionController extends Controller
             'reason' => $data['reason'] ?? null,
             'wallet_funding_provider' => $data['wallet_funding_provider'] ?? null,
             'provider_charge' => $data['provider_charge'] ?? null,
+            'account_number' => $data['account_number'] ?? null,
         ];
 
         $trans = TransactionLog::create($pre);

@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\PaymentProccessors\MonnifyController;
-use App\Models\ReservedAccountCallback;
 use App\Models\TransactionLog;
+use Illuminate\Support\Facades\DB;
+use App\Models\ReservedAccountNumber;
+use App\Models\ReservedAccountCallback;
+use App\Http\Controllers\PaymentProccessors\MonnifyController;
 
 class PaymentController extends Controller
 {
@@ -63,8 +64,11 @@ class PaymentController extends Controller
 
     public function dumpCallback(Request $request, $provider)
     {
-        $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
-        $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
+        if ($provider == 1) {
+            $account_number = $request['eventData']['paymentSourceInformation'][0]['accountNumber'];
+            $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
+            $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
+        }
 
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
         if (!$check) {
@@ -73,6 +77,7 @@ class PaymentController extends Controller
                 'provider_id' => $provider,
                 'paid_on' => $request['eventData']['paidOn'],
                 'session_id' => $session_id,
+                'account_number' => $account_number,
                 'transaction_reference' => $transaction_reference,
             ]);
         }
@@ -80,70 +85,114 @@ class PaymentController extends Controller
 
     public function analyzeCallbackResponse()
     {
-        $calls = ReservedAccountCallback::where(['status' => 'pending'])->orderBy('id', 'ASC')
-            ->take(10)
-            ->get()
-            ->toArray();
 
-        if (count($calls) < 1) {
-            return;
-        }
+        try {
+            DB::beginTransaction();
+            $calls = ReservedAccountCallback::where(['status' => 'pending'])->orderBy('id', 'ASC')
+                ->take(5)
+                ->get()
+                ->toArray();
 
-        $tlk = 'PICKED-' . time();
-        $ids = array_column($calls, 'id');
-        // ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
-
-        // $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
-
-        foreach ($calls as $call) {
-            if ($call['provider_id'] == 1) {
-                $analyze = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($call['transaction_reference']);
+            if (count($calls) < 1) {
+                return;
             }
 
-            if (isset($analyze) && $analyze['status'] == 'success') {
+            $tlk = 'PICKED-' . time();
+            $ids = array_column($calls, 'id');
+            ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
 
-                // Log Transaction
-                $wallet = new WalletController();
-                $balance = $wallet->getWalletBalance(auth()->user());
-                $reference = $this->generateRequestId();
-                $provider_charge = ($provider->charge / 100) * $request->amount;
-                $amount = $request->amount - $provider_charge;
-                $original_amount = $request->amount;
+            $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
 
-                $request['type'] = 'credit';
-                $request['customer_id'] = auth()->user()->customer->id;
-                $request['request_id'] = $reference;
-                $request['transaction_id'] = '';
-                $request['payment_method'] = $provider->name;
-                $request['balance_before'] = $balance;
-                $request['ip_address'] = $this->getIpAddress();
-                $request['domain_name'] = $this->getDomainName();
-                $request['customer_email'] = auth()->user()->email;
-                $request['customer_phone'] = auth()->user()->phone;
-                $request['customer_name'] = auth()->user()->firstname;
-                $request['reason'] = 'WALLET-FUNDING';
-                $request['amount'] = $original_amount;
-                $request['total_amount'] = $amount;
-                $request['discount'] = 0;
-                $request['unit_price'] =  $amount;
-                $request['quantity'] = 1;
-                $request['unique_element'] = 'WALLET-FUNDING';
-                $request['provider_charge'] = $provider_charge;
-                $request['wallet_funding_provider'] = $provider->id;
+            foreach ($calls as $call) {
+                $decodeCall = json_decode($call['raw']);
+                $account = ReservedAccountNumber::with('customer')->where('account_number', $call['account_number'])->first();
+                $provider = PaymentGateway::where('id', $call['provider_id'])->first();
 
-                $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
+                if (!$account) {
+                    continue;
+                }
 
-                $request['reference'] = $reference;
-                $request['amount'] = $original_amount;
-                $redirect_url = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->redirectToGateway($request, $transaction);
+                $customer = $account->customer;
+                $user = $account->customer->user;
 
-                // Log Wallet
-                // Send Notification email
+                if ($call['provider_id'] == 1) {
+                    $analyze = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($call['transaction_reference']);
+                    ReservedAccountCallback::where('id', $call['id'])->update(['raw_requery' => json_encode($analyze['data'])]);
+
+                    $payment_method = $provider->name;
+                    $provider_charge = $provider->charge;
+                    $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
+                    $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
+                }
+
+                if (isset($analyze) && $analyze['status'] == 'success') {
+
+                    // Log Transaction
+                    $wallet = new WalletController();
+                    $balance = $wallet->getWalletBalance($user);
+                    $reference = $this->generateRequestId();
+
+                    if (!empty($provider->reserved_account_payment_charge)) {
+                        $provider_charge = ($provider->reserved_account_payment_charge / 100) * $original_amount;
+                    } else {
+                        $provider_charge = 0;
+                    }
+
+                    $amount = $original_amount - $provider_charge;
+
+                    $request['type'] = 'credit';
+                    $request['customer_id'] = $customer->id;
+                    $request['request_id'] = $this->generateRequestId();
+                    $request['transaction_id'] = $transaction_id;
+                    $request['payment_method'] = $payment_method;
+                    $request['balance_before'] = $balance;
+                    $request['ip_address'] = $this->getIpAddress();
+                    $request['domain_name'] = $this->getDomainName();
+                    $request['customer_email'] = $user->email;
+                    $request['customer_phone'] = $user->phone;
+                    $request['customer_name'] = $user->firstname;
+                    $request['reason'] = 'WALLET-FUNDING';
+                    $request['amount'] = $original_amount;
+                    $request['total_amount'] = $amount;
+                    $request['discount'] = 0;
+                    $request['unit_price'] =  $amount;
+                    $request['quantity'] = 1;
+                    $request['unique_element'] = 'WALLET-FUNDING';
+                    $request['provider_charge'] = $provider_charge;
+                    $request['wallet_funding_provider'] = $call['provider_id'];
+                    $request['account_number'] =  $call['account_number'];
+
+                    $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
+
+                    $transaction->update([
+                        'balance_after' => $balance + $amount,
+                        'status' => 'success',
+                        'descr' => 'Wallet Funding Via Account: ' . $call['account_number'] . ' of ' . getSettings()->currency . number_format($amount, 2) . ' was successful',
+                    ]);
+
+
+                    $request['type'] = 'credit';
+                    $request['amount'] = $amount;
+                    $request['transaction_id'] = $transaction->transaction_id;
+                    $request['reason'] = 'WALLET FUNDING Via Reserved account';
+
+                    $wal = $wallet->logWallet($request);
+
+                    // Update Customer Wallet
+                    $wallet->updateCustomerWallet(auth()->user(), $amount, $request['type']);
+
+                    $this->sendTransactionEmail($transaction);
+                }
+
+                //
+                DB::commit();
+                ReservedAccountCallback::where('id', $call['id'])->update(['status' => 'analyzed']);
+
+                $this->sendTransactionEmail($transaction, $user);
             }
-
-            ReservedAccountCallback::where('id', $call['id'])->update(['status' => 'analyzed']);
-
-            //
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th->getMessage(), $th->getFile(), $th->getLine());
         }
     }
 
@@ -188,7 +237,7 @@ class PaymentController extends Controller
 
                 DB::commit();
 
-                app('App\Http\Controllers\TransactionController')->sendTransactionEmail($transaction);
+                $this->sendTransactionEmail($transaction);
 
                 return redirect(route('transaction.status', $transaction->transaction_id));
             } catch (\Throwable $th) {

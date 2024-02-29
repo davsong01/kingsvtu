@@ -81,6 +81,11 @@
                                                         <input type="number" class="form-control" id="charge" name="charge" step=".10" value="{{ $paymentgateway->charge ?? old('charge') }}" placeholder="Enter gatway charge in percentage" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
+                                                        <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">(%)</span></label>
+                                                        <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter reserved account payment charge in percentage" required>
+                                                    </fieldset>
+                                                    
+                                                    <fieldset class="form-group">
                                                         <label for="status">Gateway Status</label>
                                                         <select class="form-control" name="status" id="status" required>
                                                             <option value="">Select</option>

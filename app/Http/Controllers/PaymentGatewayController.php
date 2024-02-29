@@ -10,6 +10,8 @@ class PaymentGatewayController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+     
     public function index()
     {
         $paymentgateway = PaymentGateway::orderBy('created_at', 'DESC')->get();
@@ -25,6 +27,8 @@ class PaymentGatewayController extends Controller
                 'contract_id' => '1234567890',
                 'merchant_email' => 'test@gmail.com',
                 'status' => 'inactive',
+                'charge' => 1.5,
+                'reserved_account_payment_charge' => 1.5
             ]);
         }
         return view('admin.paymentgateway.index', compact('paymentgateway'));
@@ -88,7 +92,8 @@ class PaymentGatewayController extends Controller
             "merchant_email" => "nullable",
             "base_url" => "nullable",
             "status" => "nullable",
-            "charge" => "required"
+            "charge" => "required",
+            "reserved_account_payment_charge" => "nullable"
         ]);
 
         $paymentgateway->update([
@@ -102,6 +107,7 @@ class PaymentGatewayController extends Controller
             "base_url" => $request->base_url,
             "status" => $request->status,
             "charge" => $request->charge,
+            "reserved_account_payment_charge" => $request->reserved_account_payment_charge,
         ]);
 
         return back()->with('message', 'Updated successfully');

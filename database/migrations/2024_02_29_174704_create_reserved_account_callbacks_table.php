@@ -16,6 +16,7 @@ return new class extends Migration
             $table->longText('raw')->nullable();
             $table->string('status')->default('pending');
             $table->integer('provider_id')->nullable();
+            $table->string('account_number')->nullable();
             $table->timestamp('paid_on')->nullable();
             $table->string('session_id');
             $table->string('transaction_reference');

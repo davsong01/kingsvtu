@@ -108,14 +108,15 @@ class Controller extends BaseController
         return $trx;
     }
 
-    public function sendTransactionEmail($transaction)
+    public function sendTransactionEmail($transaction, $user=null)
     {
         if (getSettings()->transaction_email_notification == 'yes') {
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
             $product =  $transaction->product->name ?? '' .  $variation_name;
             $extras = isset($transaction->extras) ? $transaction->extras : '';
+            $name = auth()->user()->firstname ?? $user->firstname;
             $subject = "Transaction Alert";
-            $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
+            $body = '<p>Hello! ' . $name . '</p>';
             $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
             <strong>Transaction Purpose:</strong> ' . $transaction->reason . '<br>
             <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
@@ -149,7 +150,7 @@ class Controller extends BaseController
             <br>Warm Regards. (' . config('app.name') . ')<br/>
             </p>';
 
-            logEmails(auth()->user()->email, $subject, $body);
+            logEmails(auth()->user()->email ?? $user->email, $subject, $body);
         }
     }
 }
