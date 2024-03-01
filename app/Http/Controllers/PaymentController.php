@@ -122,7 +122,7 @@ class PaymentController extends Controller
                 if ($call['provider_id'] == 1) {
                     $payment_type = $call['payment_method'];
 
-                    if ($payment_type !== 'ACCOUNT_TRANSFER') {
+                    if ($payment_type === 'CARD') {
                         continue;
                     }
 
