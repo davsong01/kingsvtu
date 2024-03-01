@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\KycData;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -55,12 +56,20 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Customer::create([
+        $customer = Customer::create([
             'user_id' => $user->id,
             'wallet' => 0,
             'referal_wallet' => 0,
             'customer_level' => env('DEFAULT_CUSTOMER_LEVEL_ID') ?? 1,
         ]);
+        
+        KycData::create([
+            'key' => 'PHONE_NUMBER',
+            'value' => $user->firstname,
+            'status' => 'unverified',
+            'customer_id' => $customer->id
+        ]);
+
         Auth::login($user);
 
         try {

@@ -37,6 +37,9 @@
                 </form>
                 <hr>
                 <div class="text-center"><small class="mr-25">Don't have an account?</small><a href="{{ route('register') }}"><small>Sign up</small></a></div>
+                <div class="text-center"><p> <br>
+                    <strong>For Support please contact {{ getSettings()->whatsapp_number }} on whatsapp.</strong>
+                </p></div>
             </div>
         </div>
     </div>
