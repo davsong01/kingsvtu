@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
 use App\Models\Variation;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use App\Models\ReferralEarning;
@@ -537,8 +538,10 @@ class TransactionController extends Controller
 
     function bounceBlacklist($phone, $mail = null)
     {
-        $blacklist = BlackList::where('status', 'active')->Where('value', $phone)
-            ->orWhere('value', $mail)->first(['id']);
+        $blacklist = BlackList::where('status', 'active')->where('value', function (Builder $q) use ($phone, $mail) {
+            $q->where('value', $phone)
+                ->orWhere('value', $mail)->first(['id']);
+        });
 
         if ($blacklist)
             return true;
@@ -547,11 +550,34 @@ class TransactionController extends Controller
 
     function transView(Request $request)
     {
-        $transactions = TransactionLog::latest()->paginate(20);
+        $transactions = TransactionLog::latest();
         $totalTransSuccess = TransactionLog::where('status', 'delivered')->sum('amount');
         $totalTransFailed = TransactionLog::where('status', 'failed')->sum('amount');
         $totalTransPending = TransactionLog::where('status', 'pending')->sum('amount');
         $products = Product::all();
+
+        if ($request->service) {
+            $transactions = $transactions->where('product_id', $request->service);
+        }
+        if ($request->transaction_id) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+        if ($request->unique_element) {
+            $transactions = $transactions->where('unique_element', $request->unique_element);
+        }
+        if ($request->status) {
+            $transactions = $transactions->where('status', $request->status);
+        }
+        if ($request->from) {
+            $time = $request->from . ' 00:00:00';
+            $transactions = $transactions->where('created_at', '>', $time);
+        }
+        if ($request->to) {
+            $time = $request->to . ' 00:00:00';
+            $transactions = $transactions->where('created_at', $time);
+        }
+
+        $transactions = $transactions->paginate(20);
 
         return view('admin.transaction.index', [
             'transactions' => $transactions,
@@ -559,6 +585,7 @@ class TransactionController extends Controller
             'success' => $totalTransSuccess,
             'failed' => $totalTransFailed,
             'pending' => $totalTransPending,
+            'query' => $request->query(),
         ]);
     }
 }
