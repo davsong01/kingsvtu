@@ -35,7 +35,6 @@ class Controller extends BaseController
         $response = curl_exec($ch);
         \Log::info($response);
         return json_decode($response, true);
-     
     }
 
     public function uploadFile($file, $location = null, $width = null, $height = null)
@@ -108,7 +107,7 @@ class Controller extends BaseController
         return $trx;
     }
 
-    public function sendTransactionEmail($transaction, $user=null)
+    public function sendTransactionEmail($transaction, $user = null)
     {
         if (getSettings()->transaction_email_notification == 'yes') {
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
@@ -128,7 +127,7 @@ class Controller extends BaseController
             }
 
             if (!empty($transaction->unique_element)) {
-                $body .= '<strong>Biller:</strong> ' . $transaction->unique_element . '<br>';
+                $body .= '<br><strong>Biller:</strong> ' . $transaction->unique_element . '<br>';
             }
 
             if (!empty($product)) {
@@ -141,8 +140,13 @@ class Controller extends BaseController
                 }
             }
 
-            $body .= '<strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>
-            <strong>Quantity:</strong> ' . $transaction->quantity . '<br>
+            $body .= '<strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>';
+
+            if (!empty($transaction->provider_charge)) {
+                $body .= '<strong>Convenience Fee:</strong> ' . $transaction->provider_charge . '<br>';
+            }
+
+            $body .= '<strong>Quantity:</strong> ' . $transaction->quantity . '<br>
             <strong>Discount Applied:</strong> ' . getSettings()->currency . $transaction->discount . '<br>
             <strong>Total Amount Paid:</strong> ' . getSettings()->currency . $transaction->total_amount . '<br>
             <strong>Initial Balance:</strong> ' . getSettings()->currency . $transaction->balance_before . '<br>

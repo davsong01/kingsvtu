@@ -204,6 +204,12 @@
 					<td>Unit Price</td>
 					<td>#{{ number_format($transaction['unit_price'], 2) }}</td>
 				</tr>
+				@if(!empty($transaction->provider_charge))
+                <tr class="item">
+					<td>Convenience Fee</td>
+					<td>#{{ number_format($transaction['provider_charge'], 2) }}</td>
+				</tr>                                                           
+                @endif
 				<tr class="item">
 					<td>Quantity</td>
 					<td>{{ number_format($transaction['quantity']) }}</td>

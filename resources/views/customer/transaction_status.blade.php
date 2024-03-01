@@ -203,6 +203,18 @@
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->unit_price) }}</div>
                                                                                 </div>
                                                                             </li>
+                                                                            @if(!empty($transaction->provider_charge))
+                                                                                <li class="d-flex mb-1">
+                                                                                    <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                                                                    <div class="me-2">
+                                                                                        <p class="mb-0 lh-1 key">Convenience Fee </p>
+                                                                                    </div>
+
+                                                                                    <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->provider_charge) }}</div>
+                                                                                    </div>
+                                                                                </li>
+                                                                            @endif
+                                                                           
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">

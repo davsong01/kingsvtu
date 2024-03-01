@@ -64,10 +64,13 @@ class PaymentController extends Controller
 
     public function dumpCallback(Request $request, $provider)
     {
+
         if ($provider == 1) {
             $account_number = $request['eventData']['paymentSourceInformation'][0]['accountNumber'];
             $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
             $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
+            $payment_method = $request['eventData']['paymentMethod'];
+            $paid_on = $request['eventData']['paidOn'];
         }
 
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
@@ -75,9 +78,10 @@ class PaymentController extends Controller
             ReservedAccountCallback::create([
                 'raw' => json_encode($request->all()),
                 'provider_id' => $provider,
-                'paid_on' => $request['eventData']['paidOn'],
+                'paid_on' => $paid_on ?? null,
                 'session_id' => $session_id,
                 'account_number' => $account_number,
+                'payment_method' => $payment_method,
                 'transaction_reference' => $transaction_reference,
             ]);
         }
@@ -104,7 +108,7 @@ class PaymentController extends Controller
             $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
 
             foreach ($calls as $call) {
-                $decodeCall = json_decode($call['raw']);
+                $decodeCall = json_decode($call['raw'], true);
                 $account = ReservedAccountNumber::with('customer')->where('account_number', $call['account_number'])->first();
                 $provider = PaymentGateway::where('id', $call['provider_id'])->first();
 
@@ -116,10 +120,16 @@ class PaymentController extends Controller
                 $user = $account->customer->user;
 
                 if ($call['provider_id'] == 1) {
+                    $payment_type = $call['payment_method'];
+
+                    if ($payment_type !== 'ACCOUNT_TRANSFER') {
+                        continue;
+                    }
+
                     $analyze = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($call['transaction_reference']);
                     ReservedAccountCallback::where('id', $call['id'])->update(['raw_requery' => json_encode($analyze['data'])]);
 
-                    $payment_method = $provider->name;
+                    $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
                     $provider_charge = $provider->charge;
                     $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
                     $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
@@ -142,7 +152,7 @@ class PaymentController extends Controller
 
                     $request['type'] = 'credit';
                     $request['customer_id'] = $customer->id;
-                    $request['request_id'] = $this->generateRequestId();
+                    $request['request_id'] = $reference;
                     $request['transaction_id'] = $transaction_id;
                     $request['payment_method'] = $payment_method;
                     $request['balance_before'] = $balance;
@@ -179,16 +189,14 @@ class PaymentController extends Controller
                     $wal = $wallet->logWallet($request);
 
                     // Update Customer Wallet
-                    $wallet->updateCustomerWallet(auth()->user(), $amount, $request['type']);
+                    $wallet->updateCustomerWallet($user, $amount, $request['type']);
 
-                    $this->sendTransactionEmail($transaction);
+                    $this->sendTransactionEmail($transaction, $user);
                 }
 
                 //
-                DB::commit();
                 ReservedAccountCallback::where('id', $call['id'])->update(['status' => 'analyzed']);
-
-                $this->sendTransactionEmail($transaction, $user);
+                DB::commit();
             }
         } catch (\Throwable $th) {
             DB::rollBack();
