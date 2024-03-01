@@ -25,8 +25,8 @@
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
                                                 <?php
-                                                $balance = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(walletBalance(auth()->user())) : 0;
-                                                $ref = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(referralBalance(auth()->user())) : 0;
+                                                    $balance = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(walletBalance(auth()->user())) : 0;
+                                                    $ref = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(referralBalance(auth()->user())) : 0;
                                                 ?>
                                                 <h1 class="text-primary font-large-2 text-bold-500">{!! $balance !!}</h1>
                                                 <div class="text-muted line-ellipsis">Referral Earnings</div>

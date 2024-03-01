@@ -2,6 +2,7 @@
 @section('title', 'Upgrade Level')
 
 @section('page-css')
+<link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/pages/dashboard-analytics.css')}}">
 <style>
     .reset-pin {
         font-size: 10px;
@@ -29,6 +30,7 @@
                                                 <div class="col-md-12">
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
                                                         <h4 class="card-title">Fund Wallet</h4>
+                                                        @include('layouts.walletanalytics')
                                                         @include('layouts.alerts')
                                                     </div>
                                                 </div>
@@ -79,8 +81,10 @@
                                                                         <a href="{{ route('update.kyc.details') }}" class="btn btn-info btn-sm">Update KYC details here</a>
                                                                         @else
                                                                             @if(auth()->user()->customer->reserved_accounts->count() > 0)
-                                                                                <p>To fund your wallet, make payment into any of the accounts below. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.<br><br><strong style="color:red">IMPORTANT:</strong><br> payments made into this account are automated. This means that once you transfer, your wallet is credited automatically.
-                                                                                P.S: Just like every other transfers, you could experience a slight delay in wallet funding. You only need to hold on patiently as your wallet would be credited once processed. You do not need to contact support after funding your wallet, It is automated. 
+                                                                                <p>To fund your wallet, make payment into any of the accounts below. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.<br><br><strong style="color:red">IMPORTANT:</strong><br> payments made into any of these account are automated. This means that once you transfer, your wallet is credited automatically. <br>
+                                                                                P.S: Just like every other transfers, you could experience a slight delay in wallet funding. You only need to hold on patiently as your wallet would be credited once processed. You do not need to contact support after funding your wallet, It is automated. <br>
+                                                                                
+                                                                                <small style="color:red"><b>NOTE: </b>A charge of <strong>{{ getSettings()->currency }}{{number_format($gateway->reserved_account_payment_charge, 1)}} </strong>is applicable to this method of wallet funding</small>
                                                                                 </p>    
                                                                                 <div>
                                                                                     <h5>Wallet Funding Account Details</h5>
@@ -146,51 +150,6 @@
         $.LoadingOverlay("show");
         document.forms["wallet_load"].submit();
     }
-        // function payWithMonnify() {
-        //     amount = $('#amount').val();
-            
-        //     MonnifySDK.initialize({
-        //         amount: amount ,
-        //         currency: "NGN",
-        //         reference: new String((new Date()).getTime()),
-        //         customerFullName: "{{auth()->user()->firstname}}"+" "+"{{auth()->user()->middlename}}"+" "+"{{auth()->user()->lastname}}",
-        //         customerEmail: "{{ auth()->user()->email }}",
-        //         apiKey: "{{ $gateway->api_key}}",
-        //         contractCode: "{{ $gateway->contract_id}}",
-        //         paymentDescription: "Wallet Funding",
-        //         metadata: {
-        //             "customer_id": "{{ auth()->user()->customer->id }}",
-        //             "reason": "Wallet Funding",
-        //         },
-                
-        //         onLoadStart: () => {
-                   
-        //         },
-        //         onLoadComplete: () => {
-        //             alert.log("Something went wrong");
-        //         },
-
-        //         onComplete: function(response) {
-        //             $.LoadingOverlay("show");
-        //             $.ajax({
-        //                 url: "{{url('/log-p-callback')}}"+"/{{ $gateway->id}}",
-        //                 method: 'POST',
-        //                 dataType: 'json',
-        //                 data:response,
-
-        //                 success: function (data) {
-        //                     if(data.message){
-        //                         window.location.href = "{{ url('customer-transaction_status/') }}"+"/"+data.transaction_id;
-        //                     }else{
-        //                         $.LoadingOverlay("hide");
-        //                         alert(data.error);
-        //                     }
-        //                 }
-        //             });
-        //         },
-        //         onClose: function(data) {
-        //         }
-        //     });
-        // }
+       
 </script>
 @endsection

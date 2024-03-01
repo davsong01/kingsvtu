@@ -33,6 +33,7 @@ class TransactionController extends Controller
             return back();
         }
     }
+    
 
     public function initializeTransaction(Request $request)
     {
@@ -419,22 +420,26 @@ class TransactionController extends Controller
 
     public function customerTransactionHistory(Request $request)
     {
-        $transactions = TransactionLog::with(['product','variation','wallet'])->where('customer_id', auth()->user()->customer->id)->where('status','!=','initiated');
+        $transactions = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
 
         if (!empty($request->service)) {
             $transactions = $transactions->where('product_id', $request->service);
         }
 
-        if (!empty($request->unique_element)) {
-            $transactions = $transactions->where('unique_element', $request->unique_element);
+        if (!empty($request->reason)) {
+            $transactions = $transactions->where('reason', $request->reason);
+        }
+
+        if (!empty($request->transaction_id)) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
         }
 
         if (!empty($request->status)) {
             $transactions = $transactions->where('status', $request->status);
         }
 
-        if (!empty($request->transaction_id)) {
-            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        if (!empty($request->unique_element)) {
+            $transactions = $transactions->whereLike('unique_element', "%".$request->unique_element."%");
         }
 
         if (!empty($request->from) && !empty($request->to)) {
@@ -442,11 +447,47 @@ class TransactionController extends Controller
             $to = $request->to . " 23:59:59";
             $transactions = $transactions->whereBetween('created_at', [$from, $to]);
         }
-        // dd($transactions->get());
+        
         $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
 
         $products = Product::where('status', 'active')->get();
         return view('customer.mytransactions', compact('transactions', 'products'));
+    }
+
+    public function showTransactionReportPage(Request $request){
+
+        $transactions = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
+        $data = collect([]);
+        if (!empty($request->service)) {
+            $transactions = $transactions->where('product_id', $request->service);
+        }
+
+        if (!empty($request->reason)) {
+            $transactions = $transactions->where('reason', $request->reason);
+        }
+
+        if (!empty($request->transaction_id)) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+
+        if (!empty($request->status)) {
+            $transactions = $transactions->where('status', $request->status);
+        }
+
+        if (!empty($request->unique_element)) {
+            $transactions = $transactions->whereLike('unique_element', "%" . $request->unique_element . "%");
+        }
+
+        if (!empty($request->from) && !empty($request->to)) {
+            $from = $request->from . " 00:00:00";
+            $to = $request->to . " 23:59:59";
+            $transactions = $transactions->whereBetween('created_at', [$from, $to]);
+        }
+
+        $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
+
+        // $products = Product::where('status', 'active')->get();
+        return view('customer.reports', compact('transactions'));
     }
 
     function referralReward($ref, $amount, $customer_id, $transaction_id)

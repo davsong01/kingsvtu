@@ -33,7 +33,8 @@
              <li class="{{ Request::path() == 'level-upgrade' ? 'active' : '' }}"><a href="{{ route('customer.level.upgrade')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Upgrade Account</span></a></li>
             
             <li class="{{ Request::path() == 'load-wallet' ? 'active' : '' }}"><a href="{{ route('customer.load.wallet')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Fund Wallet</span></a></li>
-            <li class="{{ Request::path() == 'customer-transactions' ? 'active' : '' }}"><a href="{{ route('customer.transaction.history')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">My Transactions</span></a></li>
+            <li class="{{ Request::path() == 'customer-transactions' ? 'active' : '' }}"><a href="{{ route('customer.transaction.history')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Transactions History</span></a></li>
+             <li class="{{ Request::path() == 'customer-transactions-reports' ? 'active' : '' }}"><a href="{{ route('customer.transaction.report')}}"><i class="menu-livicon" data-icon="priority-low"></i><span class="menu-title">Reports</span></a></li>
             <li class=""><a href="{{ route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="bx bx-power-off mr-50" data-icon="priority-low"></i><span class="menu-title">Logout</span></a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf

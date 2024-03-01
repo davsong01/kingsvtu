@@ -46,6 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
     Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
     Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
+    Route::get('customer-transaction-report', [TransactionController::class, 'showTransactionReportPage'])->name('customer.transaction.report');
+    
     Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
     Route::get('customer-load-wllet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
     Route::post('process-customer-load-wllet', [PaymentController::class, 'redirectToUrl'])->name('process-customer-load-wllet');

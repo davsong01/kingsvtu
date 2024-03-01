@@ -68,6 +68,11 @@
         .green{
             color:green
         }
+
+        .main-menu.menu-dark .navigation li a {
+            color: white;
+            font-weight: lighter;
+        }
     </style>
     @yield('page-css')
 </head>

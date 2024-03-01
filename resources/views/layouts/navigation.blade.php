@@ -17,9 +17,9 @@
                     ?>
                     @if(auth()->user()->type == 'customer')
                     <li class="nav-item d-lg-block"><a class="nav-link">
-                        <strong>Balance: </strong>{!! $balance !!}
+                        <strong style="font-weight: lighter;">Balance: </strong>{!! $balance !!}
                         <br/>
-                        <strong>Referral Earning: </strong>{!! $ref !!}</a>
+                        <strong style="font-weight: lighter;">Referral Earning: </strong>{!! $ref !!}</a>
                     </a></li>
                     @endif
 
