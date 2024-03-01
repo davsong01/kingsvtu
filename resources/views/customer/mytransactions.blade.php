@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Edit Profile')
+@section('title', 'Transactions History')
 
 @section('page-css')
 <style>

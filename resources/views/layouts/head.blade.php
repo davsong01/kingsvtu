@@ -73,6 +73,10 @@
             color: white;
             font-weight: lighter;
         }
+
+        .svg svg{
+            fill: white;
+        }
     </style>
     @yield('page-css')
 </head>

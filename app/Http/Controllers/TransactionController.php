@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BlackList;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
+use App\Models\BlackList;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
+use App\Services\ExcelService;
 use App\Models\ReferralEarning;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +35,7 @@ class TransactionController extends Controller
             return back();
         }
     }
-    
+
 
     public function initializeTransaction(Request $request)
     {
@@ -439,7 +441,7 @@ class TransactionController extends Controller
         }
 
         if (!empty($request->unique_element)) {
-            $transactions = $transactions->whereLike('unique_element', "%".$request->unique_element."%");
+            $transactions = $transactions->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
         }
 
         if (!empty($request->from) && !empty($request->to)) {
@@ -447,47 +449,138 @@ class TransactionController extends Controller
             $to = $request->to . " 23:59:59";
             $transactions = $transactions->whereBetween('created_at', [$from, $to]);
         }
-        
+
         $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
 
         $products = Product::where('status', 'active')->get();
         return view('customer.mytransactions', compact('transactions', 'products'));
     }
 
-    public function showTransactionReportPage(Request $request){
+    public function showTransactionReportPage(Request $request, ExcelService $export)
+    {
+        if (!empty($request->type)) {
+            if ($request->type == 'transaction') {
+                $data = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
 
-        $transactions = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
-        $data = collect([]);
-        if (!empty($request->service)) {
-            $transactions = $transactions->where('product_id', $request->service);
+                if (!empty($request->category)) {
+                    $data = $data->where('category_id', $request->category);
+                }
+
+                if (!empty($request->unique_element)) {
+                    $transactions = $data->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
+                }
+
+                if (!empty($request->status)) {
+                    if ($request->status == 'delivered') {
+                        $data = $data->whereIn('status', ['success', 'delivered']);
+                    } else {
+                        $data = $data->where('status', 'failed');
+                    }
+                }
+            }
+
+            if ($request->type == 'wallet') {
+                $data = Wallet::where('customer_id', auth()->user()->customer->id);
+            }
+
+            if ($request->type == 'earning') {
+                $data = ReferralEarning::where('customer_id', auth()->user()->customer->id);
+            }
+
+            if (!empty($request->from) && !empty($request->to)) {
+                $from = $request->from . " 00:00:00";
+                $to = $request->to . " 23:59:59";
+                $data = $data->whereBetween('created_at', [$from, $to]);
+            }
+
+            $data = $data->orderBy('created_at', 'DESC')->get()->toArray();
+            $format = [];
+            foreach ($data as $data) {
+                if ($request->type == 'earnings') {
+                    $details = Customer::with('user')->where('id', $data['customer_id'])->first();
+                    $data['customer_username'] = $details->username;
+                }
+
+                if (isset($data['reason'])) {
+                    $row['Reason'] = $data['reason'];
+                }
+
+                if (isset($data['extras'])) {
+                    $row['Extras'] = $data['extras'];
+                }
+
+                if (isset($data['product_name'])) {
+                    $row['Product Name'] = $data['product_name'];
+                }
+                if (isset($data['variation_name'])) {
+                    $row['Variation Name'] = $data['variation_name'];
+                }
+
+                if (isset($data['unique_element'])) {
+                    $row['Unique Element'] = $data['unique_element'];
+                }
+
+                if (isset($data['descr'])) {
+                    $row['Description'] = $data['descr'];
+                }
+
+                if (isset($data['payment_method'])) {
+                    $row['Payment Method'] = $data['payment_method'];
+                }
+
+                if (isset($data['customer_email'])) {
+                    $row['Customer Email'] = $data['customer_email'];
+                }
+
+                if (isset($data['customer_username'])) {
+                    $row['Customer Username'] = $data['customer_username'];
+                }
+
+                if (isset($data['customer_phone'])) {
+                    $row['Customer Phone'] = $data['customer_phone'];
+                }
+
+                $row['Type'] = $data['type'];
+                $row['Transaction ID'] = $data['transaction_id'];
+                $row['Amount'] = $data['amount'];
+
+                if (isset($data['unit_price'])) {
+                    $row['Unit Price'] = $data['unit_price'];
+                }
+
+                if (isset($data['provider_charge'])) {
+                    $row['Convenience Fee'] = $data['provider_charge'];
+                }
+
+                if (isset($data['discount'])) {
+                    $row['Discount'] = $data['discount'];
+                }
+
+                if (isset($data['total_amount'])) {
+                    $row['Total Amount'] = $data['total_amount'];
+                }
+
+                if (isset($data['balance_before'])) {
+                    $row['Initial Balance'] = $data['balance_before'];
+                }
+
+                if (isset($data['balance_after'])) {
+                    $row['Final Balance'] = $data['balance_after'];
+                }
+
+                $row['Date'] = $data['created_at'];
+
+                $format[] = $row;
+            }
+
+            $fileName = $request->type . '_report-' . rand(919, 9999) . '-' . date('Y-m-d H:i:s', time());
+            return $export->fastExcelExport($format, $fileName);
         }
 
-        if (!empty($request->reason)) {
-            $transactions = $transactions->where('reason', $request->reason);
-        }
 
-        if (!empty($request->transaction_id)) {
-            $transactions = $transactions->where('transaction_id', $request->transaction_id);
-        }
-
-        if (!empty($request->status)) {
-            $transactions = $transactions->where('status', $request->status);
-        }
-
-        if (!empty($request->unique_element)) {
-            $transactions = $transactions->whereLike('unique_element', "%" . $request->unique_element . "%");
-        }
-
-        if (!empty($request->from) && !empty($request->to)) {
-            $from = $request->from . " 00:00:00";
-            $to = $request->to . " 23:59:59";
-            $transactions = $transactions->whereBetween('created_at', [$from, $to]);
-        }
-
-        $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
-
-        // $products = Product::where('status', 'active')->get();
-        return view('customer.reports', compact('transactions'));
+        $products = Product::where('status', 'active')->get();
+        $categories = Category::where('status', 'active')->get();
+        return view('customer.reports', compact('products', 'categories'));
     }
 
     function referralReward($ref, $amount, $customer_id, $transaction_id)
