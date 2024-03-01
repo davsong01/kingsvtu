@@ -60,6 +60,14 @@
             height: 105px !important;
             padding: 10px !important;
         }
+
+        .red{
+            color:red
+        }
+
+        .green{
+            color:green
+        }
     </style>
     @yield('page-css')
 </head>

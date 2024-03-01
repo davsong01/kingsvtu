@@ -34,7 +34,7 @@ class MonnifyController extends Controller
     public function verifyTransaction($reference)
     {
         $token = $this->login();
-        
+
         if (empty($token)) {
             return [
                 'status' => 'failed',
@@ -50,7 +50,7 @@ class MonnifyController extends Controller
             $response = $this->basicApiCall($url, [], $headers, 'GET');
 
             if (
-                $response && $response['responseCode'] == 0 && $response['responseBody']['paymentStatus'] == 'PAID' &&
+                isset($response['responseCode']) && isset($response['responseBody']) && $response['responseCode'] == 0 && $response['responseBody']['paymentStatus'] == 'PAID' &&
                 $response['responseMessage'] == 'success'
             ) {
                 $real = [
@@ -60,10 +60,10 @@ class MonnifyController extends Controller
             } else {
                 $real = [
                     'status' => 'failed',
-                    'data' => $response['responseBody'],
+                    'data' => $response['responseMessage'],
                 ];
             }
-
+            
             return $real;
         }
     }

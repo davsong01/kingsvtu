@@ -2,6 +2,7 @@
 
 use App\Models\KycData;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Settings;
 use App\Mail\EmailMessages;
 use Illuminate\Support\Facades\Mail;
@@ -1203,14 +1204,7 @@ if (!function_exists("kycStatus")) {
 if (!function_exists("getFinalKycStatus")) {
     function getFinalKycStatus($customer_id)
     {
-        $status = 'verified';
-
-        $data = KycData::where(['customer_id' => $customer_id])->pluck('status')->toArray();
-        if (in_array('unverified', $data)) {
-            $status = 'unverified';
-        }
-
-        return $status;
+        return Customer::where(['id' => $customer_id])->value('kyc_status');
     }
 }
 

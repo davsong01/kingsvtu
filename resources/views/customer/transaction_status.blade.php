@@ -92,7 +92,7 @@
                                                                     </strong></h3></span>
                                                                    
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
-                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount Paid: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</strong></span> <br>
+                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</strong></span> <br>
                                                                     <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:100%;"><i class="fa fa-download"></i>Download Transaction Receipt</a>
                                                                 </div>
                                                                 <div class="col-md-3">
@@ -236,7 +236,7 @@
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
-                                                                                    <p class="mb-0 lh-1 key">Total Amount Paid: </p>
+                                                                                    <p class="mb-0 lh-1 key">Total Amount: </p>
                                                                                 </div>
 
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</div>

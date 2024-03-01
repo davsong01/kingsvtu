@@ -265,8 +265,11 @@ class DashboardController extends Controller
             'customer_id' => auth()->user()->customer->id,
         ];
 
-        app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
+        auth()->user()->customer->update([
+            "kyc_status" => 'verified',
+        ]);
 
+        app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
         return back()->with('message', 'KYC Update completed');
     }
 

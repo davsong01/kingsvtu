@@ -66,7 +66,7 @@ class PaymentController extends Controller
     {
 
         if ($provider == 1) {
-            $account_number = $request['eventData']['paymentSourceInformation'][0]['accountNumber'];
+            $account_number = $request['eventData']['destinationAccountInformation'][0]['accountNumber'];
             $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
             $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
             $payment_method = $request['eventData']['paymentMethod'];
@@ -89,14 +89,13 @@ class PaymentController extends Controller
 
     public function analyzeCallbackResponse()
     {
-
         try {
             DB::beginTransaction();
             $calls = ReservedAccountCallback::where(['status' => 'pending'])->orderBy('id', 'ASC')
                 ->take(5)
                 ->get()
                 ->toArray();
-
+           
             if (count($calls) < 1) {
                 return;
             }
@@ -129,25 +128,25 @@ class PaymentController extends Controller
                     $analyze = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($call['transaction_reference']);
                     ReservedAccountCallback::where('id', $call['id'])->update(['raw_requery' => json_encode($analyze['data'])]);
 
-                    $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                    $provider_charge = $provider->charge;
-                    $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
-                    $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
+                    if (isset($analyze) && $analyze['status'] == 'success') {
+                        $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
+                        $provider_charge = $provider->charge ?? 0;
+                        $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
+                        $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
+                    }
                 }
 
                 if (isset($analyze) && $analyze['status'] == 'success') {
-
                     // Log Transaction
                     $wallet = new WalletController();
                     $balance = $wallet->getWalletBalance($user);
                     $reference = $this->generateRequestId();
-
-                    if (!empty($provider->reserved_account_payment_charge)) {
-                        $provider_charge = ($provider->reserved_account_payment_charge / 100) * $original_amount;
-                    } else {
-                        $provider_charge = 0;
-                    }
-
+                    // if (!empty($provider->reserved_account_payment_charge)) {
+                    //     // $provider_charge = ($provider->reserved_account_payment_charge / 100) * $original_amount;
+                    //     $provider_charge = $provider_charge;
+                    // } else {
+                    //     $provider_charge = 0;
+                    // }
                     $amount = $original_amount - $provider_charge;
 
                     $request['type'] = 'credit';

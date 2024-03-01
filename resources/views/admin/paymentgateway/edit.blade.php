@@ -77,12 +77,12 @@
                                                         <input type="text" class="form-control" id="base_url" name="base_url" value="{{ $paymentgateway->base_url ?? old('base_url') }}" placeholder="Enter base URL" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="charge">Gateway Charge <span style="color:red">(%)</span></label>
+                                                        <label for="charge">Gateway Charge for card funding <span style="color:red">(%)</span></label>
                                                         <input type="number" class="form-control" id="charge" name="charge" step=".10" value="{{ $paymentgateway->charge ?? old('charge') }}" placeholder="Enter gatway charge in percentage" required>
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">(%)</span></label>
-                                                        <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter reserved account payment charge in percentage" required>
+                                                        <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">({!! getSettings()->currency !!})</span></label>
+                                                        <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter flat reserved account payment charge" required>
                                                     </fieldset>
                                                     
                                                     <fieldset class="form-group">

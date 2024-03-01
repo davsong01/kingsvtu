@@ -97,6 +97,14 @@
 			.invoice-box.rtl table tr td:nth-child(2) {
 				text-align: left;
 			}
+
+			.red{
+				color:red
+			}
+
+			.green{
+				color:green
+			}
 		</style>
 	</head>
 

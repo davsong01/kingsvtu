@@ -128,9 +128,10 @@
                                                         <small>
                                                             {{ $transaction->unique_element }}</strong>
                                                         </small> <br>
-                                                        <span class="title">Amount Paid</span> <br>
-                                                        <small>
-                                                            {!! getSettings()['currency']!!}{{ number_format($transaction->total_amount, 2) }}</strong>
+                                                       
+                                                        <span class="title">Amount</span> <br>
+                                                        <small class="{{$transaction->type == 'debit' ? 'red' : 'green' }}">{{$transaction->type == 'debit' ? '- ' : '+ '}}{!! getSettings()['currency']!!}{{ number_format($transaction->total_amount, 2) }} <br>
+                                                        {{$transaction->type == 'debit' ? '(Debit)' : '(Credit)' }}
                                                         </small> <br>
                                                         <span class="title">Transaction Id</span> <br>
                                                         <small>

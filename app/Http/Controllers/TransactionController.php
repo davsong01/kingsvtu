@@ -419,7 +419,7 @@ class TransactionController extends Controller
 
     public function customerTransactionHistory(Request $request)
     {
-        $transactions = TransactionLog::where('customer_id', auth()->user()->customer->id);
+        $transactions = TransactionLog::with(['product','variation','wallet'])->where('customer_id', auth()->user()->customer->id)->where('status','!=','initiated');
 
         if (!empty($request->service)) {
             $transactions = $transactions->where('product_id', $request->service);
