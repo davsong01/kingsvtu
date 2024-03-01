@@ -248,6 +248,11 @@ class VtpassController extends Controller
                 $message .= isset($response['content']['Customer_Name']) ? 'Account Name: ' . $response['content']['Customer_Name'] : '';
                 $message .= isset($response['content']['Address']) ? '<br/>Address: ' . $response['content']['Address'] : '';
                 $message .= isset($response['content']['Status']) ? '<br/>Status: ' . $response['content']['Status'] : '';
+                $message .= isset($response['content']['Meter_Number']) ? '<br/>Meter Number: ' . $response['content']['Meter_Number'] : '';
+                $message .= isset($response['content']['Meter_Type']) ? '<br/>Meter Type: ' . $response['content']['Meter_Type'] : '';
+                $message .= isset($response['content']['Customer_Arrears']) ? '<br/>Customer Arrears: ' . $response['content']['Customer_Arrears'] : '';
+                $message .= isset($response['content']['Customer_Account_Type']) ? '<br/>Customer Account Type: ' . $response['content']['Customer_Account_Type'] : '';
+                $message .= isset($response['content']['Min_Purchase_Amount']) ? '<br/>Minimum Purchase Amount: ' . $response['content']['Min_Purchase_Amount'] : '';
                 $message .= isset($response['content']['Customer_Number']) ? '<br/>Customer Number: ' . $response['content']['Customer_Number'] : '';
                 $message .= isset($response['content']['Current_Bouquet']) ? '<br/>Current Bouquet: ' . $response['content']['Current_Bouquet'] : '';
                 $message .= isset($response['content']['Renewal_Amount']) ? '<br/>Renewal Amount: ' . $response['content']['Renewal_Amount'] : '';

@@ -64,9 +64,8 @@ class PaymentController extends Controller
 
     public function dumpCallback(Request $request, $provider)
     {
-
         if ($provider == 1) {
-            $account_number = $request['eventData']['destinationAccountInformation'][0]['accountNumber'];
+            $account_number = $request['eventData']['destinationAccountInformation']['accountNumber'];
             $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
             $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
             $payment_method = $request['eventData']['paymentMethod'];
@@ -95,7 +94,7 @@ class PaymentController extends Controller
                 ->take(5)
                 ->get()
                 ->toArray();
-           
+
             if (count($calls) < 1) {
                 return;
             }
