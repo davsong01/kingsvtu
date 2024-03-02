@@ -4,6 +4,8 @@
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
+            @include('admin.includes.popup')
+            @include('admin.includes.scroller')
             <div class="content-header row">
             </div>
             <div class="content-body">
@@ -13,12 +15,12 @@
                         <!-- Greetings Content Starts -->
                         <div class="col-md-6 col-12 dashboard-greetings">
                             <div class="card">
-                                
+
                                 {{-- <div class="card-content">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
-                                              
+
                                                 <h1 class="text-primary font-large-2 text-bold-500">{!! $balance !!}</h1>
                                                 <div class="text-muted line-ellipsis">Referral Earnings</div>
                                                 <h3 class="mb-2">{!! $ref !!}</h3>

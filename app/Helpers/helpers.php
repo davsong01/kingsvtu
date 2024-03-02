@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Settings;
 use App\Mail\EmailMessages;
+use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\WalletController;
 
@@ -1212,5 +1213,20 @@ if (!function_exists("starMiddle")) {
     function starMiddle($word, $a = 2, $b = 9, $c = 9, $d = 10)
     {
         return substr_replace($word, "*******", $a, $b) . substr($word, $c, $d);
+    }
+}
+
+if (!function_exists("announcements")) {
+    function announcements($type)
+    {
+        $ann = $ann = Announcement::all();
+
+        if (count($ann)) {
+            if ($type == 'scroll'){
+                return $ann[1];
+            } else {
+                return $ann[0];
+            }
+        }
     }
 }
