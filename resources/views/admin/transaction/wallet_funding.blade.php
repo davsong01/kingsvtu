@@ -74,7 +74,7 @@
                     </div>
                     <div class="card-body">
                         <div class="col-md-12">
-                            <form action="{{ route('admin.trans') }}" method="GET">
+                            <form action="{{ route('admin.walletfundinglog') }}" method="GET">
                                 {{-- @csrf --}}
                                 <div class="row">
                                     <div class="col-md-3">
