@@ -14,4 +14,9 @@ class Wallet extends Model
     public function transaction_log(){
         return $this->hasOne(TransactionLog::class, 'transaction_id','transaction_id');
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }

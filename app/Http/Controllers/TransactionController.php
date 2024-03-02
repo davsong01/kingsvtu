@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
+use App\Models\PaymentGateway;
 
 class TransactionController extends Controller
 {
@@ -641,10 +642,21 @@ class TransactionController extends Controller
     {
         $transactions = TransactionLog::whereNotNull('product_id')->latest();
         $transactionsS = clone $transactions;
-        $totalTransSuccess = TransactionLog::where('status', 'delivered')->sum('amount');
-        $totalTransFailed = TransactionLog::where('status', 'failed')->sum('amount');
-        $totalTransPending = TransactionLog::where('status', 'pending')->sum('amount');
+        $transactionsA = clone $transactions;
+        $transactionsF = clone $transactions;
+        $totalTransSuccess = $transactionsS->whereIn('status', ['delivered', 'success'])->sum('amount');
+        $totalTransFailed = $transactionsF->where('status', 'failed')->sum('amount');
+        $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
         $products = Product::all();
+
+        if ($request->email) {
+            $user = User::where('email', $request->email)->first();
+            if (!empty($user)) {
+                $customer = $user->customer;
+                $id = $customer->id;
+                $transactions = $transactions->where('customer_id', $id);
+            }
+        }
 
         if ($request->service) {
             $transactions = $transactions->where('product_id', $request->service);
@@ -674,8 +686,106 @@ class TransactionController extends Controller
             'products' => $products,
             'success' => $totalTransSuccess,
             'failed' => $totalTransFailed,
-            'pending' => $totalTransPending,
+            'attention_required' => $totalTransAttention,
             'query' => $request->query(),
         ]);
     }
+
+    function walletTransView(Request $request)
+    {
+        $transactions = Wallet::latest();
+        $transactionsD = clone $transactions;
+        $transactionsC = clone $transactions;
+
+        $debit = $transactionsD->where('type', 'debit')->sum('amount');
+        $credit = $transactionsC->where('type', 'credit')->sum('amount');
+
+        if ($request->email) {
+            $user = User::where('email', $request->email)->first();
+            if(!empty($user)){
+                $customer = $user->customer;
+                $id = $customer->id;
+                $transactions = $transactions->where('customer_id', $id);
+            }
+
+        }
+
+        if ($request->transaction_id) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+
+        if ($request->type) {
+            $transactions = $transactions->where('type', $request->type);
+        }
+
+        if ($request->from) {
+            $time = $request->from . ' 00:00:00';
+            $transactions = $transactions->where('created_at', '>', $time);
+        }
+        if ($request->to) {
+            $time = $request->to . ' 00:00:00';
+            $transactions = $transactions->where('created_at', $time);
+        }
+
+        $transactions = $transactions->paginate(20);
+
+        return view('admin.transaction.wallet_log', [
+            'transactions' => $transactions,
+            'debit' => $debit,
+            'credit' => $credit,
+            'query' => $request->query(),
+        ]);
+    }
+
+    function walletFundingLogView(Request $request)
+    {
+        $transactions = TransactionLog::whereNotNull('wallet_funding_provider')->where('unique_element', 'WALLET-FUNDING')->latest();
+        $transactions = TransactionLog::whereNotNull('wallet_funding_provider')->where('unique_element', 'WALLET-FUNDING')->latest();
+        $transactionsS = clone $transactions;
+        $transactionsA = clone $transactions;
+        $transactionsF = clone $transactions;
+        $totalTransSuccess = $transactionsS->whereIn('status', ['delivered', 'success'])->sum('amount');
+        $totalTransFailed = $transactionsF->where('status', 'failed')->sum('amount');
+        $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
+        $providers = PaymentGateway::latest();
+
+        if ($request->email) {
+            $user = User::where('email', $request->email)->first();
+            if (!empty($user)) {
+                $customer = $user->customer;
+                $id = $customer->id;
+                $transactions = $transactions->where('customer_id', $id);
+            }
+        }
+
+        if ($request->transaction_id) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+
+        if ($request->type) {
+            $transactions = $transactions->where('type', $request->type);
+        }
+
+        if ($request->from) {
+            $time = $request->from . ' 00:00:00';
+            $transactions = $transactions->where('created_at', '>', $time);
+        }
+        if ($request->to) {
+            $time = $request->to . ' 00:00:00';
+            $transactions = $transactions->where('created_at', $time);
+        }
+
+        $transactions = $transactions->paginate(20);
+
+        return view('admin.transaction.wallet_funding', [
+            'providers' => $providers,
+            'transactions' => $transactions,
+            'success' => $totalTransSuccess,
+            'failed' => $totalTransFailed,
+            'attention_required' => $totalTransAttention,
+            'query' => $request->query(),
+        ]);
+    }
+
+    
 }

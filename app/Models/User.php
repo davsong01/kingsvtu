@@ -20,6 +20,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $guarded = [];
+    protected $appends = ['name'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -51,5 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
     function admin () {
         return $this->hasOne(Admin::class, 'user_id', 'id');
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->firstname." " . $this->middlename . " " .$this->lastname;
     }
 }
