@@ -86,6 +86,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     // transactions route
     Route::get('transactions', [TransactionController::class, 'transView'])->name('admin.trans');
+    Route::get('wallet-transactions', [TransactionController::class, 'transView'])->name('admin.trans');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');

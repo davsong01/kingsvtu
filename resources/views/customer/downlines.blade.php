@@ -84,7 +84,7 @@
                                                             @if (!$check)
                                                                 <td>
                                                                     <a href="downlines/{{ $ref->referred_customer_id }}"
-                                                                        class="btn btn-sm btn-promary">View Transactions</a>
+                                                                        class="btn btn-sm btn-primary"><i class="fa fa-eye"></i>View Transactions</a>
                                                                 </td>
                                                             @endif
                                                         </tr>

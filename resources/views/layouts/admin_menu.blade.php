@@ -126,7 +126,7 @@
                              href="{{ route('admin.trans') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Product Purchase</span></a>
                      </li>
-                     <li class="{{ Route::is('transactionsw.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('wallet-transactions.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Funding
                                  Log</span></a>
