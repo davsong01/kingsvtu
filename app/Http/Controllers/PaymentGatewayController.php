@@ -42,39 +42,6 @@ class PaymentGatewayController extends Controller
         return view('admin.paymentgateway.create');
     }
 
-    // public function store(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         "name" => "required",
-    //         "display_name" => "nullable",
-    //         "slug" => "required",
-    //         "unique_element" => "required",
-    //         "status" => "required",
-    //         "order" => "required",
-    //         "description" => "nullable",
-    //         "seo_description" => "nullable",
-    //         "seo_title" => "nullable",
-    //         "icon" => "nullable",
-    //         "seo_keywords" => "nullable",
-    //     ]);
-
-    //     Category::updateOrCreate([
-    //         "name" => $request->name,
-    //         "icon" => $request->icon,
-    //         "display_name" => $request->display_name,
-    //         "slug" => $request->slug,
-    //         "status" => $request->status,
-    //         "order" => $request->order,
-    //         "description" => $request->description,
-    //         "seo_description" => $request->seo_description,
-    //         "seo_title" => $request->seo_title,
-    //         "seo_keywords" => $request->seo_keywords,
-    //         "unique_element" => $request->unique_element,
-    //     ]);
-
-    //     return redirect(route('category.index'))->with('message', 'Added successfully');
-    // }
-
     public function edit(PaymentGateway $paymentgateway)
     {
         return view('admin.paymentgateway.edit', compact('paymentgateway'));

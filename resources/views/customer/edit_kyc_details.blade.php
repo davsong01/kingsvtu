@@ -209,15 +209,15 @@
         var state = $('#state').val();
         $('#lga option:not(:first)').remove();
         $.ajax({
-                type: "GET",
-                url: "{{url('/')}}/get-lga-by-statename/"+state,
-                beforeSend: function () {
+            type: "GET",
+            url: "{{url('/')}}/get-lga-by-statename/"+state,
+            beforeSend: function () {
 
-                },
-                success: function(data) {
-                    $("#lga").append(data);
-                }
-            });
+            },
+            success: function(data) {
+                $("#lga").append(data);
+            }
+        });
     });
 </script>
 <script>

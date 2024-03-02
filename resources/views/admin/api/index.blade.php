@@ -68,8 +68,10 @@
                                                         <td style="color:{{ $api->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($api->status) }}</td>
                                                         <td>{{ $api->created_at }}</td>
                                                         <td>
-                                                            <a href="{{ route('api.edit', $api->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
-                                        
+                                                            <a href="{{ route('api.edit', $api->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                                            <a id="api-{{$api->id}}" onclick="getBalance('{{$api->id}}')" style="color:white" class="btn btn-info btn-sm mr-1 mb-1"><span id="icon-{{ $api->id }}"><i class="fa fa-refresh"></i></span><span class="align-middle ml-25">Check balance</span></a>
+                                                            <span id="balance-{{$api->id}}" style="font-weight: bold;color: black;"></span>
+                                                            
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -89,6 +91,48 @@
     </div>
 @endsection
 @section('page-script')
+
+<script>
+     function getBalance(id){
+        var url = "{{ url('admin/api-balance') }}/"+id;
+        
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            
+            beforeSend: function () {
+                $("#icon-"+id).html("<i class='fa fa-spinner fa-spin'></i>");
+            },
+            success: function (data) {
+                if(data.status == 'success'){
+                    $("#api-"+id).hide(); 
+                    $("#balance-"+id).html('<span>'+data.balance+'</span>'); 
+                }
+            },
+            error: function (data) {
+                $("#api-"+id).hide(); 
+                $("#balance-"+id).html('<span>An error occured</>'); 
+            }
+        });
+    }
+        // function getBalance(id){
+        //     alert('sd');
+        //     let url = "{{url('/')}}"+"api-balance/"+id;
+        //     $.ajax({
+        //         type: "GET",
+        //         url: url,
+        //         dataType: 'json',
+        //         beforeSend: function () {
+        //             $("#icon-"+id).html("<i class='fa fa-spinner fa-spin'></i>");
+        //         },
+        //         success: function (data) {
+        //             $("#api-"+id).html(data.message);
+        //         }
+        //     });
+        // }
+        
+    </script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.buttons.min.js') }}"></script>
@@ -97,5 +141,5 @@
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/pdfmake.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/vfs_fonts.js') }}"></script>
-     <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
+    <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
 @endsection

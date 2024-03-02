@@ -74,6 +74,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('product', ProductController::class);
     Route::get('duplicate-product/{product}', [ProductController::class, 'duplicateProduct'])->name('duplicate.product');
     Route::resource('api', APIController::class);
+    Route::get('api-balance/{api}', [APIController::class, 'getBalance'])->name('api.balance');
+
     Route::resource('category', CategoryController::class);
     Route::resource('customer-blacklist', BlackListController::class);
     Route::get('black-list-status', [BlackListController::class, 'status']);

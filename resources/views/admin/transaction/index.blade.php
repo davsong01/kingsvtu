@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
     <!-- Content wrapper -->
-
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
@@ -188,3 +187,13 @@
             </section>
         </div>
     </div>
+@endsection
+@section('page-script')
+    {{-- <script src="{{asset('asset/js/app-logistics-dashboard.js')}}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+    </script>
+@endsection

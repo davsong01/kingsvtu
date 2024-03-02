@@ -148,7 +148,7 @@ class VtpassController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-        
+
         return $format;
     }
 
@@ -217,8 +217,40 @@ class VtpassController extends Controller
         }
     }
 
-    public function balance()
+    public function balance($api)
     {
+        try {
+            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
+            $url = $url . "balance";
+
+            $headers = [
+                'api-key: ' . $api->api_key,
+                'public-key: ' . $api->public_key,
+                'secret-key: ' . $api->secret_key,
+            ];
+
+            $response = $this->basicApiCall($url, [], $headers, 'GET');
+
+            if (isset($response['code']) && $response['code'] == 1 && !empty($response['contents'])) {
+                $final_response = [
+                    'status' => 'success',
+                    'status_code' => '1',
+                    'balance' => '#'.number_format($response['contents']['balance'], 2),
+                ];
+            } else {
+                $final_response = [
+                    'status' => 'failed',
+                    'status_code' => '0',
+                ];
+            }
+        } catch (\Throwable $th) {
+            $final_response = [
+                'status' => 'failed',
+                'status_code' => '0',
+            ];
+        }
+
+        return $final_response;
     }
 
     public function verify($data)

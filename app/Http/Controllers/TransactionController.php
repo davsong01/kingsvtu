@@ -643,7 +643,7 @@ class TransactionController extends Controller
 
     function transView(Request $request)
     {
-        $transactions = TransactionLog::latest();
+        $transactions = TransactionLog::whereNotNull('product_id')->latest();
         $totalTransSuccess = TransactionLog::where('status', 'delivered')->sum('amount');
         $totalTransFailed = TransactionLog::where('status', 'failed')->sum('amount');
         $totalTransPending = TransactionLog::where('status', 'pending')->sum('amount');

@@ -58,7 +58,6 @@
                                                         </select>
                                                     </fieldset>
                                                 </div>
-                                                
                                                 <div class="col-md-3">
                                                     <fieldset class="form-group">
                                                         <label for="service">Service</label>
@@ -86,7 +85,6 @@
                                                         </select>
                                                     </fieldset>
                                                 </div>
-                                                
                                                 <div class="col-md-3">
                                                     <fieldset class="form-group">
                                                         <label for="from">From</label>
@@ -108,10 +106,8 @@
                                         </form>
                                         <hr>
                                     </div>
-                                    
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
