@@ -9,7 +9,7 @@ use App\Models\Category;
 use App\Models\Discount;
 use App\Models\BlackList;
 use App\Models\Variation;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use App\Services\ExcelService;
@@ -40,7 +40,7 @@ class TransactionController extends Controller
 
     public function initializeTransaction(Request $request)
     {
-        $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, $request->email);
+        $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, $request->email, auth()->user()->email);
 
         if ($blacklist) {
             return back()->with('error', 'Couldn\'t perform transaction, kindly reach out to us!');
@@ -629,15 +629,11 @@ class TransactionController extends Controller
         return $ref;
     }
 
-    function bounceBlacklist($phone, $mail = null)
+    function bounceBlacklist($phone, $mail = null, $user)
     {
-        $blacklist = BlackList::where('status', 'active')->where('value', function (Builder $q) use ($phone, $mail) {
-            $q->where('value', $phone)
-                ->orWhere('value', $mail)->first(['id']);
-        });
+        $blacklist = BlackList::where('status', 'active')->whereRaw(" (value = ? or value = ? or value = ?)", [$mail, $phone, $user])->first();
 
-        if ($blacklist)
-            return true;
+        if ($blacklist) return true;
         return false;
     }
 
