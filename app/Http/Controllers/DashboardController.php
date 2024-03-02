@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ReferralEarning;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
@@ -301,5 +302,17 @@ class DashboardController extends Controller
             'email' => $kyc_data->email ?? 'unverified',
             'phone' => $kyc_data->phone ?? 'unverified',
         ];
+    }
+
+    public function downlines ($id = null) {
+        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->latest();
+
+        if ($id) {
+            $refs = $refs->where('referred_customer_id', $id)->get();
+        } else {
+            $refs = $refs->groupBy('referred_customer_id')->get(['*', DB::raw('sum(amount) as total')]);
+        }
+
+        return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
     }
 }
