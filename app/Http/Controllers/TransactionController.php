@@ -644,6 +644,7 @@ class TransactionController extends Controller
     function transView(Request $request)
     {
         $transactions = TransactionLog::whereNotNull('product_id')->latest();
+        $transactionsS = clone $transactions;
         $totalTransSuccess = TransactionLog::where('status', 'delivered')->sum('amount');
         $totalTransFailed = TransactionLog::where('status', 'failed')->sum('amount');
         $totalTransPending = TransactionLog::where('status', 'pending')->sum('amount');

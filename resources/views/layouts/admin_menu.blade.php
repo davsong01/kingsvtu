@@ -120,31 +120,31 @@
                      </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Financials</span></a>
                  <ul class="menu-content">
                      <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
+                             href="{{ route('admin.trans') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Product Purchase</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactionsw.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Funding
                                  Log</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactionws.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Log</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactiows.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Earnings Log</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactiowns.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Credit Customer</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactiwons.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit Customer</span></a>
                      </li>
-                     <li class="{{ Route::is('transactions.*') ? 'active' : '' }}"><a
+                     <li class="{{ Route::is('transactiowns.*') ? 'active' : '' }}"><a
                              href="{{ request()->route()->getPrefix() }}/admins"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
                      </li>
