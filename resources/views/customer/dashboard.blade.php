@@ -4,6 +4,8 @@
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
+            @include('admin.includes.popup')
+            @include('admin.includes.scroller')
             <div class="content-header row">
             </div>
             <div class="content-body">
@@ -92,7 +94,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                                 <!-- Revenue Growth Chart Starts -->
@@ -100,8 +102,8 @@
                         </div>
                     </div>
                     <div class="row">
-                       
-                       
+
+
                         <!-- Earning Swiper Starts -->
                         <div class="col-xl-12 col-md-12 col-12 dashboard-earning-swiper" id="widget-earnings">
                             <div class="card">
@@ -160,7 +162,7 @@
                                         <!-- earnings swiper ends -->
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                         <!-- Marketing Campaigns Starts -->

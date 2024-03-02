@@ -37,15 +37,9 @@
                                         <form action="{{ route('announcement.update', $announcement->id) }}" method="POST"
                                             enctype="multipart/form-data">
                                             @csrf
-                                            @method('PATCH')
+
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <fieldset class="form-group">
-                                                        <label for="title">Title</label>
-                                                        <input type="text" class="form-control" id="title"
-                                                            name="title" value="{{ old('title') ?? $announcement->title }}"
-                                                            placeholder="Enter announcement title" required>
-                                                    </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="status">Status</label>
                                                         <select class="form-control" name="status" id="status" required>

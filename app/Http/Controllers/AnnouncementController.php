@@ -12,7 +12,14 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
-        $ann = Announcement::where('type', 'popup')->paginate(20);
+        $ann = Announcement::all();
+
+        if (count($ann) < 1) {
+            $ann = (object) [
+                0 => (object) ['type' => 'popup', 'status' => 'inactive', 'message' => null, 'title' => 'Pop-up Announcement'],
+                1 => (object) ['type' => 'scroll', 'status' => 'inactive', 'message' => null, 'title' => 'Scroll Announcement',]
+            ];
+        }
         return view ('admin.announcement.index', ['announcements' => $ann]);
     }
 
@@ -34,20 +41,17 @@ class AnnouncementController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'status' => 'required',
-            'type' => 'required',
-            'message' => 'required',
-        ]);
-
-        $create = Announcement::create($request->except('_token'));
-
-        if ($create) {
-            return back()->with('message', 'Announcement created successfully!');
-        } else {
-            return back()->with('error', 'Failed to create announcement, try again!');
+        // dd($request->all());
+        foreach($request->status as $key => $val) {
+            Announcement::updateOrCreate([
+                'type' => $request->type[$key]
+            ], [
+                'message' => $request->message[$key],
+                'status' => $val,
+                'title' => $request->title[$key]
+            ]);
         }
+        return back()->with('message', 'Announcement updated successfully!');
     }
 
     /**

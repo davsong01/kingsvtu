@@ -1,19 +1,7 @@
 @extends('layouts.app')
-@section('title', 'All APIs')
-
-@section('page-css')
-    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/datatables.min.css') }}">
-
-    <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/datatables.min.css')}}">
-    <!-- END: Vendor CSS-->
-
-@endsection
 @section('content')
-<!-- Content wrapper -->
- <div class="app-content content">
+    <!-- Content wrapper -->
+    <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
@@ -26,7 +14,7 @@
                                     </li>
                                     <li class="breadcrumb-item"><a href="{{ route('announcement.index') }}">Announcement</a>
                                     </li>
-                                    <li class="breadcrumb-item active">
+                                    <li class="breadcrumb-item active">Edit Announcement
                                     </li>
                                 </ol>
                             </div>
@@ -35,87 +23,143 @@
                 </div>
             </div>
             <div class="content-body">
-                <!-- Column selectors with Export Options and print table -->
-                <section id="column-selectors">
+                <!-- Basic Inputs start -->
+                <section id="basic-input">
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">All Announcement</h4> <br>
-                                    <a href="{{ route('announcement.create') }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; New Announcement</button></a>
+                                    <h4 class="card-title">Edit Announcements</h4>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">
-                                    <div class="card-body card-dashboard">
-                                        <div class="table-responsive">
-                                            <table class="table table-striped dataex-html5-selectors">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Type</th>
-                                                        <th>Status</th>
-                                                        <th>Date Added</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ( $announcements as $announcement )
-                                                    <tr>
-                                                        <td>{{ $announcement->title }}</td>
-                                                        <td>{{ ucfirst($announcement->type) }}</td>
-                                                        <td style="color:{{ $announcement->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($announcement->status) }}</td>
-                                                        <td>{{ $announcement->created_at }}</td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-primary btn-sm mr-1 mb-1" data-toggle="modal" data-target="#border-less-{{ $announcement->id }}"><i class="bx bxs-magnify"></i><span class="align-middle ml-25">View</span></button>
-                                                            <a href="{{ route('announcement.edit', $announcement->id) }}"><button type="button" class="btn btn-warning btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">Edit</span></button></a>
-
-                                                            <!--BorderLess Modal Modal -->
-                                                            <div class="modal fade text-left modal-borderless" id="border-less-{{ $announcement->id }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-                                                                <div class="modal-dialog modal-dialog-scrollable" role="document">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h3 class="modal-title">Message</h3>
-                                                                            {{-- <button type="button" class="close rounded-pill" data-dismiss="modal" aria-label="Close">
-                                                                                <i class="bx bx-x"></i>
-                                                                            </button> --}}
-                                                                        </div>
-                                                                        <div class="modal-body text-dark">
-                                                                           {!! $announcement->message !!}
-                                                                        </div>
-                                                                        <div class="modal-footer d-flex justify-content-center">
-                                                                            <button type="button" class="btn btn-light-primary" data-dismiss="modal">
-                                                                                <i class="bx bx-x d-block d-sm-none"></i>
-                                                                                <span class="d-none d-sm-block">Close</span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                    <div class="card-body">
+                                        <form action="{{ route('announcement.store') }}" method="POST"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    @foreach ($announcements as $key => $announcement)
+                                                        <h3 class="card-title">{{ $announcement->title }}</h3>
+                                                        <fieldset class="form-group">
+                                                            <label for="status">Status</label>
+                                                            <select class="form-control" name="status[]" id="status"
+                                                                required>
+                                                                <option value="">Select</option>
+                                                                <option value="active"
+                                                                    {{ $announcement->status == 'active' ? 'selected' : '' }}>
+                                                                    Active</option>
+                                                                <option value="inactive"
+                                                                    {{ $announcement->status == 'inactive' ? 'selected' : '' }}>
+                                                                    InActive</option>
+                                                            </select>
+                                                        </fieldset>
+                                                        <input type="hidden" name="type[]"
+                                                            value="{{ $announcement->type }}">
+                                                        <input type="hidden" name="title[]"
+                                                            value="{{ $announcement->title }}">
+                                                        <fieldset class="form-group">
+                                                            <label for="type">Announcement Content</label>
+                                                            <div id="toolbar-container-{{ $announcement->type }}">
+                                                                <span class="ql-formats">
+                                                                    <select class="ql-font"></select>
+                                                                    <select class="ql-size"></select>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-bold"></button>
+                                                                    <button class="ql-italic"></button>
+                                                                    <button class="ql-underline"></button>
+                                                                    <button class="ql-strike"></button>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <select class="ql-color"></select>
+                                                                    <select class="ql-background"></select>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-script" value="sub"></button>
+                                                                    <button class="ql-script" value="super"></button>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-header" value="1"></button>
+                                                                    <button class="ql-header" value="2"></button>
+                                                                    <button class="ql-blockquote"></button>
+                                                                    <button class="ql-code-block"></button>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-list" value="ordered"></button>
+                                                                    <button class="ql-list" value="bullet"></button>
+                                                                    <button class="ql-indent" value="-1"></button>
+                                                                    <button class="ql-indent" value="+1"></button>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-direction" value="rtl"></button>
+                                                                    <select class="ql-align"></select>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-link"></button>
+                                                                    <button class="ql-image"></button>
+                                                                    <button class="ql-video"></button>
+                                                                    <button class="ql-formula"></button>
+                                                                </span>
+                                                                <span class="ql-formats">
+                                                                    <button class="ql-clean"></button>
+                                                                </span>
                                                             </div>
-                                                        </td>
-                                                    </tr>
+                                                            <div class="editor-{{ $announcement->type }}" style="min-height: 240px">
+                                                                {!! old('message') ?? $announcement->message !!}
+                                                            </div>
+                                                            <input name="message[]" type="hidden" id="content-{{ $announcement->type }}" />
+                                                        </fieldset>
+                                                        @if ($key == 0)
+                                                            <div class="my-4">
+                                                                <hr />
+                                                            </div>
+                                                        @endif
                                                     @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    <fieldset class="form-group">
+                                                        <button class="btn btn-primary" type="submit">Submit</button>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-                <!-- Column selectors with Export Options and print table -->
             </div>
         </div>
     </div>
 @endsection
 @section('page-script')
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/vfs_fonts.js') }}"></script>
-     <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
+    <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+    <link href="/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <script>
+        @foreach ($announcements as $a)
+            let quill_{{ $a->type }} = new Quill('.editor-{{ $a->type }}', {
+                theme: 'snow',
+                toolbar: true,
+                placeholder: 'Enter announcement content...',
+                modules: {
+                    syntax: true,
+                    toolbar: '#toolbar-container-{{ $a->type }}',
+                },
+            });
+
+            $('form').on('submit', () => {
+                var myEditor = document.querySelector('.editor-{{ $a->type }}')
+                console.log(myEditor);
+                var html = myEditor.children[0].innerHTML;
+                $('#content-{{ $a->type }}').val(html);
+            });
+        @endforeach
+    </script>
 @endsection
