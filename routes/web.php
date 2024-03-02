@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\BlackListController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
@@ -76,6 +77,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::resource('api', APIController::class);
     Route::resource('category', CategoryController::class);
     Route::resource('customer-blacklist', BlackListController::class);
+    Route::get('announcement/scroll', [AnnouncementController::class, 'scroll'])->name('announcement.scroll');
+    Route::resource('announcement', AnnouncementController::class);
     Route::get('black-list-status', [BlackListController::class, 'status']);
 
     // transactions route

@@ -15,7 +15,19 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             <li class="{{ Route::is('dashboard') ? 'active' : ''}} nav-item"><a href="{{ route('dashboard') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" fill="white" width="24"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg><span class="menu-title" data-i18n="Form Layout">&nbsp;Dashboard</span></a>
             </li>
+<<<<<<< HEAD
             <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z" fill="white"/></svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Catalogue</span></a>
+=======
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Announcement</span></a>
+                <ul class="menu-content">
+                    <li class="{{ Route::is('announcement.index') ? 'active' : '' }}"><a href="{{ route('announcement.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Pop-Up Announcement</span></a>
+                    </li>
+                    <li class="{{ Route::is('announcement.scroll') ? 'active' : '' }}"><a href="{{ route('announcement.scroll') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input Groups">Scrolling Announcement</span></a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item"><a href="#"><i class="bx bx-folder-open" data-icon="check"></i><span class="menu-title" data-i18n="Form Elements">Catalogue</span></a>
+>>>>>>> 1f967dd (committing)
                 <ul class="menu-content">
                     <li class="{{ Route::is('api.*') ? 'active' : '' }}"><a href="{{ route('api.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" >API Providers</span></a>
                     </li>
