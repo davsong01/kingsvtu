@@ -39,7 +39,7 @@
     <script>
         setTimeout(() => {
             $('#auto-pop-up').click();
-        }, 0);
+        }, 3000);
     </script>
 @endsection
 @endif
