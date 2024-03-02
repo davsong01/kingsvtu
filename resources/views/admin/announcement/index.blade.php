@@ -38,8 +38,8 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             <div class="row">
+                                                @foreach ($announcements as $key => $announcement)
                                                 <div class="col-md-6">
-                                                    @foreach ($announcements as $key => $announcement)
                                                         <h3 class="card-title">{{ $announcement->title }}</h3>
                                                         <fieldset class="form-group">
                                                             <label for="status">Status</label>
@@ -110,16 +110,13 @@
                                                             </div>
                                                             <input name="message[]" type="hidden" id="content-{{ $announcement->type }}" />
                                                         </fieldset>
-                                                        @if ($key == 0)
-                                                            <div class="my-4">
-                                                                <hr />
-                                                            </div>
-                                                        @endif
+                                                    </div>
                                                     @endforeach
-                                                    <fieldset class="form-group">
-                                                        <button class="btn btn-primary" type="submit">Submit</button>
-                                                    </fieldset>
-                                                </div>
+                                                    <div class="col-12">
+                                                        <fieldset class="form-group">
+                                                            <button class="btn btn-primary" type="submit">Submit</button>
+                                                        </fieldset>
+                                                    </div>
                                             </div>
                                         </form>
                                     </div>
