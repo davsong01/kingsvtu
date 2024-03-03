@@ -131,7 +131,7 @@
                             <hr>
                         </div>
                         <div class="table-responsive">
-                            <form method="post">
+                            {{-- <form method="post"> --}}
                                 <table id="table-extended-success" class="table mb-0">
                                     <thead>
                                         <tr>
@@ -144,7 +144,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $transaction)
-                                        
+
                                             <tr>
                                                 <td>
                                                     <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>

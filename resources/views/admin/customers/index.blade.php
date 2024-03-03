@@ -28,8 +28,6 @@
                                     @foreach ($customers as $customer)
                                         <tr>
                                             <td>
-                                                {{-- <img class="rounded-circle mr-1" src="{{ $customer->avatar }}"
-                                                    alt="image"> --}}
                                                 Name:<a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
                                                     {{ $customer->firstname . ' ' . $customer->lastname }}</a> <br>
                                                    Email:  {{ $customer->email }} <br>

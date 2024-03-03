@@ -787,18 +787,28 @@ class TransactionController extends Controller
     function walletEarningView(Request $request)
     {
         $transactions = ReferralEarning::latest();
+
         $transactionsS = clone $transactions;
-        $transactionsA = clone $transactions;
         $transactionsF = clone $transactions;
         $totalTransSuccess = $transactionsS->where('type', 'credit')->sum('amount');
         $totalTransFailed = $transactionsF->where('type', 'debit')->sum('amount');
 
-        if ($request->email) {
-            $user = User::where('email', $request->email)->first();
+
+        if ($request->upline_email) {
+            $user = User::where('email', $request->upline_email)->first();
             if (!empty($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
+            }
+        }
+
+        if ($request->downline_email) {
+            $user = User::where('email', $request->downline_email)->first();
+            if (!empty($user)) {
+                $customer = $user->customer;
+                $id = $customer->id;
+                $transactions = $transactions->where('referred_customer_id', $id);
             }
         }
 

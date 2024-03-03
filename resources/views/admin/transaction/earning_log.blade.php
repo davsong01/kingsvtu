@@ -18,10 +18,10 @@
                                 <div class="statistics-data my-auto">
                                     <div class="statistics">
                                         <span
-                                            class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($success) !!}</span>
+                                            class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($success, 2) !!}</span>
                                             <br>
                                             <span
-                                            class="text-success">Sucessful</span>
+                                            class="text-success">Total Credit</span>
                                     </div>
                                     
                                 </div>
@@ -37,8 +37,8 @@
                                 <div class="statistics-data my-auto">
                                     <div class="statistics">
                                         <span
-                                            class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($failed) !!}</s!!an><br><span
-                                            class="text-danger">Failed</span>
+                                            class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($failed, 2) !!}</s!!an><br><span
+                                            class="text-danger">Total Debit</span>
                                     </div>
                                    
                                 </div>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="card-body">
                         <div class="col-md-12">
-                            <form action="{{ route('admin.walletfundinglog') }}" method="GET">
+                            <form action="{{ route('admin.earninglog') }}" method="GET">
                                 {{-- @csrf --}}
                                 <div class="row">
                                     <div class="col-md-3">
@@ -71,7 +71,7 @@
                                     
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
-                                            <label for="sttus">Status</label>
+                                            <label for="type">Type</label>
                                             <select class="form-control" name="type" id="type">
                                                 <option value="type">Select</option>
                                                 <option value="credit" {{ \Request::get('type') == 'credit' ? 'selected' : ''}}>Credit</option>
@@ -106,28 +106,29 @@
                                             <th>Upline</th>
                                             <th>Downline</th>
                                             <th>Payment Details</th>
-                                            <th>Date</th>
+                                            <th>Type</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $transaction)
                                             <tr>
-                                                <td>{{ $transaction->referredCustomer->user->name }} <br>
-                                                    <a href="">{{ $transaction->referredCustomer->user->email  }}</a> <br>
+                                               
+                                                <td>{{ $transaction->customer->user->name }} <br>
+                                                    <a href="{{ route('customers.edit', $transaction->customer)}}">{{ $transaction->customer->user->email  }}</a> <br>
                                                     {{ $transaction->customer_phone }} <br>
-                                                    @if($transaction->status == 'success')
-                                                    <button class="btn btn-primary btn-sm">{{ucfirst($transaction->status) }}</button>
-                                                    @else
-                                                    <button class="btn btn-danger btn-sm">{{ucfirst($transaction->status) }}</button>
-                                                    @endif
+                                                    
                                                 </td>
-                                                <td>
+                                                 <td>{{ $transaction->referredCustomer->user->name }} <br>
+                                                    <a href="{{ route('customers.edit', $transaction->referredCustomer)}}">{{ $transaction->referredCustomer->user->email  }}</a> <br>
+                                                    {{ $transaction->customer_phone }} <br>
+                                                    
+                                                </td>
+                                                 <td>
                                                     <small>
-                                                    <strong>Account Number: </strong>{{ $transaction->account_number }} <br>
-                                                    <strong>Amount: </strong>{!! getSettings()->currency. number_format($transaction->amount, 2) !!} <br>
-                                                    <strong>Charge: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
-                                                    <strong>Total Amount: </strong>{!! getSettings()->currency. number_format($transaction->total_amount,2) !!} <br>
+                                                    <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>
+                                                    </small><small>
+                                                    <strong>Amount: </strong><span style="color:{{$transaction->type == 'credit' ? 'green':''}}">{{ $transaction->type == 'credit' ? '+':'-' }}{!! getSettings()->currency. number_format($transaction->amount, 2) !!} </span><br>
                                                     <strong>Initial Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_before, 2) !!} <br>
                                                     <strong>Final Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_after, 2) !!} <br>
                                                     <strong>Date: </strong>{{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
@@ -135,14 +136,15 @@
                                                     </small>
                                                 </td>
                                                 <td>
-                                                    <small>
-                                                    <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>
-                                                    <span style="color:rgb(27, 20, 220)"><strong>Request ID: </strong>{{ $transaction->reference_id }}</span> <br>
-                                                    <span style="color:rgb(0, 145, 87)"><strong>Payment Method: </strong> {{ $transaction->payment_method }}
-                                                    </small>
+                                                    <strong>
+                                                        @if($transaction->type == 'credit')
+                                                        <span style="color:green">{{ucfirst($transaction->type) }}</span>
+                                                        @else
+                                                        <span style="color:red">{{ucfirst($transaction->type) }}</span>
+                                                        @endif
 
+                                                    </strong>
                                                 </td>
-                                            
                                                 <td>
                                                     <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->id) }}">
                                                         <i class="fa fa-eye"></i>

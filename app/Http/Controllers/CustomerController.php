@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\ReferralEarning;
+use App\Models\ReservedAccountNumber;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
-    function customers(Request $request, $status = null) {
+    function customers(Request $request, $status = null)
+    {
         $customers = User::where('type', '!=', 'admin');
 
         if ($status) {
@@ -42,31 +46,50 @@ class CustomerController extends Controller
 
     }
 
-    function singleCustomer ($id) {
+    function singleCustomer($id)
+    {
         if (!is_numeric($id)) {
             return redirect(404);
         }
 
-        $customer = User::findOrFail($id);
+        $user = User::findOrFail($id);
+        $customer = $user->customer->id;
+        $downlines = ReferralEarning::where('customer_id', $customer)
+            ->latest()
+            ->groupBy('referred_customer_id')
+            ->get(['*', DB::raw('sum(amount) as total')]);
 
-        return view('admin.customers.single-customer', ['customer' => $customer]);
+        $curr = getSettings()->currency;
+        $balance = $curr . number_format(walletBalance($user), 2) ?? 0;
+        $ref = $curr . number_format(referralBalance($user), 2) ?? 0;
+        $transTotal = $curr . number_format($user->customer->transactions()->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
+        $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
+        $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
+        $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->get();
+        
+        return view(
+            'admin.customers.single-customer',
+            [
+                'user' => $user,
+                'downlines' => $downlines,
+                'accounts' => $reservedAccount,
+                'balances' => $balances,
+            ]
+        );
     }
 
-    function updateCustomer (Request $request, $id = null) {
+    function updateCustomer(Request $request, $id = null)
+    {
         $val = $request->validate([
             'status' => 'required',
             'firstname' => 'required',
             'lastname' => 'required',
         ]);
 
-        $update = User::where('id', $id)->update([
-            'status' => $request->status,
-            'lastname' => $request->lastname,
-            'firstname' => $request->firstname,
-        ]);
+        $update = User::where('id', $id)->update($request->except('_token'));
 
         if ($update) {
-            return back()->with('flash_message', 'Update successful!');
+            return back()->with('message', 'Update successful!');
         } else {
             return back()->with('error', 'Failed to update profile');
         }
