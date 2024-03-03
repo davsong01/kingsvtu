@@ -178,10 +178,6 @@ use App\Models\BlackList;
                                                         <option value="suspended" @selected($user->status == 'suspended')>Suspended
                                                         </option>
                                                         <option value="delete" @selected($user->status == 'delete')>Delete</option>
-                                                        <option value="email-blacklist" @selected($user->status == 'email-blacklist')>Email
-                                                            Blacklist</option>
-                                                        <option value="phone-blacklist" @selected($user->status == 'phone-blacklist')>Phone
-                                                            Blacklist</option>
                                                     </select>
                                                 </fieldset>
                                                 <fieldset class="form-group">
@@ -404,51 +400,50 @@ use App\Models\BlackList;
                                         </div>
                                         <div class="tab-pane" id="reserved-account" aria-labelledby="about-tab"
                                             role="tabpanel">
-                                            <div class="row">
-                                                @forelse ($accounts as $key => $account)
-                                                    @if ($account->paymentgateway_id === 1)
-                                                        <div class="col-sm-6 col-md-4">
-                                                            <div class="card {{ $colors[$key] }} bg-lighten-2">
-                                                                <div class="card-content">
-                                                                    <div class="">
+                                            @empty($accounts)
+                                                <p>No reserved account has been created by this customer</p>
+                                            @else
+                                                <table able class="table table-striped dataex-html5-selectors">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Bank</th>
+                                                            <th>Account</th>
+                                                            <th>ACtion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($accounts as $key => $account)
+                                                            @if ($account->paymentgateway_id === 1)
+                                                                <tr>
+                                                                    <td>{{ ucfirst($account->account_name) }}</td>
+                                                                    <td>{{ ucfirst($account->bank_name) }}</td>
+                                                                    <td>{{ ucfirst($account->account_number) }}</td>
+                                                                    <td>
                                                                         <div
-                                                                            class="d-flex align-items-center justify-content-center p-1">
-                                                                            <h5 class="card-title white">
-                                                                                {{ $account->account_number }}
-                                                                            </h5>
+                                                                            class="d-flex justify-content-center align-items-center gap-3">
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success">
+                                                                                Update
+                                                                            </button>
+                                                                            &nbsp;&nbsp;&nbsp;
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-secondary">
+                                                                                Delete
+                                                                            </button>
                                                                         </div>
-                                                                        <div class="card-body text-center pb-1 pt-0">
-                                                                            <p class="card-text white">
-                                                                                {{ $account->bank_name }}</p>
-                                                                            <p class="card-text white">
-                                                                                {{ $account->account_name }}</p>
-                                                                            <div
-                                                                                class="d-flex justify-content-center align-items-center gap-3">
-                                                                                <button type="button"
-                                                                                    class="btn btn-success">
-                                                                                    Update
-                                                                                </button>
-                                                                                &nbsp;&nbsp;&nbsp;
-                                                                                <button type="button"
-                                                                                    class="btn btn-secondary">
-                                                                                    Delete
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @empty
-                                                    <p>No reserved account has been created by this customer</p>
-                                                @endforelse
-                                            </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            @endempty
                                         </div>
                                         <div class="tab-pane" id="actions" aria-labelledby="about-tab"
                                             role="tabpanel">
                                             <div class="row">
-                                                <div class="col-md-3 col-sm-4">
+                                                {{-- <div class="col-md-3 col-sm-4">
                                                     <div class="card bg-lighten-2 p-0 bg-warning">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -465,12 +460,12 @@ use App\Models\BlackList;
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 @php
                                                     // check blacklist status
                                                     $mail = BlackList::where('value', $user->email)->first();
                                                 @endphp
-                                                <div class="col-md-3 col-sm-4">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-dark">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -495,11 +490,11 @@ use App\Models\BlackList;
                                                                     <form action="{{ route('customer-blacklist.store') }}"
                                                                         method="POST">
                                                                         @csrf
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="type"
                                                                             value="email">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="value"
                                                                             value="{{ $user->email }}">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="status"
                                                                             value="active">
                                                                         <button class="btn btn-danger" type="submit">Add
                                                                             to blacklist</button>
@@ -513,7 +508,7 @@ use App\Models\BlackList;
                                                     // check blacklist statu
                                                     $phone = BlackList::where('value', $user->phone)->first();
                                                 @endphp
-                                                <div class="col-md-3 col-sm-4">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-danger">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -538,14 +533,14 @@ use App\Models\BlackList;
                                                                     <form action="{{ route('customer-blacklist.store') }}"
                                                                         method="POST">
                                                                         @csrf
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="type"
                                                                             value="biller">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="value"
                                                                             value="{{ $user->phone }}">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="status"
                                                                             value="active">
-                                                                        <button class="btn btn-danger"
-                                                                            type="submit">Add to blacklist</button>
+                                                                        <button class="btn btn-danger" type="submit">Add
+                                                                            to blacklist</button>
                                                                     </form>
                                                                 @endif
                                                             </div>
@@ -564,30 +559,30 @@ use App\Models\BlackList;
         </div>
     </div>
 
-    @section('page-script')
-        <script>
-            function toggleStatus() {
-                let check = confirm('Are you sure you want to perform this action?');
-                if (check) {
-                    let status = $('#customSwitchGlow2').attr('data-value');
-                    let id = $('#customSwitchGlow2').attr('data-id');
+@section('page-script')
+    <script>
+        function toggleStatus() {
+            let check = confirm('Are you sure you want to perform this action?');
+            if (check) {
+                let status = $('#customSwitchGlow2').attr('data-value');
+                let id = $('#customSwitchGlow2').attr('data-id');
 
-                    $.ajax({
-                        url: '/admin/black-list-status',
-                        data: {
-                            status,
-                            id
-                        },
-                        success: e => {
-                            alert(e.message)
-                            if (e.code == 1) {
-                                let status = $('#customSwitchGlow2').attr('data-value', e.status);
-                            }
-                        },
-                        error: () => alert('Request could not be completed!'),
-                    });
-                }
+                $.ajax({
+                    url: '/admin/black-list-status',
+                    data: {
+                        status,
+                        id
+                    },
+                    success: e => {
+                        alert(e.message)
+                        if (e.code == 1) {
+                            let status = $('#customSwitchGlow2').attr('data-value', e.status);
+                        }
+                    },
+                    error: () => alert('Request could not be completed!'),
+                });
             }
-        </script>
+        }
+    </script>
 
-    @endsection
+@endsection
