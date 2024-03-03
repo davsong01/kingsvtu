@@ -454,7 +454,7 @@ use App\Models\BlackList;
                             id
                         },
                         success: e => {
-                            alert(e.messages)
+                            alert(e.message)
                             if (e.code == 1) {
                                 let status = $('#customSwitchGlow2').attr('data-value', e.status);
                             }
