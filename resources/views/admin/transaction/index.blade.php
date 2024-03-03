@@ -137,12 +137,13 @@
                             <hr>
                         </div>
                         <div class="table-responsive">
-                            <form method="post">
+                            {{-- <form method="post"> --}}
                                 <table id="table-extended-success" class="table mb-0">
                                     <thead>
                                         <tr>
                                             <th><button class="btn btn-sm btn-warning m-0">Reorder</button></th>
                                             <th>Transaction ID</th>
+                                            {{-- <th><button class="btn btn-sm btn-warning m-0">Reorder</button></th> --}}
                                             <th>Product</th>
                                             <th>Amount</th>
                                             <th>Amount Paid</th>
@@ -156,16 +157,14 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $transaction)
-                                        
+
                                             <tr>
-                                                <td colspan="1">
+                                                {{-- <td colspan="1">
                                                     <div class="checkbox checkbox-warning">
                                                         <input value="{{ $transaction->id }}" type="checkbox" id="colorCheckbox-{{ $transaction->id }}">
                                                         <label for="colorCheckbox-{{ $transaction->id }}"></label>
                                                     </div>
-                                                </td>
-                                                <td>{{ $transaction->transaction_id }}</td>
-
+                                                </td> --}}
                                                 <td>
                                                     {{ $transaction->product_name }}
                                                 </td>
@@ -189,7 +188,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </form>
+                            {{-- </form> --}}
                             {{-- {{ $transactions->appends($query) }} --}}
                         </div>
                     </div>
