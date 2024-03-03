@@ -52,7 +52,7 @@
                                 <div class="card-content">
                                     <div class="card-body card-dashboard">
                                         <div class="table-responsive">
-                                            <table class="table table-striped dataex-html5-selectors">
+                                           <table able class="table table-striped dataex-html5-selectors">
                                                 <thead>
                                                     <tr>
                                                         <th>Username</th>
