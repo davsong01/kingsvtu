@@ -1,3 +1,6 @@
+<?php
+use App\Models\BlackList;
+?>
 @extends('layouts.app')
 @section('content')
     <!-- Content wrapper -->
@@ -339,7 +342,6 @@
                                                 </div>
                                                 @php
                                                     // check blacklist status
-
                                                     $mail = BlackList::where('value', $user->email)->first();
                                                 @endphp
                                                 <div class="col-md-3 col-sm-4">
@@ -349,16 +351,34 @@
                                                                 <h5 class="card-title white">
                                                                     Blacklist Email
                                                                 </h5>
-                                                                <form action="{{ route('customer-blacklist.store') }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="email" value="email">
-                                                                    <input type="hidden" name="email"
-                                                                        value="{{ $user->email }}">
-                                                                    <input type="hidden" name="email" value="active">
-                                                                    <button class="btn btn-primary"
-                                                                        type="submit"></button>
-                                                                </form>
+                                                                @if ($mail)
+                                                                    <div
+                                                                        class="custom-control custom-switch custom-switch-success custom-switch-glow custom-control-inline mb-1">
+                                                                        <input type="checkbox"
+                                                                            class="custom-control-input"
+                                                                            id="customSwitchGlow2"
+                                                                            @checked($mail->status == 'active')
+                                                                            onchange="toggleStatus()"
+                                                                            data-id="{{ $mail->id }}"
+                                                                            data-value="{{ $mail->status }}">
+                                                                        <label class="custom-control-label"
+                                                                            for="customSwitchGlow2">
+                                                                        </label>
+                                                                    </div>
+                                                                @else
+                                                                    <form action="{{ route('customer-blacklist.store') }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="email"
+                                                                            value="email">
+                                                                        <input type="hidden" name="email"
+                                                                            value="{{ $user->email }}">
+                                                                        <input type="hidden" name="email"
+                                                                            value="active">
+                                                                        <button class="btn btn-danger" type="submit">Add
+                                                                            to blacklist</button>
+                                                                    </form>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -389,16 +409,18 @@
                                                                         </label>
                                                                     </div>
                                                                 @else
-                                                                <form action="{{ route('customer-blacklist.store') }}"
-                                                                    method="POST">
-                                                                    @csrf
-                                                                    <input type="hidden" name="email" value="biller">
-                                                                    <input type="hidden" name="email"
-                                                                        value="{{ $user->phone }}">
-                                                                    <input type="hidden" name="email" value="active">
-                                                                    <button class="btn btn-primary"
-                                                                        type="submit"></button>
-                                                                </form>
+                                                                    <form action="{{ route('customer-blacklist.store') }}"
+                                                                        method="POST">
+                                                                        @csrf
+                                                                        <input type="hidden" name="email"
+                                                                            value="biller">
+                                                                        <input type="hidden" name="email"
+                                                                            value="{{ $user->phone }}">
+                                                                        <input type="hidden" name="email"
+                                                                            value="active">
+                                                                        <button class="btn btn-danger"
+                                                                            type="submit">Add to blacklist</button>
+                                                                    </form>
                                                                 @endif
                                                             </div>
                                                         </div>
@@ -415,3 +437,32 @@
             </section>
         </div>
     </div>
+
+    @section('page-script')
+        <script>
+            function toggleStatus() {
+                let check = confirm('Are you sure you want to perform this action?');
+
+                if (check) {
+                    let status = $('#customSwitchGlow2').attr('data-value');
+                    let id = $('#customSwitchGlow2').attr('data-id');
+
+                    $.ajax({
+                        url: '/admin/black-list-status',
+                        data: {
+                            status,
+                            id
+                        },
+                        success: e => {
+                            alert(e.messages)
+                            if (e.code == 1) {
+                                let status = $('#customSwitchGlow2').attr('data-value', e.status);
+                            }
+                        },
+                        error: () => alert('Request could not be completed!'),
+                    });
+                }
+            }
+        </script>
+
+    @endsection
