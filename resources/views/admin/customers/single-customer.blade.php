@@ -568,7 +568,6 @@ use App\Models\BlackList;
         <script>
             function toggleStatus() {
                 let check = confirm('Are you sure you want to perform this action?');
-
                 if (check) {
                     let status = $('#customSwitchGlow2').attr('data-value');
                     let id = $('#customSwitchGlow2').attr('data-id');
