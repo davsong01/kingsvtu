@@ -40,6 +40,11 @@ class TransactionLog extends Model
         return $this->belongsTo(PaymentGateway::class, 'wallet_funding_provider');
     }
 
+    public function api()
+    {
+        return $this->belongsTo(API::class, 'api_id');
+    }
+
 
     public function customer()
     {

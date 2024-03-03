@@ -23,11 +23,7 @@
                                             <span
                                             class="text-success">Delivered</span>
                                     </div>
-                                    {{-- <div class="statistics-date">
-                                        <i
-                                            class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
-                                        <small class="text-muted">May 12, 2019</small>
-                                    </div> --}}
+                                   
                                 </div>
                             </div>
                         </div>
@@ -43,11 +39,7 @@
                                             class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($attention_required) !!}</span><br><span
                                             class="text-warning">Attention Required</span>
                                     </div>
-                                    {{-- <div class="statistics-date">
-                                        <i
-                                            class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
-                                        <small class="text-muted">Jul 26, 2019</small>
-                                    </div> --}}
+                                    
                                 </div>
                             </div>
                         </div>
@@ -63,11 +55,7 @@
                                             class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($failed) !!}</s!!an><br><span
                                             class="text-danger">Failed</span>
                                     </div>
-                                    {{-- <div class="statistics-date">
-                                        <i
-                                            class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
-                                        <small class="text-muted">Jul 26, 2019</small>
-                                    </div> --}}
+                                    
                                 </div>
                             </div>
                         </div>
@@ -79,8 +67,14 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
-                                            <label for="email">Customer Email</label>
+                                            <label for="email">Transaction Email</label>
                                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter customer email address" value="{{ \Request::get('email')}}">
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <fieldset class="form-group">
+                                            <label for="phone">Transaction Phone</label>
+                                            <input type="phone" class="form-control" id="phone" name="phone" placeholder="Enter customer phone number" value="{{ \Request::get('phone')}}">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-3">
@@ -117,19 +111,19 @@
                                             </select>
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="from">From</label>
                                             <input type="date" class="form-control" value="{{ \Request::get('from')}}" name="from">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="to">To</label>
                                             <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <input type="submit" class="form-control btn btn-primary mt-2" value="Search">
                                     </div>
                                 </div>
@@ -141,16 +135,10 @@
                                 <table id="table-extended-success" class="table mb-0">
                                     <thead>
                                         <tr>
-                                            <th><button class="btn btn-sm btn-warning m-0">Reorder</button></th>
-                                            <th>Transaction ID</th>
-                                            <th>Product</th>
-                                            <th>Amount</th>
-                                            <th>Amount Paid</th>
-                                            <th>Biller</th>
-                                            <th>Status</th>
-                                            <th>Phone</th>
-                                            <th>Email</th>
-                                            <th>Date</th>
+                                            <th>Customer</th>
+                                            <th>Payment Details</th>
+                                            <th>Transaction Details</th>
+                                            <th>Unique Element</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -158,39 +146,61 @@
                                         @foreach ($transactions as $transaction)
                                         
                                             <tr>
-                                                <td colspan="1">
-                                                    <div class="checkbox checkbox-warning">
-                                                        <input value="{{ $transaction->id }}" type="checkbox" id="colorCheckbox-{{ $transaction->id }}">
-                                                        <label for="colorCheckbox-{{ $transaction->id }}"></label>
-                                                    </div>
-                                                </td>
-                                                <td>{{ $transaction->transaction_id }}</td>
-
                                                 <td>
-                                                    {{ $transaction->product_name }}
+                                                    <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>
+                                                    <span style="color:rgb(27, 20, 220)"><strong>Request ID: </strong>{{ $transaction->reference_id }}</span> <br><br>
+                                                    {{ $transaction->customer_name }} <br>
+                                                    <a href="">{{ $transaction->customer_email  }}</a> <br>
+                                                    {{ $transaction->customer_phone }} <br>
+                                                     {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }} <br>
+                                                    @if($transaction->status == 'success')
+                                                    <button class="btn btn-primary btn-sm">{{ucfirst($transaction->status) }}</button>
+                                                    @else
+                                                    <button class="btn btn-danger btn-sm">{{ucfirst($transaction->status) }}</button>
+                                                    @endif 
+                                                    
+                                                   
                                                 </td>
-                                                <td>{!! getSettings()->currency. number_format($transaction->amount) !!}</td>
-                                                <td>{!! getSettings()->currency. number_format($transaction->total_amount) !!}</td>
+                                                <td>
+                                                    <small>
+                                                    <strong>Amount: </strong>{!! getSettings()->currency. number_format($transaction->amount, 2) !!} <br>
+                                                    <strong>Charge: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
+                                                    <strong>Total Amount: </strong>{!! getSettings()->currency. number_format($transaction->total_amount,2) !!} <br>
+                                                    <strong>Initial Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_before, 2) !!} <br>
+                                                    <strong>Final Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_after, 2) !!} <br>
+                                                   
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <small>
+                                                    <strong>Product: </strong>{{ $transaction->product_name }} <br>
+                                                    <strong>Category: </strong>{{ $transaction->category->display_name }} <br>
+                                                    <strong>Variation: </strong>{{ $transaction->variation->system_name }} <br>
+                                                    <strong>Provider: </strong>{{ $transaction->api->name }} <br>
+                                                    <strong>Convenience: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
+                                                    <strong>Discount: </strong>{!! getSettings()->currency. number_format($transaction->discount, 2) !!} <br>
+                                                    <strong>Total Amount: </strong>{!! getSettings()->currency. number_format($transaction->total_amount,2) !!} <br>
+                                                    <strong>Initial Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_before, 2) !!} <br>
+                                                    <strong>Final Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_after, 2) !!} <br>
+                                                    <strong>Date: </strong>{{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
+
+                                                    </small>
+                                                </td>
                                                 <td>{{ $transaction->unique_element }}</td>
-                                                <td>{{ $transaction->status }}</td>
-                                                <td>{{ $transaction->customer_phone }}</td>
-                                                <td>{{ $transaction->customer_email }}</td>
-                                                <td>{{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}</td>
 
                                                 <td>
-                                                    <a class="btn btn-primary btn-sm mr-1 mb-1" href="/admin/single-transaction/{{  $transaction->id }}">
+                                                    <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->id) }}">
                                                         <i class="bx bxs-eye"></i>
                                                         <span class="align-middle ml-25">View</span>
                                                     </a>
 
                                                 </td>
                                             </tr>
-                                            {{-- @dump($transaction) --}}
                                         @endforeach
                                     </tbody>
                                 </table>
                             </form>
-                            {{-- {{ $transactions->appends($query) }} --}}
+                            {{ $transactions->appends($query) }}
                         </div>
                     </div>
                 </div>

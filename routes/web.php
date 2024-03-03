@@ -83,11 +83,16 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('announcement/scroll', [AnnouncementController::class, 'scroll'])->name('announcement.scroll');
     Route::resource('announcement', AnnouncementController::class);
     Route::get('black-list-status', [BlackListController::class, 'status']);
-
+    
     // transactions route
     Route::get('transactions', [TransactionController::class, 'transView'])->name('admin.trans');
     Route::get('wallet-transactions', [TransactionController::class, 'walletTransView'])->name('admin.walletlog');
     Route::get('admin-wallet-funding-log', [TransactionController::class, 'walletFundingLogView'])->name('admin.walletfundinglog');
+    Route::get('admin-earninglog', [TransactionController::class, 'walletEarningView'])->name('admin.earninglog');
+    Route::get('credit-customer', [TransactionController::class, 'creditCustomerPage'])->name('admin.credit.customer');
+    Route::get('debit-customer', [TransactionController::class, 'debitCustomerPage'])->name('admin.debit.customer');
+    Route::get('verify-biller', [TransactionController::class, 'verifyBiller'])->name('admin.verifybiller');
+    
     Route::get('single-transaction-view/{transaction_id}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');

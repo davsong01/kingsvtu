@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header">
                         <!-- head -->
-                        <h5 class="card-title mb-2">Wallet Funding</h5>
+                        <h5 class="card-title mb-2">Earnings Log</h5>
                         <div class="d-inline-block">
                             <!-- chart-1   -->
                             <div class="d-flex market-statistics-1">
@@ -23,14 +23,11 @@
                                             <span
                                             class="text-success">Sucessful</span>
                                     </div>
-                                    {{-- <div class="statistics-date">
-                                        <i
-                                            class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
-                                        <small class="text-muted">May 12, 2019</small>
-                                    </div> --}}
+                                    
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="d-inline-block mx-3">
                             <!-- chart-2 -->
                             <div class="d-flex mb-75 market-statistics-2">
@@ -40,26 +37,6 @@
                                 <div class="statistics-data my-auto">
                                     <div class="statistics">
                                         <span
-                                            class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($attention_required) !!}</span><br><span
-                                            class="text-warning">Attention Required</span>
-                                    </div>
-                                    {{-- <div class="statistics-date">
-                                        <i
-                                            class="bx bx-radio-circle font-small-1 text-success mr-25"></i>
-                                        <small class="text-muted">Jul 26, 2019</small>
-                                    </div> --}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-inline-block mx-3">
-                            <!-- chart-2 -->
-                            <div class="d-flex mb-75 market-statistics-2">
-                                <!-- chart statistics-2 -->
-                                <div id="donut-danger-chart"></div>
-                                <!-- data-2 -->
-                                <div class="statistics-data my-auto">
-                                    <div class="statistics">
-                                        <s!!an
                                             class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($failed) !!}</s!!an><br><span
                                             class="text-danger">Failed</span>
                                     </div>
@@ -75,8 +52,14 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
-                                            <label for="email">Customer Email</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter customer email address" value="{{ \Request::get('email')}}">
+                                            <label for="upline_email">Upline Email</label>
+                                            <input type="upline_email" class="form-control" id="upline_email" name="upline_email" placeholder="Enter upline email address" value="{{ \Request::get('upline_email')}}">
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <fieldset class="form-group">
+                                            <label for="downline_email">Downline Email</label>
+                                            <input type="downline_email" class="form-control" id="downline_email" name="downline_email" placeholder="Enter upline email address" value="{{ \Request::get('downline_email')}}">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-3">
@@ -85,24 +68,14 @@
                                             <input type="text" class="form-control" id="transaction_id" name="transaction_id" placeholder="Enter transaction ID" value="{{ \Request::get('transaction_id')}}">
                                         </fieldset>
                                     </div>
+                                    
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
-                                            <label for="payment_provider">Payment Gateway</label>
-                                            <select class="form-control" name="payment_provider" id="payment_provider">
-                                                <option value="">Select</option>
-                                                @foreach ($providers as $provider)
-                                                    <option value="{{ $provider->id }}" {{ \Request::get('payment_provider') == $provider->id ? 'selected' : ''}}>{{ $provider->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="status">Status</label>
-                                            <select class="form-control" name="status" id="status">
-                                                <option value="">Select</option>
-                                                <option value="delivered" {{ \Request::get('status') == 'delivered' ? 'selected' : ''}}>Delivered</option>
-                                                <option value="failed" {{ \Request::get('status') == 'failed' ? 'selected' : ''}}>Failed</option>
+                                            <label for="sttus">Status</label>
+                                            <select class="form-control" name="type" id="type">
+                                                <option value="type">Select</option>
+                                                <option value="credit" {{ \Request::get('type') == 'credit' ? 'selected' : ''}}>Credit</option>
+                                                <option value="debit" {{ \Request::get('type') == 'debit' ? 'selected' : ''}}>Debit</option>
                                             </select>
                                         </fieldset>
                                     </div>
@@ -130,18 +103,18 @@
                                 <table id="table-extended-success" class="table mb-0">
                                     <thead>
                                         <tr>
-                                            <th>Customer</th>
-                                            <th>Transaction</th>
+                                            <th>Upline</th>
+                                            <th>Downline</th>
                                             <th>Payment Details</th>
+                                            <th>Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $transaction)
-                                        
                                             <tr>
-                                                <td>{{ $transaction->customer_name }} <br>
-                                                    <a href="">{{ $transaction->customer_email  }}</a> <br>
+                                                <td>{{ $transaction->referredCustomer->user->name }} <br>
+                                                    <a href="">{{ $transaction->referredCustomer->user->email  }}</a> <br>
                                                     {{ $transaction->customer_phone }} <br>
                                                     @if($transaction->status == 'success')
                                                     <button class="btn btn-primary btn-sm">{{ucfirst($transaction->status) }}</button>

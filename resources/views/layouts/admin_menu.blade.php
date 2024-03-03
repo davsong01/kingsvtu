@@ -135,20 +135,19 @@
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet
                                  Log</span></a>
                      </li>
-                     <li class="{{ Route::is('transactiows.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
+                     <li class="{{ Route::is('admin.earninglog') ? 'active' : '' }}"><a
+                             href="{{ route('admin.earninglog') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Earnings Log</span></a>
                      </li>
-                     <li class="{{ Route::is('transactiowns.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
+                     <li class="{{ Route::is('admin.credit.customer') ? 'active' : '' }}"><a
+                             href="{{ route('admin.credit.customer') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Credit Customer</span></a>
                      </li>
-                     <li class="{{ Route::is('transactiwons.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
-                                 class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit Customer</span></a>
+                     <li class="{{ Route::is('admin.debit.customer') ? 'active' : '' }}"><a
+                             href="{{ route('admin.debit.customer') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit Customer</span></a>
                      </li>
-                     <li class="{{ Route::is('transactiowns.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
+                     <li class="{{ Route::is('admin.verifybiller') ? 'active' : '' }}"><a
+                             href="{{ route('admin.verifybiller') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
                      </li>
                  </ul>

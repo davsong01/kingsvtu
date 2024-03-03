@@ -650,12 +650,11 @@ class TransactionController extends Controller
         $products = Product::all();
 
         if ($request->email) {
-            $user = User::where('email', $request->email)->first();
-            if (!empty($user)) {
-                $customer = $user->customer;
-                $id = $customer->id;
-                $transactions = $transactions->where('customer_id', $id);
-            }
+            $transactions = $transactions->where('customer_email', $request->email);
+        }
+
+        if ($request->phone) {
+            $transactions = $transactions->where('customer_phone', $request->phone);
         }
 
         if ($request->service) {
@@ -702,12 +701,11 @@ class TransactionController extends Controller
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
-            if(!empty($user)){
+            if (!empty($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
             }
-
         }
 
         if ($request->transaction_id) {
@@ -739,7 +737,6 @@ class TransactionController extends Controller
 
     function walletFundingLogView(Request $request)
     {
-        $transactions = TransactionLog::whereNotNull('wallet_funding_provider')->where('unique_element', 'WALLET-FUNDING')->latest();
         $transactions = TransactionLog::whereNotNull('wallet_funding_provider')->where('unique_element', 'WALLET-FUNDING')->latest();
         $transactionsS = clone $transactions;
         $transactionsA = clone $transactions;
@@ -787,5 +784,48 @@ class TransactionController extends Controller
         ]);
     }
 
-    
+    function walletEarningView(Request $request)
+    {
+        $transactions = ReferralEarning::latest();
+        $transactionsS = clone $transactions;
+        $transactionsA = clone $transactions;
+        $transactionsF = clone $transactions;
+        $totalTransSuccess = $transactionsS->where('type', 'credit')->sum('amount');
+        $totalTransFailed = $transactionsF->where('type', 'debit')->sum('amount');
+
+        if ($request->email) {
+            $user = User::where('email', $request->email)->first();
+            if (!empty($user)) {
+                $customer = $user->customer;
+                $id = $customer->id;
+                $transactions = $transactions->where('customer_id', $id);
+            }
+        }
+
+        if ($request->transaction_id) {
+            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+        }
+
+        if ($request->type) {
+            $transactions = $transactions->where('type', $request->type);
+        }
+
+        if ($request->from) {
+            $time = $request->from . ' 00:00:00';
+            $transactions = $transactions->where('created_at', '>', $time);
+        }
+        if ($request->to) {
+            $time = $request->to . ' 00:00:00';
+            $transactions = $transactions->where('created_at', $time);
+        }
+
+        $transactions = $transactions->paginate(20);
+
+        return view('admin.transaction.earning_log', [
+            'transactions' => $transactions,
+            'success' => $totalTransSuccess,
+            'failed' => $totalTransFailed,
+            'query' => $request->query(),
+        ]);
+    }
 }
