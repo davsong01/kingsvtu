@@ -11,7 +11,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('products')->get();
+        $categories = Category::withCount('products')->orderby('order', 'ASC')->get();
+
         return view('admin.category.index', compact('categories'));
     }
 
@@ -73,7 +74,7 @@ class CategoryController extends Controller
             "seo_title" => "nullable",
             "seo_keywords" => "nullable",
         ]);
-       
+
         $category->update([
             "name" => $request->name,
             "icon" => $request->icon,
@@ -89,5 +90,16 @@ class CategoryController extends Controller
         ]);
 
         return back()->with('message', 'Updated successfully');
+    }
+
+    public function destroy(Category $category){
+        if($category->products->count() < 1){
+            $category->delete();
+        }else{
+            return back()->with('error', 'Category in use, cannot delete');
+        }
+
+        return back()->with('message', 'Deleted successfully');
+
     }
 }

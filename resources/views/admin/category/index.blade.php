@@ -48,7 +48,7 @@
                                 <div class="card-content">
                                     <div class="card-body card-dashboard">
                                         <div class="table-responsive">
-                                            <table class="table table-striped dataex-html5-selectors">
+                                            <table class="table table-striped" id="dtable">
                                                 <thead>
                                                     <tr>
                                                         <th>Name</th>
@@ -69,7 +69,17 @@
                                                         <td>{{ $category->created_at }}</td>
                                                         <td>
                                                             <a href="{{ route('category.edit', $category->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
-                                        
+                                                            @if($category->products_count < 1)
+                                                            <form action="{{ route('category.destroy', $category->id) }}"
+                                                                class="btn btn-custon-four btn-bg-cl-social" method="POST"
+                                                                onsubmit="return confirm('Are you sure you want to delete forever?');">
+                                                                {{ csrf_field() }}
+                                                                {{method_field('DELETE')}}
+            
+                                                                <button type="submit" class="btn btn-danger btn-sm mr-1 mb-1"
+                                                                    data-toggle="tooltip" title="Delete Customer Level"><i class="fa fa-trash"></i> Delete Category                                                                </button>
+                                                            </form>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach
@@ -97,5 +107,13 @@
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/pdfmake.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/vfs_fonts.js') }}"></script>
-     <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
+    <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
+
+    <script>
+        $('#dtable').DataTable({
+             "ordering": false,
+        });
+
+    </script>
+    
 @endsection

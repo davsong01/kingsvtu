@@ -63,7 +63,9 @@
                                                     @foreach ( $products as $product )
                                                     <tr>
                                                         <td><img src="{{asset($product->image)}}" alt="{{$product->image}}" style="width: 50px;float:left">{{ $product->name }}</td>
-                                                        <td>{{ $product->category->name }}</td>
+                                                        <td>{{ $product->category->name }} <br>
+                                                            <strong>API:</strong> {{ $product->api->name }}
+                                                        </td>
                                                        
                                                         <td>
                                                             All: {{ $product->variations->count() }} <br>
