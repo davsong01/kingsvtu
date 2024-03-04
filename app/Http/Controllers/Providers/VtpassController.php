@@ -241,12 +241,14 @@ class VtpassController extends Controller
                 $final_response = [
                     'status' => 'failed',
                     'status_code' => '0',
+                    'error' => json_encode($response),
                 ];
             }
         } catch (\Throwable $th) {
             $final_response = [
                 'status' => 'failed',
                 'status_code' => '0',
+                'error' => $th->getMessage(),
             ];
         }
 
