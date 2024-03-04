@@ -220,7 +220,7 @@ class VtpassController extends Controller
     public function balance($api)
     {
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
+            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "balance";
 
             $headers = [

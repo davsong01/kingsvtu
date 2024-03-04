@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xl-4 col-12 dashboard-users">
+                        {{-- <div class="col-xl-4 col-12 dashboard-users">
                             <div class="row  ">
                                 <!-- Statistics Cards Starts -->
                                 <div class="col-12">
@@ -99,13 +99,13 @@
                                 </div>
                                 <!-- Revenue Growth Chart Starts -->
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="row">
 
 
                         <!-- Earning Swiper Starts -->
-                        <div class="col-xl-12 col-md-12 col-12 dashboard-earning-swiper" id="widget-earnings">
+                        {{-- <div class="col-xl-12 col-md-12 col-12 dashboard-earning-swiper" id="widget-earnings">
                             <div class="card">
                                 <div class="card-header border-bottom d-flex justify-content-between align-items-center">
                                     <h5 class="card-title"><i class="bx bx-dollar font-medium-5 align-middle"></i> <span
@@ -164,9 +164,9 @@
                                 </div>
 
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Marketing Campaigns Starts -->
-                        <div class="col-xl-12 col-12 dashboard-marketing-campaign">
+                        {{-- <div class="col-xl-12 col-12 dashboard-marketing-campaign">
                             <div class="card marketing-campaigns">
                                 <div class="card-header d-flex justify-content-between align-items-center pb-1">
                                     <h4 class="card-title">Marketing campaigns</h4>
@@ -381,7 +381,7 @@
                                     <!-- table ends -->
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </section>
                 <!-- Dashboard Ecommerce ends -->
