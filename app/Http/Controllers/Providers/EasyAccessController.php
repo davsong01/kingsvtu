@@ -612,10 +612,10 @@ class EasyAccessController extends Controller
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
 
-            if (env('ENT') == 'local') {
-                $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
-                $result = json_decode($response);
-            }
+            // if (env('ENT') == 'local') {
+            //     $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
+            //     $result = json_decode($response);
+            // }
 
             if (empty($response)) {
                 $user_status = 'failed';
@@ -700,36 +700,36 @@ class EasyAccessController extends Controller
 
             $response = $this->basicApiCall($url, [], $headers, 'GET');
 
-            if (env('ENT') == 'local') {
-                $response = json_encode([
-                    "success" => "true",
-                    "message" => "Wallet balance check was successful",
-                    "email" => "example@gmail.com",
-                    "balance" => 12450,
-                    "funding_acctno1" => 2001245621,
-                    "funding_bank1" => "Sterling Bank",
-                    "funding_acctno2" => 2001245622,
-                    "funding_bank2" => "Wema Bank",
-                    "funding_acctno3" => "2001245623",
-                    "funding_bank3" => "Moniepoint Microfinance Bank",
-                    "funding_acctno4" => "2001245624",
-                    "funding_bank4" => "Fidelity Bank",
-                    "funding_acctno5" => "2001245625",
-                    "funding_bank5" => "GTBank",
-                    "funding_acctname" => "Easy Access - Exa",
-                    "checked_date" => "11-10-2021 08:06:52 am",
-                    "reference_no" => "ID96703055397",
-                    "status" => "Successful"
-                ]);
-            }
+            // if (env('ENT') == 'local') {
+            //     $response = json_encode([
+            //         "success" => "true",
+            //         "message" => "Wallet balance check was successful",
+            //         "email" => "example@gmail.com",
+            //         "balance" => 12450,
+            //         "funding_acctno1" => 2001245621,
+            //         "funding_bank1" => "Sterling Bank",
+            //         "funding_acctno2" => 2001245622,
+            //         "funding_bank2" => "Wema Bank",
+            //         "funding_acctno3" => "2001245623",
+            //         "funding_bank3" => "Moniepoint Microfinance Bank",
+            //         "funding_acctno4" => "2001245624",
+            //         "funding_bank4" => "Fidelity Bank",
+            //         "funding_acctno5" => "2001245625",
+            //         "funding_bank5" => "GTBank",
+            //         "funding_acctname" => "Easy Access - Exa",
+            //         "checked_date" => "11-10-2021 08:06:52 am",
+            //         "reference_no" => "ID96703055397",
+            //         "status" => "Successful"
+            //     ]);
+            // }
 
             if (empty($response)) {
                 $status = 'failed';
                 $status_code = 0;
                 $balance = null;
             } else {
-                $result = json_decode($response);
-                $balance = '#' . number_format($result->balance, 2);
+                $result = $response;
+                $balance = '#' . number_format($result['balance'], 2);
                 $status = 'success';
                 $status_code = 1;
             }
