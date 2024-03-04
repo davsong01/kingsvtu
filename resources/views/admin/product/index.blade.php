@@ -64,7 +64,11 @@
                                                     <tr>
                                                         <td><img src="{{asset($product->image)}}" alt="{{$product->image}}" style="width: 50px;float:left">{{ $product->name }}</td>
                                                         <td>{{ $product->category->name }}</td>
-                                                        <td>{{ $product->variations->where('status','active')->count() }}</td>
+                                                       
+                                                        <td>
+                                                            All: {{ $product->variations->count() }} <br>
+                                                            <span style="color:green">Active: {{ $product->variations->where('status','active')->count() }}</span>
+                                                        </td>
                                                         <td>{{ $product->api->name }}</td>
                                                         <td>{{ $product->status }}</td>
                                                         <td>{{ $product->created_at }}</td>

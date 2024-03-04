@@ -63,7 +63,7 @@ if (!function_exists("verifiableUniqueElements")) {
 if (!function_exists("getCategories")) {
     function getCategories()
     {
-        return Category::where('status', 'active')->get();
+        return Category::where('status', 'active')->orderBy('order', 'ASC')->get();
     }
 }
 
@@ -1222,7 +1222,7 @@ if (!function_exists("announcements")) {
         $ann = $ann = Announcement::all();
 
         if (count($ann)) {
-            if ($type == 'scroll'){
+            if ($type == 'scroll') {
                 return $ann[1];
             } else {
                 return $ann[0];
