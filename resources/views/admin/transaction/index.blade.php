@@ -179,10 +179,7 @@
                                                     <strong>Provider: </strong>{{ $transaction->api->name }} <br>
                                                     <strong>Convenience: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
                                                     <strong>Discount: </strong>{!! getSettings()->currency. number_format($transaction->discount, 2) !!} <br>
-                                                    <strong>Total Amount: </strong>{!! getSettings()->currency. number_format($transaction->total_amount,2) !!} <br>
-                                                    <strong>Initial Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_before, 2) !!} <br>
-                                                    <strong>Final Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_after, 2) !!} <br>
-                                                    <strong>Date: </strong>{{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }}
+                                                   
 
                                                     </small>
                                                 </td>

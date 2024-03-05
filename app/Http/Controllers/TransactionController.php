@@ -841,6 +841,7 @@ class TransactionController extends Controller
 
     public function singleTransactionView(TransactionLog $transaction)
     {
-        dd($transaction);
+
+        return view('admin.transaction.single_transaction', compact('transaction'));
     }
 }

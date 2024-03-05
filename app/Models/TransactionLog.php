@@ -35,6 +35,11 @@ class TransactionLog extends Model
         return $this->hasOne(Wallet::class, 'transaction_id', 'transaction_id');
     }
 
+    public function wallets()
+    {
+        return $this->hasMany(Wallet::class, 'transaction_id', 'transaction_id');
+    }
+
     public function provider()
     {
         return $this->belongsTo(PaymentGateway::class, 'wallet_funding_provider');
