@@ -630,7 +630,7 @@ class TransactionController extends Controller
         return $ref;
     }
 
-    function bounceBlacklist($phone, $mail = null, $user)
+    public function bounceBlacklist($phone, $mail = null, $user)
     {
         $blacklist = BlackList::where('status', 'active')->whereRaw(" (value = ? or value = ? or value = ?)", [$mail, $phone, $user])->first();
 
@@ -638,7 +638,7 @@ class TransactionController extends Controller
         return false;
     }
 
-    function transView(Request $request)
+    public function transView(Request $request)
     {
         $transactions = TransactionLog::whereNotNull('product_id')->latest();
         $transactionsS = clone $transactions;
@@ -690,7 +690,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    function walletTransView(Request $request)
+    public function walletTransView(Request $request)
     {
         $transactions = Wallet::latest();
         $transactionsD = clone $transactions;
@@ -735,7 +735,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    function walletFundingLogView(Request $request)
+    public function walletFundingLogView(Request $request)
     {
         $transactions = TransactionLog::whereNotNull('wallet_funding_provider')->where('unique_element', 'WALLET-FUNDING')->latest();
         $transactionsS = clone $transactions;
@@ -784,7 +784,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    function walletEarningView(Request $request)
+    public function walletEarningView(Request $request)
     {
         $transactions = ReferralEarning::latest();
 
@@ -837,5 +837,10 @@ class TransactionController extends Controller
             'failed' => $totalTransFailed,
             'query' => $request->query(),
         ]);
+    }
+
+    public function singleTransactionView(TransactionLog $transaction)
+    {
+        dd($transaction);
     }
 }

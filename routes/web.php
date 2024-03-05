@@ -93,7 +93,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('debit-customer', [TransactionController::class, 'debitCustomerPage'])->name('admin.debit.customer');
     Route::get('verify-biller', [TransactionController::class, 'verifyBiller'])->name('admin.verifybiller');
     
-    Route::get('single-transaction-view/{transaction_id}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
+    Route::get('single-transaction-view/{transaction}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');

@@ -127,7 +127,7 @@ class MonnifyController extends Controller
                 "bvn" => $data["BVN"],
                 // "customerName" => config('app.name').'-'.$data["customerName"],
                 "customerEmail" => $data["customerEmail"],
-                "accountName" => config('app.name') . '-' . $data["customerName"],
+                "accountName" => $data["customerName"],
                 "currencyCode" => "NGN",
                 "contractCode" => $this->api->contract_id,
                 "getAllAvailableBanks" => true,

@@ -2,6 +2,24 @@
 use App\Models\BlackList;
 ?>
 @extends('layouts.app')
+@section('page-css')
+    <style>
+         .verified{
+        color: green !important;
+        font-size: 13px;
+        margin-top: -6px;
+        display: inline-block;
+        margin-left: 5px;
+    }
+    .unverified{
+        color: orange !important;
+        font-size: 13px;
+        margin-top: -6px;
+        display: inline-block;
+        margin-left: 5px;
+    }
+    </style>
+@endsection
 @section('content')
     <!-- Content wrapper -->
     <div class="app-content content">
@@ -83,7 +101,7 @@ use App\Models\BlackList;
                                             <a class="nav-link" id="ky-tabc" data-toggle="tab" href="#kyc"
                                                 aria-controls="about" role="tab" aria-selected="false">
                                                 <i class="bx bx-user align-middle"></i>
-                                                <span class="align-middle">KYC</span>
+                                                <span class="align-middle">KYC Data</span>
                                             </a>
                                         </li>
                                         <li class="nav-item">
@@ -168,14 +186,11 @@ use App\Models\BlackList;
                                                 </fieldset>
                                                 <fieldset class="form-group">
                                                     <label for="email">Email</label>
-                                                    <input type="email" class="form-control" id="email"
-                                                        placeholder="Email" value="{{ $user->email }}">
+                                                    <input type="email" disabled class="form-control" id="email" placeholder="Email" value="{{ $user->email }}">
                                                 </fieldset>
                                                 <fieldset class="form-group">
                                                     <label for="username">Username</label>
-                                                    <input type="text" class="form-control" id="username"
-                                                        placeholder="Username" value="{{ $user->username }}"
-                                                        name="username">
+                                                    <input type="text" class="form-control" disabled placeholder="Username" value="{{ $user->username }}">
                                                 </fieldset>
                                                 <fieldset class="form-group">
                                                     <label for="phone">Phone</label>
@@ -203,10 +218,6 @@ use App\Models\BlackList;
                                                             <th>Biller</th>
                                                             <th>Status</th>
                                                             <th>Transaction ID</th>
-                                                            <th>Phone</th>
-                                                            <th>Email</th>
-                                                            <th>Date</th>
-                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -219,24 +230,14 @@ use App\Models\BlackList;
                                                         @foreach ($trans as $transaction)
                                                             <tr>
                                                                 <td>
-                                                                    {{ $transaction->product_name }}
+                                                                    {{ $transaction->product_name }} <br><br>
+                                                                   <span><small>{{ $transaction->created_at->toDateString('en-GB') }}</small></span>
                                                                 </td>
                                                                 <td>{!! getSettings()->currency . number_format($transaction->amount) !!}</td>
                                                                 <td>{!! getSettings()->currency . number_format($transaction->total_amount) !!}</td>
                                                                 <td>{{ $transaction->unique_element }}</td>
                                                                 <td>{{ $transaction->status }}</td>
-                                                                <td>{{ $transaction->transaction_id }}</td>
-                                                                <td>{{ $transaction->phone }}</td>
-                                                                <td>{{ $transaction->email }}</td>
-                                                                <td>{{ $transaction->created_at->toDateString('en-GB') }}
-                                                                </td>
-                                                                <td>
-                                                                    <a class="btn btn-primary btn-sm mr-1 mb-1"
-                                                                        href="/admin/single-transaction/{{ $transaction->id }}">
-                                                                        <i class="bx bxs-eye"></i>
-                                                                        <span class="align-middle ml-25">View</span>
-                                                                    </a>
-
+                                                                <td><a class="mr-1 mb-1"  href="{{ route('admin.single.transaction.view', $transaction->id) }}">{{ $transaction->transaction_id }}</a>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -274,7 +275,132 @@ use App\Models\BlackList;
                                         </div>
                                         <div class="tab-pane" id="kyc" aria-labelledby="about-tab"
                                             role="tabpanel">
-                                            <h1>KYC</h1>
+                                            <h1>KYC Data</h1>
+                                            <div class="card-content">
+                                                <div class="row">
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('FIRST_NAME', $user->customer->id)['status'] == 'verified')
+                                                            <label for="FIRST_NAME">First Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('FIRST_NAME', $user->customer->id)['value'] }}" disabled>
+                                                            @else 
+                                                            <label for="FIRST_NAME">First Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="text" disabled name="FIRST_NAME" class="form-control" value="{{ $user->firstname }}" required>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('MIDDLE_NAME', $user->customer->id)['status'] == 'verified')
+                                                            <label for="MIDDLE_NAME">Middle Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('MIDDLE_NAME', $user->customer->id)['value'] }}" disabled>
+                                                            @else 
+                                                            <label for="MIDDLE_NAME">Middle Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="text" name="MIDDLE_NAME" class="form-control" value="{{ $user->middlename }}" disabled>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('LAST_NAME', $user->customer->id)['status'] == 'verified')
+                                                            <label for="LAST_NAME">Last Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('LAST_NAME', $user->customer->id)['value'] }}" disabled>
+                                                            @else 
+                                                            <label for="lastname">Last Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="text" name="LAST_NAME"  class="form-control" value="{{ $user->lastname }}" disabled>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            <label for="email">Email Address</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input autocomplete="false" class="form-control" disabled value="{{ $user->email }}">
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('PHONE_NUMBER', $user->customer->id)['status'] == 'verified')
+                                                            <label for="PHONE_NUMBER">Phone Number</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] }}" disabled>
+                                                            @else 
+                                                            <label for="lastname">Phone Number</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $user->phone }}" disabled>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('COUNTRY', $user->customer->id)['status'] == 'verified')
+                                                            <label for="COUNTRY">Country</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" name="COUNTRY" class="form-control" value="{{ kycStatus('COUNTRY', $user->customer->id)['value']}}" disabled>
+                                                            @else
+                                                            <label for="COUNTRY">Country</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <select name="COUNTRY" id="country" class="form-control" disabled>
+                                                                <option value="">Select...</option>
+                                                                <option value="Nigeria">Nigeria</option>
+                                                            </select>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('STATE', $user->customer->id)['status'] == 'verified')
+                                                            <label for="STATE">State</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('STATE', $user->customer->id)['value'] }}" disabled/>
+                                                            @else
+                                                            <label for="STATE">State</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <select name="STATE" id="state" class="form-control">
+                                                                @foreach (getStates() as $state)
+                                                                    <option value="{{$state}}"  {{ kycStatus('STATE', $user->customer->id)['value'] ? 'selected' : '' }}>{{$state}}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('LGA', $user->customer->id)['status'] == 'verified')
+                                                            <label for="LGA">Local Government Area</label>
+                                                            <span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('LGA', $user->customer->id)['value'] }}" disabled/>
+                                                            @else
+                                                            <label for="LGA">Local Government Area</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <select id="lga" name="LGA" class="form-control" required>
+                                                                <option value="">Select</option>
+                                                                @if (!empty($lgas))
+                                                                    @foreach ($lgas as $item)
+                                                                        <option value="{{$item}}" {{ kycStatus('LGA', $user->customer->id)['value'] == $item ? 'selected' : '' }}>{{$item}}</option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('DOB', $user->customer->id)['status'] == 'verified')
+                                                            <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" disabled>
+                                                            @else 
+                                                            <label for="lastname">Date of Birth (As associated with your BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="date" name="DOB"  class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">   
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('BVN', $user->customer->id)['status'] == 'verified')
+                                                            <label for="bvn">BVN</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input autocomplete="false" type="text" class="form-control" value="{{ starMiddle(kycStatus('BVN', $user->customer->id)['value'] ) }}" disabled>
+                                                            @else 
+                                                            <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="tab-pane" id="reserved-account" aria-labelledby="about-tab"
                                             role="tabpanel">
