@@ -30,7 +30,7 @@
     <script>
         $(window).load(function(){
             $("#adsense").find("iframe").appendTo("#googleadgoeshere"); 
-            $("#adsense").remove();
+            // $("#adsense").remove();
         });
 
     </script>
