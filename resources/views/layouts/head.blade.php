@@ -79,4 +79,5 @@
         }
     </style>
     @yield('page-css')
+    {{-- {!! getSettings()->google_ad_code !!} --}}
 </head>
