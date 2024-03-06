@@ -21,5 +21,7 @@
 
     <!-- BEGIN: Page JS-->
     <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+    <div id="adsense" style="display:none;">{!! getSettings()->google_ad_code !!}</div>
     @yield('page-script')
+    
     <!-- END: Page JS-->

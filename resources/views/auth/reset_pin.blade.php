@@ -52,11 +52,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            {!! getSettings()->google_ad_code !!}
-    
-                                            {!! getSettings()->google_ad_code !!}
-                                        </div>
+                                        <div class="col-md-3" id="googleadgoeshere"></div>
                                     </div>
                                 </section>
                                 <!-- Nav Filled Ends -->

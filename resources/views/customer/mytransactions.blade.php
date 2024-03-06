@@ -150,8 +150,14 @@
                                                         </small> <br>
 
                                                     </div>
+
                                                     <div class="statistics-date">
-                                                        <small class="text-muted"><a target="_blank" href="{{ route('transaction.status', $transaction->transaction_id) }}" class="btn btn-sm btn-primary glow mt-md-2 mb-1">View</a></small> <small class="text-muted"><a target="_blank" href="{{ route('transaction.receipt.download', $transaction->id) }}" class="btn btn-sm btn-info glow mt-md-2 mb-1">Download Transaction Receipt</a></small>
+                                                        <small class="text-muted">
+                                                            <a target="_blank" href="{{ route('transaction.status', $transaction->transaction_id) }}" class="btn btn-sm btn-primary glow mt-md-2 mb-1">View</a></small> <small class="text-muted">
+                                                            @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                            <a target="_blank" href="{{ route('transaction.receipt.download', $transaction->id) }}" class="btn btn-sm btn-info glow mt-md-2 mb-1">Download Transaction Receipt</a>
+                                                            @endif
+                                                        </small>
                                                     </div>
                                                 </div>
                                             </div>

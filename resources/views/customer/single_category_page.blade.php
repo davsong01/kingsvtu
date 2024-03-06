@@ -157,10 +157,7 @@
                                                                     <button id="buy-buttonx" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
                                                                 </div>
 
-                                                                <div class="col-md-3">
-                                                                    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pubxxx" crossorigin="anonymous"></script>
-                                                                    <script>(adsbygoogle=window.adsbygoogle||[]).requestNonPersonalizedAds=1;</script><script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                                                                </div>
+                                                                <div class="col-md-3" id="googleadgoeshere"></div>
                                                             </div>
 
                                                     </div>

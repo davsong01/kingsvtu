@@ -263,7 +263,7 @@ class TransactionController extends Controller
         return $transaction;
     }
 
-    public function verify(Request $request)
+    public function verify(Request $request, $admin = null)
     {
         $variation = Variation::where('id', $request->variation)->first();
 
@@ -274,19 +274,24 @@ class TransactionController extends Controller
         }
 
         $unique_elementX = ucfirst(str_replace("_", " ", $element));
-        $validator = Validator::make($request->all(), [
-            'unique_element' => 'required'
-        ]);
 
-        if ($validator->fails()) {
-            $res = [
-                'status' => '0',
-                'message' => $unique_elementX . ' is required',
-                'title' => 'Please fill all fields',
-            ];
+        if (empty($admin)) {
+            $validator = Validator::make($request->all(), [
+                'unique_element' => 'required'
+            ]);
 
-            return response()->json($res);
+            if ($validator->fails()) {
+                $res = [
+                    'status' => '0',
+                    'message' => $unique_elementX . ' is required',
+                    'title' => 'Please fill all fields',
+                ];
+
+                return response()->json($res);
+            }
         }
+
+
         $product = $variation->product;
         $api = $variation->api;
         $file_name = $variation->api->file_name;
@@ -298,7 +303,7 @@ class TransactionController extends Controller
         $request['network'] = $variation->network ?? null;
 
         $request['unique_element'] = $request->unique_element;
-
+        
         $data = [
             'variation' => $variation,
             'product' => $product,
@@ -403,6 +408,8 @@ class TransactionController extends Controller
             'wallet_funding_provider' => $data['wallet_funding_provider'] ?? null,
             'provider_charge' => $data['provider_charge'] ?? null,
             'account_number' => $data['account_number'] ?? null,
+            'ip_address' => Session::get('ip_address') ?? null,
+            'domain_name' => Session::get('domain_name') ?? null,
         ];
 
         $trans = TransactionLog::create($pre);
@@ -841,7 +848,53 @@ class TransactionController extends Controller
 
     public function singleTransactionView(TransactionLog $transaction)
     {
-
         return view('admin.transaction.single_transaction', compact('transaction'));
+    }
+
+    public function queryWallet(Request $request, TransactionLog $transactionlog)
+    {
+        $type = $request->type;
+        $check = Wallet::where('transaction_id', $transactionlog->transaction_id)
+            ->where('type', $type)
+            ->get();
+
+        $type = strtoupper($request->type);
+        $message = '';
+
+        if ($check->count() > 0) {
+            $status = 'success';
+            $message .= '<h4 align="center" style="color:green"><b>QUERY SUCCESSFUL</b><br><span class="fa fa-check-circle text-success mr-1" style="font-size:19px">' . $check->count() . '</span></h4><hr style="margin:6px 0px 6px 0px"><table><tbody>';
+
+            foreach ($check as $wallet) {
+                $message .= '<tr><th>TransID:</th>
+                <td>&nbsp;' . $wallet->transaction_id . '</td>
+                </tr>
+                <tr><th>Amt:</th>
+                <td>&nbsp;' . getSettings()->currency . number_format($wallet->amount, 2) . '</td>
+                </tr>
+                <tr><th>Date:</th>
+                <td>&nbsp;' . $wallet->created_at . '</td>
+                </tr>';
+            }
+
+            $message .= '</tbody></table><br><center><button class="btn btn-success btn-sm">' . $type . ' DONE</button></center></div>';
+        } else {
+            $status = 'failed';
+            $message .= '<h4 align="center" style="color:red"><b>QUERY FAILED</b></h4><hr style="margin:6px 0px 6px 0px"><center><button class="btn btn-danger btn-sm">' . $type . ' NOT DONE</button></center>';
+        }
+
+        $ret = [
+            'status' => $status,
+            'message' => $message
+        ];
+
+        return response()->json($ret);
+    }
+
+    public function requery(Request $request, TransactionLog $transactionlog)
+    {
+
+        if ($transactionlog->status == 'success') {
+        }
     }
 }
