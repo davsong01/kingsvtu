@@ -120,17 +120,6 @@ use App\Models\BlackList;
                                             </a>
                                         </li>
                                     </ul>
-                                    @php
-                                        $colors = [
-                                            'bg-primary',
-                                            'bg-secondary',
-                                            'bg-warning',
-                                            'bg-danger',
-                                            'bg-success',
-                                            'bg-dark',
-                                        ];
-                                        shuffle($colors);
-                                    @endphp
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="account" aria-labelledby="account-tab"
                                             role="tabpanel">
@@ -138,7 +127,7 @@ use App\Models\BlackList;
                                                 @foreach ($balances as $key => $bal)
                                                     <div class="col-sm-3 col-md-3">
                                                         <div
-                                                            class="card {{ $colors[array_rand($colors)] }} bg-lighten-2 p-0">
+                                                            class="card bg-warning bg-lighten-2 p-0">
                                                             <div class="card-content">
                                                                 <div class="card-body text-center" style="padding: 10px;padding-bottom: 0px;">
                                                                     <p class="card-text white">
@@ -274,58 +263,58 @@ use App\Models\BlackList;
                                             <h1>KYC Data</h1>
                                             <div class="card-content">
                                                 <div class="row">
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('FIRST_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="FIRST_NAME">First Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('FIRST_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="FIRST_NAME">First Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" disabled name="FIRST_NAME" class="form-control" value="{{ $user->firstname }}" required>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    
-                                                    <div class="col-md-6">   
+
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('MIDDLE_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="MIDDLE_NAME">Middle Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('MIDDLE_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="MIDDLE_NAME">Middle Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="MIDDLE_NAME" class="form-control" value="{{ $user->middlename }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('LAST_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="LAST_NAME">Last Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('LAST_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Last Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="LAST_NAME"  class="form-control" value="{{ $user->lastname }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             <label for="email">Email Address</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input autocomplete="false" class="form-control" disabled value="{{ $user->email }}">
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('PHONE_NUMBER', $user->customer->id)['status'] == 'verified')
                                                             <label for="PHONE_NUMBER">Phone Number</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Phone Number</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $user->phone }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('COUNTRY', $user->customer->id)['status'] == 'verified')
                                                             <label for="COUNTRY">Country</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
@@ -339,7 +328,7 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('STATE', $user->customer->id)['status'] == 'verified')
                                                             <label for="STATE">State</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
@@ -354,7 +343,7 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('LGA', $user->customer->id)['status'] == 'verified')
                                                             <label for="LGA">Local Government Area</label>
@@ -373,23 +362,23 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('DOB', $user->customer->id)['status'] == 'verified')
                                                             <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Date of Birth (As associated with your BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="date" name="DOB"  class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('BVN', $user->customer->id)['status'] == 'verified')
                                                             <label for="bvn">BVN</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input autocomplete="false" type="text" class="form-control" value="{{ starMiddle(kycStatus('BVN', $user->customer->id)['value'] ) }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>
                                                             @endif

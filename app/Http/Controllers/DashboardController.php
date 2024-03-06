@@ -305,7 +305,7 @@ class DashboardController extends Controller
     }
 
     public function downlines ($id = null) {
-        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->latest();
+        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->latest();
 
         if ($id) {
             $refs = $refs->where('referred_customer_id', $id)->get();
@@ -314,5 +314,71 @@ class DashboardController extends Controller
         }
 
         return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
+    }
+
+    function downlinesWithdrawal () {
+        return view('customer.withdraw_earning');
+    }
+
+    function processWithdrawal(Request $request) {
+        $request->validate(([
+            'amount' => 'required|integer',
+        ]));
+
+        $currAmount = referralBalance(auth()->user());
+        $controller = new TransactionController();
+        $amount = $controller->removeCharsInAmount($request->amount);
+
+        if ($amount > $currAmount) {
+            return back()->with('error', 'Insuffient fund, amount to withdraw cannot be more than ' . $currAmount);
+        }
+
+        $requestId = $controller->generateRequestId();
+        $tid = 'KVTU-' . $requestId;
+        $customer = auth()->user()->customer;
+
+        try {
+            //code...
+            $data['type'] = 'credit';
+            $data['customer_id'] = $customer->id;
+            $data['transaction_id'] = $tid;
+            $data['request_id'] = $requestId;
+            $data['payment_method'] = 'wallet';
+            $data['balance_before'] = walletBalance(auth()->user());
+            $data['amount'] = $amount;
+            $data['total_amount'] = $amount;
+            $data['customer_email'] = auth()->user()->email;
+            $data['customer_phone'] = auth()->user()->phone;
+            $data['customer_name'] = auth()->user()->firstname;
+            $data['unique_element'] = 'wallet';
+            $data['discount'] = 0;
+            $data['unit_price'] = $amount;
+            $controller->logTransaction($data);
+            $controller->logEarnings(
+                'debit',
+                $customer->id,
+                $customer->id,
+                $amount,
+                $currAmount,
+                $currAmount - $amount,
+                $tid,
+            );
+
+            $wallet = new WalletController();
+            $wallet->logWallet([
+                'type' => 'credit',
+                'amount' => $amount,
+                'reason' => 'WITHDRAW TO WALLET',
+                'transaction_id' => $tid,
+            ]);
+
+            $wallet->updateCustomerWallet(auth()->user(), $amount, 'credit');
+            $wallet->updateReferralWallet(auth()->user(), $amount, 'debit');
+
+            return back()->with('message', "{$amount} withdrawn to wallet successfully!");
+        } catch (\Throwable $th) {
+            //throw $th;
+            return back()->with('error', "Transaction could not be completed, try again! ". $th->getMessage());
+        }
     }
 }
