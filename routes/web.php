@@ -92,7 +92,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->gr
 
     Route::get('single-transaction-view/{transaction}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
     Route::get('query-wallet/{transactionlog?}', [TransactionController::class, 'queryWallet'])->name('admin.query.wallet');
-    Route::get('requery-transaction/{transactionlog?}', [TransactionController::class, 'requery'])->name('admin.query.wallet');
+    Route::get('requery-transaction/{transactionlog?}', [TransactionController::class, 'requery'])->name('admin.requery.transaction');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');
