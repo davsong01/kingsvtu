@@ -28,10 +28,10 @@
     @include('layouts.footer')
 
     <script>
-        $(window).load(function(){
-            $("#adsense").find("iframe").appendTo("#googleadgoeshere"); 
-            // $("#adsense").remove();
-        });
+        // $(window).load(function(){
+        //     $("#adsense").find("iframe").appendTo("#googleadgoeshere"); 
+        //     $("#adsense").remove();
+        // });
 
     </script>
 </body>
