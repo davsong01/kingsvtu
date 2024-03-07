@@ -25,7 +25,7 @@
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
-                                                
+
                                                 <h1 class="text-primary font-large-2 text-bold-500">{{$customer->customer->user->username}}</h1>
                                                 <div style="color:green" class="text-muted line-ellipsis">{{number_format($customer->count)}}+ Transactions</div>
                                                 {{-- <a href="/customer-transactions" class="btn btn-primary glow"></a> --}}
@@ -51,26 +51,48 @@
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
                                                 <?php
-                                                    $balance = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(walletBalance(auth()->user())) : 0;
-                                                    $ref = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(referralBalance(auth()->user())) : 0;
+                                                $balance = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(walletBalance(auth()->user())) : 0;
+                                                $ref = auth()->user()->type == 'customer' ? getSettings()->currency . number_format(referralBalance(auth()->user())) : 0;
                                                 ?>
-                                                <h1 class="text-primary font-large-2 text-bold-500">{!! $balance !!}</h1>
+                                                <h1 class="text-primary font-large-2 text-bold-500">
+                                                    {!! $balance !!}</h1>
+
                                                 <div class="text-muted line-ellipsis">Referral Earnings</div>
                                                 <h3 class="mb-2">{!! $ref !!}</h3>
-                                                <a href="/customer-transactions" class="btn btn-primary glow">View Transactions</a>
+                                                <div class="d-flex align-items-center justify-content-start"
+                                                    style="gap: 10px">
+                                                    <a href="{{ route('customer.load.wallet') }}"
+                                                        class="btn btn-sm btn-success glow">Fund Wallet</a>
+                                                    <a href="{{ route('downlines') }}"
+                                                        class="btn btn-sm btn-warning glow">Earning History</a>
+                                                    <a href="/customer-transactions"
+                                                        class="btn btn-primary btn-sm glow">Transaction History</a>
+                                                </div>
                                             </div>
-                                            {{-- <div class="dashboard-content-right">
-                                                <img src="{{ asset('app-assets/images/icon/cup.png') }}" height="220"
-                                                    width="220" class="img-fluid" alt="Dashboard Ecommerce" />
-                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Multi Radial Chart Starts -->
-                        
-                        <div class="col-12 dashboard-users">
+                        <div class="col-md-6 col-12 dashboard-visit">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title">Refer and Earn</h4>
+                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <p>
+                                            Share your referral links with friends to earn handsome reward
+                                        <div class="text-primary">
+                                            {{ env('APP_URL') . '/register/' . auth()->user()->username }}</div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <div class="col-xl-4 col-12 dashboard-users">
                             <div class="row  ">
                                 <!-- Statistics Cards Starts -->
                                 <div class="col-12">
@@ -91,7 +113,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        
+
                                         <div class="col-sm-3 col-12 dashboard-users-success">
                                             <a href="{{route('customer.level.upgrade')}}">
                                                 <div class="card text-center">
@@ -108,7 +130,7 @@
                                                 </div>
                                             </a>
                                         </div>
-                                        
+
                                         <div class="col-sm-3 col-12 dashboard-users-danger">
                                             <a href="{{route('downlines')}}">
                                                 <div class="card text-center">
@@ -156,7 +178,7 @@
                                             </div>
                                             </a>
                                         </div>
-                                        
+
 
                                     </div>
                                 </div>

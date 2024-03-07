@@ -66,7 +66,7 @@ class CustomerController extends Controller
         $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
         $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->get();
-        
+
         return view(
             'admin.customers.single-customer',
             [
@@ -95,4 +95,10 @@ class CustomerController extends Controller
         }
     }
 
+    function filterEmail (Request $request) {
+        $key = "%$request->key%";
+        $user = User::where('email', 'like', $key)->get();
+
+        return $user->toArray();
+    }
 }
