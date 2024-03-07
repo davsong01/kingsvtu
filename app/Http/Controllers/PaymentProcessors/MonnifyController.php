@@ -63,7 +63,7 @@ class MonnifyController extends Controller
                     'data' => $response['responseMessage'],
                 ];
             }
-            
+
             return $real;
         }
     }
@@ -125,9 +125,8 @@ class MonnifyController extends Controller
             $payload = json_encode([
                 "customer_id" => $data["customer_id"],
                 "bvn" => $data["BVN"],
-                // "customerName" => config('app.name').'-'.$data["customerName"],
                 "customerEmail" => $data["customerEmail"],
-                "accountName" => $data["customerName"],
+                "accountName" => $data["accountName"] ?? $data["customerName"],
                 "currencyCode" => "NGN",
                 "contractCode" => $this->api->contract_id,
                 "getAllAvailableBanks" => true,
@@ -178,6 +177,46 @@ class MonnifyController extends Controller
             return $data;
         }
     }
+
+    public function deleteReservedAccount(string $account_reference)
+    {
+        $token = $this->login();
+
+        if (empty($token)) {
+            return [
+                'status' => 'failed',
+                'status_code' => 0,
+            ];
+        } else {
+            $url = $this->api->base_url . 'v1/bank-transfer/reserved-accounts/reference/' . $account_reference;
+            $headers = [
+                "Content-Type: application/json",
+                "Authorization: Bearer " . $token . "",
+            ];
+
+            $response = $this->basicApiCall($url, [], $headers, 'DELETE');
+            
+            if (
+                $response && $response['responseCode'] == 0 &&
+                $response['responseMessage'] == 'success'
+            ) {
+                ReservedAccountNumber::where('account_reference', $account_reference)->delete();
+                $data = [
+                    'status' => 'success',
+                    'data' => '',
+                ];
+            } else {
+                $data = [
+                    'status' => 'failed',
+                    'data' => $response['responseBody'] ?? $response['responseMessage'],
+                ];
+            }
+
+            return $data;
+        }
+    }
+
+
 
     public function redirectToGateway(Request $request, $transaction)
     {

@@ -1,22 +1,24 @@
 <?php
 
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\BlackListController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KycDataController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\BlackListController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\CustomerLevelController;
-use App\Http\Controllers\KycDataController;
 use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\ReservedAccountController;
+use App\Http\Controllers\ReservedAccountNumberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -91,6 +93,11 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->gr
     Route::get('credit-customer', [TransactionController::class, 'creditCustomerPage'])->name('admin.credit.customer');
     Route::get('debit-customer', [TransactionController::class, 'debitCustomerPage'])->name('admin.debit.customer');
     Route::post('verify-biller/{admin?}', [TransactionController::class, 'verify'])->name('admin.verifybiller');
+    Route::get('admin-kyc', [KycDataController::class, 'adminKycIndex'])->name('admin.kyc');
+    Route::get('admin-reserved-account', [ReservedAccountNumberController::class, 'index'])->name('admin.reserved.accounts');
+    Route::get('account-transactions/{account}', [ReservedAccountNumberController::class, 'show'])->name('account.transactions');
+
+    Route::get('reserved-account-delete/{account}', [ReservedAccountNumberController::class, 'delete'])->name('reserved_account.delete');
 
     Route::get('single-transaction-view/{transaction}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
     Route::get('query-wallet/{transactionlog?}', [TransactionController::class, 'queryWallet'])->name('admin.query.wallet');

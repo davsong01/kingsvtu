@@ -4,59 +4,103 @@
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
-           
             <div class="content-header row">
             </div>
             <div class="content-body">
-                <!-- Dashboard Ecommerce Starts -->
                 <section id="dashboard-ecommerce">
                     <div class="row">
                         <div class="col-md-12">
                             @include('layouts.alerts')
                         </div>
-                        <!-- Greetings Content Starts -->
-                       
-                        <!-- Multi Radial Chart Starts -->
                         
-                        <div class="col-xl-4 col-12 dashboard-users">
-                            <div class="row  ">
-                                <!-- Statistics Cards Starts -->
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col-sm-6 col-12 dashboard-users-success">
-                                            <div class="card text-center">
-                                                <div class="card-content">
-                                                    <div class="card-body py-1">
-                                                        <div
-                                                            class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
-                                                            <i class="bx bx-briefcase-alt font-medium-5"></i>
-                                                        </div>
-                                                        <div class="text-muted line-ellipsis">New Products</div>
-                                                        <h3 class="mb-0">1.2k</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 col-12 dashboard-users-danger">
-                                            <div class="card text-center">
-                                                <div class="card-content">
-                                                    <div class="card-body py-1">
-                                                        <div
-                                                            class="badge-circle badge-circle-lg badge-circle-light-danger mx-auto mb-50">
-                                                            <i class="bx bx-user font-medium-5"></i>
-                                                        </div>
-                                                        <div class="text-muted line-ellipsis">New Users</div>
-                                                        <h3 class="mb-0">45.6k</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <a href="{{ route('customers.edit', $customer->customer->id)}}">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <span style="margin-top:5px"></span>
+                                        <div class="text-muted line-ellipsis"><strong>Customer of the month</strong></div>
+                                        <h1 class="text-primary text-bold-500">{{$customer->customer->user->username}}</h1>
+                                        <h4 class="mb-0">{{number_format($customer->count)}}+ Transactions</h4>
                                     </div>
                                 </div>
-                                <!-- Revenue Growth Chart Starts -->
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="text-muted line-ellipsis"><strong>All Transactions</strong></div>
+                                        <span style="margin-top:50px"></span>
+                                        <p>
+                                            <span style="color:black">All:  {!! getSettings()->currency !!}{{ number_format($credit + $debit )}}({{ $debit_count +  $credit_count}}) </span><br>
+                                            <span style="color:green">Credit: {!! getSettings()->currency !!}{{ number_format($credit) }}<small>({{ $credit_count }})</small></span> <br>
+                                            <span style="color:red">Debit: {!! getSettings()->currency !!}{{ number_format($debit) }} <small>({{ $debit_count }})</small></span><br>
+                                        </p>
+                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="text-muted line-ellipsis"><strong>Referral Earnings</strong></div>
+                                        <span style="margin-top:50px"></span>
+                                        <p>
+                                            <span style="color:black">All:  {!! getSettings()->currency !!}{{ number_format( $referral_credit + $referral_debit)}}({{$referral_debit_count + $referral_credit_count}}) </span><br>
+                                            <span style="color:green">Credit: {!! getSettings()->currency !!}{{ number_format($referral_credit) }}<small>({{ $referral_credit_count }})</small></span> <br>
+                                            <span style="color:red">Debit: {!! getSettings()->currency !!}{{ number_format($referral_debit) }} <small>({{ $referral_debit_count }})</small></span><br>
+                                        </p>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                            <i class="bx bx-briefcase-alt font-medium-5"></i>
+                                        </div>
+                                        <div class="text-muted line-ellipsis">KYC Verified Users</div>
+                                        <h3 class="mb-0">{{ number_format($kyc_verified) }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                            <i class="bx bx-user font-medium-5"></i>
+                                        </div>
+                                        <div class="text-muted line-ellipsis">Registered Users</div>
+                                        <h3 class="mb-0">{{ number_format($customers) }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                            <i class="bx bx-user font-medium-5"></i>
+                                        </div>
+                                        <div class="text-muted line-ellipsis">Active Users</div>
+                                        <h3 class="mb-0">{{ number_format($active_customers) }}</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
                     </div>
                     <div class="row">
 

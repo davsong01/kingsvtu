@@ -150,16 +150,22 @@
                              href="{{ route('admin.verifybiller') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
                      </li>
+                    <li class="{{ Route::is('admin.reserved.accounts') ? 'active' : '' }}"><a
+                             href="{{ route('admin.reserved.accounts') }}"><i
+                                 class="bx bx-right-arrow-alt"></i><span class="menu-item">Reserved Account Numbers</span></a>
+                     </li>
                  </ul>
              </li>
-             <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a
-                     href="{{ route('profile.edit') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24"
-                         fill="white" viewBox="0 -960 960 960" width="24">
-                         <path
-                             d="M200-246q54-53 125.5-83.5T480-360q83 0 154.5 30.5T760-246v-514H200v514Zm280-194q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm80-80h400v-10q-42-35-93-52.5T480-280q-56 0-107 17.5T280-210v10Zm200-320q-25 0-42.5-17.5T420-580q0-25 17.5-42.5T480-640q25 0 42.5 17.5T540-580q0 25-17.5 42.5T480-520Zm0 17Z" />
-                     </svg><span class="menu-title">&nbsp;My Profile</span></a></li>
+            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24"fill="white" viewBox="0 -960 960 960" width="24"> <path  d="M200-246q54-53 125.5-83.5T480-360q83 0 154.5 30.5T760-246v-514H200v514Zm280-194q58 0 99-41t41-99q0-58-41-99t-99-41q-58 0-99 41t-41 99q0 58 41 99t99 41ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm80-80h400v-10q-42-35-93-52.5T480-280q-56 0-107 17.5T280-210v10Zm200-320q-25 0-42.5-17.5T420-580q0-25 17.5-42.5T480-640q25 0 42.5 17.5T540-580q0 25-17.5 42.5T480-520Zm0 17Z" /></svg><span class="menu-title">&nbsp;My Profile</span></a>
+            </li>
 
-             <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a
+            <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a href="{{ route('profile.edit') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M440-280H280q-83 0-141.5-58.5T80-480q0-83 58.5-141.5T280-680h160v80H280q-50 0-85 35t-35 85q0 50 35 85t85 35h160v80ZM320-440v-80h320v80H320Zm200 160v-80h160q50 0 85-35t35-85q0-50-35-85t-85-35H520v-80h160q83 0 141.5 58.5T880-480q0 83-58.5 141.5T680-280H520Z" fill="white"/></svg><span class="menu-title">&nbsp;Callback Analysis</span></a>
+            </li>
+
+            <li class="{{ Request::path() == 'admin.kyc' ? 'active' : '' }}"><a href="{{ route('admin.kyc') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" fill="white" width="24"><path d="M480-260q68 0 123.5-38.5T684-400H276q25 63 80.5 101.5T480-260ZM312-520l44-42 42 42 42-42-84-86-86 86 42 42Zm250 0 42-42 44 42 42-42-86-86-84 86 42 42ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg><span class="menu-title">&nbsp;KYC Management</span></a>
+            </li>
+
+            <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a
                      href="{{ route('paymentgateway.index') }}"><svg xmlns="http://www.w3.org/2000/svg"
                          height="24" viewBox="0 -960 960 960" width="24">
                          <path

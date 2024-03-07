@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\KycData;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class KycDataController extends Controller
 {
+
+    public function adminKycIndex()
+    {
+        $customers = Customer::with('user')->paginate(20);
+        return view('admin.customers.kyc_data', compact('customers'));
+    }
 
     public function verifyBVN($bvn)
     {
@@ -15,7 +22,8 @@ class KycDataController extends Controller
         return $verify;
     }
 
-    public function getLgaByStateName($state){
+    public function getLgaByStateName($state)
+    {
         $lgas = getLgas($state);
         $res = '';
 

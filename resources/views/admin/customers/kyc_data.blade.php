@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header">
                         <!-- head -->
-                        <h5 class="card-title">Customers {{ isset($status) ? "($status)" : '' }}</h5>
+                        <h5 class="card-title">KYC Data</h5>
                     </div>
 
                     <div class="card-body">
@@ -17,11 +17,7 @@
                                 <thead>
                                     <tr>
                                         <th>Details</th>
-                                        <th>Username</th>
-                                        <th>Status</th>
-                                        <th>Level</th>
-                                        <th>Balance</th>
-                                        <th>Joined</th>
+                                        <th>KYC Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -30,25 +26,16 @@
                                         <tr>
                                             <td>
                                                 <P>
-                                                    Name:<a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
-                                                        {{ $customer->firstname . ' ' . $customer->lastname }}</a> <br>
-                                                       Email:  {{ $customer->email }} <br>
-                                                       Phone Number: {{ $customer->phone }}
+                                                    <a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
+                                                        {{ $customer->user->firstname . ' ' . $customer->user->lastname }}</a> <br>
+                                                        {{ $customer->user->email }} <br>
+                                                        {{ $customer->user->phone }}
                                                 </P>
                                             </td>
-                                            
-                                            <td>{{ $customer->username }}</td>
-                                            <td> <small><strong>{{ ucfirst($customer->status) }}</strong></small></td>
-                                            <td>{{ $customer->customer->level->name ?? 'N/A' }}</td>
-                                            <td>
-                                                Wallet: {!! getSettings()->currency !!}{{ number_format(walletBalance($customer)) }} <br>
-                                                Referral:  {!! getSettings()->currency !!}{{ number_format(referralBalance($customer)) }} <br>
-                                            </td>
-                                            <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
+                                            <td style="color:{{$customer->kyc_status == 'verified' ? 'green' : 'red'}}">{{ ucfirst($customer->kyc_status) }}</td>
                                             <td>
                                                 <a href="{{ route('customers.edit', $customer->id) }}"><button type="button" class="btn btn-info btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View</span></button>
                                                 </a>
-                                                
                                             </td>
                                         </tr>
                                     @endforeach

@@ -26,14 +26,17 @@ class Controller extends BaseController
         } elseif ($method == "PUT") {
             curl_setopt($ch, CURLOPT_PUT, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        } elseif (!empty($timeout)) {
+        } elseif ($method == "DELETE") {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        }elseif (!empty($timeout)) {
             curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
-        \Log::info($response);
+
         return json_decode($response, true);
     }
 

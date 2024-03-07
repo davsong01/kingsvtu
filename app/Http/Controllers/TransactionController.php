@@ -44,7 +44,7 @@ class TransactionController extends Controller
         $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, $request->email, auth()->user()->email);
 
         if ($blacklist) {
-            return back()->with('error', 'Couldn\'t perform transaction, kindly reach out to us!');
+            return back()->with('error', 'Account blacklisted!, kindly reach out to support!');
         }
 
 

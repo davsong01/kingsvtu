@@ -19,7 +19,7 @@ return new class extends Migration
 
         if (!Schema::hasColumn('transaction_logs', 'account_number')) {
             Schema::table('transaction_logs', function (Blueprint $table) {
-                $table->double('account_number')->nullable()->after('unique_element');
+                $table->string('account_number')->nullable()->after('unique_element');
             });
         }
 

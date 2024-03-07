@@ -16,4 +16,14 @@ class ReservedAccountNumber extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(TransactionLog::class, 'account_number', 'id');
+    }
+
+    public function payment_gateway()
+    {
+        return $this->belongsTo(PaymentGateway::class, 'paymentgateway_id');
+    }
 }

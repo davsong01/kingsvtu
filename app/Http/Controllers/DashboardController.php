@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReferralEarning;
+use App\Models\User;
+use App\Models\KycData;
+use App\Models\Customer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
-use App\Models\KycData;
 use App\Models\PaymentGateway;
 use App\Models\TransactionLog;
 use Illuminate\Support\Carbon;
+use App\Models\ReferralEarning;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\TransactionPinResetToken;
@@ -19,12 +21,35 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->type == 'admin') {
-            return view('admin.dashboard');
-        } else {
-            // Get Customer of the month
-            $customer = $this->customerOfTheMonth();
+        $customer = $this->customerOfTheMonth();
 
+        if (auth()->user()->type == 'admin') {
+            $transaction_debit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
+                ->where('wallets.type', 'debit')->whereIn('status', ['success', 'delivered']);
+
+            $transaction_credit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
+                ->where('wallets.type', 'credit')->whereIn('status', ['success', 'delivered']);
+
+            $debit = $transaction_debit->sum('total_amount');
+            $debit_count = $transaction_debit->count();
+
+            $credit = $transaction_credit->sum('total_amount');
+            $credit_count = $transaction_credit->count();
+
+            $referralC = ReferralEarning::where('type', 'credit');
+            $referral_credit = $referralC->sum('amount');
+            $referral_credit_count = $referralC->count();
+
+            $referralD = ReferralEarning::where('type', 'debit');
+            $referral_debit = $referralD->sum('amount');
+            $referral_debit_count = $referralD->count();
+
+            $kyc_verified = User::join('customers', 'customers.user_id', 'users.id')->where('users.type', 'customer')->where('kyc_status', 'verified')->count();
+            $active_customers = TransactionLog::distinct('customer_id')->count();
+            $customers = User::where('type', 'customer')->count();
+
+            return view('admin.dashboard', compact('customer',  'credit', 'credit_count', 'debit', 'debit_count', 'referral_debit', 'referral_credit', 'referral_credit_count', 'referral_debit_count', 'kyc_verified', 'active_customers', 'customers'));
+        } else {
             return view('customer.dashboard', compact('customer'));
         }
     }
@@ -283,6 +308,7 @@ class DashboardController extends Controller
         $data = [
             'BVN' => $request->BVN ?? kycStatus('BVN', auth()->user()->customer->id)['value'],
             'customerName' => $name,
+            'accountName' => config('app.name').'-'.$firstname,
             'customerEmail' => auth()->user()->email,
             'customer_id' => auth()->user()->customer->id,
         ];

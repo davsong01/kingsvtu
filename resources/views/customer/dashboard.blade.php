@@ -28,7 +28,6 @@
                                                 
                                                 <h1 class="text-primary font-large-2 text-bold-500">{{$customer->customer->user->username}}</h1>
                                                 <div style="color:green" class="text-muted line-ellipsis">{{number_format($customer->count)}}+ Transactions</div>
-                                                {{-- <a href="/customer-transactions" class="btn btn-primary glow"></a> --}}
                                             </div>
                                             <div class="dashboard-content-right">
                                                 <img src="{{ asset('app-assets/images/icon/cup.png') }}" height="220"

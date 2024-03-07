@@ -616,7 +616,7 @@ class EasyAccessController extends Controller
             //     $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
             //     $result = json_decode($response);
             // }
-
+            $result = $response;
             if (empty($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
@@ -637,7 +637,7 @@ class EasyAccessController extends Controller
                 }
 
                 $pins = (isset($pinsx) && !empty($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
-                $true_response = $result->true_response ?? ($result['message'] ?? '');
+                $true_response = $response['true_response'] ?? ($result['message'] ?? '');
 
                 $status = isset($result['status']) ? strtolower($result['status']) : 'failed';
                 $auto_refund_status = isset($result['auto_refund_status']) ? strtolower($result['auto_refund_status']) : 'nil';
@@ -672,6 +672,7 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
                 'extras' => $extras ?? null
             ];
+
             // dd($resX, $postdata['payload'], $postdata['headers']);
         } catch (\Throwable $th) {
             $format = [
