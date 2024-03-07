@@ -20,12 +20,13 @@ class CheckIpMiddleware
 
         if (substr($domain, 0, 4) === 'www.') $domain = substr($domain, 4, strlen($domain));
 
-        $allowed_domains = ['127.0.0.1', 'kingsvtu.com.ng'];
-        $allowed_ips = ['198.54.115.205', '127.0.0.1'];
+        $allowed_domains = ['127.0.0.1', 'portal.kingsvtu.ng'];
+        $allowed_ips = ['102.88.36.93', '127.0.0.1'];
 
         $ip = 'Initial';
 
         $ip = $this->get_client_ipX();
+
         if ($ip == 'UNKNOWN') {
             $ip = $this->get_client_ip();
         }
@@ -34,10 +35,10 @@ class CheckIpMiddleware
         //================= GET USER IP ADDRESS ==============//
         $request['ip']  = $ip;
 
-        if (!in_array($domain, $allowed_domains) || !in_array($ip, $allowed_ips)) {
+        if (!in_array($domain, $allowed_domains) && !in_array($ip, $allowed_ips)) {
             die();
         }
-        
+
         Session::put('ip_address', $ip);
         Session::put('app_version', '1.0');
         Session::put('domain_name', $domain);

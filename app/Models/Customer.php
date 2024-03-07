@@ -37,4 +37,5 @@ class Customer extends Model
     public function transactions () {
         return $this->hasMany(TransactionLog::class);
     }
+
 }

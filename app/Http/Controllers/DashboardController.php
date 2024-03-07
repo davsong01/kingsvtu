@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
 use App\Models\KycData;
 use App\Models\PaymentGateway;
+use App\Models\TransactionLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -21,8 +22,28 @@ class DashboardController extends Controller
         if (auth()->user()->type == 'admin') {
             return view('admin.dashboard');
         } else {
-            return view('customer.dashboard');
+            // Get Customer of the month
+            $customer = $this->customerOfTheMonth();
+            
+            return view('customer.dashboard',compact('customer'));
         }
+    }
+
+    public function customerOfTheMonth()
+    {
+        $firstdayofmonth = Carbon::today()->startOfMonth();
+
+        $count = TransactionLog::with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
+            ->groupBy('customer_id')
+            ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
+            ->orderBy('total_amount', 'DESC')->first();
+        return $count;
+
+        // TransactionLog::select('customer_id', 'total_amount')
+        //     ->groupBy('total_amount')
+        //     ->orderByRaw('COUNT(*) DESC, total_amount ASC LIMIT 1');
+
+        // dd($count->get());
     }
 
     public function resetTransactionPin()
@@ -304,7 +325,8 @@ class DashboardController extends Controller
         ];
     }
 
-    public function downlines ($id = null) {
+    public function downlines($id = null)
+    {
         $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->latest();
 
         if ($id) {
