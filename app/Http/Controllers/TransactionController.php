@@ -303,7 +303,7 @@ class TransactionController extends Controller
         $request['network'] = $variation->network ?? null;
 
         $request['unique_element'] = $request->unique_element;
-        
+
         $data = [
             'variation' => $variation,
             'product' => $product,
@@ -851,6 +851,74 @@ class TransactionController extends Controller
     public function singleTransactionView(TransactionLog $transaction)
     {
         return view('admin.transaction.single_transaction', compact('transaction'));
+    }
+
+    function debitCustomerPage () {
+        return view('admin.transaction.debit_customer');
+    }
+
+    function creditCustomerPage () {
+        return view('admin.transaction.credit_customer');
+    }
+
+    function processCreditDebit (Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'amount' => 'required|numeric',
+            'reason' => 'required'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) return back()->with('error', 'Account not found!');
+        if (str_contains(url()->previous(), 'debit')) $type = 'debit';
+        else if (str_contains(url()->previous(), 'credit')) $type =  'credit';
+
+        if (!$type) return back()->with('error', 'Hmph, something went wrong!');
+
+        $controller = new TransactionController();
+        $amount = $controller->removeCharsInAmount($request->amount);
+        $currAmount = walletBalance(auth()->user());
+
+
+        $requestId = $controller->generateRequestId();
+        $tid = 'KVTU-' . $requestId;
+        try {
+            //code...
+            $data['type'] = $type;
+            $data['customer_id'] = $user->customer->id;
+            $data['transaction_id'] = $tid;
+            $data['request_id'] = $requestId;
+            $data['payment_method'] = 'wallet';
+            $data['balance_before'] = $currAmount;
+            $data['amount'] = $amount;
+            $data['total_amount'] = $amount;
+            $data['customer_email'] = $user->email;
+            $data['customer_phone'] = $user->phone;
+            $data['customer_name'] = $user->firstname;
+            $data['unique_element'] = 'wallet';
+            $data['discount'] = 0;
+            $data['unit_price'] = $amount;
+            $data['reason'] = $request->reason;
+            $data['status'] = 'success';
+            $data['admin_id'] = auth()->user()->admin->id;
+            $controller->logTransaction($data);
+
+            DB::transaction(function () use($type, $amount, $tid, $user) {
+                $wallet = new WalletController();
+                $wallet->logWallet([
+                    'type' => $type,
+                    'amount' => $amount,
+                    'reason' => 'WITHDRAW TO WALLET',
+                    'transaction_id' => $tid,
+                ]);
+                $wallet->updateCustomerWallet($user, $amount, $type);
+            });
+            $sign = getSettings()->currency;
+            return back()->with('message', "Customer wallet has been {$type} with {$sign} ". number_format($amount));
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     public function queryWallet(Request $request, TransactionLog $transactionlog)
