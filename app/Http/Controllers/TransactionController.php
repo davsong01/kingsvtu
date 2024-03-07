@@ -900,18 +900,20 @@ class TransactionController extends Controller
             $data['discount'] = 0;
             $data['unit_price'] = $amount;
             $data['reason'] = $request->reason;
+            $data['status'] = 'success';
             $data['admin_id'] = auth()->user()->admin->id;
             $controller->logTransaction($data);
 
-            $wallet = new WalletController();
-            $wallet->logWallet([
-                'type' => $type,
-                'amount' => $amount,
-                'reason' => 'WITHDRAW TO WALLET',
-                'transaction_id' => $tid,
-            ]);
-
-            $wallet->updateCustomerWallet($user, $amount, $type);
+            DB::transaction(function () use($type, $amount, $tid, $user) {
+                $wallet = new WalletController();
+                $wallet->logWallet([
+                    'type' => $type,
+                    'amount' => $amount,
+                    'reason' => 'WITHDRAW TO WALLET',
+                    'transaction_id' => $tid,
+                ]);
+                $wallet->updateCustomerWallet($user, $amount, $type);
+            });
             $sign = getSettings()->currency;
             return back()->with('message', "Customer wallet has been {$type} with {$sign} ". number_format($amount));
         } catch (\Exception $e) {
