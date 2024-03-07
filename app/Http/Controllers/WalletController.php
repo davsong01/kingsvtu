@@ -26,7 +26,7 @@ class WalletController extends Controller
             'transaction_id' => $data['transaction_id'] ?? null,
             'reason' => $data['reason'] ?? null,
         ]);
-        
+
         return $wallet;
     }
 
@@ -39,6 +39,21 @@ class WalletController extends Controller
         } else {
             $user->customer->update([
                 'wallet' => $user->customer->wallet - $amount,
+            ]);
+        }
+
+        return;
+    }
+
+    public function updateReferralWallet($user, $amount, $type)
+    {
+        if ($type == 'credit') {
+            $user->customer->update([
+                'referal_wallet' => $user->customer->referal_wallet + $amount,
+            ]);
+        } else {
+            $user->customer->update([
+                'referal_wallet' => $user->customer->referal_wallet - $amount,
             ]);
         }
 

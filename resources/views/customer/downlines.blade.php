@@ -47,6 +47,8 @@
                                             My downlines
                                         @endif
                                     </h4>
+                                    <a href="{{ route('downlines.withdraw') }}"><button id="addRow"
+                                            class="btn btn-primary mt-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Withdraw Earning</button></a>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">

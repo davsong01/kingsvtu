@@ -120,17 +120,6 @@ use App\Models\BlackList;
                                             </a>
                                         </li>
                                     </ul>
-                                    @php
-                                        $colors = [
-                                            'bg-primary',
-                                            'bg-secondary',
-                                            'bg-warning',
-                                            'bg-danger',
-                                            'bg-success',
-                                            'bg-dark',
-                                        ];
-                                        shuffle($colors);
-                                    @endphp
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="account" aria-labelledby="account-tab"
                                             role="tabpanel">
@@ -138,7 +127,7 @@ use App\Models\BlackList;
                                                 @foreach ($balances as $key => $bal)
                                                     <div class="col-sm-3 col-md-3">
                                                         <div
-                                                            class="card {{ $colors[array_rand($colors)] }} bg-lighten-2 p-0">
+                                                            class="card bg-warning bg-lighten-2 p-0">
                                                             <div class="card-content">
                                                                 <div class="card-body text-center" style="padding: 10px;padding-bottom: 0px;">
                                                                     <p class="card-text white">
@@ -178,10 +167,6 @@ use App\Models\BlackList;
                                                         <option value="suspended" @selected($user->status == 'suspended')>Suspended
                                                         </option>
                                                         <option value="delete" @selected($user->status == 'delete')>Delete</option>
-                                                        <option value="email-blacklist" @selected($user->status == 'email-blacklist')>Email
-                                                            Blacklist</option>
-                                                        <option value="phone-blacklist" @selected($user->status == 'phone-blacklist')>Phone
-                                                            Blacklist</option>
                                                     </select>
                                                 </fieldset>
                                                 <fieldset class="form-group">
@@ -278,58 +263,58 @@ use App\Models\BlackList;
                                             <h1>KYC Data</h1>
                                             <div class="card-content">
                                                 <div class="row">
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('FIRST_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="FIRST_NAME">First Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('FIRST_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="FIRST_NAME">First Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" disabled name="FIRST_NAME" class="form-control" value="{{ $user->firstname }}" required>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    
-                                                    <div class="col-md-6">   
+
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('MIDDLE_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="MIDDLE_NAME">Middle Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('MIDDLE_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="MIDDLE_NAME">Middle Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="MIDDLE_NAME" class="form-control" value="{{ $user->middlename }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('LAST_NAME', $user->customer->id)['status'] == 'verified')
                                                             <label for="LAST_NAME">Last Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('LAST_NAME', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Last Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="LAST_NAME"  class="form-control" value="{{ $user->lastname }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             <label for="email">Email Address</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input autocomplete="false" class="form-control" disabled value="{{ $user->email }}">
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('PHONE_NUMBER', $user->customer->id)['status'] == 'verified')
                                                             <label for="PHONE_NUMBER">Phone Number</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="text" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Phone Number</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $user->phone }}" disabled>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('COUNTRY', $user->customer->id)['status'] == 'verified')
                                                             <label for="COUNTRY">Country</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
@@ -343,7 +328,7 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('STATE', $user->customer->id)['status'] == 'verified')
                                                             <label for="STATE">State</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
@@ -358,7 +343,7 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('LGA', $user->customer->id)['status'] == 'verified')
                                                             <label for="LGA">Local Government Area</label>
@@ -377,23 +362,23 @@ use App\Models\BlackList;
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('DOB', $user->customer->id)['status'] == 'verified')
                                                             <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="lastname">Date of Birth (As associated with your BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="date" name="DOB"  class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
                                                             @endif
                                                         </fieldset>
                                                     </div>
-                                                    <div class="col-md-6">   
+                                                    <div class="col-md-6">
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('BVN', $user->customer->id)['status'] == 'verified')
                                                             <label for="bvn">BVN</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input autocomplete="false" type="text" class="form-control" value="{{ starMiddle(kycStatus('BVN', $user->customer->id)['value'] ) }}" disabled>
-                                                            @else 
+                                                            @else
                                                             <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>
                                                             @endif
@@ -404,51 +389,50 @@ use App\Models\BlackList;
                                         </div>
                                         <div class="tab-pane" id="reserved-account" aria-labelledby="about-tab"
                                             role="tabpanel">
-                                            <div class="row">
-                                                @forelse ($accounts as $key => $account)
-                                                    @if ($account->paymentgateway_id === 1)
-                                                        <div class="col-sm-6 col-md-4">
-                                                            <div class="card {{ $colors[$key] }} bg-lighten-2">
-                                                                <div class="card-content">
-                                                                    <div class="">
+                                            @empty($accounts)
+                                                <p>No reserved account has been created by this customer</p>
+                                            @else
+                                                <table able class="table table-striped dataex-html5-selectors">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Bank</th>
+                                                            <th>Account</th>
+                                                            <th>ACtion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($accounts as $key => $account)
+                                                            @if ($account->paymentgateway_id === 1)
+                                                                <tr>
+                                                                    <td>{{ ucfirst($account->account_name) }}</td>
+                                                                    <td>{{ ucfirst($account->bank_name) }}</td>
+                                                                    <td>{{ ucfirst($account->account_number) }}</td>
+                                                                    <td>
                                                                         <div
-                                                                            class="d-flex align-items-center justify-content-center p-1">
-                                                                            <h5 class="card-title white">
-                                                                                {{ $account->account_number }}
-                                                                            </h5>
+                                                                            class="d-flex justify-content-center align-items-center gap-3">
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success">
+                                                                                Update
+                                                                            </button>
+                                                                            &nbsp;&nbsp;&nbsp;
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-secondary">
+                                                                                Delete
+                                                                            </button>
                                                                         </div>
-                                                                        <div class="card-body text-center pb-1 pt-0">
-                                                                            <p class="card-text white">
-                                                                                {{ $account->bank_name }}</p>
-                                                                            <p class="card-text white">
-                                                                                {{ $account->account_name }}</p>
-                                                                            <div
-                                                                                class="d-flex justify-content-center align-items-center gap-3">
-                                                                                <button type="button"
-                                                                                    class="btn btn-success">
-                                                                                    Update
-                                                                                </button>
-                                                                                &nbsp;&nbsp;&nbsp;
-                                                                                <button type="button"
-                                                                                    class="btn btn-secondary">
-                                                                                    Delete
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                @empty
-                                                    <p>No reserved account has been created by this customer</p>
-                                                @endforelse
-                                            </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            @endempty
                                         </div>
                                         <div class="tab-pane" id="actions" aria-labelledby="about-tab"
                                             role="tabpanel">
                                             <div class="row">
-                                                <div class="col-md-3 col-sm-4">
+                                                {{-- <div class="col-md-3 col-sm-4">
                                                     <div class="card bg-lighten-2 p-0 bg-warning">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -465,12 +449,12 @@ use App\Models\BlackList;
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 @php
                                                     // check blacklist status
                                                     $mail = BlackList::where('value', $user->email)->first();
                                                 @endphp
-                                                <div class="col-md-3 col-sm-4">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-dark">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -495,11 +479,11 @@ use App\Models\BlackList;
                                                                     <form action="{{ route('customer-blacklist.store') }}"
                                                                         method="POST">
                                                                         @csrf
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="type"
                                                                             value="email">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="value"
                                                                             value="{{ $user->email }}">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="status"
                                                                             value="active">
                                                                         <button class="btn btn-danger" type="submit">Add
                                                                             to blacklist</button>
@@ -513,7 +497,7 @@ use App\Models\BlackList;
                                                     // check blacklist statu
                                                     $phone = BlackList::where('value', $user->phone)->first();
                                                 @endphp
-                                                <div class="col-md-3 col-sm-4">
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-danger">
                                                         <div class="card-body">
                                                             <div class="card-content">
@@ -538,14 +522,14 @@ use App\Models\BlackList;
                                                                     <form action="{{ route('customer-blacklist.store') }}"
                                                                         method="POST">
                                                                         @csrf
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="type"
                                                                             value="biller">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="value"
                                                                             value="{{ $user->phone }}">
-                                                                        <input type="hidden" name="email"
+                                                                        <input type="hidden" name="status"
                                                                             value="active">
-                                                                        <button class="btn btn-danger"
-                                                                            type="submit">Add to blacklist</button>
+                                                                        <button class="btn btn-danger" type="submit">Add
+                                                                            to blacklist</button>
                                                                     </form>
                                                                 @endif
                                                             </div>
@@ -564,31 +548,30 @@ use App\Models\BlackList;
         </div>
     </div>
 
-    @section('page-script')
-        <script>
-            function toggleStatus() {
-                let check = confirm('Are you sure you want to perform this action?');
+@section('page-script')
+    <script>
+        function toggleStatus() {
+            let check = confirm('Are you sure you want to perform this action?');
+            if (check) {
+                let status = $('#customSwitchGlow2').attr('data-value');
+                let id = $('#customSwitchGlow2').attr('data-id');
 
-                if (check) {
-                    let status = $('#customSwitchGlow2').attr('data-value');
-                    let id = $('#customSwitchGlow2').attr('data-id');
-
-                    $.ajax({
-                        url: '/admin/black-list-status',
-                        data: {
-                            status,
-                            id
-                        },
-                        success: e => {
-                            alert(e.message)
-                            if (e.code == 1) {
-                                let status = $('#customSwitchGlow2').attr('data-value', e.status);
-                            }
-                        },
-                        error: () => alert('Request could not be completed!'),
-                    });
-                }
+                $.ajax({
+                    url: '/admin/black-list-status',
+                    data: {
+                        status,
+                        id
+                    },
+                    success: e => {
+                        alert(e.message)
+                        if (e.code == 1) {
+                            let status = $('#customSwitchGlow2').attr('data-value', e.status);
+                        }
+                    },
+                    error: () => alert('Request could not be completed!'),
+                });
             }
-        </script>
+        }
+    </script>
 
-    @endsection
+@endsection

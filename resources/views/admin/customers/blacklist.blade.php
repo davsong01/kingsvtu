@@ -43,8 +43,8 @@
                                             <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
                                             <td>
                                                 <div class="custom-control custom-switch custom-switch-success custom-switch-glow custom-control-inline mb-1">
-                                                    <input type="checkbox" class="custom-control-input" id="customSwitchGlow2" @checked($customer->status == 'active') onchange="toggleStatus()" data-id="{{ $customer->id }}" data-value="{{ $customer->status }}">
-                                                    <label class="custom-control-label" for="customSwitchGlow2">
+                                                    <input type="checkbox" class="custom-control-input" id="customSwitchGlow2-{{ $customer->id }}" @checked($customer->status == 'active') data-id="{{ $customer->id }}" data-value="{{ $customer->status }}">
+                                                    <label class="custom-control-label" for="customSwitchGlow2-{{ $customer->id }}">
                                                     </label>
                                                 </div>
                                             </td>
@@ -61,25 +61,26 @@
         </div>
     </div>
 
-    <script>
-        function toggleStatus () {
-            let check = confirm('Are you sure you want to perform this action?');
+    @section('page-script')
+        <script>
+            $('.custom-control-input').on('change', function toggleStatus () {
+                let check = confirm('Are you sure you want to perform this action?');
+                if (check) {
+                    let status = $(this).attr('data-value');
+                    let id = $(this).attr('data-id');
+                    $.ajax({
+                        url: 'black-list-status',
+                        data: {status, id},
+                        success: e => {
+                            alert(e.message)
+                            if (e.code == 1) {
+                                let status = $(this).attr('data-value', e.status);
+                            }
+                        },
+                        error: () => alert('Request could not be completed!'),
+                    });
+                }
+            })
 
-            if (check) {
-                let status = $('#customSwitchGlow2').attr('data-value');
-                let id = $('#customSwitchGlow2').attr('data-id');
-
-                $.ajax({
-                    url: 'black-list-status',
-                    data: {status, id},
-                    success: e => {
-                        alert(e.message)
-                        if (e.code == 1) {
-                            let status = $('#customSwitchGlow2').attr('data-value', e.status);
-                        }
-                    },
-                    error: () => alert('Request could not be completed!'),
-                });
-            }
-        }
-    </script>
+        </script>
+    @endsection
