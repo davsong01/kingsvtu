@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Customer;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\TransactionPinResetToken;
@@ -42,20 +43,28 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function customer(){
+    public function customer()
+    {
         return $this->hasOne(Customer::class);
     }
 
-    public function transaction_pin_token(){
+    public function transaction_pin_token()
+    {
         return $this->hasMany(TransactionPinResetToken::class);
     }
 
-    function admin () {
+    function admin()
+    {
         return $this->hasOne(Admin::class, 'user_id', 'id');
     }
 
     public function getNameAttribute()
     {
-        return $this->firstname." " . $this->middlename . " " .$this->lastname;
+        return $this->firstname . " " . $this->middlename . " " . $this->lastname;
+    }
+
+    public function downlines()
+    {
+        return $this->hasMany(User::class, 'referral', 'username');
     }
 }

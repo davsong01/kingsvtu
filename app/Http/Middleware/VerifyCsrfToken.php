@@ -12,7 +12,8 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        'customer-verify',
+        'customer-verify/*',
+        'admin/verify-biller/*',
         'log-p-callback/*'
     ];
 }

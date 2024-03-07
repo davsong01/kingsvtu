@@ -26,6 +26,14 @@
     @include('layouts.chat')
     @include('layouts.copyright')
     @include('layouts.footer')
+
+    <script>
+        // $(window).load(function(){
+        //     $("#adsense").find("iframe").appendTo("#googleadgoeshere"); 
+        //     $("#adsense").remove();
+        // });
+
+    </script>
 </body>
 <!-- END: Body-->
 </html>

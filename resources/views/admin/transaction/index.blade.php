@@ -144,19 +144,18 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($transactions as $transaction)
-
                                             <tr>
                                                 <td>
-                                                    <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>
-                                                    <span style="color:rgb(27, 20, 220)"><strong>Request ID: </strong>{{ $transaction->reference_id }}</span> <br><br>
+                                                    <span style="color:crimson"><strong>TransactionID: </strong> <br>{{ $transaction->transaction_id }}</span> <br>
+                                                    <span style="color:rgb(27, 20, 220)"><strong>Request ID: </strong> <br>{{ $transaction->reference_id }}</span> <br><br>
                                                     {{ $transaction->customer_name }} <br>
                                                     <a href="">{{ $transaction->customer_email  }}</a> <br>
                                                     {{ $transaction->customer_phone }} <br>
                                                      {{ date("M jS, Y g:iA", strtotime($transaction->created_at)) }} <br>
-                                                    @if($transaction->status == 'success')
-                                                    <button class="btn btn-primary btn-sm">{{ucfirst($transaction->status) }}</button>
+                                                    @if($transaction->status == 'success' || $transaction->status == 'delivered')
+                                                    <button class="btn btn-success btn-sm" readonly>{{ucfirst($transaction->status) }}</button>
                                                     @else
-                                                    <button class="btn btn-danger btn-sm">{{ucfirst($transaction->status) }}</button>
+                                                    <button class="btn btn-danger btn-sm" readonly>{{ucfirst($transaction->status) }}</button>
                                                     @endif 
                                                     
                                                    
@@ -175,7 +174,9 @@
                                                     <small>
                                                     <strong>Product: </strong>{{ $transaction->product_name }} <br>
                                                     <strong>Category: </strong>{{ $transaction->category->display_name }} <br>
-                                                    <strong>Variation: </strong>{{ $transaction->variation->system_name }} <br>
+                                                    @if($transaction->variation)
+                                                    <strong>Variation: </strong>{{ $transaction->variation->system_name ?? 'null'}} <br>
+                                                    @endif
                                                     <strong>Provider: </strong>{{ $transaction->api->name }} <br>
                                                     <strong>Convenience: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
                                                     <strong>Discount: </strong>{!! getSettings()->currency. number_format($transaction->discount, 2) !!} <br>
@@ -187,8 +188,7 @@
 
                                                 <td>
                                                     <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->id) }}">
-                                                        <i class="bx bxs-eye"></i>
-                                                        <span class="align-middle ml-25">View</span>
+                                                        <i class="fa fa-eye"></i><span class="align-middle ml-25">View</span>
                                                     </a>
 
                                                 </td>

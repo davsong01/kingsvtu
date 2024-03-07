@@ -6,6 +6,7 @@
         <div class="content-wrapper">
             @include('admin.includes.popup')
             @include('admin.includes.scroller')
+            <p class="" style="background: #3864dcc7;width: fit-content;padding: 10px;border-radius: 5px;color: white;">Referral Link: <span>{{ url('/register'). '?referral='.auth()->user()->username }}</span> <span><i class="fa fa-copy" style="color: #00ff58;"></i></span> </p>
             <div class="content-header row">
             </div>
             <div class="content-body">
@@ -15,9 +16,32 @@
                         <div class="col-md-12">
                             @include('layouts.alerts')
                         </div>
+                        <div class="col-md-6 col-12 dashboard-greetings">
+                            <div class="card" style="min-height: 310px;">
+                                <div class="card-header">
+                                    <h3 class="greeting-text">Customer of the Month</h3>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-end">
+                                            <div class="dashboard-content-left">
+                                                
+                                                <h1 class="text-primary font-large-2 text-bold-500">{{$customer->customer->user->username}}</h1>
+                                                <div style="color:green" class="text-muted line-ellipsis">{{number_format($customer->count)}}+ Transactions</div>
+                                                {{-- <a href="/customer-transactions" class="btn btn-primary glow"></a> --}}
+                                            </div>
+                                            <div class="dashboard-content-right">
+                                                <img src="{{ asset('app-assets/images/icon/cup.png') }}" height="220"
+                                                    width="220" class="img-fluid" alt="Dashboard Ecommerce" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Greetings Content Starts -->
                         <div class="col-md-6 col-12 dashboard-greetings">
-                            <div class="card">
+                            <div class="card" style="min-height: 325px;">
                                 <div class="card-header">
                                     <h3 class="greeting-text">Wallet Balance</h3>
                                     {{-- <p class="mb-0">Best seller of the month</p> --}}
@@ -45,61 +69,100 @@
                             </div>
                         </div>
                         <!-- Multi Radial Chart Starts -->
-                        <div class="col-md-6 col-12 dashboard-visit">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">Refer and Earn</h4>
-                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                </div>
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <p>
-                                            Share your referral links with friends to earn handsome reward
-                                            <div class="text-primary">{{ env('APP_URL').'/join-with-love/'. auth()->user()->username }}</div>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- <div class="col-xl-4 col-12 dashboard-users">
+                        
+                        <div class="col-12 dashboard-users">
                             <div class="row  ">
                                 <!-- Statistics Cards Starts -->
                                 <div class="col-12">
                                     <div class="row">
-                                        <div class="col-sm-6 col-12 dashboard-users-success">
+                                        <div class="col-sm-3 col-12 dashboard-users-primary">
+                                            <a href="{{route('update.kyc.details')}}">
+                                                <div class="card text-center">
+                                                    <div class="card-content">
+                                                        <div class="card-body py-1">
+                                                            <div
+                                                                class="badge-circle badge-circle-lg badge-circle-light-primary mx-auto mb-50">
+                                                                <i class="bx bx-briefcase-alt font-medium-5"></i>
+                                                            </div>
+                                                            <div class="text-muted line-ellipsis">KYC Status</div>
+                                                            <h3 class="mb-0" style="color:{{getFinalKycStatus(auth()->user()->customer->id) == 'verified' ? 'green' :'red'}}">{{ ucfirst(getFinalKycStatus(auth()->user()->customer->id))}}</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        
+                                        <div class="col-sm-3 col-12 dashboard-users-success">
+                                            <a href="{{route('customer.level.upgrade')}}">
+                                                <div class="card text-center">
+                                                    <div class="card-content">
+                                                        <div class="card-body py-1">
+                                                            <div
+                                                                class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                                                <i class="bx bx-briefcase-alt font-medium-5"></i>
+                                                            </div>
+                                                            <div class="text-muted line-ellipsis">Customer Level</div>
+                                                            <h3 class="mb-0">{{ auth()->user()->customer->level->name}}</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        
+                                        <div class="col-sm-3 col-12 dashboard-users-danger">
+                                            <a href="{{route('downlines')}}">
+                                                <div class="card text-center">
+                                                    <div class="card-content">
+                                                        <div class="card-body py-1">
+                                                            <div class="badge-circle badge-circle-lg badge-circle-light-danger mx-auto mb-50">
+                                                                <i class="bx bx-user font-medium-5"></i>
+                                                            </div>
+                                                            <div class="text-muted line-ellipsis">Downlines</div>
+                                                            <h3 class="mb-0">{{ number_format(auth()->user()->downlines->count()) }}</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-3 col-12 dashboard-users-warning">
+                                            <a href="{{route('customer.transaction.history')}}">
+                                            <div class="card text-center">
+                                                <div class="card-content">
+                                                    <div class="card-body py-1">
+                                                        <div
+                                                            class="badge-circle badge-circle-lg badge-circle-light-warning mx-auto mb-50">
+                                                            <i class="bx bx-user font-medium-5"></i>
+                                                        </div>
+                                                        <div class="text-muted line-ellipsis">Transactions</div>
+                                                        <h3 class="mb-0">{{ number_format(auth()->user()->customer->transactions->where('status','!=','initiated')->count()) }}<small style="font-size: 13px;"> {!! getSettings()->currency !!}{{ number_format(auth()->user()->customer->transactions->where('status','!=','initiated')->sum('total_amount')) }}</small></h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-sm-3 col-12 dashboard-users-success">
+                                            <a href="{{route('customer.load.wallet')}}">
                                             <div class="card text-center">
                                                 <div class="card-content">
                                                     <div class="card-body py-1">
                                                         <div
                                                             class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
-                                                            <i class="bx bx-briefcase-alt font-medium-5"></i>
-                                                        </div>
-                                                        <div class="text-muted line-ellipsis">New Products</div>
-                                                        <h3 class="mb-0">1.2k</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6 col-12 dashboard-users-danger">
-                                            <div class="card text-center">
-                                                <div class="card-content">
-                                                    <div class="card-body py-1">
-                                                        <div
-                                                            class="badge-circle badge-circle-lg badge-circle-light-danger mx-auto mb-50">
                                                             <i class="bx bx-user font-medium-5"></i>
                                                         </div>
-                                                        <div class="text-muted line-ellipsis">New Users</div>
-                                                        <h3 class="mb-0">45.6k</h3>
+                                                        <div class="text-muted line-ellipsis">Reserved Accounts</div>
+                                                        <h3 class="mb-0">{{ number_format(auth()->user()->customer->reserved_accounts->count()) }}</h3>
                                                     </div>
                                                 </div>
                                             </div>
+                                            </a>
                                         </div>
+                                        
 
                                     </div>
                                 </div>
                                 <!-- Revenue Growth Chart Starts -->
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                     <div class="row">
 
