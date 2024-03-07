@@ -380,7 +380,7 @@ class TransactionController extends Controller
     public function logTransaction($data)
     {
         $pre = [
-            'status' => 'initiated',
+            'status' => $data['status'] ?? 'initiated',
             'reference_id' => $data['request_id'],
             'transaction_id' => $data['transaction_id'],
             'payment_method' => $data['payment_method'],
@@ -394,6 +394,7 @@ class TransactionController extends Controller
             'total_amount' => $data['total_amount'],
             'amount' => $data['amount'],
             'balance_before' => $data['balance_before'],
+            'balance_after' => $data['balance_after'] ?? $data['balance_before'],
             'product_id' => $data['product_id'] ?? null,
             'product_name' => $data['product_name'] ?? null,
             'variation_id' => $data['variation_id'] ?? null,
@@ -410,6 +411,7 @@ class TransactionController extends Controller
             'account_number' => $data['account_number'] ?? null,
             'ip_address' => Session::get('ip_address') ?? null,
             'domain_name' => Session::get('domain_name') ?? null,
+            'descr' => $data['descr'] ?? null,
         ];
 
         $trans = TransactionLog::create($pre);

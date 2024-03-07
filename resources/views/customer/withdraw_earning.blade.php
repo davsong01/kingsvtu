@@ -45,7 +45,7 @@
                                                         <label for="amount">Amount</label>
                                                         <input type="number" class="form-control" name="amount"
                                                             value="{{ old('value') ?? referralBalance(auth()->user())  }}"
-                                                            placeholder="Amount to withdraw..." id="amount" required>
+                                                            placeholder="Amount to withdraw..." id="amount" min="0" max="{{ referralBalance(auth()->user()) }}" required>
                                                     </fieldset>
                                                     <div class="mt-2">
                                                         <button class="btn btn-primary" type="submit">Submit</button>

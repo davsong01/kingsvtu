@@ -50,6 +50,8 @@
                                                             <option value="">Select</option>
                                                             <option value="WALLET-FUNDING" {{ old('reason') == 'WALLET-FUNDING' ? 'selected' : ''}}>Wallet Funding</option>
                                                             <option value="Product Purchase" {{ old('reason') == 'Product Purchase' ? 'selected' : ''}}>Product Purchase</option>
+                                                            <option value="REFERRAL-WALLET" {{ old('reason') == 'REFERRAL-WALLET' ? 'selected' : ''}}>Referral Earnings</option>
+                                                            
                                                         </select>
                                                     </fieldset>
                                                 </div>

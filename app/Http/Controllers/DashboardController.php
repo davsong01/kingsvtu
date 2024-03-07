@@ -24,8 +24,8 @@ class DashboardController extends Controller
         } else {
             // Get Customer of the month
             $customer = $this->customerOfTheMonth();
-            
-            return view('customer.dashboard',compact('customer'));
+
+            return view('customer.dashboard', compact('customer'));
         }
     }
 
@@ -326,7 +326,8 @@ class DashboardController extends Controller
     }
 
 
-    public function downlines ($id = null) {
+    public function downlines($id = null)
+    {
         $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->latest();
 
         if ($id) {
@@ -338,11 +339,13 @@ class DashboardController extends Controller
         return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
     }
 
-    function downlinesWithdrawal () {
+    function downlinesWithdrawal()
+    {
         return view('customer.withdraw_earning');
     }
 
-    function processWithdrawal(Request $request) {
+    function processWithdrawal(Request $request)
+    {
         $request->validate(([
             'amount' => 'required|integer',
         ]));
@@ -360,21 +363,27 @@ class DashboardController extends Controller
         $customer = auth()->user()->customer;
 
         try {
+            DB::beginTransaction();
             //code...
             $data['type'] = 'credit';
             $data['customer_id'] = $customer->id;
             $data['transaction_id'] = $tid;
             $data['request_id'] = $requestId;
-            $data['payment_method'] = 'wallet';
+            $data['payment_method'] = 'REFERRAL-WALLET';
             $data['balance_before'] = walletBalance(auth()->user());
             $data['amount'] = $amount;
             $data['total_amount'] = $amount;
             $data['customer_email'] = auth()->user()->email;
             $data['customer_phone'] = auth()->user()->phone;
             $data['customer_name'] = auth()->user()->firstname;
-            $data['unique_element'] = 'wallet';
+            $data['unique_element'] = 'WALLET-FUNDING';
+            $data['reason'] = 'WALLET-FUNDING';
+            $data['descr'] = 'Withdrawal of ' . getSettings()->currency . number_format($amount, 2) . ' from referral balance was successful';
             $data['discount'] = 0;
             $data['unit_price'] = $amount;
+            $data['balance_after'] = walletBalance(auth()->user()) + $amount;
+            $data['status'] = 'success';
+
             $controller->logTransaction($data);
             $controller->logEarnings(
                 'debit',
@@ -390,17 +399,20 @@ class DashboardController extends Controller
             $wallet->logWallet([
                 'type' => 'credit',
                 'amount' => $amount,
-                'reason' => 'WITHDRAW TO WALLET',
+                'payment_method' => 'REFERRAL',
+                'reason' => 'REFFERAL BALANCE WITHDRAWN TO WALLET',
                 'transaction_id' => $tid,
             ]);
 
             $wallet->updateCustomerWallet(auth()->user(), $amount, 'credit');
             $wallet->updateReferralWallet(auth()->user(), $amount, 'debit');
 
-            return back()->with('message', "{$amount} withdrawn to wallet successfully!");
+            DB::commit();
+            return back()->with('message', getSettings()->currency . number_format($amount, 2) . " withdrawn to wallet successfully!");
         } catch (\Throwable $th) {
             //throw $th;
-            return back()->with('error', "Transaction could not be completed, try again! ". $th->getMessage());
+            DB::rollBack();
+            return back()->with('error', "Transaction could not be completed, try again! " . $th->getMessage());
         }
     }
 }
