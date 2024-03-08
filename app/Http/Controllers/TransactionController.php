@@ -169,7 +169,7 @@ class TransactionController extends Controller
         }
 
         // Log Transaction Email
-        $this->sendTransactionEmail($transaction);
+        $this->sendTransactionEmail($transaction, auth()->user());
         return redirect(route('transaction.status', $transaction->transaction_id));
     }
 

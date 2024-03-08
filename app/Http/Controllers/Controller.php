@@ -113,13 +113,13 @@ class Controller extends BaseController
         return $trx;
     }
 
-    public function sendTransactionEmail($transaction, $user = null)
+    public function sendTransactionEmail($transaction, $user)
     {
         if (getSettings()->transaction_email_notification == 'yes') {
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
             $product =  $transaction->product->name ?? '' .  $variation_name;
             $extras = isset($transaction->extras) ? $transaction->extras : '';
-            $name = auth()->user()->firstname ?? $user->firstname;
+            $name = $user->firstname ?? 'Customer';
             $subject = "Transaction Alert";
             $body = '<p>Hello! ' . $name . '</p>';
             $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' Please find below the details of the transaction: <br>
@@ -160,7 +160,8 @@ class Controller extends BaseController
             <br>Warm Regards. (' . config('app.name') . ')<br/>
             </p>';
 
-            logEmails(auth()->user()->email ?? $user->email, $subject, $body);
+            $email = $user->email ?? 'noreply@kingsvtu.com'; 
+            logEmails($email, $subject, $body);
         }
     }
 }

@@ -18,7 +18,7 @@ if (!function_exists("logEmails")) {
         ];
 
         try {
-            Mail::to($email_to,)->send(new EmailMessages($data));
+            Mail::to($email_to)->send(new EmailMessages($data));
         } catch (\Exception $e) {
         }
     }
@@ -33,7 +33,7 @@ if (!function_exists("sendEmails")) {
         ];
 
         try {
-            Mail::to($email_to,)->send(new EmailMessages($data));
+            Mail::to($email_to)->send(new EmailMessages($data));
         } catch (\Exception $e) {
             \Log::info($e->getMessage());
         }

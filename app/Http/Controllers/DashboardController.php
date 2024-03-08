@@ -153,7 +153,7 @@ class DashboardController extends Controller
         }
 
         // Log transaction email
-        $this->sendTransactionEmail($transaction);
+        $this->sendTransactionEmail($transaction, auth()->user());
         return redirect(route('dashboard'))->with('message', 'Upgrade successful');
     }
 

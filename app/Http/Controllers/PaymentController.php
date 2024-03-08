@@ -134,7 +134,7 @@ class PaymentController extends Controller
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
                     }
                 }
-
+                
                 if (isset($analyze) && $analyze['status'] == 'success') {
                     // Log Transaction
                     $wallet = new WalletController();
@@ -243,7 +243,7 @@ class PaymentController extends Controller
 
                 DB::commit();
 
-                $this->sendTransactionEmail($transaction);
+                $this->sendTransactionEmail($transaction, auth()->user());
 
                 return redirect(route('transaction.status', $transaction->transaction_id));
             } catch (\Throwable $th) {
@@ -280,8 +280,9 @@ class PaymentController extends Controller
         return $verify;
     }
 
-    public function callBackAnalysis(){
-        $calls = ReservedAccountCallback::orderBy('status','DESC')->paginate();
+    public function callBackAnalysis()
+    {
+        $calls = ReservedAccountCallback::orderBy('status', 'DESC')->paginate();
         return view('admin.transaction.raw_callbacks', compact('calls'));
     }
 }
