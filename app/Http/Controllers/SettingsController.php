@@ -73,7 +73,7 @@ class SettingsController extends Controller
     {
         $settings = Settings::first();
         
-        $data = $request->except(['_token', 'logo', 'favicon']);
+        $data = $request->except(['_token', 'logo', 'favicon','ip']);
 
         if (!empty($request->logo)) {
             $data['logo'] = $this->uploadFile($request->logo, 'site');

@@ -75,7 +75,7 @@
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-md-1">
-                                                                    @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                    @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                     <img id="product-image" width="60" height="60" src="{{ asset('site/upgrade.jpg') }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                     @else 
                                                                     <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
@@ -84,7 +84,7 @@
                                                                 <div class="col-md-4">
                                                                    
                                                                     <span class="data-details-title" style="color:#174159;"><h3 style="color:#174159;"><strong style="line-height: unset;font-size:17px;">
-                                                                        @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                        @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                             {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                         @else
                                                                         {{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) | {{$transaction->variation->system_name}} @endif 
@@ -161,7 +161,7 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Service: </p>
                                                                                 </div>
-                                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                                     {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                                 @else
                                                                                 <div class="item-progress value">{{$transaction->product->display_name}} @if(!empty($transaction->variation->system_name)) ({{$transaction->variation->system_name}})@endif</div>

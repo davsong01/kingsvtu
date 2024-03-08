@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
-            $table->id();
-            $table->integer('user_id');
-            $table->string('status')->default('active');
-            $table->string('permissions');
-            $table->timestamps();
-        });
+        if (!Schema::hasColumn('reserved_account_callbacks', 'transaction_id')) {
+            Schema::table('reserved_account_callbacks', function (Blueprint $table) {
+                $table->string('transaction_id')->nullable();
+            });
+        }
     }
 
     /**
@@ -25,6 +23,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
     }
 };

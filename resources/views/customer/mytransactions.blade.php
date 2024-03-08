@@ -112,7 +112,7 @@
                                                         <small>
                                                             <span class="mr-50 text-bold-200">
                                                                
-                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                     {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                 @else
                                                                 <strong>{{ $transaction->product->name}}</strong>

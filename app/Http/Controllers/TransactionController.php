@@ -853,21 +853,24 @@ class TransactionController extends Controller
         return view('admin.transaction.single_transaction', compact('transaction'));
     }
 
-    function debitCustomerPage () {
+    function debitCustomerPage()
+    {
         return view('admin.transaction.debit_customer');
     }
 
-    function creditCustomerPage () {
+    function creditCustomerPage()
+    {
         return view('admin.transaction.credit_customer');
     }
 
-    function processCreditDebit (Request $request) {
+    function processCreditDebit(Request $request)
+    {
         $request->validate([
             'email' => 'required|email',
             'amount' => 'required|numeric',
             'reason' => 'required'
         ]);
-
+        // dd(auth()->user()->admin->id);
         $user = User::where('email', $request->email)->first();
 
         if (!$user) return back()->with('error', 'Account not found!');
@@ -878,11 +881,17 @@ class TransactionController extends Controller
 
         $controller = new TransactionController();
         $amount = $controller->removeCharsInAmount($request->amount);
-        $currAmount = walletBalance(auth()->user());
+        $currAmount = walletBalance($user);
 
+        if ($type == 'credit') {
+            $data['balance_after'] = $currAmount + $amount;
+        } else {
+            $data['balance_after'] = $currAmount - $amount;
+        }
 
         $requestId = $controller->generateRequestId();
         $tid = 'KVTU-' . $requestId;
+        $reason = $type == 'debit' ? 'ADMIN-DEBIT' : 'ADMIN-CREDIT';
         try {
             //code...
             $data['type'] = $type;
@@ -899,25 +908,30 @@ class TransactionController extends Controller
             $data['unique_element'] = 'wallet';
             $data['discount'] = 0;
             $data['unit_price'] = $amount;
-            $data['reason'] = $request->reason;
+            $data['descr'] = $request->reason;
+            $data['reason'] = $reason;
             $data['status'] = 'success';
             $data['admin_id'] = auth()->user()->admin->id;
+
             $controller->logTransaction($data);
 
-            DB::transaction(function () use($type, $amount, $tid, $user) {
+            DB::transaction(function () use ($type, $amount, $tid, $user, $reason) {
                 $wallet = new WalletController();
                 $wallet->logWallet([
+                    'customer_id' => $user->customer->id,
                     'type' => $type,
                     'amount' => $amount,
-                    'reason' => 'WITHDRAW TO WALLET',
+                    'reason' => $reason,
                     'transaction_id' => $tid,
+                    'payment_method' => 'ADMIN-FUNDING',
                 ]);
                 $wallet->updateCustomerWallet($user, $amount, $type);
             });
             $sign = getSettings()->currency;
-            return back()->with('message', "Customer wallet has been {$type} with {$sign} ". number_format($amount));
+            return back()->with('message', "Customer wallet has been {$type}ed with {$sign}" . number_format($amount));
         } catch (\Exception $e) {
-            dd($e->getMessage());
+
+            return back()->with('error', 'An error occured' . $e->getMessage() . $e->getLine() . $e->getFile());
         }
     }
 
@@ -944,6 +958,8 @@ class TransactionController extends Controller
                 </tr>
                 <tr><th>Date:</th>
                 <td>&nbsp;' . $wallet->created_at . '</td>
+                <tr><th>Reason:</th>
+                <td>&nbsp;' . $wallet->reason . '</td>
                 </tr>';
             }
 

@@ -70,7 +70,8 @@
                                                             {{$account->account_number}}<br>
                                                             {{$account->bank_name}}<br>
                                                             <span style="color:black">Provider:</span> {{$account->payment_gateway->name}} <br>
-                                                            <span style="color:black">Reference:</span> {{$transaction->transaction_id}}
+                                                            <span style="color:black">Reference:</span> {{$transaction->transaction_id}} <br>
+                                                            <span style="color:black">Method:</span> {{$transaction->payment_method}}
                                                             </p>
                                                         </td>
                                                         <td>{{$transaction->created_at}}</td>

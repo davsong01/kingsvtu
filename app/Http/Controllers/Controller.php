@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Image;
 use App\Models\GeneralSetting;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -89,10 +90,12 @@ class Controller extends BaseController
 
     public function getIpAddress()
     {
+        return Session::get('ip_address') ?? null;
     }
 
     public function getDomainName()
     {
+        return Session::get('domain_name') ?? null;
     }
 
     public function getAppVersion()

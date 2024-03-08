@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasColumn('transactions_log', 'admin_id')) {
+        if (!Schema::hasColumn('transactions_log', 'admin_id')) {
             Schema::table('transactions_log', function (Blueprint $table) {
                 $table->integer('admin_id')->nullable();
             });

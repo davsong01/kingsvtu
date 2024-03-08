@@ -86,7 +86,11 @@ class CustomerController extends Controller
             'lastname' => 'required',
         ]);
 
-        $update = User::where('id', $id)->update($request->except('_token'));
+        $update = User::where('id', $id)->update([
+            'status' => $request->status,
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+        ]);
 
         if ($update) {
             return back()->with('message', 'Update successful!');

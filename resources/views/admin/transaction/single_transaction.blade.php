@@ -78,7 +78,7 @@
                                                     <div class="card-body">
                                                         <div class="row">
                                                             <div class="col-md-1">
-                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                 <img id="product-image" width="60" height="60" src="{{ asset('site/upgrade.jpg') }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 @else 
                                                                 <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
@@ -152,7 +152,7 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <strong class="heads">Payment Details</strong> <br>
-                                                                    <strong>PMETHOD: </strong> {{ $transaction->payment_method}} <br>
+                                                                    <strong>PAYMENT METHOD: </strong> {{ $transaction->payment_method}} <br>
                                                                     <strong>CHANNEL: </strong>{{ $transaction->channel}} <br>
                                                                     <strong>CUST. EMAIL: </strong>{{ $transaction->customer_email }} <br>
                                                                     <strong>PHONE: </strong>{{ $transaction->customer_phone }} <br>
@@ -216,7 +216,7 @@
                                                                         <tbody>
                                                                         <tr>
                                                                             <td>
-                                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
+                                                                                @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                                     {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                                 @else
                                                                                 {{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) <strong> | {{$transaction->variation->system_name}} </strong> @endif 
@@ -260,7 +260,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <strong>Initial Balance:</strong> {!! getSettings()->currency.number_format($transaction->balance_before, 2) !!} <br>
-                                                                    <strong>Final Balance:</strong> {!! getSettings()->currency. number_format($transaction->balance_before, 2) !!}<br>
+                                                                    <strong>Final Balance:</strong> {!! getSettings()->currency. number_format($transaction->balance_after, 2) !!}<br>
                                                                     
                                                                     <div class="well">
                                                                         <address>

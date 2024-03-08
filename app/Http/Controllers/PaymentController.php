@@ -188,6 +188,7 @@ class PaymentController extends Controller
 
                     // Update Customer Wallet
                     $wallet->updateCustomerWallet($user, $amount, $request['type']);
+                    ReservedAccountCallback::where('id', $call['id'])->update(['transaction_id' => $transaction_id]);
 
                     $this->sendTransactionEmail($transaction, $user);
                 }
@@ -223,7 +224,6 @@ class PaymentController extends Controller
             try {
                 DB::beginTransaction();
                 // Log basic transaction
-
                 $transaction->update([
                     'balance_after' => $balance + $paid,
                     'status' => 'success',
@@ -278,5 +278,10 @@ class PaymentController extends Controller
         $verify = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($reference);
 
         return $verify;
+    }
+
+    public function callBackAnalysis(){
+        $calls = ReservedAccountCallback::orderBy('status','DESC')->paginate();
+        return view('admin.transaction.raw_callbacks', compact('calls'));
     }
 }

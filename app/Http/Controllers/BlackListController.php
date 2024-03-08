@@ -34,7 +34,10 @@ class BlackListController extends Controller
             'value' => 'required'
         ]);
 
-        BlackList::create($request->except('token'));
+        BlackList::create([
+            'type' => $request->type,
+            'value' => $request->value
+        ]);
         return back()->with('message', 'Item added to blacklist successfully');
     }
 
