@@ -134,7 +134,7 @@ class MonnifyController extends Controller
             ]);
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-
+            
             if (
                 $response && $response['responseCode'] == 0 &&
                 $response['responseMessage'] == 'success'
@@ -170,7 +170,7 @@ class MonnifyController extends Controller
             } else {
                 $data = [
                     'status' => 'failed',
-                    'data' => $response['responseBody'],
+                    'data' => $response['responseMessage'],
                 ];
             }
 
@@ -195,7 +195,7 @@ class MonnifyController extends Controller
             ];
 
             $response = $this->basicApiCall($url, [], $headers, 'DELETE');
-            
+
             if (
                 $response && $response['responseCode'] == 0 &&
                 $response['responseMessage'] == 'success'
