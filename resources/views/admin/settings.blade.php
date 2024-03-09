@@ -68,12 +68,16 @@ use App\Models\PaymentGateway;
                                                                             </select>
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
-                                                                            <label for="allow_fund_with_card">Allow Wallet Funding with card</label>
+                                                                            <label for="allow_fund_with_card" style="color:blue">Allow Wallet Funding with card</label>
                                                                             <select name="allow_fund_with_card" class="form-control" id="allow_fund_with_card">
                                                                                 <option value="">Select</option>
                                                                                 <option value="yes"{{ $settings->allow_fund_with_card == 'yes' ? 'selected' : ''}}>Yes</option>
                                                                                 <option value="no" {{ $settings->allow_fund_with_card == 'no' ? 'selected' : ''}}>No</option>
                                                                             </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="card_funding_extra_charge" style="color:blue">Card Funding Extra Charge({!! getSettings()->currency !!})</label>
+                                                                            <input type="number" name="card_funding_extra_charge" value="{{ $settings->card_funding_extra_charge ?? old('card_funding_extra_charge') }}" class="form-control">
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
                                                                             <label for="allow_fund_with_reserved_account">Allow Wallet Funding with reserved account</label>
@@ -92,7 +96,7 @@ use App\Models\PaymentGateway;
                                                                             </select>
                                                                         </fieldset>
                                                                         <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
-                                                                            <label for="referral_percentage">Referral Percentage</label>
+                                                                            <label for="referral_percentage">Referral Percentage(%)</label>
                                                                             <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $settings->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
                                                                         </fieldset>
                                                                     </div>

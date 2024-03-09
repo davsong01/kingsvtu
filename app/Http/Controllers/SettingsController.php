@@ -43,7 +43,7 @@ class SettingsController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Settings $settings)
-    {   
+    {
         $settings = Settings::first();
         if (!$settings) {
             $settings = Settings::create([
@@ -72,8 +72,8 @@ class SettingsController extends Controller
     public function update(Request $request, Settings $settings)
     {
         $settings = Settings::first();
-        
-        $data = $request->except(['_token', 'logo', 'favicon','ip']);
+
+        $data = $request->except(['_token', 'logo', 'favicon', 'ip']);
 
         if (!empty($request->logo)) {
             $data['logo'] = $this->uploadFile($request->logo, 'site');

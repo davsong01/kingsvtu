@@ -149,14 +149,14 @@ class Controller extends BaseController
             $body .= '<strong>Unit Price:</strong> ' . getSettings()->currency . $transaction->unit_price . '<br>';
 
             if (!empty($transaction->provider_charge)) {
-                $body .= '<strong>Convenience Fee:</strong> ' . $transaction->provider_charge . '<br>';
+                $body .= '<strong>Convenience Fee:</strong> ' . getSettings()->currency.number_format($transaction->provider_charge,2) . '<br>';
             }
 
             $body .= '<strong>Quantity:</strong> ' . $transaction->quantity . '<br>
-            <strong>Discount Applied:</strong> ' . getSettings()->currency . $transaction->discount . '<br>
-            <strong>Total Amount Paid:</strong> ' . getSettings()->currency . $transaction->total_amount . '<br>
-            <strong>Initial Balance:</strong> ' . getSettings()->currency . $transaction->balance_before . '<br>
-            <strong>Final Balance: </strong>' . getSettings()->currency . $transaction->balance_after . '<br>
+            <strong>Discount Applied:</strong> ' . getSettings()->currency . number_format($transaction->discount, 2) . '<br>
+            <strong>Total Amount Paid:</strong> ' . getSettings()->currency . number_format($transaction->total_amount, 2) . '<br>
+            <strong>Initial Balance:</strong> ' . getSettings()->currency . number_format($transaction->balance_before, 2) . '<br>
+            <strong>Final Balance: </strong>' . getSettings()->currency . number_format($transaction->balance_after,2) . '<br>
             <br>Warm Regards. (' . config('app.name') . ')<br/>
             </p>';
 

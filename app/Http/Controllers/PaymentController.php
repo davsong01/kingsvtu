@@ -24,7 +24,10 @@ class PaymentController extends Controller
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
         $reference = $this->generateRequestId();
+        $extra_charge = getSettings()->card_funding_extra_charge > 0 ? getSettings()->card_funding_extra_charge : 0;
         $provider_charge = ($provider->charge / 100) * $request->amount;
+        $provider_charge = $provider_charge + $extra_charge;
+
         $amount = $request->amount - $provider_charge;
         $original_amount = $request->amount;
 
@@ -129,12 +132,15 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                        $provider_charge = $provider->charge ?? 0;
+                        $extra_charge = getSettings()->card_funding_extra_charge > 0 ? getSettings()->card_funding_extra_charge : 0;
+
+                        $provider_charge = $provider->reserved_account_payment_charge ?? 0;
+                        $provider_charge = $provider_charge + $extra_charge;
                         $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
                     }
                 }
-                
+
                 if (isset($analyze) && $analyze['status'] == 'success') {
                     // Log Transaction
                     $wallet = new WalletController();
@@ -171,7 +177,7 @@ class PaymentController extends Controller
                     $request['account_number'] =  $call['account_number'];
 
                     $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
-
+                    
                     $transaction->update([
                         'balance_after' => $balance + $amount,
                         'status' => 'success',

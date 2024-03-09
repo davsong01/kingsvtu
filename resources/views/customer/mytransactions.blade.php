@@ -115,7 +115,7 @@
                                                                 @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                     {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                 @else
-                                                                <strong>{{ $transaction->product->name}}</strong>
+                                                                <strong>{{ $transaction->product->name ?? 'NOT SET'}}</strong>
                                                                     @if($transaction?->variation?->system_name) {{ " | ". $transaction?->variation?->system_name }} 
                                                                     @endif
                                                                 @endif

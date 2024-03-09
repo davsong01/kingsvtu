@@ -51,5 +51,7 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
-
+if(env('ENT') != 'local'){
+    $app->usePublicPath('/home/kingntxc/portal.kingsvtu.ng');
+}
 return $app;
