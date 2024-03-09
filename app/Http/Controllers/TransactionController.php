@@ -629,8 +629,11 @@ Congratulations! We are excited to inform you that you have earned a commission 
 Here are the details of the transaction:
 
 Referred Friend's Name: $curUser->firstname
+
 Commission Earned: $cal
+
 Total Commission Earned: $cal
+
 Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
 
 Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.

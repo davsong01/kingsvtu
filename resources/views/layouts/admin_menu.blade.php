@@ -101,7 +101,7 @@
                      </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;User Management</span></a>
                  <ul class="menu-content">
                      <li class="{{ Route::is('admins.*') ? 'active' : '' }}"><a
-                             href="{{ request()->route()->getPrefix() }}/admins"><i
+                             href="{{ route('admins') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">All Admins</span></a>
                      </li>
                      {{-- <li class="{{ Route::is('customers.*') ? 'active' : '' }}"><a href="{{ request()->route()->getPrefix() }}/customers/active"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="Input">Active Customers</span></a>
