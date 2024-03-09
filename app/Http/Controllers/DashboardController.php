@@ -456,6 +456,21 @@ class DashboardController extends Controller
             $wallet->updateReferralWallet(auth()->user(), $amount, 'debit');
 
             DB::commit();
+            $user = auth()->user();
+            $host = env('APP_URL');
+            $transEmail = <<<__here
+            Dear $user->firstname $user->lastname,
+
+We hope this email finds you well. We are delighted to inform you that an amount of $amount has been successfully credited to your wallet.
+
+Transaction Details:
+
+Transaction ID: <a href="$host/customer-transaction_status/$tid">click here</a><br>
+Credited Amount: $amount<br>
+This credit to your wallet provides you with the flexibility to seamlessly make transactions and enjoy our services. Whether it's making a purchase, availing discounts, or accessing exclusive features, your wallet balance is now ready for use.
+__here;
+
+            logEmails($user->email, 'Referral Commission', $transEmail);
             return back()->with('message', getSettings()->currency . number_format($amount, 2) . " withdrawn to wallet successfully!");
         } catch (\Throwable $th) {
             //throw $th;

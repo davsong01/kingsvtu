@@ -123,6 +123,18 @@ if (!function_exists("adminPermission")) {
     }
 }
 
+if (!function_exists("adminRole")) {
+    function adminPermission($role)
+    {
+
+        $perms = [
+            'Manager' => [],
+            'Support' => [],
+            'Admin' => [],
+        ];
+    }
+}
+
 if (!function_exists("specialVerifiableVariations")) {
     function specialVerifiableVariations()
     {
