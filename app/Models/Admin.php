@@ -12,10 +12,13 @@ class Admin extends Model
     protected $guarded = [];
 
     function permission () {
-        return explode(',', $this->permissions);
+        $permission = $this->permissions;
+        $details = adminPermission($permission);
+        return $details;
     }
 
     function user () {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    
 }

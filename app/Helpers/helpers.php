@@ -91,13 +91,32 @@ if (!function_exists("getSettings")) {
 }
 
 if (!function_exists("adminPermission")) {
-    function adminPermission()
+    function adminPermission($key)
     {
-        return [
-            1 => 'View Customer',
-            2 => 'Add Customer',
-            3 => 'View Transactions',
+        $perm = [];
+        $permissions = [
+            'Manager' => [
+                'menu' => [
+                    'Dashboard',
+                    'Annoucement'
+                ],
+                'permission' => [
+                    'duplicate.product',
+                    'api.balance',
+                    'product.index'
+                ]
+            ],
+            'Support' => [
+                // 'duplicate.product',
+                'api.balance'
+            ],
         ];
+
+        if(!empty($key)){
+            $perm = $permissions[$key];
+        }
+
+        return $perm;
     }
 }
 
@@ -1218,6 +1237,21 @@ if (!function_exists("starMiddle")) {
 
 if (!function_exists("announcements")) {
     function announcements($type)
+    {
+        $ann = $ann = Announcement::all();
+
+        if (count($ann)) {
+            if ($type == 'scroll') {
+                return $ann[1];
+            } else {
+                return $ann[0];
+            }
+        }
+    }
+}
+
+if (!function_exists("rolePermissions")) {
+    function rolePermissions($type)
     {
         $ann = $ann = Announcement::all();
 

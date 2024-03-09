@@ -18,6 +18,8 @@
      <div class="main-menu-content" style="margin-top: 20px;">
          <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation"
              data-icon-style="lines">
+             {{-- Menu start --}}
+             @if(in_array('Dashboard', auth()->user()->admin->permission()['menu']))
              <li class="{{ Route::is('dashboard') ? 'active' : '' }} nav-item"><a href="{{ route('dashboard') }}"><svg
                          xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" fill="white"
                          width="24">
@@ -25,6 +27,7 @@
                              d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z" />
                      </svg><span class="menu-title" data-i18n="Form Layout">&nbsp;Dashboard</span></a>
              </li>
+             @endif
              <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a
                 href="{{ route('announcement.index') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="white" d="M720-440v-80h160v80H720Zm48 280-128-96 48-64 128 96-48 64Zm-80-480-48-64 128-96 48 64-128 96ZM200-200v-160h-40q-33 0-56.5-23.5T80-440v-80q0-33 23.5-56.5T160-600h160l200-120v480L320-360h-40v160h-80Zm240-182v-196l-98 58H160v80h182l98 58Zm120 36v-268q27 24 43.5 58.5T620-480q0 41-16.5 75.5T560-346ZM300-480Z"/></svg>
