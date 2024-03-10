@@ -20,27 +20,27 @@ class UssdHosting extends Controller
 
     public function getVariations($product)
     {
-        $variations = $this->VendPlusVars($product->slug);
-        $variations = $variations['variations'];
-        foreach ($variations as $variation) {
-            Variation::updateOrCreate([
-                'category_id' => $product['category_id'],
-                'api_id' => $product['api']['id'],
-                'api_name' => $variation['name'],
-                'slug' => $variation['variation_code'],
-            ], [
-                'product_id' => $product['id'],
-                'category_id' => $product['category_id'],
-                'api_id' => $product['api']['id'],
-                'api_name' => $variation['name'],
-                'slug' => $variation['variation_code'],
-                'system_name' => $variation['name'],
-                'fixed_price' => $variation['fixedPrice'],
-                'api_price' => $variation['variation_amount'],
-                'system_price' => $variation['variation_amount'],
-                'network' => $variation['network'] ?? null,
-            ]);
-        }
+        // $variations = $this->VendPlusVars($product->slug);
+        // $variations = $variations['variations'];
+        // foreach ($variations as $variation) {
+        //     Variation::updateOrCreate([
+        //         'category_id' => $product['category_id'],
+        //         'api_id' => $product['api']['id'],
+        //         'api_name' => $variation['name'],
+        //         'slug' => $variation['variation_code'],
+        //     ], [
+        //         'product_id' => $product['id'],
+        //         'category_id' => $product['category_id'],
+        //         'api_id' => $product['api']['id'],
+        //         'api_name' => $variation['name'],
+        //         'slug' => $variation['variation_code'],
+        //         'system_name' => $variation['name'],
+        //         'fixed_price' => $variation['fixedPrice'],
+        //         'api_price' => $variation['variation_amount'],
+        //         'system_price' => $variation['variation_amount'],
+        //         'network' => $variation['network'] ?? null,
+        //     ]);
+        // }
 
         return true;
     }

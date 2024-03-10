@@ -228,13 +228,24 @@
 
                                                                 @if($product->has_variations == 'yes')
                                                                     <div class="tab-pane {{ isset($page) && $page == 2 ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
+                                                                        {{-- Manual ADD Variations --}}
+                                                                        <div class="modal-primary mr-1 mb-1 d-inline-block">
+                                                                        <!-- Button trigger for primary themes modal -->
+                                                                        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#primary">
+                                                                            Add Variations
+                                                                        </button>
+
+                                                                        @include('admin.product.add_variations_form')
+                                                                    </div>
+
                                                                         @if($product->variations->count() < 1)
-                                                                            <a style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
+                                                                            <a href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
                                                                         @else
-                                                                            <a  style="width: 20%;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-info mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
+                                                                            <a style="width:fit-content;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-info mb-2 mt-1 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
 
                                                                             <form action="{{route('variations.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                                 @csrf
+                                                                               
                                                                                 @foreach($product->variations as $variation)
                                                                                 <div class="row" style="margin-bottom:10px">
                                                                                     <div class="col-md-3">
@@ -255,9 +266,10 @@
                                                                                             <input type="text" class="form-control tiny" id="system_name" name="system_name[{{ $variation->id }}]"  value="{{ $variation->system_name }}">
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                    <div class="col-md-1">
+                                                                                    
+                                                                                    <div class="col-md-3">
                                                                                         <fieldset class="form-group">
-                                                                                            <label for="name">Slug</label>
+                                                                                            <label for="name">Slug/USSD String</label>
                                                                                             <input type="text" class="form-control tiny" id="slug" name="slug[{{ $variation->id }}]"  value="{{ $variation->slug }}">
                                                                                         </fieldset>
                                                                                     </div>
@@ -288,7 +300,6 @@
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     @foreach($customerlevel as $level)
-                                                                                    {{-- {{dd($variation->customer_level_price($level->id))}} --}}
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
@@ -296,6 +307,14 @@
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     @endforeach
+                                                                                    @if($variation->transaction->count() < 1)
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label style="color:white">S</label>
+                                                                                            <a onclick="return confirm('You are about to delete a variation')" href="{{ route('variation.delete', $variation->id) }}"><button style="color: white;" class="btn btn-sm btn-danger form-control" style="padding: 8px;" type="button"><i class="fa fa-trash"></i> Delete</button></a>
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    @endif
                                                                                 </div>
                                                                                 <input type="hidden" name="variation_id[{{$variation->id}}]" value="{{$variation->id}}">
                                                                                  <hr style="height: 0px;border-color: #00cfdd;">
@@ -330,5 +349,82 @@
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script>
+    $("#add-mode").on('click', function () {
+        //get last ID
+        var lastChild = $("#mode-holder").children().last();
+        var countChildren = $("#mode-holder").children().length;
+        
+        var lastId = $(lastChild).attr('id').split('-');
 
+        var id = lastId[1] + 1;
+    
+        var child = `<div class="row" id="mode-`+id+`">
+                <div class="col-md-3">
+                <fieldset class="form-group">
+                    <label for="name">System Name</label>
+                    <input type="text" class="form-control tiny" id="system_name" name="system_name[]"  value="" placeholder="Variation name">
+                </fieldset>
+            </div>
+            
+            <div class="col-md-3">
+                <fieldset class="form-group">
+                    <label for="name">Slug/USSD String</label>
+                    <input type="text" class="form-control tiny" id="slug" name="slug[]"  value="" placeholder="Variation slug or USSD string" required>
+                </fieldset>
+            </div>
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="fixed_price">Fixed Price</label>
+                    <select class="form-control tiny" name="fixed_price[]" id="fixed_price" required>
+                        <option value="">Select</option>
+                        <option value="Yes" {{ old('fixed_price') == 'Yes' ? 'selected' : ''}}>Yes</option>
+                        <option value="No" {{ old('fixed_price') == 'No' ? 'selected' : ''}}>No</option> 
+                    </select>
+                </fieldset>
+            </div>
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="status">Status</label>
+                    <select class="form-control tiny" name="status[]" id="status" required>
+                        <option value="">Select</option>
+                        <option value="active" {{ old('status') == 'active' ? 'selected' : ''}}>Active</option>
+                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : ''}}>InActive</option>
+                    </select>
+                </fieldset>
+            </div>
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="name">System Price ({!! getSettings()['currency']!!})</label>
+                    <input type="number" class="form-control tiny" id="system_price" name="system_price[]"  value="" placeholder="Variation price" required>
+                </fieldset>
+            </div>
+            @foreach($customerlevel as $level)
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
+                    <input type="number" class="form-control tiny" id="level" name="level[{{ $level->id }}][]" value="" required>
+                </fieldset>
+            </div>
+            @endforeach
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="mark" style="color:white">sdsdsddsdssd</label>
+                    <button class="btn btn-danger remove-mode" id="remove-mode-`+id+`" type="button" style="min-width: unset;"> <i class="fa fa-minus"></i> Remove</button>
+                </fieldset>
+            </div>
+            <div class="col-md-12">
+            <hr style="height: 0px;border-color: #00cfdd;">
+            </div>
+        </div>`
+        $("#mode-holder").append(child);      
+    });
+
+    $("#mode-holder").on('click','.remove-mode', function(e) {
+        var removeId = $(e.target).attr('id').split('-');
+        var id = removeId[2];
+        $("#mode-"+id).remove();
+    });
+
+</script>
 @endsection

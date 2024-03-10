@@ -114,6 +114,9 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->gr
 
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
+    Route::post('manual-variations-add/{product}', [VariationController::class, 'addManualVariations'])->name('manual.variations.add');
+    Route::get('delete-variations/{variation}', [VariationController::class, 'deleteVariations'])->name('variation.delete');
+
 
     Route::controller(AdminController::class)->group(function () {
         Route::get('admins', 'index')->name('admins');

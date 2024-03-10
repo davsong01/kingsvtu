@@ -27,7 +27,7 @@ class VariationController extends Controller
         foreach ($variations as $key => $variation) {
             $discount = app('App\Http\Controllers\TransactionController')->getDiscount($product->id, $variation->id);
             $variation->discount = $discount > 0 ? number_format($variation->system_price - $discount) : 0;
-            
+
             // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
             if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->verifiable = 'yes';
@@ -87,5 +87,97 @@ class VariationController extends Controller
 
         \Session::flash('page', 2);
         return back()->with('message', 'Variations Updated succesfully');
+    }
+
+    public function addManualVariations(Request $request, Product $product)
+    {
+
+        // if (isset($request->level)) {
+        //     foreach ($request->level as $key => $level) {
+        //         foreach ($level as $k => $price) {
+        //             dd($price, $k);
+        //             if (!empty($price)) {
+        //                 // Discount::updateOrCreate([
+        //                 //     'customer_level' => $key,
+        //                 //     'product_id' => $product->id,
+        //                 //     'variation_id' => $variation->id,
+        //                 // ], [
+        //                 //     'status' => 'active',
+        //                 //     'customer_level' => $key,
+        //                 //     'product_id' => $request->product_id,
+        //                 //     'variation_id' => $variation->id,
+        //                 //     'price' => $price
+        //                 // ]);
+        //             }
+        //         }
+        //     }
+        // }
+
+        // Create the variation
+        if (isset($request->system_name)) {
+            foreach ($request->system_name as $key => $variation) {
+                // dd($variation, $key, $request->all(), $request->slug[$key]);
+                $variation = Variation::updateOrCreate([
+                    'product_id' => $product->id,
+                    'category_id' => $product->category_id,
+                    'api_id' => $product->api_id,
+                    'api_name' =>  $request->system_name[$key],
+                    'slug' => $request->slug[$key],
+                ], [
+                    'product_id' => $request->product_id,
+                    'category_id' => $product->category_id,
+                    'api_id' => $product->api_id,
+                    'api_name' =>  $request->system_name[$key],
+                    'slug' => $request->slug[$key],
+                    'system_name' =>  $request->system_name[$key],
+                    'fixed_price' => $request->fixed_price[$key],
+                    'api_price' => $request->system_price[$key],
+                    'system_price' => $request->system_price[$key],
+                    'min' => $request->minimum_amount[$key] ?? null,
+                    'max' => $request->maximum_amount[$key] ?? null,
+                    'status' => $request->status[$key]
+                ]);
+
+
+                if (isset($request->level)) {
+                    foreach ($request->level as $l => $level) {
+                        foreach ($level as $price) {
+                            if (!empty($price)) {
+                                Discount::updateOrCreate([
+                                    'customer_level' => $l,
+                                    'product_id' => $product->id,
+                                    'variation_id' => $variation->id,
+                                ], [
+                                    'status' => 'active',
+                                    'customer_level' => $l,
+                                    'product_id' => $product->id,
+                                    'variation_id' => $variation->id,
+                                    'price' => $level[$key]
+                                ]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        \Session::flash('page', 2);
+        return back()->with('message', 'Variations added succesfully');
+    }
+
+    public function deleteVariations(Variation $variation)
+    {
+
+        if ($variation->discounts->count() > 0) {
+            foreach ($variation->discounts as $dist) {
+                $dist->delete();
+            }
+        }
+
+        // dd($variation);
+        $variation->delete();
+
+        return back()->with('message', 'Variation deleted successfully');
+        // Discount::
     }
 }
