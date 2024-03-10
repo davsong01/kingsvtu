@@ -31,7 +31,8 @@ class BlackListController extends Controller
     {
         $request->validate([
             'type' => 'required',
-            'value' => 'required'
+            'value' => 'required',
+            'status' => 'required'
         ]);
 
         BlackList::create([
@@ -73,7 +74,8 @@ class BlackListController extends Controller
         //
     }
 
-    public function status (Request $request) {
+    public function status(Request $request)
+    {
         $request->validate([
             'status' => 'required',
             'id' => 'required|integer'

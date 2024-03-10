@@ -48,7 +48,7 @@
                                                 </div>
                                                 <div class="card-content">
                                                     <div class="card-body">
-                                                        <form action="{{route('update.kyc.details.process')}}" method="POST" autocomplete="off">
+                                                        <form action="{{route('update.kyc.details.process')}}" method="POST" autocomplete="off" enctype="multipart/form-data">
                                                             @csrf
                                                             <div class="row">
                                                                 <div class="col-md-6">   
@@ -170,6 +170,32 @@
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>
+                                                                @if(kycStatus('IDCARD', auth()->user()->customer->id)['status'] == 'verified')
+                                                                <div class="col-md-6 mb-2"> 
+                                                                    <label for="idcard">ID CARD</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                                    <input autocomplete="false" type="text" class="form-control" value="{{(kycStatus('IDCARDTYPE', auth()->user()->customer->id)['value'] ) }}" disabled>
+                                                                </div>
+                                                                @else 
+                                                                    <div class="col-md-6">   
+                                                                        <fieldset class="form-group">
+                                                                            <label for="IDCARDTYPE">ID Card Type</label>
+                                                                            <select id="IDCARDTYPE" name="IDCARDTYPE" class="form-control" required>
+                                                                                <option value="">Select</option>
+                                                                                <option value="Driver's Licence">Driver's Licence</option>
+                                                                                <option value="Voter's Card">Voter's Card</option>
+                                                                                <option value="Utility Bill">Utility Bill</option>
+                                                                                <option value="International Passport">International Passport</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                    </div>
+                                                                    <div class="col-md-6">   
+                                                                    <fieldset class="form-group">
+                                                                        <label for="IDCARD">ID CARD <small style="font-weight: bold;color:red">(Not more that 200 kilobytes)</small> </label>
+                                                                        <input type="file" name="IDCARD"  class="form-control" required>
+                                                                    </fieldset>
+                                                                </div>
+                                                                @endif
+                                                                
                                                             </div>
                                                             
                                                             @if(getFinalKycStatus(auth()->user()->customer->id) == 'unverified')

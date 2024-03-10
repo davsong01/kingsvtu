@@ -115,7 +115,7 @@ if (!function_exists("adminPermission")) {
             ],
         ];
 
-        if(!empty($key)){
+        if (!empty($key)) {
             $perm = $permissions[$key];
         }
 
@@ -131,6 +131,7 @@ if (!function_exists("specialVerifiableVariations")) {
         ];
     }
 }
+
 
 if (!function_exists("getStates")) {
     function getStates()

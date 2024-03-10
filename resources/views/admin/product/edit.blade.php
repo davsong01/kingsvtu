@@ -148,7 +148,6 @@
                                                                                 </fieldset>
                                                                             </div>
                                                                             <div class="col-md-6">
-                                                                                
                                                                                 <fieldset class="form-group">
                                                                                     <label for="helperText">API to use</label>
                                                                                     <select class="form-control" name="api" id="api" required>
@@ -157,6 +156,10 @@
                                                                                             <option value="{{ $item->id  }}" {{ $product->api_id == $item->id ? 'selected' : ''}}>{{ $item->name }}</option>
                                                                                         @endforeach
                                                                                     </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="servercode">Server Code/Server Token</label>
+                                                                                    <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ $product->servercode ?? old('servercode')}}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="status">Status</label>

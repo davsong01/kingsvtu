@@ -41,6 +41,7 @@ class ProductController extends Controller
             "has_variations" => "required",
             "fixed_price" => "nullable",
             "system_price" => "nullable",
+            "servercode" => "nullable",
             "image" => "required|mimes:jpeg,png|max:1024",
             "allow_subscription_type" => 'nullable'
         ]);
@@ -80,6 +81,7 @@ class ProductController extends Controller
                 "quantity_graduation" => $request->quantity_graduation,
                 "min" => $request->min,
                 "max" => $request->max,
+                "servercode" => $request->servercode,
                 "allow_subscription_type" => $request->allow_subscription_type
             ]
         );
@@ -104,7 +106,7 @@ class ProductController extends Controller
         $variations = Variation::where('product_id', $product->id)->where('api_id', $product->api_id)->get();
         $apis = API::where('status', 'active')->get();
         $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
-        
+
         return view('admin.product.edit', compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }
 
@@ -130,6 +132,7 @@ class ProductController extends Controller
             "quantity_graduation" => 'nullable',
             "min" => 'nullable',
             "max" => 'nullable',
+            "servercode" => "nullable",
             "allow_subscription_type" => "nullable"
         ]);
 
@@ -155,6 +158,7 @@ class ProductController extends Controller
             "max" => $request->max,
             "system_price" => $request->system_price,
             "allow_quantity" => $request->allow_quantity,
+            "servercode" => $request->servercode,
             "quantity_graduation" => $request->quantity_graduation,
             "allow_subscription_type" => $request->allow_subscription_type
         ]);

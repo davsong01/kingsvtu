@@ -43,7 +43,6 @@ class CustomerController extends Controller
         $customers = $customers->latest()->paginate(20);
 
         return view('admin.customers.index', ['customers' => $customers]);
-
     }
 
     function singleCustomer($id)
@@ -86,11 +85,13 @@ class CustomerController extends Controller
             'lastname' => 'required',
         ]);
 
-        $update = User::where('id', $id)->update([
-            'status' => $request->status,
-            'firstname' => $request->firstname,
-            'lastname' => $request->lastname,
-        ]);
+        // $update = User::where('id', $id)->update([
+        //     'status' => $request->status,
+        //     'firstname' => $request->firstname,
+        //     'lastname' => $request->lastname,
+        // ]);
+
+        $update = User::where('id', $id)->update($request->except(['_token', 'ip']));
 
         if ($update) {
             return back()->with('message', 'Update successful!');
@@ -99,7 +100,8 @@ class CustomerController extends Controller
         }
     }
 
-    function filterEmail (Request $request) {
+    function filterEmail(Request $request)
+    {
         $key = "%$request->key%";
         $user = User::where('email', 'like', $key)->get();
 

@@ -122,6 +122,10 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
+                                                                                    <label for="servercode">Server Code/Server Token</label>
+                                                                                    <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ old('servercode')}}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
                                                                                     <label for="status">Status</label>
                                                                                     <select class="form-control" name="status" id="status" required>
                                                                                         <option value="">Select</option>

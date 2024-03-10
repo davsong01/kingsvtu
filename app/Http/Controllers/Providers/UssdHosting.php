@@ -304,35 +304,35 @@ class UssdHosting extends Controller
 
     public function buyData()
     {
-
     }
 
     function query($request, $api)
     {
         try {
-            $item = explode('-',$request['product_slug']);
-            $payload = [
-                'phone' => $request['phone'],
-                'value' => $request['amount'],
-                'token' => $api->api_key,
+            $url = $api->live_base_url;
+
+            $payload = array(
+                "ussd" => $request['variation_slug'],
+                "servercode" => $request['servercode'],
+                "token" => $api->api_key,
                 'refid' => $request['request_id'],
-            ];
+                "multistep" => "{$request['variation_slug']}, {$request['unique_element']}",
+                // "multistep" => "*312*8*2*1*1*4*1#,{$request['unique_element']}",
+            );
 
-            if (count($item) > 1) {
-                $payload['product'] = $request['variation_name'];
-                $url = $api->live_base_url . "vend/data/{$item[0]}/gifting/vend/";
-            } else {
-                $url = $api->live_base_url . 'vend/airtime/vend/';
+            $payload = http_build_query($payload);
+            $res = $this->basicApiCall($url, $payload, [], 'POST');
+            dd($res);
+            if (env('ENT') == 'local') {
+                $res = [
+                    "success" => "true",
+                    "comment" => "ADDITIONAL_COMMENT",
+                    "refid" => $request['request_id'],
+                    "log_id" => "123344"
+                ];
             }
 
-            if (env('APP_ENV') != 'local') {
-                $res = Http::post($url);
-                $res = $res->object();
-            } else {
-                $res = json_decode('{"success": true,"comment": "Purchase of NGN1000.00 XXXXXX Airtime at NGN968.00 on 23480xxxxxxxx. Product purchase successful","data": {"log_id": 3200399184,"cost": "968.00","wallet_before": "302,860.20","wallet_post": "303,828.20"}}');
-            }
-
-            if ($res->success) {
+            if (isset($res['success']) && ($res['success'] == "true" || $res['success'] == true)) {
                 $format = [
                     'status' => 'delivered',
                     'user_status' => 'delivered',
@@ -371,10 +371,11 @@ class UssdHosting extends Controller
         }
     }
 
-    function requery($api, $request_id){
-        
+    function requery($api, $request_id)
+    {
+
         try {
-            $url = $api->live_base_url . "status/?token=". $api->api_key."&refid=". $request_id;
+            $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
 
             if (env('APP_ENV') != 'local') {
                 $res = Http::post($url);

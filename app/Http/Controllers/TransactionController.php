@@ -195,7 +195,7 @@ class TransactionController extends Controller
         $api = $variation->api ?? $product->api;
         // Get Api
         $file_name = $api->file_name;
-
+        $request['servercode'] = $variation->product->servercode;
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
 
         try {
@@ -910,7 +910,7 @@ class TransactionController extends Controller
             $data['unit_price'] = $amount;
             $data['descr'] = $request->reason;
             $data['reason'] = $reason;
-            $data['status'] = 'success';
+            $data['status'] = 'delivered';
             $data['admin_id'] = auth()->user()->admin->id;
 
             $controller->logTransaction($data);

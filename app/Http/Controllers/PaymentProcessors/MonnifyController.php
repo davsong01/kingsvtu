@@ -129,7 +129,7 @@ class MonnifyController extends Controller
                 "accountName" => $data["accountName"] ?? $data["customerName"],
                 "currencyCode" => "NGN",
                 "contractCode" => $this->api->contract_id,
-                "getAllAvailableBanks" => true,
+                "getAllAvailableBanks" => $data["getAllAvailableBanks"],
                 "accountReference" => $this->generateRequestId(),
             ]);
 

@@ -263,10 +263,16 @@ class DashboardController extends Controller
             "STATE" => "nullable",
             "LGA" => "nullable",
             "DOB" => "nullable",
-            "BVN" => "nullable"
+            "BVN" => "nullable",
+            "IDCARD" => "sometimes|image|max:200",
+            "IDCARDTYPE" => "nullable"
         ]);
 
-        $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA'];
+        if (!empty($request->IDCARD)) {
+            $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
+        }
+
+        $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
         foreach ($input as $key => $value) {
             if (in_array($key, $instantVerify)) {
                 $this->updateKycData($key, $value, auth()->user()->customer->id, 'verified');
@@ -274,7 +280,7 @@ class DashboardController extends Controller
                 $this->updateKycData($key, $value, auth()->user()->customer->id, 'unverified');
             }
         }
-
+       
         // if (!empty($request->BVN)) {
         //     // Verify BVN first
         //     $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
@@ -307,13 +313,14 @@ class DashboardController extends Controller
         $data = [
             'BVN' => $request->BVN ?? kycStatus('BVN', auth()->user()->customer->id)['value'],
             'customerName' => $name,
-            'accountName' => config('app.name') . '-' . $firstname,
+            'accountName' => $firstname,
             'customerEmail' => auth()->user()->email,
             'customer_id' => auth()->user()->customer->id,
+            'getAllAvailableBanks' => true,
         ];
 
         $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
-        if($reserved['status'] && $reserved['status'] == 'success'){
+        if ($reserved['status'] && $reserved['status'] == 'success') {
             $this->updateKycData('BVN', $request->BVN, auth()->user()->customer->id, 'verified');
 
             auth()->user()->customer->update([
@@ -321,8 +328,8 @@ class DashboardController extends Controller
             ]);
 
             return back()->with('message', 'KYC Update completed');
-        }else{
-            return back()->with('error', 'Error: '. $reserved['data']);
+        } else {
+            return back()->with('error', 'Error: ' . $reserved['data']);
         }
     }
 
@@ -413,7 +420,7 @@ class DashboardController extends Controller
             $data['discount'] = 0;
             $data['unit_price'] = $amount;
             $data['balance_after'] = walletBalance(auth()->user()) + $amount;
-            $data['status'] = 'success';
+            $data['status'] = 'delivered';
 
             $controller->logTransaction($data);
             $controller->logEarnings(

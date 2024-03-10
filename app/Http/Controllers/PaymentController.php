@@ -180,7 +180,7 @@ class PaymentController extends Controller
                     
                     $transaction->update([
                         'balance_after' => $balance + $amount,
-                        'status' => 'success',
+                        'status' => 'delivered',
                         'descr' => 'Wallet Funding Via Account: ' . $call['account_number'] . ' of ' . getSettings()->currency . number_format($amount, 2) . ' was successful',
                     ]);
 
@@ -232,7 +232,7 @@ class PaymentController extends Controller
                 // Log basic transaction
                 $transaction->update([
                     'balance_after' => $balance + $paid,
-                    'status' => 'success',
+                    'status' => 'delivered',
                     'descr' => 'Wallet Funding of ' . getSettings()->currency . number_format($paid, 2) . ' was successful',
                 ]);
                 // Log wallet

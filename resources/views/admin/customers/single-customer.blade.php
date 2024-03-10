@@ -368,8 +368,31 @@ use App\Models\BlackList;
                                                             <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                             <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" disabled>
                                                             @else
-                                                            <label for="lastname">Date of Birth (As associated with your BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <label for="lastname">Date of Birth (As associated with BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="date" name="DOB"  class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('IDCARDTYPE', $user->customer->id)['status'] == 'verified')
+                                                            <label for="IDCARDTYPE">ID Card Type</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                            <input type="text" class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}" disabled>
+                                                            @else
+                                                            <label for="IDCARDTYPE">ID Card Type</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            <input type="date" name="IDCARDTYPE"  class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}" required>
+                                                            @endif
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <fieldset class="form-group">
+                                                            @if(kycStatus('IDCARD', $user->customer->id)['status'] == 'verified')
+                                                            <label for="IDCARD">ID Card</label><span class="verified"><i class="fa fa-check"></i> Verifiedd</span> <br>
+                                                            <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value'])}}" onclick="zoomImg(this)">
+                                                            @else
+                                                            <label for="IDCARD">ID Card</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                            
+                                                            <input type="date" name="IDCARD"  class="form-control" value="{{ kycStatus('IDCARD', $user->customer->id)['value'] }}" required>
                                                             @endif
                                                         </fieldset>
                                                     </div>
@@ -431,27 +454,11 @@ use App\Models\BlackList;
                                         <div class="tab-pane" id="actions" aria-labelledby="about-tab"
                                             role="tabpanel">
                                             <div class="row">
-                                                {{-- <div class="col-md-3 col-sm-4">
-                                                    <div class="card bg-lighten-2 p-0 bg-warning">
-                                                        <div class="card-body">
-                                                            <div class="card-content">
-                                                                <h5 class="card-title white">
-                                                                    Verify Email
-                                                                </h5>
-                                                                <p class="text-center">
-                                                                    @if ($user->email_verified_at)
-                                                                        Verified
-                                                                    @else
-                                                                        Unverified
-                                                                    @endif
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
+                                                
                                                 @php
                                                     // check blacklist status
                                                     $mail = BlackList::where('value', $user->email)->first();
+                                                  
                                                 @endphp
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-dark">
@@ -520,13 +527,13 @@ use App\Models\BlackList;
                                                                 @else
                                                                     <form action="{{ route('customer-blacklist.store') }}"
                                                                         method="POST">
+                                                                        
                                                                         @csrf
                                                                         <input type="hidden" name="type"
                                                                             value="biller">
                                                                         <input type="hidden" name="value"
                                                                             value="{{ $user->phone }}">
-                                                                        <input type="hidden" name="status"
-                                                                            value="active">
+                                                                        <input type="hidden" name="status" value="active">
                                                                         <button class="btn btn-danger" type="submit">Add
                                                                             to blacklist</button>
                                                                     </form>
@@ -546,9 +553,29 @@ use App\Models\BlackList;
             </section>
         </div>
     </div>
+    <div id="myModal" class="modal modalPix">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+            <img class="modal-content" id="img01">
+        </div>
+    </div>
+@endsection
 
 @section('page-script')
+
     <script>
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+        var modalImg = document.getElementById("img01");
+
+        modalImg.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        function zoomImg(e){
+            modal.style.display = "block";
+            modalImg.src = e.src;
+        }
+
         function toggleStatus() {
             let check = confirm('Are you sure you want to perform this action?');
             if (check) {
