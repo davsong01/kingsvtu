@@ -470,7 +470,7 @@ Credited Amount: $amount<br>
 This credit to your wallet provides you with the flexibility to seamlessly make transactions and enjoy our services. Whether it's making a purchase, availing discounts, or accessing exclusive features, your wallet balance is now ready for use.
 __here;
 
-            logEmails($user->email, 'Referral Commission', $transEmail);
+            logEmails($user->email, 'Wallet Credit', $transEmail);
             return back()->with('message', getSettings()->currency . number_format($amount, 2) . " withdrawn to wallet successfully!");
         } catch (\Throwable $th) {
             //throw $th;

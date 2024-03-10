@@ -8,6 +8,7 @@ use App\Mail\EmailMessages;
 use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\WalletController;
+use Illuminate\Support\Facades\Route;
 
 if (!function_exists("logEmails")) {
     function logEmails($email_to, $subject, $body)
@@ -97,41 +98,52 @@ if (!function_exists("adminPermission")) {
             'menu' => [],
             'permission' => []
         ];
+
+        $menuItems = [
+            'Dashboard',
+            'Annoucement',
+            'Catalogue',
+            'Customers',
+            'User Management',
+            'Financials',
+            'My Profile',
+            'Call Analysis',
+            'KYC Management',
+            'KYC Management',
+            'Payment Gateway Settings',
+            'General Settings',
+        ];
+
+        $routes = [];
+
+        foreach (Route::getRoutes() as $route) {
+            $routes[] = $route->getName();
+        }
         $permissions = [
+            'Admin' => [
+                'menu' => $menuItems,
+                'permission' => Arr::except($routes, ['product.*'])
+            ],
             'Manager' => [
-                'menu' => [
-                    'Dashboard',
-                    'Annoucement'
-                ],
-                'permission' => [
-                    'duplicate.product',
-                    'api.balance',
-                    'product.index'
-                ]
+                'menu' => Arr::except($menuItems, []),
+                'permissions' =>  Arr::except($routes, []),
             ],
             'Support' => [
-                // 'duplicate.product',
-                'api.balance'
+                'menu' => Arr::except($menuItems, []),
+                'permissions' =>  Arr::except($routes, []),
             ],
         ];
 
+<<<<<<< HEAD
         if (!empty($key)) {
             $perm = $permissions[$key];
+=======
+        if(!empty($key)){
+            $perm = $permissions[$key] ?? $perm;
+>>>>>>> 8a86173 (not working)
         }
 
         return $perm;
-    }
-}
-
-if (!function_exists("adminRole")) {
-    function adminPermission($role)
-    {
-
-        $perms = [
-            'Manager' => [],
-            'Support' => [],
-            'Admin' => [],
-        ];
     }
 }
 
@@ -1253,21 +1265,6 @@ if (!function_exists("starMiddle")) {
 
 if (!function_exists("announcements")) {
     function announcements($type)
-    {
-        $ann = $ann = Announcement::all();
-
-        if (count($ann)) {
-            if ($type == 'scroll') {
-                return $ann[1];
-            } else {
-                return $ann[0];
-            }
-        }
-    }
-}
-
-if (!function_exists("rolePermissions")) {
-    function rolePermissions($type)
     {
         $ann = $ann = Announcement::all();
 
