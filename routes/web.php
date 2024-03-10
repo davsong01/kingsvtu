@@ -117,6 +117,10 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->gr
     Route::post('manual-variations-add/{product}', [VariationController::class, 'addManualVariations'])->name('manual.variations.add');
     Route::get('delete-variations/{variation}', [VariationController::class, 'deleteVariations'])->name('variation.delete');
 
+    Route::post('create-reserved-account/{customer}', [CustomerController::class, 'addReservedAccounts'])->name('create.reserved.account');
+
+    
+
 
     Route::controller(AdminController::class)->group(function () {
         Route::get('admins', 'index')->name('admins');

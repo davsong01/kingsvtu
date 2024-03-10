@@ -131,6 +131,7 @@ class MonnifyController extends Controller
                 "contractCode" => $this->api->contract_id,
                 "getAllAvailableBanks" => $data["getAllAvailableBanks"],
                 "accountReference" => $this->generateRequestId(),
+                "preferredBanks" => $data["preferredBanks"],
             ]);
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');

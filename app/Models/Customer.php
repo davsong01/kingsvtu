@@ -26,7 +26,7 @@ class Customer extends Model
 
     public function reserved_accounts()
     {
-        return $this->hasMany(ReservedAccountNumber::class, 'customer_id');
+        return $this->hasMany(ReservedAccountNumber::class, 'customer_id')->orderBy('created_at', 'DESC');
     }
 
     public function user()
@@ -34,8 +34,8 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function transactions () {
+    public function transactions()
+    {
         return $this->hasMany(TransactionLog::class);
     }
-
 }

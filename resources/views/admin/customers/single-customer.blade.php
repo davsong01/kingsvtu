@@ -3,21 +3,26 @@ use App\Models\BlackList;
 ?>
 @extends('layouts.app')
 @section('page-css')
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
          .verified{
-        color: green !important;
-        font-size: 13px;
-        margin-top: -6px;
-        display: inline-block;
-        margin-left: 5px;
-    }
-    .unverified{
-        color: orange !important;
-        font-size: 13px;
-        margin-top: -6px;
-        display: inline-block;
-        margin-left: 5px;
-    }
+            color: green !important;
+            font-size: 13px;
+            margin-top: -6px;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        .unverified{
+            color: orange !important;
+            font-size: 13px;
+            margin-top: -6px;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .select2-container {
+            width: 100% !important;
+        }
     </style>
 @endsection
 @section('content')
@@ -400,7 +405,7 @@ use App\Models\BlackList;
                                                         <fieldset class="form-group">
                                                             @if(kycStatus('BVN', $user->customer->id)['status'] == 'verified')
                                                             <label for="bvn">BVN</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                            <input autocomplete="false" type="text" class="form-control" value="{{ starMiddle(kycStatus('BVN', $user->customer->id)['value'] ) }}" disabled>
+                                                            <input autocomplete="false" type="text" class="form-control" value="{{ kycStatus('BVN', $user->customer->id)['value'] }}" disabled>
                                                             @else
                                                             <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                             <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>
@@ -415,6 +420,10 @@ use App\Models\BlackList;
                                             @empty($accounts)
                                                 <p>No reserved account has been created by this customer</p>
                                             @else
+                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#reserved">
+                                                Create Reserved Account
+                                            </button>
+
                                                 <table able class="table table-striped dataex-html5-selectors">
                                                     <thead>
                                                         <tr>
@@ -553,6 +562,61 @@ use App\Models\BlackList;
             </section>
         </div>
     </div>
+    <div class="modal fade text-left" id="reserved" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title white" id="myModalLabel160">Add Reserved account for {{ $user->name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </div>
+                <form action="{{route('create.reserved.account', $user->customer->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            {{-- <div class="col-md-3">
+                                <fieldset class="form-group">
+                                    <label for="trans_lower_amt">Funding Lower Limit</label>
+                                    <input type="text" class="form-control" id="trans_lower_amt" name="trans_lower_amt"  value="" placeholder="Transaction Lower Limit" required>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-3">
+                                <fieldset class="form-group">
+                                    <label for="trans_upper_amt">Funding Upper Limit</label>
+                                    <input type="text" class="form-control" id="trans_upper_amt" name="trans_upper_amt"  value="" placeholder="Transaction Upper Limit" required>
+                                </fieldset>
+                            </div> --}}
+                            <div class="col-md-12">
+                                
+                                <fieldset class="form-group">
+                                    <label for="bank" style="display: block">Bank(s)</label>
+                                    
+                                    <select class="form-control js-example-basic-single" name="bank[]" id="bank" required multiple>
+                                        <option value="">Select</option>
+                                        {{-- <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option> --}}
+                                        <option value="035" {{ old('bank') == '035' ? 'selected' : ''}}>Wema Bank</option>
+                                        <option value="232" {{ old('bank') == '232' ? 'selected' : ''}}>Sterling Bank</option>
+                                        {{-- <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option>  --}}
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <input type="hidden" name="bvn" value="{{ kycStatus('BVN', $user->customer->id)['value']  }}">
+                        <input type="hidden" name="customer_id" value="{{ $user->customer->id }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-1"><span class="d-none d-sm-block">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <div id="myModal" class="modal modalPix">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <img class="modal-content" id="img01">
@@ -561,7 +625,14 @@ use App\Models\BlackList;
 @endsection
 
 @section('page-script')
-
+    {{-- <script src="{{asset('asset/js/app-logistics-dashboard.js')}}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2();
+        });
+        
+    </script>
     <script>
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("close")[0];
