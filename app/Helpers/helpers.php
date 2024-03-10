@@ -93,7 +93,10 @@ if (!function_exists("getSettings")) {
 if (!function_exists("adminPermission")) {
     function adminPermission($key)
     {
-        $perm = [];
+        $perm = [
+            'menu' => [],
+            'permission' => []
+        ];
         $permissions = [
             'Manager' => [
                 'menu' => [
