@@ -73,7 +73,6 @@
                                     <input type="number" class="form-control tiny" id="max" name="max[]"  value="{{ old('max') }}">
                                 </fieldset>
                             </div>
-                            
                             <div class="col-md-2">
                                 <fieldset class="form-group">
                                     <label for="name">System Price ({!! getSettings()['currency']!!})</label>
