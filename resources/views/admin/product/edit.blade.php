@@ -286,16 +286,7 @@
                                                                                             </select>
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                    <div class="col-md-2">
-                                                                                        <fieldset class="form-group">
-                                                                                            <label for="multistep">Use Multistep</label>
-                                                                                            <select class="form-control tiny" name="multistep[{{ $variation->id }}]" id="multistep">
-                                                                                                <option value="">Select</option>
-                                                                                                <option value="yes" {{ $variation->multistep == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                                <option value="no" {{ $variation->multistep == 'no' ? 'selected' : ''}}>No</option> 
-                                                                                            </select>
-                                                                                        </fieldset>
-                                                                                    </div>
+                                                                                    
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="status">Status</label>
@@ -303,6 +294,16 @@
                                                                                                 <option value="">Select</option>
                                                                                                 <option value="active" {{ $variation->status == 'active' ? 'selected' : ''}}>Active</option>
                                                                                                 <option value="inactive" {{ $variation->status == 'inactive' ? 'selected' : ''}}>InActive</option>
+                                                                                            </select>
+                                                                                        </fieldset>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="multistep">Use Multistep</label>
+                                                                                            <select class="form-control tiny" name="multistep[{{ $variation->id }}]" id="multistep">
+                                                                                                <option value="">Select</option>
+                                                                                                <option value="yes" {{ $variation->multistep == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                                <option value="no" {{ $variation->multistep == 'no' ? 'selected' : ''}}>No</option> 
                                                                                             </select>
                                                                                         </fieldset>
                                                                                     </div>
@@ -415,16 +416,7 @@
                     </select>
                 </fieldset>
             </div>
-            <div class="col-md-2">
-                <fieldset class="form-group">
-                    <label for="multistep">Use Multistep</label>
-                    <select class="form-control tiny" name="multistep[]" id="multistep">
-                        <option value="">Select</option>
-                        <option value="yes" {{ old('multistep') == 'yes' ? 'selected' : ''}}>Yes</option>
-                        <option value="no" {{ old('multistep') == 'no' ? 'selected' : ''}}>No</option> 
-                    </select>
-                </fieldset>
-            </div>
+            
             <div class="col-md-2">
                 <fieldset class="form-group">
                     <label for="status">Status</label>
@@ -432,6 +424,16 @@
                         <option value="">Select</option>
                         <option value="active" {{ old('status') == 'active' ? 'selected' : ''}}>Active</option>
                         <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : ''}}>InActive</option>
+                    </select>
+                </fieldset>
+            </div>
+            <div class="col-md-2">
+                <fieldset class="form-group">
+                    <label for="multistep">Use Multistep</label>
+                    <select class="form-control tiny" name="multistep[]" id="multistep">
+                        <option value="">Select</option>
+                        <option value="yes" {{ old('multistep') == 'yes' ? 'selected' : ''}}>Yes</option>
+                        <option value="no" {{ old('multistep') == 'no' ? 'selected' : ''}}>No</option> 
                     </select>
                 </fieldset>
             </div>
