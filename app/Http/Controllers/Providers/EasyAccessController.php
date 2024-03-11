@@ -578,7 +578,7 @@ class EasyAccessController extends Controller
         }
     }
 
-    public function query($request, $api)
+    public function query($request, $api, $variation=null)
     {
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];

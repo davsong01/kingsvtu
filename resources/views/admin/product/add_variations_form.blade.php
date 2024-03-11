@@ -18,11 +18,10 @@
                                     <input type="text" class="form-control tiny" id="system_name" name="system_name[]"  value="" placeholder="Variation name" required>
                                 </fieldset>
                             </div>
-                        
                             <div class="col-md-3">
                                 <fieldset class="form-group">
-                                    <label for="name">Slug/USSD String</label>
-                                    <input type="text" class="form-control tiny" id="slug" name="slug[]"  value="" placeholder="Variation slug or USSD string" required>
+                                    <label for="name">Slug</label>
+                                    <input type="text" class="form-control tiny" id="slug" name="slug[]"  value="" placeholder="Variation slug" required>
                                 </fieldset>
                             </div>
                             <div class="col-md-2">
@@ -37,6 +36,16 @@
                             </div>
                             <div class="col-md-2">
                                 <fieldset class="form-group">
+                                    <label for="multistep">Use Multistep</label>
+                                    <select class="form-control tiny" name="multistep[]" id="multistep">
+                                        <option value="">Select</option>
+                                        <option value="yes" {{ old('multistep') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                        <option value="no" {{ old('multistep') == 'no' ? 'selected' : ''}}>No</option> 
+                                    </select>
+                                </fieldset>
+                            </div>
+                            <div class="col-md-2">
+                                <fieldset class="form-group">
                                     <label for="status">Status</label>
                                     <select class="form-control tiny" name="status[]" id="status" required>
                                         <option value="">Select</option>
@@ -45,6 +54,25 @@
                                     </select>
                                 </fieldset>
                             </div>
+                            <div class="col-md-4">
+                                <fieldset class="form-group">
+                                    <label for="ussd_string">USSD String</label>
+                                    <input type="text" class="form-control tiny" id="ussd_string" name="ussd_string[]"  value="{{ old('ussd_string') }}">
+                                </fieldset>
+                            </div>
+                            <div class="col-md-2">
+                                <fieldset class="form-group">
+                                    <label for="min">Min Amount</label>
+                                    <input type="number" class="form-control tiny" id="min" name="min[]"  value="{{ old('min') }}">
+                                </fieldset>
+                            </div>
+                            <div class="col-md-2">
+                                <fieldset class="form-group">
+                                    <label for="max">Max Amount</label>
+                                    <input type="number" class="form-control tiny" id="max" name="max[]"  value="{{ old('max') }}">
+                                </fieldset>
+                            </div>
+                            
                             <div class="col-md-2">
                                 <fieldset class="form-group">
                                     <label for="name">System Price ({!! getSettings()['currency']!!})</label>

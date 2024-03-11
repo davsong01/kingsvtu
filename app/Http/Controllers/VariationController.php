@@ -75,10 +75,13 @@ class VariationController extends Controller
             $data = [
                 'system_name' => $request->system_name[$variation],
                 'slug' => $request->slug[$variation],
+                'ussd_string' => $request->ussd_string[$variation],
                 'system_price' => $request->system_price[$variation],
                 'fixed_price' => $request->fixed_price[$variation],
                 'min' => $request->min[$variation] ?? null,
                 'max' => $request->max[$variation] ?? null,
+                'ussd_string' => $request->ussd_string[$variation] ?? null,
+                'multistep' => $request->multistep[$variation] ?? null,
                 'status' => $request->status[$variation],
             ];
 
@@ -91,28 +94,6 @@ class VariationController extends Controller
 
     public function addManualVariations(Request $request, Product $product)
     {
-
-        // if (isset($request->level)) {
-        //     foreach ($request->level as $key => $level) {
-        //         foreach ($level as $k => $price) {
-        //             dd($price, $k);
-        //             if (!empty($price)) {
-        //                 // Discount::updateOrCreate([
-        //                 //     'customer_level' => $key,
-        //                 //     'product_id' => $product->id,
-        //                 //     'variation_id' => $variation->id,
-        //                 // ], [
-        //                 //     'status' => 'active',
-        //                 //     'customer_level' => $key,
-        //                 //     'product_id' => $request->product_id,
-        //                 //     'variation_id' => $variation->id,
-        //                 //     'price' => $price
-        //                 // ]);
-        //             }
-        //         }
-        //     }
-        // }
-
         // Create the variation
         if (isset($request->system_name)) {
             foreach ($request->system_name as $key => $variation) {
@@ -135,9 +116,10 @@ class VariationController extends Controller
                     'system_price' => $request->system_price[$key],
                     'min' => $request->minimum_amount[$key] ?? null,
                     'max' => $request->maximum_amount[$key] ?? null,
+                    'ussd_string' => $request->ussd_string[$key] ?? null,
+                    'multistep' => $request->multistep[$key] ?? null,
                     'status' => $request->status[$key]
                 ]);
-
 
                 if (isset($request->level)) {
                     foreach ($request->level as $l => $level) {

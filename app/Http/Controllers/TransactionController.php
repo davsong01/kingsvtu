@@ -196,7 +196,7 @@ class TransactionController extends Controller
         // Get Api
         $file_name = $api->file_name;
         $request['servercode'] = $variation->product->servercode;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api);
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation);
 
         try {
             //code...

@@ -57,7 +57,7 @@ class VtpassController extends Controller
         }
     }
 
-    public function query($request, $api)
+    public function query($request, $api, $variation=null)
     {
         // Post data
         try {

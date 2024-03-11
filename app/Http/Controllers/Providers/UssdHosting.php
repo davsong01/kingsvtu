@@ -306,23 +306,35 @@ class UssdHosting extends Controller
     {
     }
 
-    function query($request, $api)
+    function query($request, $api, $variation = null)
     {
         try {
             $url = $api->live_base_url;
+            if ($variation->multistep == 'yes') {
+                // $replace = str_replace("number", "{$request['unique_element']}", $string);
+                // $replace = str_replace("amount", "{$request['total_amount']}", $replace);
+                // $step1 = explode(",", $replace)[0] ?? 'NOT-AVAILABLE';
+                $string = $this->replaceString($request, $variation->ussd_string);
+                $string = str_replace(" ", "", $string);
+                $stringArray = explode(",", $string);
+                $step1 = $stringArray[0];
+                $others = array_slice($stringArray, 1);
+                $others = implode(",", $others);
+            } else {
+                $step1 = $this->replaceString($request, $variation->ussd_string);
+            }
 
             $payload = array(
-                "ussd" => $request['variation_slug'],
+                "ussd" => $step1,
                 "servercode" => $request['servercode'],
                 "token" => $api->api_key,
                 'refid' => $request['request_id'],
-                "multistep" => "{$request['variation_slug']}, {$request['unique_element']}",
-                // "multistep" => "*312*8*2*1*1*4*1#,{$request['unique_element']}",
+                "multistep" => $others ?? null,
             );
 
             $payload = http_build_query($payload);
             $res = $this->basicApiCall($url, $payload, [], 'POST');
-            dd($res);
+            
             if (env('ENT') == 'local') {
                 $res = [
                     "success" => "true",
@@ -369,6 +381,16 @@ class UssdHosting extends Controller
                 'extras' => null,
             ];
         }
+    }
+
+    public function replaceString($request, $string)
+    {
+        $newString = str_replace(
+            array("number", "amount", "phone"), // possible tokens
+            array($request['unique_element'], $request['total_amount'], $request['phone']),
+            $string
+        );
+        return $newString;
     }
 
     function requery($api, $request_id)

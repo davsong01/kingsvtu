@@ -106,7 +106,7 @@ class MonnifyController extends Controller
         }
     }
 
-    public function createReservedAccount(array $data)
+    public function createReservedAccount(array $data, int $admin_id = null)
     {
         $token = $this->login();
 
@@ -150,6 +150,7 @@ class MonnifyController extends Controller
                             'bank_code' => $account['bankCode'] ?? null,
                         ], [
                             'customer_id' => $data["customer_id"] ?? null,
+                            'admin_id' => $admin_id ?? null,
                             'account_reference' => $response['responseBody']['accountReference'] ?? null,
                             'account_number' => $account['accountNumber'] ?? null,
                             'account_name' => $account['accountName'] ?? null,
