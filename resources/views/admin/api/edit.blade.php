@@ -70,7 +70,6 @@
                                                     </fieldset>
                                                 </div>
                                                 <div class="col-md-6">
-                                                   
                                                     <fieldset class="form-group">
                                                         <label for="status">API Status</label>
                                                         <select class="form-control" name="status" id="status" required>

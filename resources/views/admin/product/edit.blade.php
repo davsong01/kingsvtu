@@ -10,21 +10,7 @@
         /* padding: 1.5px !important;
         font-size: 11px !important;
     } */
-    .form-control {
-            display: block;
-            width: 100%;
-            height: calc(1.4em + 0.94rem + 3.7px);
-            padding: 0.47rem 0.8rem;
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 0;
-            color: black;
-            background-color: #FFFFFF;
-            background-clip: padding-box;
-            border: 1px solid #DFE3E7;
-            border-radius: 1px;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-        }
+    
 </style>
 @endsection
 @section('content')
@@ -149,7 +135,7 @@
                                                                             </div>
                                                                             <div class="col-md-6">
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="helperText">API to use</label>
+                                                                                    <label for="api">API to use</label>
                                                                                     <select class="form-control" name="api" id="api" required>
                                                                                         <option value="">Select</option>
                                                                                         @foreach ($apis as $item)
