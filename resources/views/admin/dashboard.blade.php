@@ -34,8 +34,21 @@
                                         <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
                                             <i class="fa fa-server font-medium-5"></i>
                                         </div>
-                                        <div class="text-muted line-ellipsis">IP ADDRESS</div>
-                                        <h4 class="mb-0">{{ $_SERVER['REMOTE_ADDR'] ?? getenv("REMOTE_ADDR") }}</h4>
+                                        <div class="text-muted line-ellipsis">SERVER ADDRESS</div>
+                                        <h4 class="mb-0">{{ $_SERVER['SERVER_ADDR'] }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-12 dashboard-users">
+                            <div class="card text-center">
+                                <div class="card-content">
+                                    <div class="card-body py-1">
+                                        <div class="badge-circle badge-circle-lg badge-circle-light-success mx-auto mb-50">
+                                            <i class="fa fa-server font-medium-5"></i>
+                                        </div>
+                                        <div class="text-muted line-ellipsis">REMOTE ADDRESS</div>
+                                        <h4 class="mb-0">{{ $_SERVER['REMOTE_ADDR'] }}</h4>
                                     </div>
                                 </div>
                             </div>
