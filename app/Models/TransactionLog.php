@@ -27,7 +27,7 @@ class TransactionLog extends Model
 
     public function variation()
     {
-        return $this->belongsTo(Variation::class);
+        return $this->belongsTo(Variation::class, 'variation_id');
     }
 
     public function wallet()

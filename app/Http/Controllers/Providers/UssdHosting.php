@@ -306,14 +306,17 @@ class UssdHosting extends Controller
     {
     }
 
-    function query($request, $api, $variation = null)
+    function query($request, $api, $variation, $product)
     {
         try {
             $url = $api->live_base_url;
+            if ($product->has_variations == 'yes') {
+                $variation = $variation;
+            } else {
+                $variation = $product;
+            }
+
             if ($variation->multistep == 'yes') {
-                // $replace = str_replace("number", "{$request['unique_element']}", $string);
-                // $replace = str_replace("amount", "{$request['total_amount']}", $replace);
-                // $step1 = explode(",", $replace)[0] ?? 'NOT-AVAILABLE';
                 $string = $this->replaceString($request, $variation->ussd_string);
                 $string = str_replace(" ", "", $string);
                 $stringArray = explode(",", $string);
@@ -337,7 +340,7 @@ class UssdHosting extends Controller
             
             if (env('ENT') == 'local') {
                 $res = [
-                    "success" => "true",
+                    "success" => true,
                     "comment" => "ADDITIONAL_COMMENT",
                     "refid" => $request['request_id'],
                     "log_id" => "123344"

@@ -30,11 +30,15 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasColumn('variations', 'ussd_string')) {
-
+            Schema::table('variations', function (Blueprint $table) {
+                $table->dropColumn("ussd_string");
+            });
         }
-        Schema::table('variations', function (Blueprint $table) {
-            $table->dropColumn("primary_marketer");
-            $table->dropColumn("secondary_marketers");
-        }); 
+
+        if (Schema::hasColumn('variations', 'multistep')) {
+            Schema::table('variations', function (Blueprint $table) {
+                $table->dropColumn("multistep");
+            });
+        }
     }
 };

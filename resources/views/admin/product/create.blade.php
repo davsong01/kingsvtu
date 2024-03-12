@@ -99,6 +99,26 @@
                                                                                     <label for="seo_description">SEO Description</label>
                                                                                     <textarea class="form-control" id="seo_description" rows="3" name="seo_description" placeholder="SEO Description">{{ old('seo_description') }}</textarea>
                                                                                 </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Quantity</label>
+                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('allow_quantity') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('allow_quantity') == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Quantity Graduation</label>
+                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ old('quantity_graduation') }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Subscription Type</label>
+                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('allow_subscription_type') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('allow_subscription_type') == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
                                                                             </div>
                                                                             <div class="col-md-6">
                                                                                 <fieldset class="form-group">
@@ -108,7 +128,7 @@
                                                                                 <fieldset class="form-group">
                                                                                     <label for="basicInputFile">Display Image</label>
                                                                                     <div class="custom-file">
-                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="image">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="image" required>
                                                                                         <label class="custom-file-label" for="image">Choose file</label>
                                                                                     </div>
                                                                                 </fieldset>
@@ -124,6 +144,18 @@
                                                                                 <fieldset class="form-group">
                                                                                     <label for="servercode">Server Code/Server Token</label>
                                                                                     <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ old('servercode')}}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="multistep">Use Multistep</label>
+                                                                                    <select class="form-control tiny" name="multistep" id="multistep">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ old('multistep') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ old('multistep') == 'no' ? 'selected' : ''}}>No</option> 
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="ussd_string">USSD String</label>
+                                                                                    <input type="text" class="form-control tiny" id="ussd_string" name="ussd_string"  value="{{ old('ussd_string') }}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="status">Status</label>
@@ -161,26 +193,7 @@
                                                                                     <label for="max">Maimum Amount</label>
                                                                                     <input type="number" class="form-control tiny" id="max" name="max"  value="{{ old('max') }}">
                                                                                 </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Allow Quantity</label>
-                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="yes" {{ old('allow_quantity') == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                        <option value="no" {{ old('allow_quantity') == 'no' ? 'selected' : ''}}>No</option>
-                                                                                    </select>
-                                                                                </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Quantity Graduation</label>
-                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ old('quantity_graduation') }}">
-                                                                                </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Allow Subscription Type</label>
-                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="yes" {{ old('allow_subscription_type') == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                        <option value="no" {{ old('allow_subscription_type') == 'no' ? 'selected' : ''}}>No</option>
-                                                                                    </select>
-                                                                                </fieldset>
+                                                                                
                                                                                 <input type="hidden" value="product.store" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">

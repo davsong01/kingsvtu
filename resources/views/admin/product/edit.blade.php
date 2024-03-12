@@ -148,6 +148,19 @@
                                                                                     <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ $product->servercode ?? old('servercode')}}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
+                                                                                    <label for="multistep">Use Multistep</label>
+                                                                                    <select class="form-control tiny" name="multistep" id="multistep">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->multistep == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->multistep == 'no' ? 'selected' : ''}}>No</option> 
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="ussd_string">USSD String</label>
+                                                                                    <input type="text" class="form-control tiny" id="ussd_string" name="ussd_string"  value="{{ $product->ussd_string }}">
+                                                                                </fieldset>
+                                                                                
+                                                                                <fieldset class="form-group">
                                                                                     <label for="status">Status</label>
                                                                                     <select class="form-control" name="status" id="status" required>
                                                                                         <option value="">Select</option>
@@ -240,13 +253,13 @@
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="api_name">API Name</label>
-                                                                                            <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}" disabled>
+                                                                                            <input type="text" class="form-control tiny" id="api_name" name="api_name[{{ $variation->id }}]"  value="{{ $variation->api_name }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">
                                                                                         <fieldset class="form-group">
                                                                                             <label for="name">API Price ({!! getSettings()['currency']!!})</label>
-                                                                                            <input type="text" class="form-control tiny" disabled id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
+                                                                                            <input type="text" class="form-control tiny" id="api_price" name="api_price[{{ $variation->id }}]"  value="{{ $variation->api_price }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     <div class="col-md-2">

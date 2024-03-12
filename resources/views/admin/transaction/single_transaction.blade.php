@@ -170,7 +170,7 @@
                                                                         @endif
                                                                         @if($transaction->category)
                                                                         <br>
-                                                                        <strong>Variation:</strong>{{ $transaction->variation->system_name }}
+                                                                        <strong>Variation:</strong>{{ $transaction->category->system_name }}
                                                                         @endif
                                                                     @endif
                                                                     @if($transaction->category)

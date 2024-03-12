@@ -73,6 +73,8 @@ class VariationController extends Controller
 
         foreach ($request->variation_id as $variation) {
             $data = [
+                'api_name' => $request->api_name[$variation],
+                'api_price' => $request->api_price[$variation],
                 'system_name' => $request->system_name[$variation],
                 'slug' => $request->slug[$variation],
                 'ussd_string' => $request->ussd_string[$variation],

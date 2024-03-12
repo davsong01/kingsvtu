@@ -185,7 +185,6 @@ class TransactionController extends Controller
 
         $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
         return $pdf->download($transaction['transaction_id'] . '.pdf');
-        // dd($transaction, $transaction_id);
         // return view('customer.receipts.transaction_receipt', compact('transaction'));
     }
 
@@ -195,9 +194,9 @@ class TransactionController extends Controller
         $api = $variation->api ?? $product->api;
         // Get Api
         $file_name = $api->file_name;
-        $request['servercode'] = $variation->product->servercode;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation);
-
+        $request['servercode'] = $variation->product->servercode ?? $product->servercode;
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
+        
         try {
             //code...
             DB::beginTransaction();
@@ -870,7 +869,7 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'reason' => 'required'
         ]);
-        // dd(auth()->user()->admin->id);
+        
         $user = User::where('email', $request->email)->first();
 
         if (!$user) return back()->with('error', 'Account not found!');
