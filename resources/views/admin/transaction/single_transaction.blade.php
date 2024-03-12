@@ -97,6 +97,7 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                    <strong>Request Id:</strong> <br>{{ $transaction->reference_id }} <br>
+                                                                   <strong>IP Address: </strong><br>{{ $transaction->ip_address }} <br>
                                                                    @if(!empty($transaction->extras))
                                                                     <li class="d-flex mb-1">
                                                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
