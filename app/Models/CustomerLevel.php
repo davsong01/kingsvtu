@@ -21,4 +21,11 @@ class CustomerLevel extends Model
         $price = Discount::where('variation_id', $variation_id)->value('price');
         return $price;
     }
+
+    public function product_price($product_id)
+    {
+        $price = null;
+        $price = Discount::where('variation_id', $product_id)->whereNull('variation_id')->value('price');
+        return $price;
+    }
 }

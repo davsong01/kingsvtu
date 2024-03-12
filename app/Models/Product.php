@@ -15,7 +15,7 @@ class Product extends Model
 
     public function variations()
     {
-        return $this->hasMany(Variation::class)->orderBy('created_at','DESC');
+        return $this->hasMany(Variation::class)->orderBy('created_at', 'DESC');
     }
 
     public function api()
@@ -26,5 +26,12 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function customer_level_price($level)
+    {
+        $price = null;
+        $price = Discount::where(['product_id' => $this->id, 'customer_level' => $level])->value('price');
+        return $price;
     }
 }

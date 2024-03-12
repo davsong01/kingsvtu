@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Product;
 use App\Models\Variation;
+use App\Models\TransactionLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,11 @@ class API extends Model
     public function variations()
     {
         return $this->hasMany(Variation::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(TransactionLog::class, 'api_id');
     }
 
 }

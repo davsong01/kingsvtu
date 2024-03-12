@@ -16,7 +16,7 @@ if (!function_exists("logEmails")) {
             'subject' => $subject,
             'body' => $body,
         ];
-
+        \Log::info($data);
         try {
             Mail::to($email_to)->send(new EmailMessages($data));
         } catch (\Exception $e) {

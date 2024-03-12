@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\API;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\CustomerLevel;
+use App\Models\Discount;
 use App\Models\Variation;
 use Illuminate\Http\Request;
+use App\Models\CustomerLevel;
 
 class ProductController extends Controller
 {
@@ -21,7 +22,9 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 'active')->get();
         $apis = API::where('status', 'active')->get();
-        return view('admin.product.create', compact('categories', 'apis'));
+        $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
+
+        return view('admin.product.create', compact('categories', 'apis', 'customerlevel'));
     }
 
     public function store(Request $request)
@@ -90,6 +93,21 @@ class ProductController extends Controller
             ]
         );
 
+
+        if (isset($request->productlevel) && isset($product)) {
+            foreach ($request->productlevel as $key => $price) {
+                Discount::updateOrCreate([
+                    'customer_level' => $key,
+                    'product_id' => $product->id,
+                ], [
+                    'status' => 'active',
+                    'customer_level' => $key,
+                    'product_id' => $product->id,
+                    'price' => $price
+                ]);
+            }
+        }
+
         return redirect(route('product.edit', $product->id))->with('message', 'Product Added Successfully');
     }
 
@@ -116,6 +134,7 @@ class ProductController extends Controller
 
     public function update(Product $product, Request $request)
     {
+
         $this->validate($request, [
             "name" => "required",
             "display_name" => "required",
@@ -170,6 +189,21 @@ class ProductController extends Controller
             'ussd_string' => $request->ussd_string,
             'multistep' => $request->multistep,
         ]);
+
+        $productLevel = array_filter($request->productlevel);
+
+        if (count($productLevel) > 0 && isset($product)) {
+            foreach ($productLevel as $key => $price) {
+                Discount::updateOrCreate([
+                    'customer_level' => $key,
+                    'product_id' => $product->id,
+                ], [
+                    'customer_level' => $key,
+                    'product_id' => $product->id,
+                    'price' => $price
+                ]);
+            }
+        }
 
         return back()->with('message', 'Update Successfull');
     }

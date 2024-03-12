@@ -15,7 +15,7 @@
 @endsection
 @section('content')
 <!-- Content wrapper -->
- <div class="app-content content">
+<div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
-                                 <div class="content-body">
+                                <div class="content-body">
                                     <!-- Nav Filled Starts -->
                                     <section id="nav-filled">
                                         <div class="row">
@@ -55,11 +55,8 @@
                                                     </div>
                                                     <div class="card-content">
                                                         <div class="card-body">
-                                                            <p>
-                                                                
-                                                            </p>
+                                                            <p></p>
                                                             <!-- Nav tabs -->
-                                                            
                                                             @if($product->has_variations == 'yes')
                                                                 <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
                                                                     <li class="nav-item">
@@ -115,10 +112,37 @@
                                                                                         @endforeach
                                                                                     </select>
                                                                                 </fieldset>
-                                                                                
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Quantity</label>
+                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->allow_quantity == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->allow_quantity == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Quantity Graduation</label>
+                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ $product->quantity_graduation }}">
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="has_variations">Has Variations</label>
+                                                                                    <select class="form-control" name="has_variations" id="has_variations" required>
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->has_variations == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->has_variations == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">Allow Subscription Type (For DSTV and GOTV purchses)</label>
+                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->allow_subscription_type == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->allow_subscription_type == 'no' ? 'selected' : ''}}>No</option>
+                                                                                    </select>
+                                                                                </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="description">Description</label>
-                                                                                    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ $product->description ??  old('description')}}"></textarea>
+                                                                                    <textarea style="height: 117px !important" class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ $product->description ??  old('description')}}"></textarea>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="seo_title">SEO Title</label>
@@ -128,7 +152,7 @@
                                                                                     <label for="seo_keywords">SEO Keywords</label>
                                                                                     <input type="text" class="form-control"  name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords" value="{{ $product->seo_keywords ?? old('seo_keywords')}}">
                                                                                 </fieldset>
-                                                                                 <fieldset class="form-group">
+                                                                                <fieldset class="form-group">
                                                                                     <label for="seo_description">SEO Description</label>
                                                                                     <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $product->seo_description ?? old('seo_description') }}" placeholder="SEO Description">{{ $product->seo_description ?? old('seo_description') }}</textarea>
                                                                                 </fieldset>
@@ -180,6 +204,12 @@
                                                                                     <label for="name">System Price ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
+                                                                                @foreach($customerlevel as $level)
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
+                                                                                    <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]"  value="{{ $product->customer_level_price($level->id) }}">
+                                                                                </fieldset>
+                                                                                @endforeach
                                                                                 <fieldset class="form-group">
                                                                                     <label for="min">Minimun Amount ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="min" name="min"  value="{{ $product->min }}">
@@ -188,35 +218,7 @@
                                                                                     <label for="max">Maimum Amount ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="max" name="max"  value="{{ $product->max }}">
                                                                                 </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="has_variations">Has Variations</label>
-                                                                                    <select class="form-control" name="has_variations" id="has_variations" required>
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="yes" {{ $product->has_variations == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                        <option value="no" {{ $product->has_variations == 'no' ? 'selected' : ''}}>No</option>
-                                                                                    </select>
-                                                                                </fieldset>
-                                                                               
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Allow Quantity</label>
-                                                                                    <select class="form-control" name="allow_quantity" id="allow_quantity">
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="yes" {{ $product->allow_quantity == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                        <option value="no" {{ $product->allow_quantity == 'no' ? 'selected' : ''}}>No</option>
-                                                                                    </select>
-                                                                                </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Quantity Graduation</label>
-                                                                                    <input type="text" class="form-control tiny" placeholder="Please enter each value seperated with a comma" id="quantity_graduation" name="quantity_graduation"  value="{{ $product->quantity_graduation }}">
-                                                                                </fieldset>
-                                                                                <fieldset class="form-group">
-                                                                                    <label for="name">Allow Subscription Type (For DSTV and GOTV purchses)</label>
-                                                                                    <select class="form-control" name="allow_subscription_type" id="allow_subscription_type">
-                                                                                        <option value="">Select</option>
-                                                                                        <option value="yes" {{ $product->allow_subscription_type == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                                                        <option value="no" {{ $product->allow_subscription_type == 'no' ? 'selected' : ''}}>No</option>
-                                                                                    </select>
-                                                                                </fieldset>
+                                                                                
                                                                                 @if($product->has_variations == 'yes')
                                                                                 @endif
                                                                                 <input type="hidden" value="page1" name="route">

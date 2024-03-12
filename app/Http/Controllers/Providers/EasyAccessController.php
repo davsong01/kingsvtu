@@ -685,12 +685,32 @@ class EasyAccessController extends Controller
             ];
         }
 
+        try {
+            //code...
+            $this->balance($api);
+            $this->sendWarningEmail($api);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         return $format;
     }
 
-    public function balance($api)
-    {
+    // public function fetchAndUpdateBalance($api)
+    // {
+    //     $newBalance = $this->balance($api, 'no-format');
+        
+    //     if (isset($newBalance['status']) && $newBalance['status'] == 'success') {
+    //         $api->update([
+    //             'balance' => $newBalance['balance'],
+    //         ]);
+    //     }
 
+    //     return $api;
+    // }
+
+    public function balance($api, $no_format=null)
+    {
         try {
             $url = "https://easyaccess.com.ng/api/wallet_balance.php";
 
@@ -733,6 +753,10 @@ class EasyAccessController extends Controller
                 $balance = '#' . number_format($result['balance'], 2);
                 $status = 'success';
                 $status_code = 1;
+
+                $api->update([
+                    'balance' => $result['balance'],
+                ]);
             }
 
             $format = [
@@ -745,6 +769,14 @@ class EasyAccessController extends Controller
                 'status' => 'failed',
                 'status_code' => 0,
                 'balance' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
+            ];
+        }
+
+        if (isset($no_format)) {
+            $format = [
+                'status' => $status,
+                'balance' => $balance,
+                'status_code' => $status_code,
             ];
         }
 

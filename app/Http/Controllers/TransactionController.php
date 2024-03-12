@@ -105,15 +105,21 @@ class TransactionController extends Controller
                 return back()->with('error', $meterValidation['error']);
             }
         }
-        $discountedPrice = $this->getDiscount($product->id, $variation->id ?? null) ?? 0;
+
+        if ($product->has_variations == 'yes') {
+            $discountedPrice = $this->getVariationDiscount($variation->id);
+        } else {
+            $discountedPrice = $this->getProductDiscount($product->id);
+        }
+
         $request['discount'] = 0;
         $discountedAmount = $request['amount'];
 
         if ($discountedPrice > 0) {
-            $request['discount'] = $request['amount'] - $discountedPrice;
+            $request['discount'] = ($discountedPrice < $request['amount']) ? $request['amount'] - $discountedPrice : $request['amount'];
             $discountedAmount = $discountedPrice;
         }
-
+        
         $request['quantity'] = $request->quantity ?? 1;
         $request['total_amount'] = $discountedAmount * $request['quantity'];
 
@@ -196,7 +202,7 @@ class TransactionController extends Controller
         $file_name = $api->file_name;
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
-        
+
         try {
             //code...
             DB::beginTransaction();
@@ -351,19 +357,26 @@ class TransactionController extends Controller
         }
     }
 
-    public function getDiscount($product_id, $variation_id = null)
+    public function getVariationDiscount($variation_id)
     {
         $discount = 0;
         $level = auth()->user()->customer->customer_level;
 
+        $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $variation_id])->first();
 
-        $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $product_id]);
-
-        if (!empty($variation_id)) {
-            $findDiscount = $findDiscount->where('variation_id', $variation_id);
+        if (!empty($findDiscount)) {
+            $discount = $findDiscount->price;
         }
 
-        $findDiscount = $findDiscount->first();
+        return $discount;
+    }
+
+    public function getProductDiscount($product_id)
+    {
+        $discount = 0;
+        $level = auth()->user()->customer->customer_level;
+
+        $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $product_id])->first();
 
         if (!empty($findDiscount)) {
             $discount = $findDiscount->price;
@@ -869,7 +882,7 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'reason' => 'required'
         ]);
-        
+
         $user = User::where('email', $request->email)->first();
 
         if (!$user) return back()->with('error', 'Account not found!');

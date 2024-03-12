@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\API;
 use App\Models\User;
 use App\Models\KycData;
 use App\Models\Customer;
@@ -43,12 +44,15 @@ class DashboardController extends Controller
             $referralD = ReferralEarning::where('type', 'debit');
             $referral_debit = $referralD->sum('amount');
             $referral_debit_count = $referralD->count();
+            $total_wallet_balance = Customer::sum('wallet');
 
             $kyc_verified = User::join('customers', 'customers.user_id', 'users.id')->where('users.type', 'customer')->where('kyc_status', 'verified')->count();
             $active_customers = TransactionLog::distinct('customer_id')->count();
             $customers = User::where('type', 'customer')->count();
 
-            return view('admin.dashboard', compact('customer',  'credit', 'credit_count', 'debit', 'debit_count', 'referral_debit', 'referral_credit', 'referral_credit_count', 'referral_debit_count', 'kyc_verified', 'active_customers', 'customers'));
+            $apis = API::get();
+           
+            return view('admin.dashboard', compact('customer',  'credit', 'credit_count', 'debit', 'debit_count', 'referral_debit', 'referral_credit', 'referral_credit_count', 'referral_debit_count', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
         } else {
             return view('customer.dashboard', compact('customer'));
         }
@@ -280,7 +284,7 @@ class DashboardController extends Controller
                 $this->updateKycData($key, $value, auth()->user()->customer->id, 'unverified');
             }
         }
-       
+
         // if (!empty($request->BVN)) {
         //     // Verify BVN first
         //     $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;

@@ -57,7 +57,7 @@ class VtpassController extends Controller
         }
     }
 
-    public function query($request, $api, $variation,$product)
+    public function query($request, $api, $variation, $product)
     {
         // Post data
         try {
@@ -149,8 +149,29 @@ class VtpassController extends Controller
             ];
         }
 
+        try {
+            //code...
+            $this->balance($api);
+            // $this->fetchAndUpdateBalance($api);
+            $this->sendWarningEmail($api);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
         return $format;
     }
+
+    // public function fetchAndUpdateBalance($api)
+    // {
+    //     $newBalance = $this->balance($api, 'no-format');
+
+    //     if (isset($newBalance['status']) && $newBalance['status'] == 'success') {
+    //         $api->update([
+    //             'balance' => $newBalance['balance'],
+    //         ]);
+    //     }
+
+    //     return $api;
+    // }
 
     public function requery($api, $request_id)
     {
@@ -217,7 +238,7 @@ class VtpassController extends Controller
         }
     }
 
-    public function balance($api)
+    public function balance($api, $no_format = null)
     {
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
@@ -232,27 +253,42 @@ class VtpassController extends Controller
             $response = $this->basicApiCall($url, [], $headers, 'GET');
 
             if (isset($response['code']) && $response['code'] == 1 && !empty($response['contents'])) {
-                $final_response = [
-                    'status' => 'success',
-                    'status_code' => '1',
-                    'balance' => '#'.number_format($response['contents']['balance'], 2),
-                ];
+                $result = $response;
+                $balance = '#' . number_format($response['contents']['balance'], 2);
+                $status = 'success';
+                $status_code = 1;
+
+                $api->update([
+                    'balance' => $response['contents']['balance'],
+                ]);
             } else {
-                $final_response = [
-                    'status' => 'failed',
-                    'status_code' => '0',
-                    'error' => json_encode($response),
-                ];
+                $status = 'failed';
+                $status_code = 0;
+                $balance = null;
             }
+
+            $format = [
+                'status' => $status,
+                'balance' => $balance,
+                'status_code' => $status_code,
+            ];
         } catch (\Throwable $th) {
-            $final_response = [
+            $format = [
                 'status' => 'failed',
-                'status_code' => '0',
-                'error' => $th->getMessage(),
+                'status_code' => 0,
+                'balance' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
 
-        return $final_response;
+        if (isset($no_format)) {
+            $format = [
+                'status' => $status,
+                'balance' => $response['contents']['balance'] ?? null,
+                'status_code' => $status_code,
+            ];
+        }
+
+        return $format;
     }
 
     public function verify($data)
@@ -276,7 +312,7 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-
+            // dd($response);
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
                 $message = '';
                 $message .= isset($response['content']['Customer_Name']) ? 'Account Name: ' . $response['content']['Customer_Name'] : '';
