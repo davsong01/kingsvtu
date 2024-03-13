@@ -42,7 +42,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -50,16 +50,15 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        if(auth()->user()->type == 'customer'){
-            if(getSettings()->login_email_notification == 'yes'){
-                $name = auth()->user()->first_name ?? auth()->user()->username;
-                $body = 'Dear '. $name . '<br>A new sign in has occured on your account at: ' . Carbon::now() . '.<br> If this was not you, please get in touch with us as quick as possible';
-                logEmails(auth()->user()->email, 'New Login alert on '.config('app.name'), $body);
+        $user = auth()->user();
+        if ($user->type == 'customer' && $user->status == 'active') {
+            if (getSettings()->login_email_notification == 'yes') {
+                $name = $user->first_name ?? $user->username;
+                $body = 'Dear ' . $name . '<br>A new sign in has occured on your account at: ' . Carbon::now() . '.<br> If this was not you, please get in touch with us as quick as possible';
+                logEmails(auth()->user()->email, 'New Login alert on ' . config('app.name'), $body);
             }
         }
-        
 
-        // dd(auth()->user(), 'sdsdds');
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -70,7 +69,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -91,6 +90,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('email')) . '|' . $this->ip());
     }
 }
