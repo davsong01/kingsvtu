@@ -7,6 +7,7 @@ use App\Models\Settings;
 use App\Mail\EmailMessages;
 use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,48 +100,57 @@ if (!function_exists("adminPermission")) {
             'permission' => []
         ];
 
-        $menuItems = [
-            'Dashboard',
-            'Annoucement',
-            'Catalogue',
-            'Customers',
-            'User Management',
-            'Financials',
-            'My Profile',
-            'Call Analysis',
-            'KYC Management',
-            'KYC Management',
-            'Payment Gateway Settings',
-            'General Settings',
-        ];
-
         $routes = [];
 
         foreach (Route::getRoutes() as $route) {
-            $routes[] = $route->getName();
+            if ($route->getName()) $routes[] = $route->getName();
         }
+
         $permissions = [
             'Admin' => [
-                'menu' => $menuItems,
-                'permission' => Arr::except($routes, ['product.*'])
+                'menu' => [
+                    'Dashboard',
+                    'Announcement',
+                    'Catalogue',
+                    'Customers',
+                    'User Management',
+                    'Financials',
+                    'My Profile',
+                    'Callback Analysis',
+                    'KYC Management',
+                    'Payment Gateway Settings',
+                    'General Settings',
+                ],
+                'permissions' => Arr::except($routes, ['product.*'])
             ],
             'Manager' => [
-                'menu' => Arr::except($menuItems, []),
-                'permissions' =>  Arr::except($routes, []),
+                'menu' => [
+                    'Dashboard',
+                    'Announcement',
+                    'Catalogue',
+                    'Customers',
+                    'Financials',
+                    'My Profile',
+                    'KYC Management',
+                ],
+                'permissions' => [
+                    'product',
+                    'api',
+                ],
             ],
             'Support' => [
-                'menu' => Arr::except($menuItems, []),
-                'permissions' =>  Arr::except($routes, []),
+                'menu' => [
+                    'Dashboard',
+                    'Customers',
+                    'Financials',
+                    'My Profile',
+                ],
+                'permissions' => Arr::except($routes, []),
             ],
         ];
 
-<<<<<<< HEAD
         if (!empty($key)) {
             $perm = $permissions[$key];
-=======
-        if(!empty($key)){
-            $perm = $permissions[$key] ?? $perm;
->>>>>>> 8a86173 (not working)
         }
 
         return $perm;
@@ -151,7 +161,9 @@ if (!function_exists("specialVerifiableVariations")) {
     function specialVerifiableVariations()
     {
         return $specialVerifiableVariations = [
-            'utme-no-mock' => 'profile_id', 'utme-mock' => 'profile_id', 'de' => 'profile_id'
+            'utme-no-mock' => 'profile_id',
+            'utme-mock' => 'profile_id',
+            'de' => 'profile_id'
         ];
     }
 }

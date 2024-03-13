@@ -73,7 +73,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin
-Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'secure-route'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefix('admin')->group(function () {
     Route::resource('product', ProductController::class);
     Route::get('duplicate-product/{product}', [ProductController::class, 'duplicateProduct'])->name('duplicate.product');
     Route::resource('api', APIController::class);

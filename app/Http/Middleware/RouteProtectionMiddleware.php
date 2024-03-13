@@ -18,8 +18,8 @@ class RouteProtectionMiddleware
     {
         $admin = auth()->user()->admin;
         $curRouteName = Route::currentRouteName();
-        $routes = adminPermission($admin->permissions)['permission'];
-        return $next($request);
+        $routes = adminPermission($admin->permissions)['permissions'];
+
         if (in_array($curRouteName, $routes)) {
             return $next($request);
         } else {
