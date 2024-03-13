@@ -65,7 +65,10 @@
                                                         <label for="seo_keywords">SEO Keywords</label>
                                                         <input type="text" class="form-control" name="seo_keywords" placeholder="Enter SEO Keywords" id="seo_keywords">
                                                     </fieldset>
-                                                    
+                                                    <fieldset class="form-group">
+                                                        <label for="seo_description">SEO Description</label>
+                                                        <textarea class="form-control" id="seo_description" name="seo_description" rows="3" placeholder="SEO Description"></textarea>
+                                                    </fieldset>
                                                 </div>
                                                 <div class="col-md-6">
                                                    
@@ -87,6 +90,14 @@
                                                         </select>
                                                     </fieldset>
                                                     <fieldset class="form-group">
+                                                        <label for="discount_type">Discount Type</label>
+                                                        <select class="form-control" name="discount_type" id="discount_type" required>
+                                                            <option value="">Select...</option>
+                                                            <option value="flat" {{ old('discount_type') == 'flat' ? 'selected' : '' }}>Flat</option>
+                                                            <option value="percentage" {{ old('discount_type') == 'percentage' ? 'selected' : '' }}>Percentage</option>
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
                                                         <label for="order">Order</label>
                                                         <input type="number" class="form-control" name="order" value="{{ old('order') }}" placeholder="Enter order" id="order" required>
                                                     </fieldset>
@@ -94,10 +105,7 @@
                                                         <label for="description">Description</label>
                                                         <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description" required></textarea>
                                                     </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="seo_description">SEO Description</label>
-                                                        <textarea class="form-control" id="seo_description" name="seo_description" rows="3" placeholder="SEO Description"></textarea>
-                                                    </fieldset>
+                                                    
                                                 </div>
                                                 <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Submit</button>

@@ -1,5 +1,4 @@
 <?php 
-
     use Illuminate\Support\Facades\Session;
     $page = Session::get('page') ?? 1;
 ?>
@@ -206,8 +205,8 @@
                                                                                 </fieldset>
                                                                                 @foreach($customerlevel as $level)
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
-                                                                                    <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]"  value="{{ $product->customer_level_price($level->id) }}">
+                                                                                    <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
+                                                                                    <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]" step=".01" value="{{ $product->customer_level_price($level->id) }}">
                                                                                 </fieldset>
                                                                                 @endforeach
                                                                                 <fieldset class="form-group">
@@ -333,19 +332,20 @@
                                                                                             <input type="number" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>
+                                                                                   
                                                                                     @foreach($customerlevel as $level)
-                                                                                    <div class="col-md-2">
+                                                                                    <div class="col-md-3">
                                                                                         <fieldset class="form-group">
-                                                                                            <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
-                                                                                            <input type="number" class="form-control tiny" id="level" name="level[{{ $level->id }}][{{ $variation->id }}]"  value="{{ $variation->customer_level_price($level->id) }}">
+                                                                                            <label for="name">{{ $level->name }} @if($variation->category->discount_type == '') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
+                                                                                            <input type="number" step=".01" class="form-control tiny" id="level" name="level[{{ $level->id }}][{{ $variation->id }}]"  value="{{ $variation->customer_level_price($level->id) }}">
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     @endforeach
                                                                                     @if($variation->transaction->count() < 1)
-                                                                                    <div class="col-md-2">
+                                                                                    <div class="col-md-1">
                                                                                         <fieldset class="form-group">
                                                                                             <label style="color:white">S</label>
-                                                                                            <a onclick="return confirm('You are about to delete a variation')" href="{{ route('variation.delete', $variation->id) }}"><button style="color: white;" class="btn btn-sm btn-danger form-control" style="padding: 8px;" type="button"><i class="fa fa-trash"></i> Delete</button></a>
+                                                                                            <a onclick="return confirm('You are about to delete a variation')" href="{{ route('variation.delete', $variation->id) }}"><button style="color: white;" class="btn btn-sm btn-danger form-control" style="padding: 8px;" type="button"><i class="fa fa-trash"></i></button></a>
                                                                                         </fieldset>
                                                                                     </div>
                                                                                     @endif
@@ -464,10 +464,10 @@
                 </fieldset>
             </div>
             @foreach($customerlevel as $level)
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <fieldset class="form-group">
-                    <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
-                    <input type="number" class="form-control tiny" id="level" name="level[{{ $level->id }}][]" value="" required>
+                    <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
+                    <input type="number" class="form-control tiny" step=".01" id="level" name="level[{{ $level->id }}][]" value="" required>
                 </fieldset>
             </div>
             @endforeach

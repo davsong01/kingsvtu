@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasColumn('categories', 'discount_type')) {
             Schema::table('categories', function (Blueprint $table) {
-                $table->dropColumn("discount_type")->nullable();
+                $table->dropColumn("discount_type");
             }); 
         }
     }

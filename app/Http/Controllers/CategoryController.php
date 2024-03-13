@@ -35,6 +35,7 @@ class CategoryController extends Controller
             "seo_title" => "nullable",
             "icon" => "nullable",
             "seo_keywords" => "nullable",
+            "discount_type" => "nullable",
         ]);
 
         Category::updateOrCreate([
@@ -49,6 +50,7 @@ class CategoryController extends Controller
             "seo_title" => $request->seo_title,
             "seo_keywords" => $request->seo_keywords,
             "unique_element" => $request->unique_element,
+            "discount_type" => $request->discount_type,
         ]);
 
         return redirect(route('category.index'))->with('message', 'Added successfully');
@@ -73,6 +75,8 @@ class CategoryController extends Controller
             "seo_description" => "nullable",
             "seo_title" => "nullable",
             "seo_keywords" => "nullable",
+            "discount_type" => "nullable",
+
         ]);
 
         $category->update([
@@ -87,6 +91,7 @@ class CategoryController extends Controller
             "seo_description" => $request->seo_description,
             "seo_title" => $request->seo_title,
             "seo_keywords" => $request->seo_keywords,
+            "discount_type" => $request->discount_type,
         ]);
 
         return back()->with('message', 'Updated successfully');

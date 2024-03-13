@@ -80,10 +80,10 @@
                                 </fieldset>
                             </div>
                             @foreach($customerlevel as $level)
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <fieldset class="form-group">
-                                    <label for="name">{{ $level->name }} Price ({!! getSettings()['currency']!!})</label>
-                                    <input type="number" class="form-control tiny" id="level" name="level[{{ $level->id }}][]" value="" required>
+                                    <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
+                                    <input type="number" class="form-control tiny" id="level" step=".01" name="level[{{ $level->id }}][]" value="" required>
                                 </fieldset>
                             </div>
                             @endforeach

@@ -25,8 +25,7 @@ class VariationController extends Controller
     {
         $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
         foreach ($variations as $key => $variation) {
-        
-            $discount = app('App\Http\Controllers\TransactionController')->getVariationDiscount($variation->id);
+            $discount = app('App\Http\Controllers\TransactionController')->getDiscount($variation, 'variation');
             $variation->discount = $discount > 0 ? number_format($variation->system_price - $discount) : 0;
 
             // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());

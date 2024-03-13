@@ -106,23 +106,19 @@ class TransactionController extends Controller
             }
         }
 
-        if ($product->has_variations == 'yes') {
-            $discountedPrice = $this->getVariationDiscount($variation->id);
-        } else {
-            $discountedPrice = $this->getProductDiscount($product->id);
-        }
-
         $request['discount'] = 0;
-        $discountedAmount = $request['amount'];
 
-        if ($discountedPrice > 0) {
-            $request['discount'] = ($discountedPrice < $request['amount']) ? $request['amount'] - $discountedPrice : $request['amount'];
-            $discountedAmount = $discountedPrice;
+        if ($product->has_variations == 'yes') {
+            $request['discount'] = $this->getDiscount($variation, 'variation', $request['amount']);
+        } else {
+            $request['discount'] = $this->getDiscount($product, 'product', $request['amount']);
         }
-        
+
+        $discountedAmount = $request['amount'] - $request['discount'];
+
         $request['quantity'] = $request->quantity ?? 1;
         $request['total_amount'] = $discountedAmount * $request['quantity'];
-
+       
         // Get Wallet Balance
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
@@ -156,6 +152,7 @@ class TransactionController extends Controller
         $request['reason'] = 'Product Purchase';
         $request['subscription_type'] = $variation->bouquet ?? 'change';
 
+       
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
 
@@ -357,33 +354,45 @@ class TransactionController extends Controller
         }
     }
 
-    public function getVariationDiscount($variation_id)
+    public function getDiscount($resource, $type,$amount=null )
     {
         $discount = 0;
         $level = auth()->user()->customer->customer_level;
 
-        $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $variation_id])->first();
-
-        if (!empty($findDiscount)) {
-            $discount = $findDiscount->price;
+        if($type == 'variation'){
+            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
         }
 
+        if ($type == 'product') {
+            $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
+        }
+
+        if (!empty($findDiscount) && $findDiscount->price > 0) {
+            $price = $findDiscount->price;
+            if ($resource->category->discount_type == 'flat') {
+                $discount = $price;
+            }
+
+            if ($resource->category->discount_type == 'percentage' && !empty($amount)) {
+                $discount = ($price / 100) * $amount;
+            }
+        }
         return $discount;
     }
 
-    public function getProductDiscount($product_id)
-    {
-        $discount = 0;
-        $level = auth()->user()->customer->customer_level;
+    // public function getProductDiscount($product)
+    // {
+    //     $discount = 0;
+    //     $level = auth()->user()->customer->customer_level;
 
-        $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $product_id])->first();
+    //     $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $product->id])->first();
 
-        if (!empty($findDiscount)) {
-            $discount = $findDiscount->price;
-        }
+    //     if (!empty($findDiscount)) {
+    //         $discount = $findDiscount->price;
+    //     }
 
-        return $discount;
-    }
+    //     return $discount;
+    // }
 
     public function validateMeter()
     {
