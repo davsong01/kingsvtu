@@ -35,6 +35,7 @@ if (!function_exists("sendEmails")) {
         ];
 
         try {
+
             Mail::to($email_to)->send(new EmailMessages($data));
         } catch (\Exception $e) {
             \Log::info($e->getMessage());
@@ -103,7 +104,8 @@ if (!function_exists("adminPermission")) {
         $routes = [];
 
         foreach (Route::getRoutes() as $route) {
-            if ($route->getName()) $routes[] = $route->getName();
+            if ($route->getName())
+                $routes[] = $route->getName();
         }
 
         $permissions = [
@@ -121,7 +123,7 @@ if (!function_exists("adminPermission")) {
                     'Payment Gateway Settings',
                     'General Settings',
                 ],
-                'permissions' => Arr::except($routes, ['product.*'])
+                'permissions' => $routes,
             ],
             'Manager' => [
                 'menu' => [
@@ -134,8 +136,7 @@ if (!function_exists("adminPermission")) {
                     'KYC Management',
                 ],
                 'permissions' => [
-                    'product',
-                    'api',
+
                 ],
             ],
             'Support' => [
@@ -145,7 +146,16 @@ if (!function_exists("adminPermission")) {
                     'Financials',
                     'My Profile',
                 ],
-                'permissions' => Arr::except($routes, []),
+                'permissions' => [
+                    'admin.trans',
+                    'admin.single.transaction.view',
+                    'customers',
+                    'customers',
+                    'customers.active',
+                    'customers.suspended',
+                    'admin.requery.transaction',
+                    'admin.walletfundinglog',
+                ],
             ],
         ];
 
