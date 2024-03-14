@@ -129,9 +129,8 @@
                                                                             <fieldset class="form-group">
                                                                                 <label for="amount" class="">Amount {!! getSettings()['currency'] !!}</label>
                                                                                 <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
-                                                                                
-                                                                                <small ><span id="discount" style="display:none;color: red;"></span></small>
                                                                             </fieldset>
+                                                                            <small><span id="discount" style="display:none;color: red;"></span></small> <br>
                                                                         </div>
                                                                         <div class="col-md-6" id="quantity-div" style="display:none">
                                                                             <fieldset class="form-group">
@@ -154,7 +153,7 @@
 
 
                                                                   </form>
-                                                                    <button id="buy-buttonx" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
+                                                                    <button id="buy-buttonx"style="margin-top:4px" class="btn btn-primary" type="submit" onclick="submitForm()">Buy now</button>
                                                                 </div>
 
                                                                 <div class="col-md-3" id="googleadgoeshere"></div>
@@ -277,6 +276,42 @@
         document.forms["initialize"].submit();
     }
 
+    $("#amount").keyup(function(){        
+        var has_variation = $('#product').find(':selected').data('has_variation');
+        var product_id = $('#product').val();
+        var variation_id = $('#variation').val();
+        var amount = $('#amount').val();
+       
+        if(amount > 0){
+            if(has_variation == 'yes'){
+                formData = {
+                    variation_id:variation_id,
+                    amount:amount
+                };
+            }else{
+                formData = {
+                    product_id:product_id,
+                    amount:amount
+                };
+            }
+            
+            $.ajax({
+                url: "{{ url('customer-get-discount') }}",
+                method: 'POST',
+                dataType: 'json',
+                data:formData,
+                success: function (data) {
+                    if(data.discount > 0){
+                        $('#discount').show();
+                        var amount = $('#discount').html(data.message);
+                    }
+                }
+            });
+        }else{
+            $('#discount').hide()
+        }
+    });
+
     $(document).ready(function () {
         var variations = [];
 
@@ -288,7 +323,6 @@
             var max = $('#product').find(':selected').data('max');
             var min = $('#product').find(':selected').data('min');
             var quantity_graduation = $('#product').find(':selected').data('quantity_graduation');
-            // console.log(fixed_price, has_variation, system_price, allow_quantity,min,max, quantity_graduation);
             var product = $('#product').val();
 
             $("#verify-link").hide();
@@ -333,7 +367,7 @@
                     success: function (data) {
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
-                                $('#variation').append(`<option value="${data[t].id}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
+                                $('#variation').append(`<option value="${data[t].id}" data-min="${data[t].min}" data-max="${data[t].max}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
 
                                 variations.push({
                                     "id": data[t].id,
@@ -343,7 +377,8 @@
                                     "min": data[t].min,
                                     "fixedPrice": data[t].fixed_price,
                                     "variation_amount": data[t].system_price,
-                                    "discount": data[t].discount
+                                    "discount": data[t].discount.discount > 0 ? data[t].discount.message : '',
+                                    "discount_rate":data[t].discount.discount
                                 });
                             }
                         }
@@ -415,7 +450,6 @@
             var selected = variations.filter((item) => {
                 return item.id == v;
             });
-            // console.log(selected[0].unique_element);
             if (selected[0].verifiable == 'yes') {
                 showAllUniqueElement();
                 $("#verify-link").html('Verify '+ selected[0].unique_element.replace("_", " "));
@@ -427,10 +461,11 @@
                 hideAllUniqueElement();
             }
             var currency = "{!! getSettings()['currency'] !!}";
-            // console.log(currency);
-            if (selected[0].discount > 0) {
-                $("#discount").html("You get a discount of "+currency+selected[0].discount);
-                $("#discount").show();
+            if (selected[0].discount_rate > 0) {
+                if(selected[0].fixedPrice == 'Yes'){
+                    $("#discount").html(selected[0].discount);
+                    $("#discount").show();
+                }
             }else{
                 $("#discount").html("");
                 $("#discount").hide();
@@ -475,6 +510,7 @@
 
         $('.select2').select2();
 
+        
     });
 </script>
 

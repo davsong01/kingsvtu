@@ -13,6 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'customer-verify',
+        'customer-get-discount',
         'admin/verify-biller/*',
         'log-p-callback/*'
     ];

@@ -109,16 +109,18 @@ class TransactionController extends Controller
         $request['discount'] = 0;
 
         if ($product->has_variations == 'yes') {
-            $request['discount'] = $this->getDiscount($variation, 'variation', $request['amount']);
+            $discount = $this->getDiscount($variation, 'variation', $request['amount'], 'yes');
         } else {
-            $request['discount'] = $this->getDiscount($product, 'product', $request['amount']);
+            $discount = $this->getDiscount($product, 'product', $request['amount'], 'yes');
         }
-
-        $discountedAmount = $request['amount'] - $request['discount'];
-
+        $discountedAmount = $discount['discounted_price'];
+        $disCountApplied = $discount['discount_applied'];
+        
         $request['quantity'] = $request->quantity ?? 1;
         $request['total_amount'] = $discountedAmount * $request['quantity'];
-       
+        $request['discount'] = $disCountApplied * $request['quantity'];
+        
+        
         // Get Wallet Balance
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
@@ -152,7 +154,6 @@ class TransactionController extends Controller
         $request['reason'] = 'Product Purchase';
         $request['subscription_type'] = $variation->bouquet ?? 'change';
 
-       
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
 
@@ -354,15 +355,47 @@ class TransactionController extends Controller
         }
     }
 
-    public function getDiscount($resource, $type,$amount=null )
+    public function getCustomerDiscount(Request $request){
+        if(!empty($request->product_id)){
+            $resource = Product::where('id', $request->product_id)->first();
+            $type = 'product';
+        }
+
+        if (!empty($request->variation_id)) {
+            $resource = Variation::where('id', $request->variation_id)->first();
+            $type = 'variation';
+        }
+
+        $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');
+        
+        $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) .'% off' : 'Discounted to '.getSettings()->currency.number_format($discount['rate'], 2);
+       
+        if(!empty($request->raw) && $request->raw == 'yes'){
+            return [
+                'discount' => $discount['rate'],
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.number_format($discount['discounted_price']). '</span></strong><span class="suffix">('.$suffix.')</span>',
+            ];
+        }else{
+            return response()->json([
+                'discount' => $discount['rate'],
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.number_format($discount['discounted_price']). '</span></strong><span class="suffix">('.$suffix.')</span>',
+            ]);
+        }
+    }
+
+    public function getDiscount($resource, $type,$amount=null, $getRate = null )
     {
         $discount = 0;
         $level = auth()->user()->customer->customer_level;
+        $amount = $amount;
 
         if($type == 'variation'){
             $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
+            if($resource->fixed_price == 'Yes'){
+                $amount = $resource->system_price;
+            }
         }
-
+       
         if ($type == 'product') {
             $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
         }
@@ -371,13 +404,28 @@ class TransactionController extends Controller
             $price = $findDiscount->price;
             if ($resource->category->discount_type == 'flat') {
                 $discount = $price;
+                $discounted_price = $discount;
             }
 
             if ($resource->category->discount_type == 'percentage' && !empty($amount)) {
                 $discount = ($price / 100) * $amount;
+                $discounted_price = $amount - $discount;
             }
         }
-        return $discount;
+
+        if(!empty($getRate)){
+            $response = [
+                'discount' => $discount ?? 0,
+                'discounted_price' => $discounted_price ?? $amount,
+                'rate' => $price ?? 0,
+                'type' => $resource->category->discount_type ?? '',
+                'discount_applied' => !empty($discounted_price) ? $amount - $discounted_price : 0,
+
+            ];
+            return $response;
+        }else{
+            return $discount;
+        }
     }
 
     // public function getProductDiscount($product)

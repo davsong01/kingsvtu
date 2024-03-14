@@ -212,20 +212,25 @@
 					<td>Unit Price</td>
 					<td>#{{ number_format($transaction['unit_price'], 2) }}</td>
 				</tr>
+				
+				<tr class="item">
+					<td>Quantity</td>
+					<td>{{ number_format($transaction['quantity']) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Amount</td>
+					<td>#{{ number_format($transaction['amount'], 2) }}</td>
+				</tr>
+				<tr class="item">
+					<td>Discount Applied</td>
+					<td>#{{ number_format($transaction['discount'], 2) }}</td>
+				</tr>
 				@if(!empty($transaction->provider_charge))
                 <tr class="item">
 					<td>Convenience Fee</td>
 					<td>#{{ number_format($transaction['provider_charge'], 2) }}</td>
 				</tr>                                                           
                 @endif
-				<tr class="item">
-					<td>Quantity</td>
-					<td>{{ number_format($transaction['quantity']) }}</td>
-				</tr>
-				<tr class="item">
-					<td>Discount Applied</td>
-					<td>#{{ number_format($transaction['discount'], 2) }}</td>
-				</tr>
 				<tr class="item">
 					<td>Total Amount Paid</td>
 					<td>#{{ number_format($transaction['total_amount'], 2) }}</td>
