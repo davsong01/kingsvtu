@@ -105,7 +105,17 @@ if (!function_exists("adminPermission")) {
 
         foreach (Route::getRoutes() as $route) {
             if ($route->getName())
-                $routes[] = $route->getName();
+                if ($key == 'Admin') {
+                    $routes[] = $route->getName();
+                } else {
+                    if (
+                        $route->getName() != 'settings.edit' &&
+                        $route->getName() != 'settings.update' &&
+                        $route->getName() != 'announcement.index'
+                    ) {
+                        $routes[] = $route->getName();
+                    }
+                }
         }
 
         $permissions = [
@@ -128,16 +138,12 @@ if (!function_exists("adminPermission")) {
             'Manager' => [
                 'menu' => [
                     'Dashboard',
-                    'Announcement',
                     'Catalogue',
                     'Customers',
                     'Financials',
                     'My Profile',
-                    'KYC Management',
                 ],
-                'permissions' => [
-
-                ],
+                'permissions' => $routes
             ],
             'Support' => [
                 'menu' => [

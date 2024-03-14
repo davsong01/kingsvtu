@@ -81,7 +81,6 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
 
     Route::resource('category', CategoryController::class);
     Route::resource('customer-blacklist', BlackListController::class);
-    Route::get('announcement/scroll', [AnnouncementController::class, 'scroll'])->name('announcement.scroll');
     Route::resource('announcement', AnnouncementController::class);
     Route::get('black-list-status', [BlackListController::class, 'status']);
 
@@ -98,7 +97,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('admin-reserved-account', [ReservedAccountNumberController::class, 'index'])->name('admin.reserved.accounts');
     Route::get('account-transactions/{account}', [ReservedAccountNumberController::class, 'show'])->name('account.transactions');
     Route::get('admin-callback-analysis', [PaymentController::class, 'callBackAnalysis'])->name('callback.analysis');
-    
+
     Route::get('reserved-account-delete/{account}', [ReservedAccountNumberController::class, 'delete'])->name('reserved_account.delete');
 
     Route::get('single-transaction-view/{transaction}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
@@ -118,7 +117,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('delete-variations/{variation}', [VariationController::class, 'deleteVariations'])->name('variation.delete');
 
     Route::post('create-reserved-account/{customer}', [CustomerController::class, 'addReservedAccounts'])->name('create.reserved.account');
-    
+
     Route::controller(AdminController::class)->group(function () {
         Route::get('admins', 'index')->name('admins');
         Route::get('admin/new', 'create')->name('newAdmin');

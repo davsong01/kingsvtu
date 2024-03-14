@@ -21,7 +21,6 @@ class RouteProtectionMiddleware
         $curRouteName = Route::currentRouteName();
         $routes = adminPermission($admin->permissions)['permissions'];
 
-        \Log::info(Arr::except($routes, $curRouteName));
         if (in_array($curRouteName, $routes)) {
             return $next($request);
         } else {

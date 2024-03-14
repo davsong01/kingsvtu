@@ -57,19 +57,19 @@
                                 fill="white" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Catalogue</span></a>
                     <ul class="menu-content">
-                        @if ($perm('api-index'))
+                        @if ($perm('api.index'))
                             <li class="{{ Route::is('api.*') ? 'active' : '' }}"><a href="{{ route('api.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">API
                                         Providers</span></a>
                             </li>
                         @endif
-                        @if ($perm('categories.index'))
+                        @if ($perm('category.index'))
                             <li class="{{ Route::is('category.*') ? 'active' : '' }}"><a
                                     href="{{ route('category.index') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input Groups">Categories</span></a>
                             </li>
                         @endif
-                        @if ($perm('product-index'))
+                        @if ($perm('product.index'))
                             <li class="{{ Route::is('product.*') ? 'active' : '' }}"><a
                                     href="{{ route('product.index') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input">Products</span></a>
