@@ -212,10 +212,12 @@ class TransactionController extends Controller
                     'message' => 'Transaction Successful!',
                     // 'extras' => 'Transaction Successful!',
                 ];
-
+                
+                $user_status = 'success';
                 $balance_after = $request['balance_before'] - $request['total_amount'];
             } else if (isset($query) && $query['status_code'] == 0) {
                 // Log wallet
+
                 $wallet = new WalletController();
                 $request['type'] = 'credit';
                 $wallet->logWallet($request);
@@ -224,7 +226,10 @@ class TransactionController extends Controller
                 // Update Customer Wallet
                 $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
                 $balance_after = $request['balance_before'];
+                $user_status = 'failed';
+
             } else {
+                $user_status = 'failed';
                 $res = [
                     'status' => $query['status'],
                     'message' => 'Transaction Successful!',
@@ -243,6 +248,7 @@ class TransactionController extends Controller
                 'status' => $query['status'] ?? 'attention-required',
                 'descr' => $query['description'],
                 'extra_info' => $query['extra_info'] ?? null,
+                'user_status' => $user_status ?? null
             ]);
 
             DB::commit();

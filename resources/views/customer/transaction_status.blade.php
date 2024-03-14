@@ -49,13 +49,13 @@
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
                                                         <h4 class="card-title">Transaction Status Page</h4>
 
-                                                        @if(in_array($transaction->status, ['completed','delivered','pending','attention-required']))
+                                                        @if(in_array($transaction->user_status, ['completed','delivered','pending','attention-required','success']))
                                                             <div class="alert alert-success" role="alert" style="margin-bottom: 5px !important; margin-top:10px">
-                                                                <strong>{{ strtoupper($transaction->descr) }}</strong>
+                                                                <strong>{{ strtoupper($transaction->user_status) }}</strong>
                                                             </div>
                                                         @elseif($transaction->status == 'failed')
                                                             <div class="alert alert-danger" role="alert" style="margin-bottom: 5px !important;margin-top:10px">
-                                                                <strong>{{ strtoupper($transaction->descr) }}</strong>
+                                                                <strong>{{ strtoupper($transaction->user_status) }}</strong>
                                                             </div>
                                                         @endif
                                                     </div>
