@@ -17,23 +17,14 @@ class RouteProtectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $admin = auth()->user()->admin;
         $curRouteName = Route::currentRouteName();
-        // $userPermissions = explode(",", $admin->permissions);
         
-        // if(!empty($userPermissions)){
-        //     $userPermissions = $userPermissions;
-        // }else{
-        //     $userPermissions = [];
-        // }    singleUserAllowedRoutes
-
-        dd('sdd');
-        $routes = adminPermission($admin->permissions)['permissions'];
-
+        $routes = singleUserAllowedRoutes(auth()->user()->admin)['permissions'];
+            
         if (in_array($curRouteName, $routes)) {
             return $next($request);
         } else {
-            return back();
+            return back()->with('error', 'You cannot access this resource');
         }
     }
 }

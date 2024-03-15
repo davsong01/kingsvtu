@@ -131,9 +131,25 @@ if (!function_exists("adminPermission")) {
                     'Dashboard',
                     'Announcement',
                     'Catalogue',
+                    'API Providers',
+                    'Categories',
+                    'Products',
                     'Customers',
+                    'All Customers',
+                    'Active Customers',
+                    'Suspended Customers',
+                    'Blacklisted Customers',
+                    'Customer Levels',
                     'User Management',
+                    'All Admins',
                     'Financials',
+                    'Product Purchase Log',
+                    'Wallet Funding Log',
+                    'Wallet Log',
+                    'Earnings Log',
+                    'Credit Customer',
+                    'Debit Customer',
+                    'Reserved Account Numbers',
                     'My Profile',
                     'Callback Analysis',
                     'KYC Management',
@@ -202,9 +218,7 @@ if (!function_exists("singleUserAllowedRoutes")) {
             'menus' => $menus,
             'permissions' => $permissions
         ];
-
     }
-
 }
 
 if (!function_exists("specialVerifiableVariations")) {
