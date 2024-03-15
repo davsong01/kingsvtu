@@ -338,15 +338,15 @@ class UssdHosting extends Controller
             $payload = http_build_query($payload);
             $res = $this->basicApiCall($url, $payload, [], 'POST');
             
-            if (env('ENT') == 'local') {
-                $res = [
-                    "success" => true,
-                    "comment" => "ADDITIONAL_COMMENT",
-                    "refid" => $request['request_id'],
-                    "log_id" => "123344"
-                ];
-            }
-
+            // if (env('ENT') == 'local') {
+            //     $res = [
+            //         "success" => true,
+            //         "comment" => "ADDITIONAL_COMMENT",
+            //         "refid" => $request['request_id'],
+            //         "log_id" => "123344"
+            //     ];
+            // }
+            
             if (isset($res['success']) && ($res['success'] == "true" || $res['success'] == true)) {
                 $format = [
                     'status' => 'delivered',

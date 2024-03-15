@@ -229,6 +229,7 @@
                                                                                 <td>
                                                                                 {{ $transaction->quantity  }}
                                                                             </td>
+                                                                            
                                                                             <td>    
                                                                                 <span style="color:black">Convenience Fee:</span> {!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
                                                                                 <span style="color:black">Discount: </span>{!! getSettings()->currency. number_format($transaction->discount, 2) !!} <br>
