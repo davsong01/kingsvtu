@@ -322,7 +322,7 @@ class TransactionController extends Controller
 
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
-
+        
         if (isset($verify) && $verify['status_code'] == 1) {
             $res = [
                 'status' => $verify['status_code'],
@@ -673,6 +673,7 @@ class TransactionController extends Controller
     {
         if ($ref) {
             $user = User::where('username', $ref)->first();
+            $curUser = auth()->user();
             if ($user) {
                 $sett = getSettings();
                 if ($sett->referral_system_status == 'active') {
@@ -694,6 +695,28 @@ class TransactionController extends Controller
                     );
                     $customer->referal_wallet = $sum;
                     $customer->save();
+                    $host = env('APP_URL');
+                    $rewardMail = <<<__here
+Dear $user->firstname $user->lastname,
+
+Congratulations! We are excited to inform you that you have earned a commission from a transaction made by your referred friend. Your support and engagement in our referral program are truly appreciated.
+
+Here are the details of the transaction:
+
+Referred Friend's Name: $curUser->firstname
+
+Commission Earned: $cal
+
+Total Commission Earned: $cal
+
+Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
+
+Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.
+
+Thank you once again for being a valued member of our community. We look forward to your continued success in our referral program!
+__here;
+
+                    logEmails($user->email, 'Referral Commission', $rewardMail);
                 }
             }
         }

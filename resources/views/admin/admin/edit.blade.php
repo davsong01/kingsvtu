@@ -53,37 +53,43 @@
                                                         name="last_name" value="{{ $admin->lastname }}"
                                                         placeholder="Last name" required>
                                                 </div>
-                                            </div>
-                                            <fieldset class="form-group">
+                                                <fieldset class="form-group col-sm-6 col-12">
                                                 <label for="file_name">Email</label>
                                                 <input type="email" class="form-control" name="email"
                                                     value="{{ $admin->email }}" placeholder="Enter email address"
                                                     id="file_name" required>
-                                            </fieldset>
-                                            <fieldset class="form-group">
+                                                </fieldset>
+                                                <div class="form-group col-sm-6 col-12">
+                                                    <label for="text-bold-600">Phone</label>
+                                                    <input type="text" class="form-control" name="phone"
+                                                        value="{{ $admin->phone }}" placeholder="Enter phone number"
+                                                        id="phone" required>
+                                                </div>
+                                                <fieldset class="form-group col-sm-6 col-12">
+                                                    <label for="category">Status</label>
+                                                    <select class="form-control" name="status" id="status" required>
+                                                        <option value="active" {{ $admin->status == 'active' ? 'selected' :'' }}>Active</option>
+                                                        <option value="inactive"  {{ $admin->status == 'inactive' ? 'selected' :''}}>Suspended</option>
+                                                    </select>
+                                                </fieldset>
+                                                <fieldset class="form-group col-sm-6 col-12">
                                                 <label for="file_name">Permission</label>
                                                 <fieldset class="form-group">
-                                                    @foreach (adminPermission() as $key => $value)
+                                                    @foreach ($permissions as $key => $value)
                                                     <div class="checkbox checkbox-success">
                                                             <input type="checkbox" name="permissions[]"
                                                                 value="{{ $key }}"
-                                                                id="colorCheckbox{{ $key }}" @checked(in_array($key, $admin->admin->permission()))>
+                                                                id="colorCheckbox{{ $key }}" @checked(in_array($key, $userPermissions))>
                                                             <label
-                                                                for="colorCheckbox{{ $key }}" class="mr-1">{{ $value }}</label>
+                                                                for="colorCheckbox{{ $key }}" class="mr-1">{{ $key }}</label>
                                                             </div>
                                                         @endforeach
                                                 </fieldset>
                                             </fieldset>
-                                            <fieldset class="form-group">
-                                                <label for="file_name">Permission</label>
-                                                <fieldset class="form-group">
-                                                    <select class="custom-select" id="customSelect" name="status">
-                                                        <option value=""></option>
-                                                        <option value="active" @selected($admin->status == 'active')>Active</option>
-                                                        <option value="suspended"  @selected($admin->status == 'suspended')>Suspended</option>
-                                                    </select>
-                                                </fieldset>
-                                            </fieldset>
+                                            </div>
+                                            
+                                            
+                                           
                                             <div class="">
                                                 <input type="hidden" value="{{ $admin->id }}" name="id" />
                                                 <button class="btn btn-primary" type="submit">Submit</button>

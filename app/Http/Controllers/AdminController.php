@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use DB;
+use App\Models\User;
 use App\Models\Admin;
 use App\Models\Customer;
-use App\Models\User;
-use DB;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -18,7 +19,9 @@ class AdminController extends Controller
     }
 
     function create () {
-        return view('admin.admin.create');
+        $permissions = array_keys(adminPermission());
+        
+        return view('admin.admin.create', compact('permissions'));
     }
 
     function store (Request $request) {
@@ -26,59 +29,78 @@ class AdminController extends Controller
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
+            'password' => 'nullable',
+            'phone' => 'nullable',
             'permissions' => 'required',
             'email' => 'required|unique:users',
-            'status' => 'active',
+            'status' => 'nullable',
         ]);
 
-        DB::transaction(function () use($request){
+        if(!empty($request->password)){
+            $password =  Hash::make($request->password);
+        }else{
+            $password = Hash::make(staffDefaultPassword());
+        }
+
+        DB::transaction(function () use($request, $password){
             $user = User::create([
                 'firstname' => $request->first_name,
                 'lastname' => $request->last_name,
                 'email'=> $request->email,
-                // 'phone' => $request->phone,
-                'password' => Hash::make('password'),
+                'phone' => $request->phone,
+                'password' => $password,
+                'status' => $request->status,
                 'type' => 'admin',
-                'username' => $request->firstname . '-' . $request->lastname,
+                'username' => Str::slug($request->firstname . '-' . $request->lastname),
             ]);
-
-            // $customer = Customer::create([
-            //     'user_id' => $user->id,
-            //     'customer_level' => 4,
-            // ]);
-
+            
             $admins = Admin::create([
                 'user_id' => $user->id,
                 'permissions' => join(',', $request->permissions),
             ]);
-
-            if ($admins) return back()->with('success', 'Account created successfully!');
-            else return back()->with('message', 'Account created successfully!');
         });
+
+        return redirect(route('admins'))->with('message', 'Account created successfully!');
     }
 
     function view (Request $request) {
         if (!is_numeric($request->admin)) return back()->with('error', 'Account not found');
         $admin = User::with('admin')->find($request->admin);
-        return view('admin.admin.edit', ['admin' => $admin]);
+        $permissions = adminPermission();
+        $userPermissions = explode(",",$admin->admin->permissions);
+       
+        return view('admin.admin.edit', ['admin' => $admin, 'permissions' => $permissions, 'userPermissions'=>$userPermissions]);
     }
 
     function update (Request $request) {
         $request->validate([
             'first_name' => 'required',
-            'email' => 'required',
             'last_name' => 'required',
-            'status' => 'required',
-            'id' => 'required|integer',
+            'password' => 'nullable',
+            'phone' => 'nullable',
+            'permissions' => 'required',
+            'email' => 'required|unique:users,email,'.$request->id,
+            'status' => 'nullable',
         ]);
 
+        // 'unique:table,email_column_to_check,id_to_ignore'
+
         $admin = User::find($request->id);
+
+        if (!empty($request->password)) {
+            $password =  Hash::make($request->password);
+        } else {
+            $password = $admin->password;
+        }
 
         $admin->update([
             'email' => $request->email,
             'firstname' => $request->first_name,
             'lastname' => $request->last_name,
+            'phone' => $request->phone,
+            'email' => $request->email,
             'status' => $request->status,
+            'password' => $password,
         ]);
 
         $admin->admin->update([

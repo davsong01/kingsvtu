@@ -7,7 +7,9 @@ use App\Models\Settings;
 use App\Mail\EmailMessages;
 use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\WalletController;
+use Illuminate\Support\Facades\Route;
 
 if (!function_exists("logEmails")) {
     function logEmails($email_to, $subject, $body)
@@ -33,6 +35,7 @@ if (!function_exists("sendEmails")) {
         ];
 
         try {
+
             Mail::to($email_to)->send(new EmailMessages($data));
         } catch (\Exception $e) {
             \Log::info($e->getMessage());
@@ -90,36 +93,120 @@ if (!function_exists("getSettings")) {
     }
 }
 
+if (!function_exists("staffDefaultPassword")) {
+    function staffDefaultPassword()
+    {
+        return '550523';
+    }
+}
+
 if (!function_exists("adminPermission")) {
-    function adminPermission($key)
+    function adminPermission($key=null)
     {
         $perm = [
             'menu' => [],
             'permission' => []
         ];
+
+        $routes = [];
+        // foreach (Route::getRoutes() as $route) {
+        //     if ($route->getName())
+        //         if ($key == 'Admin') {
+        //             $routes[] = $route->getName();
+        //         } else {
+        //             if (
+        //                 $route->getName() != 'settings.edit' &&
+        //                 $route->getName() != 'settings.update' &&
+        //                 $route->getName() != 'announcement.index'
+        //             ) {
+        //                 $routes[] = $route->getName();
+        //             }
+        //         }
+        // }
+        // dd($routes);
         $permissions = [
+            'Admin' => [
+                'menu' => [
+                    'Dashboard',
+                    'Announcement',
+                    'Catalogue',
+                    'API Providers',
+                    'Categories',
+                    'Products',
+                    'Customers',
+                    'All Customers',
+                    'Active Customers',
+                    'Suspended Customers',
+                    'Blacklisted Customers',
+                    'Customer Levels',
+                    'User Management',
+                    'All Admins',
+                    'Financials',
+                    'Product Purchase Log',
+                    'Wallet Funding Log',
+                    'Wallet Log',
+                    'Earnings Log',
+                    'Credit Customer',
+                    'Debit Customer',
+                    'Reserved Account Numbers',
+                    'My Profile',
+                    'Callback Analysis',
+                    'KYC Management',
+                    'Payment Gateway Settings',
+                    'General Settings',
+                ],
+                'permissions' => adminRoutes(),
+            ],
             'Manager' => [
                 'menu' => [
                     'Dashboard',
-                    'Annoucement'
+                    'Catalogue',
+                    'Customers',
+                    'Financials',
+                    'My Profile',
                 ],
-                'permission' => [
-                    'duplicate.product',
-                    'api.balance',
-                    'product.index'
-                ]
+                'permissions' => managerRoutes(),
             ],
             'Support' => [
-                // 'duplicate.product',
-                'api.balance'
+                'menu' => [
+                    'Dashboard',
+                    'Customers',
+                    'Financials',
+                    'My Profile',
+                ],
+                'permissions' => supportRoutes(),
             ],
         ];
 
         if (!empty($key)) {
             $perm = $permissions[$key];
+        }else{
+            $perm = $permissions;
         }
-
+        
         return $perm;
+    }
+}
+
+if (!function_exists("singleUserAllowedRoutes")) {
+    function singleUserAllowedRoutes($admin){
+        $permissions = [];
+        $menus = [];
+
+        $userPermissions = explode(",",$admin->permissions);
+        
+        if(!empty($userPermissions)){
+            foreach($userPermissions as $permission ){
+                $details = adminPermission($permission);
+                $permissions[] = $details['permissions'];
+                $menus[] = $details['menu'];
+            }
+        }
+      
+        return [
+            'menus' => Arr::flatten($menus),
+            'permissions' => Arr::flatten($permissions)
+        ];
     }
 }
 
@@ -127,7 +214,9 @@ if (!function_exists("specialVerifiableVariations")) {
     function specialVerifiableVariations()
     {
         return $specialVerifiableVariations = [
-            'utme-no-mock' => 'profile_id', 'utme-mock' => 'profile_id', 'de' => 'profile_id'
+            'utme-no-mock' => 'profile_id',
+            'utme-mock' => 'profile_id',
+            'de' => 'profile_id'
         ];
     }
 }
@@ -1254,17 +1343,103 @@ if (!function_exists("announcements")) {
     }
 }
 
-if (!function_exists("rolePermissions")) {
-    function rolePermissions($type)
+if (!function_exists("adminRoutes")) {
+    function adminRoutes()
     {
-        $ann = $ann = Announcement::all();
+        $routes = [
+            'product.index',
+            'product.show',
+            'product.edit',
+            'product.update',
+            'product.destroy',
+            'category.show',
+            'category.index',
+            'category.edit',
+            'category.update',
+            'category.destroy',
 
-        if (count($ann)) {
-            if ($type == 'scroll') {
-                return $ann[1];
-            } else {
-                return $ann[0];
-            }
-        }
+            'customer-blacklist.show',
+            'customer-blacklist.edit',
+            'customer-blacklist.update',
+            'customer-blacklist.destroy',
+
+            'announcement.show',
+            'announcement.edit',
+            'announcement.update',
+            'announcement.destroy',
+
+            'api.show',
+            'api.index',
+            'api.edit',
+            'api.update',
+            'api.destroy',
+
+            'customerlevel.show',
+            'customerlevel.edit',
+            'customerlevel.update',
+            'customerlevel.destroy',
+
+            'duplicate.product',
+            'api.balance',
+
+            'black.list.status',
+            'admin.trans',
+            'admin.walletlog',
+            'admin.walletfundinglog',
+            'admin.earninglog',
+            'admin.credit.customer',
+            'admin.debit.customer',
+            'admin.process.credit.debit',
+            'admin.verifybiller',
+            'admin.kyc',
+            'admin.reserved.accounts',
+            'account.transactions',
+            'callback.analysis',
+            'reserved_account.delete',
+            'admin.single.transaction.view',
+            'admin.query.wallet',
+            'admin.requery.transaction',
+            'customers',
+            'customers.active',
+            'customers.suspended',
+            'customers.edit',
+            'customers.update',
+            'variations.pull',
+            'variations.update',
+            'manual.variations.add',
+            'variation.delete',
+            'create.reserved.account',
+            'admins',
+            'newAdmin',
+            'adminSave',
+            'viewAdmin',
+            'updateAdmin',
+            'settings.edit',
+            'settings.update',
+            'transaction.verify',
+            'paymentgateway.index',
+        ];
+
+        return $routes;
+    }
+}
+
+if (!function_exists("managerRoutes")) {
+    function managerRoutes(){
+        $routes = [
+
+        ];
+
+        return $routes;
+    }
+
+}
+
+if (!function_exists("supportRoutes")) {
+    function supportRoutes()
+    {
+        $routes = [];
+
+        return $routes;
     }
 }

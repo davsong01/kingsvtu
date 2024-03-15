@@ -26,9 +26,17 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+        $user = auth()->user();
+        if ($user->status != 'active') {
+            auth()->logout();
+            if ($user->status == 'deleted') {
+                return back()->with('error', 'Sorry, this account was deleted! Please contact support.');
+                // return back()->with('error', );
+            } else {
+                return back()->with('error', 'Sorry, this account was suspended! Please contact support.');
+            }
+        }
         $request->session()->regenerate();
-
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
