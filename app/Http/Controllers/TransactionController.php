@@ -113,13 +113,13 @@ class TransactionController extends Controller
         } else {
             $discount = $this->getDiscount($product, 'product', $request['amount'], 'yes');
         }
+        
         $discountedAmount = $discount['discounted_price'];
         $disCountApplied = $discount['discount_applied'];
         
         $request['quantity'] = $request->quantity ?? 1;
         $request['total_amount'] = $discountedAmount * $request['quantity'];
         $request['discount'] = $disCountApplied * $request['quantity'];
-        
         
         // Get Wallet Balance
         $wallet = new WalletController();
@@ -322,7 +322,7 @@ class TransactionController extends Controller
 
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
-
+        
         if (isset($verify) && $verify['status_code'] == 1) {
             $res = [
                 'status' => $verify['status_code'],
@@ -374,17 +374,19 @@ class TransactionController extends Controller
 
         $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');
         
-        $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) .'% off' : 'Discounted to '.getSettings()->currency.number_format($discount['rate'], 2);
+        // $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
+        $suffix = '';
        
+        
         if(!empty($request->raw) && $request->raw == 'yes'){
             return [
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.number_format($discount['discounted_price']). '</span></strong><span class="suffix">('.$suffix.')</span>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.$discount['discounted_price']. '</span></strong>',
             ];
         }else{
             return response()->json([
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.number_format($discount['discounted_price']). '</span></strong><span class="suffix">('.$suffix.')</span>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.$discount['discounted_price']. '</span></strong>',
             ]);
         }
     }
@@ -401,7 +403,7 @@ class TransactionController extends Controller
                 $amount = $resource->system_price;
             }
         }
-       
+        
         if ($type == 'product') {
             $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
         }
@@ -418,16 +420,20 @@ class TransactionController extends Controller
                 $discounted_price = $amount - $discount;
             }
         }
-
+        
+        $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
+        
         if(!empty($getRate)){
             $response = [
+                'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,
-                'discounted_price' => $discounted_price ?? $amount,
+                'discounted_price' => $discounted_price,
                 'rate' => $price ?? 0,
                 'type' => $resource->category->discount_type ?? '',
                 'discount_applied' => !empty($discounted_price) ? $amount - $discounted_price : 0,
 
             ];
+           
             return $response;
         }else{
             return $discount;

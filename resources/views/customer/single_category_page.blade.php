@@ -20,7 +20,7 @@
 
 @section('content')
 <!-- Content wrapper -->
- <div class="app-content content">
+<div class="app-content content">
     <div class="content-overlay"></div>
     <div class="content-wrapper">
 
@@ -60,7 +60,7 @@
                                                                             <fieldset class="form-group">
                                                                                 <label for="product">Select Service</label>
 
-                                                                                <select class="form-control" name="product" id="product" required>
+                                                                                <select class="form-control js-example-basic-single" name="product" id="product" required>
                                                                                     <option value="">Select</option>
                                                                                     @foreach ($category->products as $item)
                                                                                         <option value="{{ $item->id  }}" data-allow_subscription_type="{{ $item->allow_subscription_type }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
@@ -195,6 +195,7 @@
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
 <script>
     function verify(e){
         $("#amount").attr({
@@ -313,6 +314,7 @@
     });
 
     $(document).ready(function () {
+
         var variations = [];
 
         $('#product').on('change', function () {

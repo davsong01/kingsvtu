@@ -61,7 +61,7 @@ class VtpassController extends Controller
     {
         // Post data
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
+            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "pay";
 
             $headers = [
@@ -176,7 +176,7 @@ class VtpassController extends Controller
     public function requery($api, $request_id)
     {
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_url;
+            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "requery";
 
             $headers = [
@@ -295,7 +295,8 @@ class VtpassController extends Controller
     {
         // Post data
         try {
-            $url = env('ENV') != 'local' ? $data['api']->sandbox_base_url : $data['api']->live_base_url;
+            $url = env('ENV') == 'local' ? $data['api']->sandbox_base_url : $data['api']->live_base_url;
+
             $url = $url . "merchant-verify";
 
             $headers = [

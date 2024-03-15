@@ -58,6 +58,10 @@
                                                         <td><p>
                                                             {{$number->customer->user->name}} <br>
                                                             <a title="View Customer" target="_blank" href="{{route('customers.edit', $number->customer->id)}}">{{$number->customer->user->email}}</a> <br>
+                                                            @if(!empty($number->admin))
+                                                            <span style="color:black"><small>Created by: {{$number->admin->user->name}}</small></span>
+                                                            @endif
+                                                             
                                                             </p>
                                                         </td>
                                                         <td><p>

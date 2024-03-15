@@ -231,9 +231,10 @@
                                                                                 <div class="me-2">
                                                                                     <p class="mb-0 lh-1 key">Discount Applied: </p>
                                                                                 </div>
-
+                                                                                
                                                                                 <div class="item-progress value">{!! getSettings()->currency !!}{{ number_format($transaction->discount, 2) }}</div>
                                                                                 </div>
+                                                                               
                                                                             </li>
                                                                             <li class="d-flex mb-1">
                                                                                  <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
