@@ -1391,6 +1391,7 @@ if (!function_exists("adminRoutes")) {
             'admin.debit.customer',
             'admin.process.credit.debit',
             'admin.verifybiller',
+            'admin.verify.post',
             'admin.kyc',
             'admin.reserved.accounts',
             'account.transactions',

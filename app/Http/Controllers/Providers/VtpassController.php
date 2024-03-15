@@ -296,6 +296,7 @@ class VtpassController extends Controller
         // Post data
         try {
             $url = env('ENV') == 'local' ? $data['api']->sandbox_base_url : $data['api']->live_base_url;
+
             $url = $url . "merchant-verify";
 
             $headers = [

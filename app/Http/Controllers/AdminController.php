@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use DB;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\API;
+use App\Models\Category;
 use App\Models\Customer;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +23,7 @@ class AdminController extends Controller
 
     function create () {
         $permissions = array_keys(adminPermission());
-        
+
         return view('admin.admin.create', compact('permissions'));
     }
 
@@ -53,7 +56,7 @@ class AdminController extends Controller
                 'type' => 'admin',
                 'username' => Str::slug($request->firstname . '-' . $request->lastname),
             ]);
-            
+
             $admins = Admin::create([
                 'user_id' => $user->id,
                 'permissions' => join(',', $request->permissions),
@@ -68,7 +71,7 @@ class AdminController extends Controller
         $admin = User::with('admin')->find($request->admin);
         $permissions = adminPermission();
         $userPermissions = explode(",",$admin->admin->permissions);
-       
+
         return view('admin.admin.edit', ['admin' => $admin, 'permissions' => $permissions, 'userPermissions'=>$userPermissions]);
     }
 
@@ -109,5 +112,27 @@ class AdminController extends Controller
 
         if ($admin) return back()->with('message', 'Account updated successfully!');
         else return back()->with('error', 'Account update failed!');
+    }
+
+    function verifyBiller () {
+        $products = Category::join('products', 'category_id', '=', 'categories.id')->whereIn('unique_element', verifiableUniqueElements())->get('products.*');
+        return view('admin.admin.verify-biller', ['products' => $products, 'api' => API::all()]);
+    }
+
+    function verifyPost (Request $request) {
+        $val = validator($request->all(), [
+            'value' => 'required',
+            'product' => 'required',
+            'api' => 'required',
+        ]);
+
+        if ($val->fails()) return ['code' => 0, 'message' => $val->errors()->first()];
+        $api = API::find($request->api);
+        $data['request']['variation_name'] = $request->type;
+        $data['request']['unique_element'] = $request->value;
+        $data['request']['product_slug'] = $request->product;
+        $data['api'] = $api;
+
+        return app("App\Http\Controllers\Providers\\" . $api->file_name)->verify($data, true);
     }
 }
