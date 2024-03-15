@@ -1,4 +1,17 @@
 @extends('layouts.app')
+@section('page-css')
+    <style>
+        code {
+            max-height: 250px;
+            display: block;
+            overflow: scroll;
+            word-wrap: break-word;
+            padding: 10px;
+            margin: bottom:10px;
+            height: 250px;
+        }
+    </style>
+@endsection
 @section('content')
     <!-- Content wrapper -->
     <div class="app-content content">
@@ -35,6 +48,20 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
+                                        <div class="api-call mb-4">
+                                            <div class="loading d-none text-warning "><i>Please wait while perform our
+                                                    magic...</i></div>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <code style="margin:10px 0" class="d-none format w-100">
+                                                    </code>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <code style="margin:10px 0" class="d-none raw w-100">
+                                                    </code>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <form action="{{ route('admin.verify.post') }}" method="POST"
                                             enctype="multipart/form-data">
                                             @csrf
@@ -71,12 +98,11 @@
                                                         Value
                                                         <span class="text-danger">*</span>
                                                     </label>
-                                                    <input type="text" class="form-control" id="lastName"
-                                                        name="value" value="{{ old('last_name') }}"
-                                                        placeholder="Value to verify" required>
+                                                    <input type="text" class="form-control" id="lastName" name="value"
+                                                        value="{{ old('last_name') }}" placeholder="Value to verify"
+                                                        required>
                                                 </div>
                                             </div>
-
 
                                             <div class="">
                                                 <button class="btn btn-primary" type="submit">Submit</button>
@@ -103,13 +129,19 @@
                 type: 'post',
                 data: $(this).serializeArray(),
                 beforeSend: () => {
-
+                    $('.api-call .loading').removeClass('d-none');
+                    $('.api-call code').addClass('d-none');
                 },
                 success: res => {
-                    console.log(res);
+                    $('.api-call .loading').addClass('d-none');
+                    $('.api-call code.raw').removeClass('d-none').html(
+                        JSON.stringify(res.raw_response, null, 2)
+                    )
+                    $('.api-call code.format').removeClass('d-none').html(res.message)
+                    if (res.status) {}
                 },
                 error: () => alert('Hmph, something went south!'),
-            })
-        })
+            });
+        });
     </script>
 @endsection
