@@ -53,20 +53,40 @@
                                                         name="last_name" value="{{ old('last_name') }}"
                                                         placeholder="Last name" required>
                                                 </div>
-                                            </div>
-                                            <fieldset class="form-group">
-                                                <label for="file_name">Email</label>
-                                                <input type="email" class="form-control" name="email"
-                                                    value="{{ old('email') }}" placeholder="Enter email address"
-                                                    id="file_name" required>
-                                            </fieldset>
-                                            <fieldset class="form-group">
-                                                <label for="file_name">Permission</label>
+                                                <div class="form-group col-sm-6 col-12">
+                                                    <label for="text-bold-600">Email</label>
+                                                    <input type="email" class="form-control" name="email"
+                                                        value="{{ old('email') }}" placeholder="Enter email address"
+                                                        id="file_name" required>
+                                                </div>
+                                                <div class="form-group col-sm-6 col-12">
+                                                    <label for="text-bold-600">Phone</label>
+                                                    <input type="text" class="form-control" name="phone"
+                                                        value="{{ old('phone') }}" placeholder="Enter phone number"
+                                                        id="phone" required>
+                                                </div>
+                                                <fieldset class="form-group col-sm-6 col-12"">
+                                                    <label for="category">Status</label>
+                                                    <select class="form-control" name="status" id="status" required>
+                                                        <option value="active">Active</option>
+                                                        <option value="inactive">Suspended</option>
+                                                        
+                                                    </select>
+                                                </fieldset>
+                                                <fieldset class="form-group col-md-6">
+                                                    <label class="text-bold-600" for="password">Password <span style="color:red">Leave empty to use the default password of: {{staffDefaultPassword()}}</span></label>
+                                                    <input type="password" class="form-control" name="password"
+                                                        value="{{ old('password') }}" placeholder="Enter password"
+                                                        id="password">
+                                                </fieldset>
+
+                                                <fieldset class="form-group col-md-6">
+                                                <label class="text-bold-600" for="file_name">Permission</label>
                                                 <fieldset class="form-group">
-                                                    @foreach (adminPermission() as $key => $value)
+                                                    @foreach ($permissions as $key => $value)
                                                     <div class="checkbox checkbox-success">
                                                             <input type="checkbox" name="permissions[]"
-                                                                value="{{ $key }}"
+                                                                value="{{ $value }}"
                                                                 id="colorCheckbox{{ $key }}">
                                                             <label
                                                                 for="colorCheckbox{{ $key }}" class="mr-1">{{ $value }}</label>
@@ -74,6 +94,8 @@
                                                         @endforeach
                                                 </fieldset>
                                             </fieldset>
+                                            </div>
+                                            
                                             <div class="">
                                                 <button class="btn btn-primary" type="submit">Submit</button>
                                             </div>

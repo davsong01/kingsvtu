@@ -130,7 +130,7 @@ class DashboardController extends Controller
         try {
             DB::beginTransaction();
             // Log basic transaction
-            $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
+            $transaction = app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
 
             $transaction->update([
                 'balance_after' => $balance - $price,
@@ -190,7 +190,7 @@ class DashboardController extends Controller
         // Send email
         $subject = "You requested a Transaction PIN Reset Link";
         $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
-        $reset_link =  url('/') . "/confirm_reset_pin?token=" . $hashedToken;
+        $reset_link = url('/') . "/confirm_reset_pin?token=" . $hashedToken;
         $body .= '<p style="line-height: 2.0;">Please <strong>login</strong> to your account on ' . config('app.name') . ' and click the button below to reset your transaction pin. <br> <a class="btn btn-info" target="_blank" href="' . $reset_link . '" style="position: margin:5px; relative;margin-bottom:50px;color: #fff;font-weight: 500;padding: 8px 20px;font-size: 13px;line-height: 24px;letter-spacing: 0.01em;border-radius: 4px;border: 1px solid;transition: all .4s ease;background:#950eb3;text-align: center;white-space: nowrap;vertical-align: middle;text-decoration:none">RESET PIN</a><br/><br><strong>Please note that this link expires after ' . $expiry->format('jS F, Y, h:iA') . '.</strong><br><br>If you did not request a Transaction PIN change, Kindly notify us via WhatsApp us via whatsapp( ' . $settings->whatsapp_no . ') immediately.<b><hr/><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
 
         logEmails(auth()->user()->email, $subject, $body);
@@ -396,8 +396,10 @@ class DashboardController extends Controller
         $controller = new TransactionController();
         $amount = $controller->removeCharsInAmount($request->amount);
 
-        if ($amount > $currAmount) {
-            return back()->with('error', 'Insuffient fund, amount to withdraw cannot be more than ' . $currAmount);
+        if ($amount < 1) {
+            return back()->with('error', 'Invalid value entered, try again!');
+        } elseif ($amount > $currAmount) {
+            return back()->with('error', 'Insuffient funds, amount to withdraw cannot be more than ' . $currAmount);
         }
 
         $requestId = $controller->generateRequestId();
@@ -450,6 +452,21 @@ class DashboardController extends Controller
             $wallet->updateReferralWallet(auth()->user(), $amount, 'debit');
 
             DB::commit();
+            $user = auth()->user();
+            $host = env('APP_URL');
+            $transEmail = <<<__here
+            Dear $user->firstname $user->lastname,
+
+We hope this email finds you well. We are delighted to inform you that an amount of $amount has been successfully credited to your wallet.
+
+Transaction Details:
+
+Transaction ID: <a href="$host/customer-transaction_status/$tid">click here</a><br>
+Credited Amount: $amount<br>
+This credit to your wallet provides you with the flexibility to seamlessly make transactions and enjoy our services. Whether it's making a purchase, availing discounts, or accessing exclusive features, your wallet balance is now ready for use.
+__here;
+
+            logEmails($user->email, 'Wallet Credit', $transEmail);
             return back()->with('message', getSettings()->currency . number_format($amount, 2) . " withdrawn to wallet successfully!");
         } catch (\Throwable $th) {
             //throw $th;
