@@ -93,7 +93,6 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('credit-customer', [TransactionController::class, 'creditCustomerPage'])->name('admin.credit.customer');
     Route::get('debit-customer', [TransactionController::class, 'debitCustomerPage'])->name('admin.debit.customer');
     Route::post('process-credit-debit', [TransactionController::class, 'processCreditDebit'])->name('admin.process.credit.debit');
-    Route::post('verify-biller/{admin?}', [TransactionController::class, 'verify'])->name('admin.verifybiller');
     Route::get('admin-kyc', [KycDataController::class, 'adminKycIndex'])->name('admin.kyc');
     Route::get('admin-reserved-account', [ReservedAccountNumberController::class, 'index'])->name('admin.reserved.accounts');
     Route::get('account-transactions/{account}', [ReservedAccountNumberController::class, 'show'])->name('account.transactions');
@@ -125,6 +124,8 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
         Route::post('admin/save', 'store')->name('adminSave');
         Route::get('admin/view', 'view')->name('viewAdmin');
         Route::post('admin/update', 'update')->name('updateAdmin');
+        Route::get('verify-biller', 'verifyBiller')->name('admin.verifybiller');
+        Route::post('verify-post', 'verifyPost')->name('admin.verify.post');
     });
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
