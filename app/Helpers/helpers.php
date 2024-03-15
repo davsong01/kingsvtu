@@ -93,8 +93,15 @@ if (!function_exists("getSettings")) {
     }
 }
 
+if (!function_exists("staffDefaultPassword")) {
+    function staffDefaultPassword()
+    {
+        return '550523';
+    }
+}
+
 if (!function_exists("adminPermission")) {
-    function adminPermission($key)
+    function adminPermission($key=null)
     {
         $perm = [
             'menu' => [],
@@ -167,10 +174,37 @@ if (!function_exists("adminPermission")) {
 
         if (!empty($key)) {
             $perm = $permissions[$key];
+        }else{
+            $perm = $permissions;
         }
 
         return $perm;
     }
+}
+
+if (!function_exists("singleUserAllowedRoutes")) {
+    function singleUserAllowedRoutes($admin){
+        $permissions = [];
+        $menus = [];
+
+        $userPermissions = explode(",",$admin->permissions);
+        
+        if(!empty($userPermissions)){
+            foreach($userPermissions as $permission ){
+                $details = adminPermission($permission);
+                $permissions = $details['permissions'];
+                $menus = $details['menu'];
+                // dd($details, $permission, $permissions, $details['menu']);
+            }
+        }
+
+        return [
+            'menus' => $menus,
+            'permissions' => $permissions
+        ];
+
+    }
+
 }
 
 if (!function_exists("specialVerifiableVariations")) {

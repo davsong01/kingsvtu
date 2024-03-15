@@ -20,6 +20,7 @@
                                     <div class="card-body py-1">
                                         <span style="margin-top:5px"></span>
                                         <div class="text-muted line-ellipsis"><strong>Customer of the month</strong></div>
+                                        
                                         <h1 class="text-primary text-bold-500">{{$customer->customer->user->username}}</h1>
                                         <h4 class="mb-0">{{number_format($customer->count)}}+ Transactions</h4>
                                     </div>

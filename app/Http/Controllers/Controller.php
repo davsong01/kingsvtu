@@ -123,6 +123,7 @@ class Controller extends BaseController
     public function sendTransactionEmail($transaction, $user)
     {
         if (getSettings()->transaction_email_notification == 'yes') {
+            
             $variation_name =  isset($transaction->variation) ? ' | ' . $transaction->variation->system_name : '';
             $product =  $transaction->product->name ?? '' .  $variation_name;
             $extras = isset($transaction->extras) ? $transaction->extras : '';
@@ -131,9 +132,10 @@ class Controller extends BaseController
             $body = '<p>Hello! ' . $name . ',</p>';
             $body .= '<p style="line-height: 2.0;">A transaction has just occured on your account on ' . config('app.name') . ' <br>Please find below the details of the transaction: <br>
             <strong>Transaction Purpose:</strong> ' . $transaction->reason . '<br>
+            <strong>Transaction Status:</strong> ' . ucfirst($transaction->user_status) . '<br>
             <strong>Transaction Id:</strong> ' . $transaction->transaction_id . '<br>
             <strong>Transaction Date:</strong> ' . date("M jS, Y g:iA", strtotime($transaction->created_at)) . '<br>
-            <strong>Transaction Status:</strong> ' . ucfirst($transaction->descr);
+            <strong>Transaction Description:</strong> ' . ucfirst($transaction->descr);
 
             if (!empty($transaction->extras)) {
                 $body .= '<br> <strong>Extras:</strong> ' . $extras . '<br>';

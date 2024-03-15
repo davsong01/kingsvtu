@@ -19,6 +19,15 @@ class RouteProtectionMiddleware
     {
         $admin = auth()->user()->admin;
         $curRouteName = Route::currentRouteName();
+        // $userPermissions = explode(",", $admin->permissions);
+        
+        // if(!empty($userPermissions)){
+        //     $userPermissions = $userPermissions;
+        // }else{
+        //     $userPermissions = [];
+        // }    singleUserAllowedRoutes
+
+        dd('sdd');
         $routes = adminPermission($admin->permissions)['permissions'];
 
         if (in_array($curRouteName, $routes)) {

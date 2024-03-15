@@ -25,9 +25,15 @@ class VariationController extends Controller
     {
         $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
         foreach ($variations as $key => $variation) {
-            $discount = app('App\Http\Controllers\TransactionController')->getDiscount($variation, 'variation');
-            $variation->discount = $discount > 0 ? number_format($variation->system_price - $discount) : 0;
+            $req = new Request([
+                'variation_id' => $variation->id,
+                'raw' => 'yes',
+            ]);
 
+            $discount = app('App\Http\Controllers\TransactionController')->getCustomerDiscount($req);
+            
+            $variation->discount = $discount;
+       
             // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
             if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->verifiable = 'yes';
@@ -38,7 +44,7 @@ class VariationController extends Controller
             if (($variation->fixed_price == 'Yes') && empty($variation->system_price) || $variation->system_price < 0) {
                 unset($variations[$key]);
             }
-
+            
             if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->unique_element = specialVerifiableVariations()[$variation->slug];
             } else {

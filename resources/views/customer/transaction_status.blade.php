@@ -49,13 +49,13 @@
                                                     <div class="card-header" style="padding:1.4rem 0.7rem">
                                                         <h4 class="card-title">Transaction Status Page</h4>
 
-                                                        @if(in_array($transaction->status, ['completed','delivered','pending','attention-required']))
+                                                        @if(in_array($transaction->user_status, ['completed','delivered','pending','attention-required','success']))
                                                             <div class="alert alert-success" role="alert" style="margin-bottom: 5px !important; margin-top:10px">
-                                                                <strong>{{ strtoupper($transaction->descr) }}</strong>
+                                                                <strong>{{ strtoupper($transaction->user_status) }}</strong>
                                                             </div>
                                                         @elseif($transaction->status == 'failed')
                                                             <div class="alert alert-danger" role="alert" style="margin-bottom: 5px !important;margin-top:10px">
-                                                                <strong>{{ strtoupper($transaction->descr) }}</strong>
+                                                                <strong>{{ strtoupper($transaction->user_status) }}</strong>
                                                             </div>
                                                         @endif
                                                     </div>
@@ -92,7 +92,7 @@
                                                                     </strong></h3></span>
                                                                    
                                                                     <span class="data-details-info">{{ $transaction->unique_element }} </span> <br/>
-                                                                    <span class="data-details-info"><strong style="color:#174159;">Total Amount: {!! getSettings()->currency !!}{{ number_format($transaction->total_amount, 2) }}</strong></span> <br>
+                                                                    <span class="data-details-info"><strong style="color:#174159;">Amount: {!! getSettings()->currency !!}{{ number_format($transaction->amount, 2) }}</strong></span> <br>
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']) && !in_array($transaction->status, ['failed']))
                                                                     <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary mt-1 mb-1" style="color:#fff;width:100%;"><i class="fa fa-download"></i>Download Transaction Receipt</a>
                                                                     @endif
