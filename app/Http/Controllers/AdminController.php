@@ -133,7 +133,6 @@ class AdminController extends Controller
         $data['request']['product_slug'] = $request->product;
         $data['api'] = $api;
 
-        // Get Api
-        return $verify = app("App\Http\Controllers\Providers\\" . $api->file_name)->verify($data, true);
+        return app("App\Http\Controllers\Providers\\" . $api->file_name)->verify($data, true);
     }
 }
