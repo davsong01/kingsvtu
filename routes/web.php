@@ -83,7 +83,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::resource('category', CategoryController::class);
     Route::resource('customer-blacklist', BlackListController::class);
     Route::resource('announcement', AnnouncementController::class);
-    Route::get('black-list-status', [BlackListController::class, 'status']);
+    Route::get('black-list-status', [BlackListController::class, 'status'])->name('black.list.status');
 
     // transactions route
     Route::get('transactions', [TransactionController::class, 'transView'])->name('admin.trans');

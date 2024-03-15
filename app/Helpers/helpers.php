@@ -109,22 +109,21 @@ if (!function_exists("adminPermission")) {
         ];
 
         $routes = [];
-
-        foreach (Route::getRoutes() as $route) {
-            if ($route->getName())
-                if ($key == 'Admin') {
-                    $routes[] = $route->getName();
-                } else {
-                    if (
-                        $route->getName() != 'settings.edit' &&
-                        $route->getName() != 'settings.update' &&
-                        $route->getName() != 'announcement.index'
-                    ) {
-                        $routes[] = $route->getName();
-                    }
-                }
-        }
-
+        // foreach (Route::getRoutes() as $route) {
+        //     if ($route->getName())
+        //         if ($key == 'Admin') {
+        //             $routes[] = $route->getName();
+        //         } else {
+        //             if (
+        //                 $route->getName() != 'settings.edit' &&
+        //                 $route->getName() != 'settings.update' &&
+        //                 $route->getName() != 'announcement.index'
+        //             ) {
+        //                 $routes[] = $route->getName();
+        //             }
+        //         }
+        // }
+        // dd($routes);
         $permissions = [
             'Admin' => [
                 'menu' => [
@@ -156,7 +155,7 @@ if (!function_exists("adminPermission")) {
                     'Payment Gateway Settings',
                     'General Settings',
                 ],
-                'permissions' => $routes,
+                'permissions' => adminRoutes(),
             ],
             'Manager' => [
                 'menu' => [
@@ -166,7 +165,7 @@ if (!function_exists("adminPermission")) {
                     'Financials',
                     'My Profile',
                 ],
-                'permissions' => $routes
+                'permissions' => managerRoutes(),
             ],
             'Support' => [
                 'menu' => [
@@ -175,16 +174,7 @@ if (!function_exists("adminPermission")) {
                     'Financials',
                     'My Profile',
                 ],
-                'permissions' => [
-                    'admin.trans',
-                    'admin.single.transaction.view',
-                    'customers',
-                    'customers',
-                    'customers.active',
-                    'customers.suspended',
-                    'admin.requery.transaction',
-                    'admin.walletfundinglog',
-                ],
+                'permissions' => supportRoutes(),
             ],
         ];
 
@@ -193,7 +183,7 @@ if (!function_exists("adminPermission")) {
         }else{
             $perm = $permissions;
         }
-
+        
         return $perm;
     }
 }
@@ -204,16 +194,15 @@ if (!function_exists("singleUserAllowedRoutes")) {
         $menus = [];
 
         $userPermissions = explode(",",$admin->permissions);
-        
+       
         if(!empty($userPermissions)){
             foreach($userPermissions as $permission ){
                 $details = adminPermission($permission);
                 $permissions = $details['permissions'];
                 $menus = $details['menu'];
-                // dd($details, $permission, $permissions, $details['menu']);
             }
         }
-
+        
         return [
             'menus' => $menus,
             'permissions' => $permissions
@@ -1351,5 +1340,106 @@ if (!function_exists("announcements")) {
                 return $ann[0];
             }
         }
+    }
+}
+
+if (!function_exists("adminRoutes")) {
+    function adminRoutes()
+    {
+        $routes = [
+            'product.index',
+            'product.show',
+            'product.edit',
+            'product.update',
+            'product.destroy',
+            'category.show',
+            'category.index',
+            'category.edit',
+            'category.update',
+            'category.destroy',
+
+            'customer-blacklist.show',
+            'customer-blacklist.edit',
+            'customer-blacklist.update',
+            'customer-blacklist.destroy',
+
+            'announcement.show',
+            'announcement.edit',
+            'announcement.update',
+            'announcement.destroy',
+
+            'api.show',
+            'api.index',
+            'api.edit',
+            'api.update',
+            'api.destroy',
+
+            'customerlevel.show',
+            'customerlevel.edit',
+            'customerlevel.update',
+            'customerlevel.destroy',
+
+            'duplicate.product',
+            'api.balance',
+
+            'black.list.status',
+            'admin.trans',
+            'admin.walletlog',
+            'admin.walletfundinglog',
+            'admin.earninglog',
+            'admin.credit.customer',
+            'admin.debit.customer',
+            'admin.process.credit.debit',
+            'admin.verifybiller',
+            'admin.kyc',
+            'admin.reserved.accounts',
+            'account.transactions',
+            'callback.analysis',
+            'reserved_account.delete',
+            'admin.single.transaction.view',
+            'admin.query.wallet',
+            'admin.requery.transaction',
+            'customers',
+            'customers.active',
+            'customers.suspended',
+            'customers.edit',
+            'customers.update',
+            'variations.pull',
+            'variations.update',
+            'manual.variations.add',
+            'variation.delete',
+            'create.reserved.account',
+            'admins',
+            'newAdmin',
+            'adminSave',
+            'viewAdmin',
+            'updateAdmin',
+            'settings.edit',
+            'settings.update',
+            'transaction.verify',
+            'paymentgateway.index',
+        ];
+
+        return $routes;
+    }
+}
+
+if (!function_exists("managerRoutes")) {
+    function managerRoutes(){
+        $routes = [
+
+        ];
+
+        return $routes;
+    }
+
+}
+
+if (!function_exists("supportRoutes")) {
+    function supportRoutes()
+    {
+        $routes = [];
+
+        return $routes;
     }
 }

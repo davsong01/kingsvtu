@@ -9,7 +9,6 @@
     // };
     $allowedMenu = singleUserAllowedRoutes(auth()->user()->admin)['menus'];
     $allowedRoutes = singleUserAllowedRoutes(auth()->user()->admin)['permissions'];
-    
 @endphp
 
 <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
