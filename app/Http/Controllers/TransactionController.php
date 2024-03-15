@@ -1083,8 +1083,25 @@ __here;
 
     public function requery(Request $request, TransactionLog $transactionlog)
     {
+        $api = $transactionlog->api;
+        // Get Api
+        $file_name = $api->file_name;
+        $message = '';
+        
+        $requery = app("App\Http\Controllers\Providers\\" . $file_name)->requery($transactionlog);
 
-        if ($transactionlog->status == 'success') {
+        if($requery && $requery['status'] == 'success'){
+            $message .= '<h4 align="center" style="color:green"><b>TRANSACTION SUCCESSFUL</b><br><span class="fa fa-check-circle text-success mr-1" style="font-size:19px">' . 1 . '</span></h4><hr style="margin:6px 0px 6px 0px"><table><tbody>';
+        }else{
+            $message .= '<h4 align="center" style="color:red"><b>'. $requery['api_status'].'</b></h4><hr style="margin:6px 0px 6px 0px"><center><button class="btn btn-danger btn-sm">' . $requery['api_status'] . '</button></center>';
         }
+
+        $ret = [
+            'status' => $requery['status'],
+            'api_response' => $requery['api_response'],
+            'message' => $message
+        ];
+       
+        return response()->json($ret);
     }
 }

@@ -86,6 +86,7 @@
 
                                                             </div>
                                                                 <div class="col-md-5">
+                                                                    <h5 style="color:black"><strong>{{ $transaction->product_name }}</strong></h5>
                                                                     <h5 class="mb-1">
                                                                         {{ $transaction->transaction_id }}</h5> <br>
                                                                        
@@ -113,9 +114,9 @@
                                                                             <li class="d-flex mb-1">
                                                                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                                 <div class="me-2">
-                                                                                    <p class="mb-0 lh-1 key">{{ $key }} </p>
+                                                                                    <p class="mb-0 lh-1 key"><strong>{{ $key }}:</strong> </p>
                                                                                 </div>
-                                                                                <div class="item-progres value">{{ ucfirst($value) }}</div>
+                                                                                <div class="item-progres value">{{ ucfirst($value) }}sd</div>
                                                                             </div>
                                                                         </li>
                                                                         @endforeach
@@ -126,6 +127,9 @@
                                                                     <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->descr) }}</strong></span><br><br>
                                                                     <strong>Real Status</strong> <br>
                                                                     <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->status) }}</strong></span><br><br>
+                                                                    @if(!in_array($transaction->status, ['completed','success']))
+                                                                    <a id="qw_resolve" onclick="queryStatus('{{$transaction->id}}')" class="btn btn-success btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M754-81q-8 0-15-2.5T726-92L522-296q-6-6-8.5-13t-2.5-15q0-8 2.5-15t8.5-13l85-85q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l204 204q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13l-85 85q-6 6-13 8.5T754-81Zm0-95 29-29-147-147-29 29 147 147ZM205-80q-8 0-15.5-3T176-92l-84-84q-6-6-9-13.5T80-205q0-8 3-15t9-13l212-212h85l34-34-165-165h-57L80-765l113-113 121 121v57l165 165 116-116-43-43 56-56H495l-28-28 142-142 28 28v113l56-56 142 142q17 17 26 38.5t9 45.5q0 24-9 46t-26 39l-85-85-56 56-42-42-207 207v84L233-92q-6 6-13 9t-15 3Zm0-96 170-170v-29h-29L176-205l29 29Zm0 0-29-29 15 14 14 15Zm549 0 29-29-29 29Z"/></svg> Resolve</a>
+                                                                    @endif
                                                                     {{-- Description <br> --}}
                                                                     {{-- <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->descr) }}</strong></span><br><br> --}}
                                                                 </div>
@@ -273,6 +277,7 @@
                                                                     </div>
                                                                     <a id="qw_debit" onclick="queryCredit('{{$transaction->id}}', 'credit')" class="btn btn-success btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q32 0 62-6t58-17l60 61q-41 20-86 31t-94 11Zm280-80v-120H640v-80h120v-120h80v120h120v80H840v120h-80ZM424-296 254-466l56-56 114 114 400-401 56 56-456 457Z"/></svg> Query Credit</a>
                                                                     <a id="qw_credit" onclick="queryCredit('{{$transaction->id}}', 'debit')" class="btn btn-danger btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M200-440v-80h560v80H200Z"/></svg> Query Debit</a>
+                                                                    <a id="qw_status" onclick="queryStatus('{{$transaction->id}}')" class="btn btn-warning btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-120 0-600q95-97 219.5-148.5T480-800q136 0 260.5 51.5T960-600l-40 40q-28-36-69.5-58T760-640q-83 0-141.5 58.5T560-440q0 49 22 90.5t58 69.5L480-120Zm280-40q-17 0-29.5-12.5T718-202q0-17 12.5-29.5T760-244q17 0 29.5 12.5T802-202q0 17-12.5 29.5T760-160Zm-30-128q0-38 10-59t43-54q21-21 27-31.5t6-26.5q0-18-14-31.5T765-504q-21 0-39 13.5T700-454l-54-22q12-38 44-61t75-23q49 0 80 29t31 74q0 23-10 41t-38 46q-24 24-30 38.5t-6 43.5h-62Z"/></svg> Requery</a>
                                                                     {{-- <a id="qw-transaction" onclick="queryTransaction('{{$transaction->id}}')" class="btn btn-info btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m105-233-65-47 200-320 120 140 160-260 109 163q-23 1-43.5 5.5T545-539l-22-33-152 247-121-141-145 233ZM863-40 738-165q-20 14-44.5 21t-50.5 7q-75 0-127.5-52.5T463-317q0-75 52.5-127.5T643-497q75 0 127.5 52.5T823-317q0 26-7 50.5T795-221L920-97l-57 57ZM643-217q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm89-320q-19-8-39.5-13t-42.5-6l205-324 65 47-188 296Z"/></svg></i> Re Query Transaction</a> --}}
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -330,6 +335,38 @@
 		e.preventDefault();
 	}
 
+    function queryStatus(id){
+		var tid = id;
+        url = '{{url("/")}}/admin/requery-transaction/'+tid;
+
+		$.ajax({
+			url : url,
+			type : 'GET',
+			beforeSend: function (){
+				$('#q_res').hide();
+				$('#img_loading').show();
+                $('.validate-div').show();
+				$('#img_loading2').show();
+				$('#qw_status').html('Processing....');
+			},
+			success:function (data) {
+				$('#qw_status').html('Requery Complete <i class="fa fa-check"></i>');
+				$('#img_loading').hide();
+				$('#q_res').show();
+				$('#q_res').html(data.message);
+                
+                // $('#validate-div').show();
+                // $('#validate-biller').html('Validate Biller <i class="fa fa-check"></i>');
+				$('#img_loading2').hide();
+				$('#validate-div').show();
+				$('#q_res2').show();
+				$('#q_res2').html(JSON.stringify(data.api_response, null, 5));
+                
+			}
+		});
+		e.preventDefault();
+	}
+    
     function validateBiller(variation_id, element, value){
         var variation_id = variation_id;
         var element = element;
@@ -341,7 +378,7 @@
         };
 
         console.log(data);
-        var url = '{{url("/")}}/admin/verify-biller/admin';
+        var url = '{{url("/")}}/admin/verify-biller';
 		$.ajax({
 			url : url,
 			type : 'POST',

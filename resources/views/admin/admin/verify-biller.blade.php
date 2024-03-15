@@ -75,7 +75,7 @@
                                                         @endforeach
                                                     </select>
                                                 </fieldset>
-                                                <fieldset class="form-group col-sm-6 col-12"">
+                                                <fieldset class="form-group col-sm-6 col-12">
                                                     <label for="product">Select API</label>
                                                     <select class="form-control" name="api" id="product" required>
                                                         <option value="">Select API</option>

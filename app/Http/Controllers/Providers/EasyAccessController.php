@@ -696,6 +696,8 @@ class EasyAccessController extends Controller
         return $format;
     }
 
+    
+
     // public function fetchAndUpdateBalance($api)
     // {
     //     $newBalance = $this->balance($api, 'no-format');

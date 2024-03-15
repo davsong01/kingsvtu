@@ -173,8 +173,11 @@ class VtpassController extends Controller
     //     return $api;
     // }
 
-    public function requery($api, $request_id)
+    public function requery($transaction)
     {
+        $api = $transaction->api;
+        $request_id = $transaction->reference_id;
+
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "requery";
@@ -191,13 +194,15 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
+           
             $successCodes = ['000'];
             $failCodes = ['016'];
-
-            if (isset($response['code']) && in_array($response['code'], $successCodes)) {
+            
+            if (isset($response) && isset($response['code']) && in_array($response['code'], $successCodes)) {
                 // success
                 $format = [
                     'status' => 'success',
+                    'api_status' => $response['content']['transactions']['status'],
                     'user_status' => 'delivered',
                     'api_response' => $response,
                     'message' => $response['response_description'] ?? null,
@@ -209,6 +214,7 @@ class VtpassController extends Controller
                 // fail
                 $format = [
                     'status' => 'failed',
+                    'api_status' => $response['content']['transactions']['status'],
                     'user_status' => 'failed',
                     'api_response' => $response,
                     'message' => $response['response_description'] ?? null,
@@ -216,26 +222,29 @@ class VtpassController extends Controller
                     'status_code' => 0,
                     'purchase_code' => $response['purchase_code'] ?? null
                 ];
-            } else {
-                // attention required
+            } else{
                 $format = [
-                    'status' => 'attention-required',
-                    'user_status' => 'completed',
+                    'status' => 'failed',
+                    'api_status' => 'no-response',
+                    'user_status' => 'failed',
+                    'response' => '',
                     'api_response' => $response,
-                    'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
-                    'status_code' => 2,
+                    'message' => 'NO RESPONSE',
                 ];
             }
         } catch (\Throwable $th) {
             $format = [
                 'status' => 'attention-required',
+                'user_status' => 'success',
                 'response' => '',
                 'api_response' => $response,
                 'payload' => $payload,
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
+
+        return $format;
     }
 
     public function balance($api, $no_format = null)

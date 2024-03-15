@@ -116,7 +116,7 @@ class AdminController extends Controller
 
     function verifyBiller () {
         $products = Category::join('products', 'category_id', '=', 'categories.id')->whereIn('unique_element', verifiableUniqueElements())->get('products.*');
-        return view('admin.admin.verify-biller', ['products' => $products, 'api' => API::all()]);
+        return view('admin.admin.verify-biller', ['products' => $products, 'api' => API::where('id', 1)->get()]);
     }
 
     function verifyPost (Request $request) {
