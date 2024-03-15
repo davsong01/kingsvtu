@@ -322,7 +322,7 @@ class TransactionController extends Controller
 
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
-
+        
         if (isset($verify) && $verify['status_code'] == 1) {
             $res = [
                 'status' => $verify['status_code'],

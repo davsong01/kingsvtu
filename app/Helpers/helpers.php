@@ -194,18 +194,18 @@ if (!function_exists("singleUserAllowedRoutes")) {
         $menus = [];
 
         $userPermissions = explode(",",$admin->permissions);
-       
+        
         if(!empty($userPermissions)){
             foreach($userPermissions as $permission ){
                 $details = adminPermission($permission);
-                $permissions = $details['permissions'];
-                $menus = $details['menu'];
+                $permissions[] = $details['permissions'];
+                $menus[] = $details['menu'];
             }
         }
-        
+      
         return [
-            'menus' => $menus,
-            'permissions' => $permissions
+            'menus' => Arr::flatten($menus),
+            'permissions' => Arr::flatten($permissions)
         ];
     }
 }
