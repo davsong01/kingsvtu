@@ -390,7 +390,7 @@ class UssdHosting extends Controller
     {
         $newString = str_replace(
             array("number", "amount", "phone"), // possible tokens
-            array($request['unique_element'], $request['total_amount'], $request['phone']),
+            array($request['unique_element'], $request['amount'], $request['phone']),
             $string
         );
         return $newString;
