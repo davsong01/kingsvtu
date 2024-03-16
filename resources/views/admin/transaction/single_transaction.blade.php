@@ -1,4 +1,4 @@
-<?php 
+<?php
     if($transaction->status == 'failed'){
         $color = 'red';
     }elseif($transaction->status == 'initiated'){
@@ -29,7 +29,7 @@
     .table {
         color: black;
     }
-   
+
     code{
         max-height: 250px;
         display: block;
@@ -80,7 +80,7 @@
                                                             <div class="col-md-1">
                                                                 @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                 <img id="product-image" width="60" height="60" src="{{ asset('site/upgrade.jpg') }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
-                                                                @else 
+                                                                @else
                                                                 <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 @endif
 
@@ -89,7 +89,7 @@
                                                                     <h5 style="color:black"><strong>{{ $transaction->product_name }}</strong></h5>
                                                                     <h5 class="mb-1">
                                                                         {{ $transaction->transaction_id }}</h5> <br>
-                                                                       
+
                                                                     {{ $transaction->created_at }}
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
                                                                      <br>
@@ -138,12 +138,12 @@
                                                             <div class="row">
                                                                 <div class="col-md-3">
                                                                     <strong class="heads">Wallet Trail:</strong> <br>
-                                                                   
+
                                                                     @if($transaction->wallets)
                                                                         @foreach($transaction->wallets as $wallet)
                                                                             @if($wallet->type == 'credit')
                                                                             <span style="color:green"><strong>CREDIT :</strong> {{ $wallet->created_at}} ({!! getSettings()->currency. number_format($wallet->amount, 2) !!})
-                                                                            </span> 
+                                                                            </span>
                                                                             @endif
                                                                             @if($wallet->type == 'debit')
                                                                             <span style="color:red"><strong>DEBIT : </strong>{{ $wallet->created_at}}
@@ -165,10 +165,10 @@
                                                                         <strong>Variation: </strong>{{ $transaction->variation->system_name ?? 'null'}} <br>
                                                                     @endif
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
-                                                                    
+
                                                                         <br><br>
                                                                         <strong class="heads">Transaction Details</strong> <br>
-                                                                        <strong>Product:</strong>{{ $transaction->product_name }} 
+                                                                        <strong>Product:</strong>{{ $transaction->product_name }}
                                                                         @if($transaction->category)<br>
                                                                         <strong>Category:</strong>{{ $transaction->category->display_name }}
                                                                         @endif
@@ -224,7 +224,7 @@
                                                                                 @if(in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING','ADMIN-DEBIT','ADMIN-CREDIT']))
                                                                                     {{ ucfirst(str_replace("-"," ",$transaction->reason))}}
                                                                                 @else
-                                                                                {{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) <strong> | {{$transaction->variation->system_name}} </strong> @endif 
+                                                                                {{ $transaction->product->name }}@if(!empty($transaction->variation->system_name)) <strong> | {{$transaction->variation->system_name}} </strong> @endif
                                                                                 @endif
                                                                             </td>
                                                                             <td>
@@ -233,26 +233,26 @@
                                                                                 <td>
                                                                                 {{ $transaction->quantity  }}
                                                                             </td>
-                                                                            
-                                                                            <td>    
+
+                                                                            <td>
                                                                                 <span style="color:black">Convenience Fee:</span> {!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
                                                                                 <span style="color:black">Discount: </span>{!! getSettings()->currency. number_format($transaction->discount, 2) !!} <br>
                                                                                 <span style="color:black">Provider Charge:</span>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
-                                                                                <span style="color:black">Total Amount:</span> {!! getSettings()->currency. number_format($transaction->total_amount, 2) !!}  
+                                                                                <span style="color:black">Total Amount:</span> {!! getSettings()->currency. number_format($transaction->total_amount, 2) !!}
                                                                             </td>
                                                                             <td>{{ $transaction->unique_element }}
-                                                                                <?php 
+                                                                                <?php
                                                                                     // dd(verifiableUniqueElements(), $transaction->category->unique_element);
-                                                                                    if (isset($transaction->variation) &&  in_array($transaction->category->unique_element, verifiableUniqueElements()) 
+                                                                                    if (isset($transaction->variation) &&  in_array($transaction->category->unique_element, verifiableUniqueElements())
                                                                                     ) {
                                                                                         $element = $transaction->category->unique_element;
-                                                                                    } else if (isset($transaction->variation) &&  in_array($transaction->variation->slug, verifiableUniqueElements()) 
+                                                                                    } else if (isset($transaction->variation) &&  in_array($transaction->variation->slug, verifiableUniqueElements())
                                                                                     )  {
                                                                                         $element = specialVerifiableVariations()[$transaction->variation->slug];
                                                                                     }  else{
                                                                                         $element = null;
                                                                                     }
-                                                                                ?>  
+                                                                                ?>
                                                                                 @if(isset($element)) <br>
                                                                                 <button id="validate-biller" onclick="validateBiller('{{$transaction->variation_id}}','{{$element}}','{{$transaction->unique_element}}')" class="btn btn-info btn-sm">Validate Biller</button>
                                                                                 @endif
@@ -267,7 +267,7 @@
                                                                 <div class="col-md-6">
                                                                     <strong>Initial Balance:</strong> {!! getSettings()->currency.number_format($transaction->balance_before, 2) !!} <br>
                                                                     <strong>Final Balance:</strong> {!! getSettings()->currency. number_format($transaction->balance_after, 2) !!}<br>
-                                                                    
+
                                                                     <div class="well">
                                                                         <address>
                                                                             <img src="{{url('/')}}/site/loading.gif" height="70" style="display:none; margin-left: auto; margin-right:auto;height:initial;" id="img_loading">
@@ -354,19 +354,19 @@
 				$('#img_loading').hide();
 				$('#q_res').show();
 				$('#q_res').html(data.message);
-                
+
                 // $('#validate-div').show();
                 // $('#validate-biller').html('Validate Biller <i class="fa fa-check"></i>');
 				$('#img_loading2').hide();
 				$('#validate-div').show();
 				$('#q_res2').show();
 				$('#q_res2').html(JSON.stringify(data.api_response, null, 5));
-                
+
 			}
 		});
 		e.preventDefault();
 	}
-    
+
     function validateBiller(variation_id, element, value){
         var variation_id = variation_id;
         var element = element;
