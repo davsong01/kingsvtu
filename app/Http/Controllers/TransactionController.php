@@ -30,17 +30,9 @@ class TransactionController extends Controller
             'products' => function ($query) {
                 return $query->where('status', 'active')->get();
             }
-        ])->where('status', 'active')->where('slug', $slug)->first();
+        ])->where('slug', $slug)->first();
 
-        // $category = Category::with([
-        //     'products' => function ($query) {
-        //         return $query->whereHas('variations', function ($q) {
-        //             $q->where('status', 'Active');
-        //         })->where('status', 'active')->get();
-        //     }
-        // ])->where('slug', $slug)->first();
-
-        if (!empty($category) && $category->status == 'active') {
+        if (!empty ($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {
             return back();
@@ -346,10 +338,7 @@ class TransactionController extends Controller
                 'title' => $verify['title'],
                 'renewal_amount' => $verify['renewal_amount']
             ];
-            if(isset($verify['raw_response'])){
-                $this->refineAndLogBiller($verify, $variation->category,$request['unique_element'],$request['product_slug']);
-            }
-        } else if (isset($query) && $query['status_code'] == 0) {
+        } else if (isset ($query) && $query['status_code'] == 0) {
             $res = [
                 'status' => $verify['status_code'],
                 'message' => $verify['message'],
@@ -388,16 +377,16 @@ class TransactionController extends Controller
         }
 
         if (!empty ($request->variation_id)) {
+        if (!empty ($request->variation_id)) {
             $resource = Variation::where('id', $request->variation_id)->first();
             $type = 'variation';
         }
 
         $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');
 
-        // $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
-        $suffix = '';
+        $suffix = (isset ($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
 
-        if(!empty($request->raw) && $request->raw == 'yes'){
+        if (!empty ($request->raw) && $request->raw == 'yes') {
             return [
                 'discount' => $discount['rate'],
                 'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
@@ -416,9 +405,9 @@ class TransactionController extends Controller
         $level = auth()->user()->customer->customer_level;
         $amount = $amount;
 
-        if($type == 'variation'){
-            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->where('price', '>', 0)->first();
-            if($resource->fixed_price == 'Yes'){
+        if ($type == 'variation') {
+            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
+            if ($resource->fixed_price == 'Yes') {
                 $amount = $resource->system_price;
             }
         }
@@ -440,16 +429,8 @@ class TransactionController extends Controller
             }
 
         }
-        $discounted_price = floor($discounted_price ?? $amount); // to floor down percentage based discounts
-        // $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
 
-        if($resource->fixed_price == 'Yes'){
-            $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
-        }
-        // dd($resource->category->discount_type, $amount, $discount, $discounted_price);
-        $discounted_price = $discounted_price <= 0 ? $resource->system_price : $discounted_price;
-
-        if(!empty($getRate)){
+        if (!empty ($getRate)) {
             $response = [
                 'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,
@@ -1126,5 +1107,7 @@ __here;
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($api, $requestId);
 
         return $query;
+        if ($transactionlog->status == 'success') {
+        }
     }
 }
