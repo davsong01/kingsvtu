@@ -31,7 +31,7 @@ class TransactionController extends Controller
             }
         ])->where('slug', $slug)->first();
 
-        if (!empty($category) && $category->status == 'active') {
+        if (!empty ($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {
             return back();
@@ -60,7 +60,7 @@ class TransactionController extends Controller
         $product = Product::where('id', $request->product)->first();
         $category = $product->category_id;
 
-        if (empty($product)) {
+        if (empty ($product)) {
             return back()->with('error', 'The selected product/service does not seem to exist, kindly check your selection');
         }
 
@@ -73,13 +73,13 @@ class TransactionController extends Controller
             if ($variation->fixedPrice == 'Yes') {
                 $request['amount'] = $variation->system_price;
             } elseif ($product->allow_subscription_type == 'yes' && $variation->category->unique_element == 'iuc_number') {
-                if (!empty($request->bouquet) && $request->bouquet == 'renew') {
+                if (!empty ($request->bouquet) && $request->bouquet == 'renew') {
                     $req = new Request([
                         'unique_element' => $request['unique_element'],
                         'variation' => $variation->id,
                     ]);
                     $res = $this->verify($req);
-                    if (isset($res['renewal_amount'])) {
+                    if (isset ($res['renewal_amount'])) {
                         $request['amount'] = $res['renewal_amount'];
                     } else {
                         $request['amount'] = $variation->system_price;
@@ -101,7 +101,7 @@ class TransactionController extends Controller
         // Verify Meter
         if ($product->allow_meter_validation) {
             $meterValidation = $this->validateMeter($product);
-            if (isset($meterValidation) && $meterValidation['code'] == 0) {
+            if (isset ($meterValidation) && $meterValidation['code'] == 0) {
                 return back()->with('error', $meterValidation['error']);
             }
         }
@@ -113,14 +113,15 @@ class TransactionController extends Controller
         } else {
             $discount = $this->getDiscount($product, 'product', $request['amount'], 'yes');
         }
-        
+
         $discountedAmount = $discount['discounted_price'];
         $disCountApplied = $discount['discount_applied'];
-        
+
         $request['quantity'] = $request->quantity ?? 1;
         $request['total_amount'] = $discountedAmount * $request['quantity'];
         $request['discount'] = $disCountApplied * $request['quantity'];
-        
+
+
         // Get Wallet Balance
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
@@ -204,7 +205,7 @@ class TransactionController extends Controller
         try {
             //code...
             DB::beginTransaction();
-            if (isset($query) && $query['status_code'] == 1) {
+            if (isset ($query) && $query['status_code'] == 1) {
                 $user = auth()->user();
                 $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id']);
                 $res = [
@@ -212,10 +213,10 @@ class TransactionController extends Controller
                     'message' => 'Transaction Successful!',
                     // 'extras' => 'Transaction Successful!',
                 ];
-                
+
                 $user_status = 'success';
                 $balance_after = $request['balance_before'] - $request['total_amount'];
-            } else if (isset($query) && $query['status_code'] == 0) {
+            } else if (isset ($query) && $query['status_code'] == 0) {
                 // Log wallet
 
                 $wallet = new WalletController();
@@ -284,7 +285,7 @@ class TransactionController extends Controller
 
         $unique_elementX = ucfirst(str_replace("_", " ", $element));
 
-        if (empty($admin)) {
+        if (empty ($admin)) {
             $validator = Validator::make($request->all(), [
                 'unique_element' => 'required'
             ]);
@@ -322,15 +323,15 @@ class TransactionController extends Controller
 
         // Get Api
         $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
-        
-        if (isset($verify) && $verify['status_code'] == 1) {
+
+        if (isset ($verify) && $verify['status_code'] == 1) {
             $res = [
                 'status' => $verify['status_code'],
                 'message' => $verify['message'],
                 'title' => $verify['title'],
                 'renewal_amount' => $verify['renewal_amount']
             ];
-        } else if (isset($query) && $query['status_code'] == 0) {
+        } else if (isset ($query) && $query['status_code'] == 0) {
             $res = [
                 'status' => $verify['status_code'],
                 'message' => $verify['message'],
@@ -361,81 +362,78 @@ class TransactionController extends Controller
         }
     }
 
-    public function getCustomerDiscount(Request $request){
-        if(!empty($request->product_id)){
+    public function getCustomerDiscount(Request $request)
+    {
+        if (!empty ($request->product_id)) {
             $resource = Product::where('id', $request->product_id)->first();
             $type = 'product';
         }
 
-        if (!empty($request->variation_id)) {
+        if (!empty ($request->variation_id)) {
             $resource = Variation::where('id', $request->variation_id)->first();
             $type = 'variation';
         }
 
         $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');
-        
-        // $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
-        $suffix = '';
-       
-        
-        if(!empty($request->raw) && $request->raw == 'yes'){
+
+        $suffix = (isset ($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
+
+        if (!empty ($request->raw) && $request->raw == 'yes') {
             return [
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.$discount['discounted_price']. '</span></strong>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
             ];
-        }else{
+        } else {
             return response()->json([
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">'.getSettings()->currency.$discount['discounted_price']. '</span></strong>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
             ]);
         }
     }
 
-    public function getDiscount($resource, $type,$amount=null, $getRate = null )
+    public function getDiscount($resource, $type, $amount = null, $getRate = null)
     {
         $discount = 0;
         $level = auth()->user()->customer->customer_level;
         $amount = $amount;
 
-        if($type == 'variation'){
+        if ($type == 'variation') {
             $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
-            if($resource->fixed_price == 'Yes'){
+            if ($resource->fixed_price == 'Yes') {
                 $amount = $resource->system_price;
             }
         }
-        
+
         if ($type == 'product') {
             $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
         }
 
-        if (!empty($findDiscount) && $findDiscount->price > 0) {
+        if (!empty ($findDiscount) && $findDiscount->price > 0) {
             $price = $findDiscount->price;
             if ($resource->category->discount_type == 'flat') {
                 $discount = $price;
                 $discounted_price = $discount;
             }
 
-            if ($resource->category->discount_type == 'percentage' && !empty($amount)) {
+            if ($resource->category->discount_type == 'percentage' && !empty ($amount)) {
                 $discount = ($price / 100) * $amount;
                 $discounted_price = $amount - $discount;
             }
         }
-        
-        $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
-        
-        if(!empty($getRate)){
+
+        if (!empty ($getRate)) {
             $response = [
                 'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,
                 'discounted_price' => $discounted_price,
                 'rate' => $price ?? 0,
                 'type' => $resource->category->discount_type ?? '',
-                'discount_applied' => !empty($discounted_price) ? $amount - $discounted_price : 0,
+                'discount_applied' => !empty ($discounted_price) ? $amount - $discounted_price : 0,
 
             ];
-           
+
             return $response;
-        }else{
+        } else {
             return $discount;
         }
     }
@@ -516,27 +514,27 @@ class TransactionController extends Controller
     {
         $transactions = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
 
-        if (!empty($request->service)) {
+        if (!empty ($request->service)) {
             $transactions = $transactions->where('product_id', $request->service);
         }
 
-        if (!empty($request->reason)) {
+        if (!empty ($request->reason)) {
             $transactions = $transactions->where('reason', $request->reason);
         }
 
-        if (!empty($request->transaction_id)) {
+        if (!empty ($request->transaction_id)) {
             $transactions = $transactions->where('transaction_id', $request->transaction_id);
         }
 
-        if (!empty($request->status)) {
+        if (!empty ($request->status)) {
             $transactions = $transactions->where('status', $request->status);
         }
 
-        if (!empty($request->unique_element)) {
+        if (!empty ($request->unique_element)) {
             $transactions = $transactions->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
         }
 
-        if (!empty($request->from) && !empty($request->to)) {
+        if (!empty ($request->from) && !empty ($request->to)) {
             $from = $request->from . " 00:00:00";
             $to = $request->to . " 23:59:59";
             $transactions = $transactions->whereBetween('created_at', [$from, $to]);
@@ -550,19 +548,19 @@ class TransactionController extends Controller
 
     public function showTransactionReportPage(Request $request, ExcelService $export)
     {
-        if (!empty($request->type)) {
+        if (!empty ($request->type)) {
             if ($request->type == 'transaction') {
                 $data = TransactionLog::with(['product', 'variation', 'wallet'])->where('customer_id', auth()->user()->customer->id)->where('status', '!=', 'initiated');
 
-                if (!empty($request->category)) {
+                if (!empty ($request->category)) {
                     $data = $data->where('category_id', $request->category);
                 }
 
-                if (!empty($request->unique_element)) {
+                if (!empty ($request->unique_element)) {
                     $transactions = $data->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
                 }
 
-                if (!empty($request->status)) {
+                if (!empty ($request->status)) {
                     if ($request->status == 'delivered') {
                         $data = $data->whereIn('status', ['success', 'delivered']);
                     } else {
@@ -579,7 +577,7 @@ class TransactionController extends Controller
                 $data = ReferralEarning::where('customer_id', auth()->user()->customer->id);
             }
 
-            if (!empty($request->from) && !empty($request->to)) {
+            if (!empty ($request->from) && !empty ($request->to)) {
                 $from = $request->from . " 00:00:00";
                 $to = $request->to . " 23:59:59";
                 $data = $data->whereBetween('created_at', [$from, $to]);
@@ -593,42 +591,42 @@ class TransactionController extends Controller
                     $data['customer_username'] = $details->username;
                 }
 
-                if (isset($data['reason'])) {
+                if (isset ($data['reason'])) {
                     $row['Reason'] = $data['reason'];
                 }
 
-                if (isset($data['extras'])) {
+                if (isset ($data['extras'])) {
                     $row['Extras'] = $data['extras'];
                 }
 
-                if (isset($data['product_name'])) {
+                if (isset ($data['product_name'])) {
                     $row['Product Name'] = $data['product_name'];
                 }
-                if (isset($data['variation_name'])) {
+                if (isset ($data['variation_name'])) {
                     $row['Variation Name'] = $data['variation_name'];
                 }
 
-                if (isset($data['unique_element'])) {
+                if (isset ($data['unique_element'])) {
                     $row['Unique Element'] = $data['unique_element'];
                 }
 
-                if (isset($data['descr'])) {
+                if (isset ($data['descr'])) {
                     $row['Description'] = $data['descr'];
                 }
 
-                if (isset($data['payment_method'])) {
+                if (isset ($data['payment_method'])) {
                     $row['Payment Method'] = $data['payment_method'];
                 }
 
-                if (isset($data['customer_email'])) {
+                if (isset ($data['customer_email'])) {
                     $row['Customer Email'] = $data['customer_email'];
                 }
 
-                if (isset($data['customer_username'])) {
+                if (isset ($data['customer_username'])) {
                     $row['Customer Username'] = $data['customer_username'];
                 }
 
-                if (isset($data['customer_phone'])) {
+                if (isset ($data['customer_phone'])) {
                     $row['Customer Phone'] = $data['customer_phone'];
                 }
 
@@ -636,27 +634,27 @@ class TransactionController extends Controller
                 $row['Transaction ID'] = $data['transaction_id'];
                 $row['Amount'] = $data['amount'];
 
-                if (isset($data['unit_price'])) {
+                if (isset ($data['unit_price'])) {
                     $row['Unit Price'] = $data['unit_price'];
                 }
 
-                if (isset($data['provider_charge'])) {
+                if (isset ($data['provider_charge'])) {
                     $row['Convenience Fee'] = $data['provider_charge'];
                 }
 
-                if (isset($data['discount'])) {
+                if (isset ($data['discount'])) {
                     $row['Discount'] = $data['discount'];
                 }
 
-                if (isset($data['total_amount'])) {
+                if (isset ($data['total_amount'])) {
                     $row['Total Amount'] = $data['total_amount'];
                 }
 
-                if (isset($data['balance_before'])) {
+                if (isset ($data['balance_before'])) {
                     $row['Initial Balance'] = $data['balance_before'];
                 }
 
-                if (isset($data['balance_after'])) {
+                if (isset ($data['balance_after'])) {
                     $row['Final Balance'] = $data['balance_after'];
                 }
 
@@ -747,7 +745,8 @@ __here;
     {
         $blacklist = BlackList::where('status', 'active')->whereRaw(" (value = ? or value = ? or value = ?)", [$mail, $phone, $user])->first();
 
-        if ($blacklist) return true;
+        if ($blacklist)
+            return true;
         return false;
     }
 
@@ -814,7 +813,7 @@ __here;
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
-            if (!empty($user)) {
+            if (!empty ($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
@@ -861,7 +860,7 @@ __here;
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
-            if (!empty($user)) {
+            if (!empty ($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
@@ -909,7 +908,7 @@ __here;
 
         if ($request->upline_email) {
             $user = User::where('email', $request->upline_email)->first();
-            if (!empty($user)) {
+            if (!empty ($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
@@ -918,7 +917,7 @@ __here;
 
         if ($request->downline_email) {
             $user = User::where('email', $request->downline_email)->first();
-            if (!empty($user)) {
+            if (!empty ($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('referred_customer_id', $id);
@@ -977,11 +976,15 @@ __here;
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) return back()->with('error', 'Account not found!');
-        if (str_contains(url()->previous(), 'debit')) $type = 'debit';
-        else if (str_contains(url()->previous(), 'credit')) $type =  'credit';
+        if (!$user)
+            return back()->with('error', 'Account not found!');
+        if (str_contains(url()->previous(), 'debit'))
+            $type = 'debit';
+        else if (str_contains(url()->previous(), 'credit'))
+            $type = 'credit';
 
-        if (!$type) return back()->with('error', 'Hmph, something went wrong!');
+        if (!$type)
+            return back()->with('error', 'Hmph, something went wrong!');
 
         $controller = new TransactionController();
         $amount = $controller->removeCharsInAmount($request->amount);
@@ -1081,27 +1084,21 @@ __here;
         return response()->json($ret);
     }
 
-    public function requery(Request $request, TransactionLog $transactionlog)
+    public function requery($transactionlog = null)
     {
-        $api = $transactionlog->api;
-        // Get Api
-        $file_name = $api->file_name;
-        $message = '';
-        
-        $requery = app("App\Http\Controllers\Providers\\" . $file_name)->requery($transactionlog);
+        if (!$transactionlog) return ['status' => 'failed'];
 
-        if($requery && $requery['status'] == 'success'){
-            $message .= '<h4 align="center" style="color:green"><b>TRANSACTION SUCCESSFUL</b><br><span class="fa fa-check-circle text-success mr-1" style="font-size:19px">' . 1 . '</span></h4><hr style="margin:6px 0px 6px 0px"><table><tbody>';
-        }else{
-            $message .= '<h4 align="center" style="color:red"><b>'. $requery['api_status'].'</b></h4><hr style="margin:6px 0px 6px 0px"><center><button class="btn btn-danger btn-sm">' . $requery['api_status'] . '</button></center>';
+        $trans = TransactionLog::find($transactionlog);
+
+        if (!$trans) return ['status' => 'failed', 'message' => 'Transaction not found!'];
+
+        $requestId = explode('KVTU-', $trans->transaction_id)[1];
+
+        $api = $trans->api;
+        $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($api, $requestId);
+
+        return $query;
+        if ($transactionlog->status == 'success') {
         }
-
-        $ret = [
-            'status' => $requery['status'],
-            'api_response' => $requery['api_response'],
-            'message' => $message
-        ];
-       
-        return response()->json($ret);
     }
 }
