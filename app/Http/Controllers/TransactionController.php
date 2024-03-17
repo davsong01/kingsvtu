@@ -113,7 +113,7 @@ class TransactionController extends Controller
         } else {
             $discount = $this->getDiscount($product, 'product', $request['amount'], 'yes');
         }
-        
+        dd($discount );
         $discountedAmount = $discount['discounted_price'];
         $disCountApplied = $discount['discount_applied'];
         
@@ -419,6 +419,7 @@ class TransactionController extends Controller
                 $discount = ($price / 100) * $amount;
                 $discounted_price = $amount - $discount;
             }
+
         }
         
         $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
