@@ -397,15 +397,15 @@ class TransactionController extends Controller
         $level = auth()->user()->customer->customer_level;
         $amount = $amount;
 
-        if ($type == 'variation') {
-            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
-            if ($resource->fixed_price == 'Yes') {
+        if($type == 'variation'){
+            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->where('price', '>', 0)->first();
+            if($resource->fixed_price == 'Yes'){
                 $amount = $resource->system_price;
             }
         }
 
         if ($type == 'product') {
-            $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
+            $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->where('price', '>',0)->first();
         }
 
         if (!empty ($findDiscount) && $findDiscount->price > 0) {
@@ -421,9 +421,13 @@ class TransactionController extends Controller
             }
 
         }
+        $discounted_price = floor($discounted_price ?? $amount); // to floor down percentage based discounts
+        // $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
 
-        $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
-        $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
+        if($resource->fixed_price == 'Yes'){
+            $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
+        }
+        // dd($resource->category->discount_type, $amount, $discount, $discounted_price);
         $discounted_price = $discounted_price <= 0 ? $resource->system_price : $discounted_price;
 
         if(!empty($getRate)){
