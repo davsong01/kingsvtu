@@ -204,6 +204,7 @@
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
                                                                                 @foreach($customerlevel as $level)
+                                                                                {{-- {{dd($product->category->discount_type )}} --}}
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
                                                                                     <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]" step=".01" value="{{ $product->customer_level_price($level->id) }}">
@@ -336,7 +337,7 @@
                                                                                     @foreach($customerlevel as $level)
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
-                                                                                            <label for="name">{{ $level->name }} @if($variation->category->discount_type == '') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
+                                                                                            <label for="name">{{ $level->name }} @if($variation->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
                                                                                             <input type="number" step=".01" class="form-control tiny" id="level" name="level[{{ $level->id }}][{{ $variation->id }}]"  value="{{ $variation->customer_level_price($level->id) }}">
                                                                                         </fieldset>
                                                                                     </div>

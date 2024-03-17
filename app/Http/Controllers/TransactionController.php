@@ -419,6 +419,7 @@ class TransactionController extends Controller
                 $discount = ($price / 100) * $amount;
                 $discounted_price = $amount - $discount;
             }
+
         }
 
         if (!empty ($getRate)) {
