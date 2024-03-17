@@ -422,7 +422,10 @@ class TransactionController extends Controller
 
         }
 
-        if (!empty ($getRate)) {
+        $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
+        $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
+
+        if(!empty($getRate)){
             $response = [
                 'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,
