@@ -27,11 +27,17 @@ class TransactionController extends Controller
     {
         $category = Category::with([
             'products' => function ($query) {
-                return $query->whereHas('variations', function($q){
-                        $q->where('status', 'Active');
-                })->where('status', 'active')->get();
+                return $query->where('status', 'active')->get();
             }
-        ])->where('slug', $slug)->first();
+        ])->where('status', 'active')->where('slug', $slug)->first();
+
+        // $category = Category::with([
+        //     'products' => function ($query) {
+        //         return $query->whereHas('variations', function ($q) {
+        //             $q->where('status', 'Active');
+        //         })->where('status', 'active')->get();
+        //     }
+        // ])->where('slug', $slug)->first();
 
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
