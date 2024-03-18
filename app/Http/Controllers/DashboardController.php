@@ -51,7 +51,7 @@ class DashboardController extends Controller
             $customers = User::where('type', 'customer')->count();
 
             $apis = API::get();
-           
+            
             return view('admin.dashboard', compact('customer',  'credit', 'credit_count', 'debit', 'debit_count', 'referral_debit', 'referral_credit', 'referral_credit_count', 'referral_debit_count', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
         } else {
             return view('customer.dashboard', compact('customer'));
