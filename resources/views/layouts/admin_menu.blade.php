@@ -218,6 +218,12 @@
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
                         </li>
                         @endif
+                        @if (in_array('billerlog.index', $allowedRoutes))
+                        <li class="{{ Route::is('billerlog.index') ? 'active' : '' }}"><a
+                             href="{{ route('billerlog.index') }}"><i
+                                 class="bx bx-right-arrow-alt"></i><span class="menu-item">Biller Logs</span></a>
+                        </li>
+                        @endif
                         @if (in_array('admin.reserved.accounts', $allowedRoutes))
                             <li class="{{ Route::is('admin.reserved.accounts') ? 'active' : '' }}"><a
                                     href="{{ route('admin.reserved.accounts') }}"><i
