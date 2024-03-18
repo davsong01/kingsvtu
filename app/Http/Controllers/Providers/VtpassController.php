@@ -111,7 +111,7 @@ class VtpassController extends Controller
                     'payload' => $payload,
                     'status_code' => 1,
                     'extras' => $response['purchased_code'] ?? null,
-                    'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
+                    'extra_info' => !empty($extra_info) ? $extra_info : [],
                 ];
             } elseif (isset($response['code']) && in_array($response['code'], $failCodes)) {
                 // fail
@@ -135,7 +135,7 @@ class VtpassController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 2,
-                    'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
+                    'extra_info' => !empty($extra_info) ? $extra_info : [],
                 ];
             }
         } catch (\Throwable $th) {
@@ -322,7 +322,7 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            // dd($response);
+            
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
                 $message = '';
                 $message .= isset($response['content']['Customer_Name']) ? 'Account Name: ' . $response['content']['Customer_Name'] : '';
@@ -350,7 +350,7 @@ class VtpassController extends Controller
                     'raw_response' => $response,
                 ];
             } else {
-                $fail_response =  $fail_response = 'Validation Error: ' . $response['content']['error'] ?? 'Unable to verify at the moment, please try again';
+                $fail_response =  $fail_response = 'Validation Error: ' . ($response['content']['error'] ?? 'Unable to verify at the moment, please try again');
 
                 $final_response = [
                     'status' => 'failed',
@@ -364,7 +364,7 @@ class VtpassController extends Controller
             }
         } catch (\Throwable $th) {
             $fail_response = 'An error occured while trying to verify, please try again';
-
+            // dd($th->getMessage() . ' ' . $th->getFile() . ' Line: ' . $th->getLine());
             $final_response = [
                 'status' => 'failed',
                 'status_code' => '500',
@@ -372,7 +372,7 @@ class VtpassController extends Controller
                 'customerAddress' => '',
                 'message' => $fail_response,
                 'title' => 'Verification Failed',
-                'raw_response' => $th->getMessage(),
+                'raw_response' => $th->getMessage().' '.$th->getFile(). ' Line: '.$th->getLine(),
             ];
         }
 

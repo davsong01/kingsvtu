@@ -1358,6 +1358,12 @@ if (!function_exists("adminRoutes")) {
             'category.update',
             'category.destroy',
 
+            'billerlog.index',
+            'billerlog.show',
+            'billerlog.edit',
+            'billerlog.update',
+            'billerlog.destroy',
+
             'customer-blacklist.show',
             'customer-blacklist.edit',
             'customer-blacklist.update',

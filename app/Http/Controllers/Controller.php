@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BillerLog;
 use Image;
 use App\Models\GeneralSetting;
 use Illuminate\Support\Facades\Session;
@@ -187,4 +188,50 @@ class Controller extends BaseController
             logEmails($email, $subject, $body);
         }
     }
+
+
+    public function refineAndLogBiller($data, $category, $biller, $serviceId)
+    {
+        try {
+            //code...
+            $refinedData = [];
+            if (isset($data['raw_response'])) {
+                $dataX = $data['raw_response']['content'];
+
+                if ($category->unique_element == 'profile_id') {
+                    $refinedData['Profile_Id'] = $data['raw_response']['content']['profile_Id'] ?? null;
+                }
+
+                if ($category->unique_element == 'meter_number') {
+                    $refinedData["Customer Name"] = $data['raw_response']['content']['Customer_Name'] ?? null;
+                    $refinedData["Address"] = $data['raw_response']['content']['Address'] ?? null;
+                    $refinedData["Meter Number"] = $data['raw_response']['content']['Meter_Number'] ?? null;
+                }else
+
+                if ($category->unique_element == 'iuc_number') {
+                    $refinedData["Customer Name"] = $data['raw_response']['content']['Customer_Name'] ?? null;
+                    $refinedData["IUC Number"] = $data['raw_response']['content']['Customer_Number'] ?? null;
+                }else
+
+                if ($category->unique_element == 'account_id') {
+                    $refinedData["Customer Name"] = $data['raw_response']['content']['Customer_Name'] ?? null;
+                    $refinedData["Account ID"] = $data['raw_response']['content']['Customer_Number'] ?? null;
+                }
+
+                $refinedData = array_unique(array_filter($refinedData));
+                BillerLog::updateOrCreate(['billers_code' => $biller, 'service_id' => $serviceId],[
+                    'billers_code' => $biller,
+                    'service_id' => $serviceId,
+                    'provider' => $data['provider'],
+                    'refined_data' => json_encode($refinedData),
+                    'raw_data' => json_encode($data['raw_response'])
+                ]);
+
+                return;
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
+
 }
