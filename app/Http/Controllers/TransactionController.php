@@ -27,10 +27,12 @@ class TransactionController extends Controller
     {
         $category = Category::with([
             'products' => function ($query) {
-                return $query->where('status', 'active')->get();
+                return $query->whereHas('variations', function($q){
+                        $q->where('status', 'Active'); 
+                })->where('status', 'active')->get();
             }
         ])->where('slug', $slug)->first();
-
+    
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {
@@ -113,7 +115,7 @@ class TransactionController extends Controller
         } else {
             $discount = $this->getDiscount($product, 'product', $request['amount'], 'yes');
         }
-        dd($discount );
+        
         $discountedAmount = $discount['discounted_price'];
         $disCountApplied = $discount['discount_applied'];
         
