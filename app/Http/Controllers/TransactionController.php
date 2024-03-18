@@ -1107,7 +1107,5 @@ __here;
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($api, $requestId);
 
         return $query;
-        if ($transactionlog->status == 'success') {
-        }
     }
 }
