@@ -20,7 +20,7 @@ class RouteProtectionMiddleware
         $curRouteName = Route::currentRouteName();
 
         $routes = singleUserAllowedRoutes(auth()->user()->admin)['permissions'];
-        
+        \Log::info(['check' => in_array($curRouteName, $routes)]);
         if (in_array($curRouteName, $routes)) {
             return $next($request);
         } else {

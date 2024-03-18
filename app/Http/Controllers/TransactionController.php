@@ -425,7 +425,7 @@ class TransactionController extends Controller
             $response = [
                 'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,
-                'discounted_price' => $discounted_price,
+                'discounted_price' => $discounted_price ?? 0,
                 'rate' => $price ?? 0,
                 'type' => $resource->category->discount_type ?? '',
                 'discount_applied' => !empty ($discounted_price) ? $amount - $discounted_price : 0,
@@ -1098,7 +1098,5 @@ __here;
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($api, $requestId);
 
         return $query;
-        if ($transactionlog->status == 'success') {
-        }
     }
 }
