@@ -34,6 +34,7 @@ use App\Http\Controllers\ReservedAccountNumberController;
 
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallback'])->name('log.payment.response');
 Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
+Route::get('cron/sendemails', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
 
 Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
