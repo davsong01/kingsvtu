@@ -23,7 +23,7 @@ class DashboardController extends Controller
     public function index()
     {
         $customer = $this->customerOfTheMonth();
-
+        
         if (auth()->user()->type == 'admin') {
             $transaction_debit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
                 ->where('wallets.type', 'debit')->whereIn('status', ['success', 'delivered']);
@@ -62,11 +62,12 @@ class DashboardController extends Controller
     {
         $firstdayofmonth = Carbon::today()->startOfMonth();
 
-        $count = TransactionLog::whereIn('status',['completed','delivered','success'])->where('balance_after','<','balance_before')->with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
-            ->groupBy('customer_id')
+        $count = TransactionLog::with('customer')->where('reason', 'Product Purchase')
+        ->whereIn('status',['completed','delivered','success'])
+        ->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
+            // ->groupBy('customer_id')
             ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
             ->orderBy('total_amount', 'DESC')->first();
-        
         return $count;
     }
 
