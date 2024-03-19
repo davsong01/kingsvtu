@@ -320,6 +320,7 @@ class DashboardController extends Controller
         ];
 
         $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
+        
         if ($reserved['status'] && $reserved['status'] == 'success') {
             $this->updateKycData('BVN', $request->BVN, auth()->user()->customer->id, 'verified');
 
@@ -329,7 +330,7 @@ class DashboardController extends Controller
 
             return back()->with('message', 'KYC Update completed');
         } else {
-            return back()->with('error', 'Error: ' . $reserved['data']);
+            return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Please refresh this page');
         }
     }
 

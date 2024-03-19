@@ -1,14 +1,6 @@
 @php
-    // $perm = function ($route) {
-    //     $userRole = auth()->user()->admin->permissions;
-    //     $perms = adminPermission($userRole)['permissions'];
-    //     if (in_array($route, $perms)) {
-    //         return true;
-    //     }
-    //     return false;
-    // };
-    $allowedMenu = singleUserAllowedRoutes(auth()->user()->admin)['menus'];
-    $allowedRoutes = singleUserAllowedRoutes(auth()->user()->admin)['permissions'];
+    $allowedMenu = auth()->user()->admin->rolepermissions();
+    $allowedRoutes = auth()->user()->admin->rolepermissions();
 @endphp
 
 <div class="main-menu menu-fixed menu-dark menu-accordion menu-shadow" data-scroll-to-active="true">
@@ -156,10 +148,20 @@
                     <ul class="menu-content">
                         @if (in_array('admins', $allowedRoutes))
                             <li class="{{ Route::is('admins') ? 'active' : '' }}"><a href="{{ route('admins') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">All
+                            class="bx bx-right-arrow-alt"></i><span class="menu-item">All
                                         Admins</span></a>
                             </li>
                         @endif
+                        {{-- @if (in_array('role.index', $allowedRoutes)) --}}
+                            <li class="{{ Route::is('role.index') ? 'active' : '' }}"><a href="{{ route('role.index') }}"><i
+                            class="bx bx-right-arrow-alt"></i><span class="menu-item">All
+                                        Roles</span></a>
+                            </li>
+                            <li class="{{ Route::is('permission.index') ? 'active' : '' }}"><a href="{{ route('permission.index') }}"><i
+                            class="bx bx-right-arrow-alt"></i><span class="menu-item">All
+                                        Permissions</span></a>
+                            </li>
+                        {{-- @endif --}}
                     </ul>
                 </li>
             @endif

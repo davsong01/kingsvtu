@@ -18,6 +18,40 @@
             <!-- Basic Inputs start -->
             <section id="basic-input">
                 <div class="row">
+                    
+                    <div class="col-md-6 col-12 dashboard-visit">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="card-title">Refer and Earn</h4>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body">
+                                    <p>
+                                        Share your referral links with friends to earn handsome rewards
+                                    <div class="text-primary">
+                                        {{ env('APP_URL') . '/register/' . auth()->user()->username }}</div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-12 dashboard-visit">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="card-title">KYC Status</h4>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-body">
+                                    @if(getFinalKycStatus(auth()->user()->customer->id) == 'verified')
+                                    <button class="btn btn-success">Verified</button>
+                                    @else 
+                                    <button class="btn btn-danger">Unverified</button>
+                                    @endif
+                                    <br><br>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
                     <div class="col-md-12">
                         <div class="card">
                                 <div class="content-body">

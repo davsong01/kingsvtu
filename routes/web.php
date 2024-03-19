@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\RolePermission;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KycDataController;
 use App\Http\Controllers\PaymentController;
@@ -9,16 +11,18 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmailLogController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\BillerLogController;
 use App\Http\Controllers\BlackListController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\BillerLogController;
 use App\Http\Controllers\CustomerLevelController;
-use App\Http\Controllers\EmailLogController;
 use App\Http\Controllers\PaymentGatewayController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ReservedAccountController;
 use App\Http\Controllers\ReservedAccountNumberController;
 
@@ -48,14 +52,22 @@ Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
     Route::get('customer-get-variations/{product}', [VariationController::class, 'getCustomerVariations'])->name('get.customer.variations');
-    Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
-    Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
-    Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
-    Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
-    Route::get('customer-transaction-report', [TransactionController::class, 'showTransactionReportPage'])->name('customer.transaction.report');
-    Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
-    Route::get('customer-load-wllet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
-    Route::post('process-customer-load-wllet', [PaymentController::class, 'redirectToUrl'])->name('process-customer-load-wllet');
+
+    Route::middleware(['kyc'])->group(function () {
+        Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
+        Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
+        Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
+        Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
+        Route::get('customer-transaction-report', [TransactionController::class, 'showTransactionReportPage'])->name('customer.transaction.report');
+        Route::get('customer-load-wallet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
+        Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
+        Route::post('process-customer-load-wallet', [PaymentController::class, 'redirectToUrl'])->name('process-customer-load-wallet');
+        Route::post('level-upgrade', [DashboardController::class, 'upgradeAccount'])->name('customer.level.upgrade.process');
+        Route::get('download-transaction-receipt/{transaction_id}', [TransactionController::class, 'transactionReceipt'])->name('transaction.receipt.download');
+        Route::get('downlines/process/withdrawal', [DashboardController::class, 'downlinesWithdrawal'])->name('downlines.withdraw');
+        Route::post('downlines/withdraw', [DashboardController::class, 'processWithdrawal'])->name('process.withdrawal');
+        Route::get('downlines/{id?}', [DashboardController::class, 'downlines'])->name('downlines');
+    });
     Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
     Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
     Route::post('customer-update-kyc-info', [DashboardController::class, 'processUpdateKycInfo'])->name('update.kyc.details.process');
@@ -63,11 +75,6 @@ Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
     Route::post('customer-get-discount', [TransactionController::class, 'getCustomerDiscount'])->name('get.customer.discount');
 
     // Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
-    Route::post('level-upgrade', [DashboardController::class, 'upgradeAccount'])->name('customer.level.upgrade.process');
-    Route::get('download-transaction-receipt/{transaction_id}', [TransactionController::class, 'transactionReceipt'])->name('transaction.receipt.download');
-    Route::get('downlines/process/withdrawal', [DashboardController::class, 'downlinesWithdrawal'])->name('downlines.withdraw');
-    Route::post('downlines/withdraw', [DashboardController::class, 'processWithdrawal'])->name('process.withdrawal');
-    Route::get('downlines/{id?}', [DashboardController::class, 'downlines'])->name('downlines');
 });
 
 Route::middleware('auth')->group(function () {
@@ -139,6 +146,8 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     });
 
     Route::resource('billerlog', BillerLogController::class);
+    Route::resource('role', RoleController::class);
+    Route::resource('permission', RolePermissionController::class);
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');

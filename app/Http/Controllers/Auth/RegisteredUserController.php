@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        return back()->with('error', 'Registration is currently not available, please try again');
+        // return back()->with('error', 'Registration is currently not available, please try again');
         $request->validate([
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],

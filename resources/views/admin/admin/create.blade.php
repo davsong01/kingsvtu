@@ -81,15 +81,12 @@
                                                 </fieldset>
 
                                                 <fieldset class="form-group col-md-6">
-                                                <label class="text-bold-600" for="file_name">Permission</label>
+                                                <label class="text-bold-600" for="file_name">Select Roles</label>
                                                 <fieldset class="form-group">
-                                                    @foreach ($permissions as $key => $value)
+                                                    @foreach ($roles as $key => $value)
                                                     <div class="checkbox checkbox-success">
-                                                            <input type="checkbox" name="permissions[]"
-                                                                value="{{ $value }}"
-                                                                id="colorCheckbox{{ $key }}">
-                                                            <label
-                                                                for="colorCheckbox{{ $key }}" class="mr-1">{{ $value }}</label>
+                                                            <input type="checkbox" name="permissions[]" value="{{ $value->id }}" id="colorCheckbox{{ $value->id }}">
+                                                            <label for="colorCheckbox{{ $value->id }}" class="mr-1">{{ $value->name }}</label>
                                                             </div>
                                                         @endforeach
                                                 </fieldset>

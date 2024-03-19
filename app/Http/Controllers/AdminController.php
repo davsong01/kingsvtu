@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use DB;
+use App\Models\API;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Admin;
-use App\Models\API;
+use App\Models\Product;
 use App\Models\Category;
 use App\Models\Customer;
-use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,13 +23,12 @@ class AdminController extends Controller
     }
 
     function create () {
-        $permissions = array_keys(adminPermission());
+        $roles = Role::where('status', 'active')->orderBy('created_at','DESC')->get();
 
-        return view('admin.admin.create', compact('permissions'));
+        return view('admin.admin.create', compact('roles'));
     }
 
     function store (Request $request) {
-        // dd($request->all());
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
@@ -38,7 +38,7 @@ class AdminController extends Controller
             'email' => 'required|unique:users',
             'status' => 'nullable',
         ]);
-
+        
         if(!empty($request->password)){
             $password =  Hash::make($request->password);
         }else{
@@ -69,10 +69,10 @@ class AdminController extends Controller
     function view (Request $request) {
         if (!is_numeric($request->admin)) return back()->with('error', 'Account not found');
         $admin = User::with('admin')->find($request->admin);
-        $permissions = adminPermission();
-        $userPermissions = explode(",",$admin->admin->permissions);
-
-        return view('admin.admin.edit', ['admin' => $admin, 'permissions' => $permissions, 'userPermissions'=>$userPermissions]);
+        $roles = Role::where('status','active')->get();
+        $permissions = explode(",",$admin->admin->permissions);
+        
+        return view('admin.admin.edit', ['admin' => $admin, 'roles' => $roles, 'permissions' => $permissions]);
     }
 
     function update (Request $request) {
@@ -81,13 +81,13 @@ class AdminController extends Controller
             'last_name' => 'required',
             'password' => 'nullable',
             'phone' => 'nullable',
-            'permissions' => 'required',
+            'roles' => 'required',
             'email' => 'required|unique:users,email,'.$request->id,
             'status' => 'nullable',
         ]);
 
         // 'unique:table,email_column_to_check,id_to_ignore'
-
+       
         $admin = User::find($request->id);
 
         if (!empty($request->password)) {
@@ -107,7 +107,7 @@ class AdminController extends Controller
         ]);
 
         $admin->admin->update([
-            'permissions' => join(',', $request->permissions),
+            'permissions' => join(',', $request->roles),
         ]);
 
         if ($admin) return back()->with('message', 'Account updated successfully!');

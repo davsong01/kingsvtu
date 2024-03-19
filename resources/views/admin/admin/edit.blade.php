@@ -73,23 +73,19 @@
                                                     </select>
                                                 </fieldset>
                                                 <fieldset class="form-group col-sm-6 col-12">
-                                                <label for="file_name">Permission</label>
+                                                <label for="file_name">Roles</label>
                                                 <fieldset class="form-group">
-                                                    @foreach ($permissions as $key => $value)
+                                                    @foreach ($roles as $key => $value)
                                                     <div class="checkbox checkbox-success">
-                                                            <input type="checkbox" name="permissions[]"
-                                                                value="{{ $key }}"
-                                                                id="colorCheckbox{{ $key }}" @checked(in_array($key, $userPermissions))>
-                                                            <label
-                                                                for="colorCheckbox{{ $key }}" class="mr-1">{{ $key }}</label>
+                                                            <input type="checkbox" name="roles[]"
+                                                                value="{{ $value->id }}" id="colorCheckbox{{ $value->id }}" @checked(in_array($value->id, $permissions))>
+                                                            <label for="colorCheckbox{{ $value->id }}" class="mr-1">{{ $value->name }}</label>
                                                             </div>
                                                         @endforeach
                                                 </fieldset>
                                             </fieldset>
                                             </div>
                                             
-                                            
-                                           
                                             <div class="">
                                                 <input type="hidden" value="{{ $admin->id }}" name="id" />
                                                 <button class="btn btn-primary" type="submit">Submit</button>
