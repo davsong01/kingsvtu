@@ -25,7 +25,7 @@
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
-                                                <h1 class="text-primary font-large-2 text-bold-500">{{$customer->customer->user->username}}</h1>
+                                                <h1 class="text-primary font-large-2 text-bold-500">{{$customer->customer->user->username ?? $customer->customer->user->firstname}}</h1>
                                                 <div style="color:green" class="text-muted line-ellipsis">{{number_format($customer->count)}}+ Transactions</div>
                                             </div>
                                             <div class="dashboard-content-right">

@@ -62,17 +62,12 @@ class DashboardController extends Controller
     {
         $firstdayofmonth = Carbon::today()->startOfMonth();
 
-        $count = TransactionLog::with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
+        $count = TransactionLog::whereIn('status',['completed','delivered','success'])->where('balance_after','<','balance_before')->with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
             ->groupBy('customer_id')
             ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
             ->orderBy('total_amount', 'DESC')->first();
+        
         return $count;
-
-        // TransactionLog::select('customer_id', 'total_amount')
-        //     ->groupBy('total_amount')
-        //     ->orderByRaw('COUNT(*) DESC, total_amount ASC LIMIT 1');
-
-        // dd($count->get());
     }
 
     public function resetTransactionPin()
