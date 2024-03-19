@@ -22,7 +22,7 @@
                                     <h3 class="greeting-text">Customer of the Month</h3>
                                 </div>
                                 
-                                <div class="card-content">
+                                {{-- <div class="card-content">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-end">
                                             <div class="dashboard-content-left">
@@ -35,7 +35,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         <!-- Greetings Content Starts -->

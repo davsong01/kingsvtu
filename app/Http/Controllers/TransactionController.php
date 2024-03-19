@@ -400,12 +400,12 @@ class TransactionController extends Controller
         if(!empty($request->raw) && $request->raw == 'yes'){
             return [
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix"></span>',
             ];
         } else {
             return response()->json([
                 'discount' => $discount['rate'],
-                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
+                'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix"></span>',
             ]);
         }
     }
