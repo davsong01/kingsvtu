@@ -9,22 +9,49 @@ use App\Models\Announcement;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\WalletController;
+use App\Models\EmailLog;
 use Illuminate\Support\Facades\Route;
 
 if (!function_exists("logEmails")) {
     function logEmails($email_to, $subject, $body)
     {
-        $data = [
-            'subject' => $subject,
-            'body' => $body,
-        ];
-        \Log::info($data);
         try {
-            Mail::to($email_to)->send(new EmailMessages($data));
-        } catch (\Exception $e) {
+            EmailLog::create([
+                'status' => 'pending',
+                'subject' => $subject,
+                'recipient' => $email_to,
+                'content' => $body,
+            ]);
+        } catch (\Exception $e) {}
+    }
+}
+
+if (!function_exists("sendEmail")) {
+    function sendEmail($count)
+    {
+        $pendingMails = EmailLog::where('status', 'pending')->take($count);
+
+        if ($pendingMails) {
+            $clonePendingMail = clone $pendingMails;
+            foreach (array_chunk($clonePendingMail->toArray(), 100) as $key => $value) {
+                $current = $pendingMails[$key];
+                try {
+                    Mail::to($current->recipient)->send(new EmailMessages([
+                        'subject' => $current->subject,
+                        'body' => $current->content,
+                    ]));
+
+                    $current->status = 'sent';
+                    $current->save();
+                } catch (\Throwable $th) {
+                    $current->status = 'failed';
+                    $current->save();
+                }
+            }
         }
     }
 }
+
 
 if (!function_exists("sendEmails")) {
     function sendEmails($email_to, $subject, $body)
@@ -101,7 +128,7 @@ if (!function_exists("staffDefaultPassword")) {
 }
 
 if (!function_exists("adminPermission")) {
-    function adminPermission($key=null)
+    function adminPermission($key = null)
     {
         $perm = [
             'menu' => [],
@@ -132,6 +159,7 @@ if (!function_exists("adminPermission")) {
                     'Catalogue',
                     'API Providers',
                     'Categories',
+                    "Email Management",
                     'Products',
                     'Customers',
                     'All Customers',
@@ -164,6 +192,7 @@ if (!function_exists("adminPermission")) {
                     'Customers',
                     'Financials',
                     'My Profile',
+                    'Emails',
                 ],
                 'permissions' => managerRoutes(),
             ],
@@ -178,31 +207,32 @@ if (!function_exists("adminPermission")) {
             ],
         ];
 
-        if (!empty($key)) {
+        if (!empty ($key)) {
             $perm = $permissions[$key];
-        }else{
+        } else {
             $perm = $permissions;
         }
-        
+
         return $perm;
     }
 }
 
 if (!function_exists("singleUserAllowedRoutes")) {
-    function singleUserAllowedRoutes($admin){
+    function singleUserAllowedRoutes($admin)
+    {
         $permissions = [];
         $menus = [];
 
-        $userPermissions = explode(",",$admin->permissions);
-        
-        if(!empty($userPermissions)){
-            foreach($userPermissions as $permission ){
+        $userPermissions = explode(",", $admin->permissions);
+
+        if (!empty ($userPermissions)) {
+            foreach ($userPermissions as $permission) {
                 $details = adminPermission($permission);
                 $permissions[] = $details['permissions'];
                 $menus[] = $details['menu'];
             }
         }
-      
+
         return [
             'menus' => Arr::flatten($menus),
             'permissions' => Arr::flatten($permissions)
@@ -1285,7 +1315,7 @@ if (!function_exists("getLgas")) {
         ];
 
         $lgas = null;
-        if (!empty($state)) {
+        if (!empty ($state)) {
             foreach ($states as $key => $value) {
                 if (strtolower($state) == strtolower($value['state'])) {
                     $lgas = array_values($value['lgas']);
@@ -1369,6 +1399,7 @@ if (!function_exists("adminRoutes")) {
             'customer-blacklist.update',
             'customer-blacklist.destroy',
 
+            'announcement.index',
             'announcement.show',
             'announcement.edit',
             'announcement.update',
@@ -1425,6 +1456,11 @@ if (!function_exists("adminRoutes")) {
             'settings.update',
             'transaction.verify',
             'paymentgateway.index',
+            'emails.index',
+            'emails.update',
+            'emails.pending',
+            'emails.resend',
+            'emails.sweep',
         ];
 
         return $routes;
@@ -1432,7 +1468,8 @@ if (!function_exists("adminRoutes")) {
 }
 
 if (!function_exists("managerRoutes")) {
-    function managerRoutes(){
+    function managerRoutes()
+    {
         $routes = [
 
         ];

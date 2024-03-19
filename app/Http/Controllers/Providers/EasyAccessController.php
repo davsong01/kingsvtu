@@ -572,7 +572,7 @@ class EasyAccessController extends Controller
         ];
 
 
-        if (!empty($product)) {
+        if (!empty ($product)) {
             $response = $variations['variations'][$product];
             return $response;
         }
@@ -604,8 +604,8 @@ class EasyAccessController extends Controller
             $payload = [
                 'url' => $url,
                 'network' => $request['network'],
-                'mobileno' =>  $request['unique_element'] ?? '',
-                'dataplan' =>  $request['variation_name'],
+                'mobileno' => $request['unique_element'] ?? '',
+                'dataplan' => $request['variation_name'],
                 'client_reference' => $request['request_id'],
                 'no_of_pins' => $request['quantity'] ?? '',
             ];
@@ -617,7 +617,7 @@ class EasyAccessController extends Controller
             //     $result = json_decode($response);
             // }
             $result = $response;
-            if (empty($response)) {
+            if (empty ($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
                 $api_response = $response;
@@ -628,7 +628,7 @@ class EasyAccessController extends Controller
             } else {
                 $pinsx = [];
 
-                if (isset($result) && !empty($result)) {
+                if (isset ($result) && !empty ($result)) {
                     foreach ($result as $key => $value) {
                         if (strpos($key, 'pin') !== false) {
                             $pinsx[] = $value;
@@ -636,13 +636,13 @@ class EasyAccessController extends Controller
                     }
                 }
 
-                $pins = (isset($pinsx) && !empty($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
+                $pins = (isset ($pinsx) && !empty ($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
                 $true_response = $response['true_response'] ?? ($result['message'] ?? '');
 
-                $status = isset($result['status']) ? strtolower($result['status']) : 'failed';
-                $auto_refund_status = isset($result['auto_refund_status']) ? strtolower($result['auto_refund_status']) : 'nil';
+                $status = isset ($result['status']) ? strtolower($result['status']) : 'failed';
+                $auto_refund_status = isset ($result['auto_refund_status']) ? strtolower($result['auto_refund_status']) : 'nil';
 
-                if (isset($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
+                if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
                     $user_status = 'delivered';
                     $status = 'success';
                     $api_response = $response;
@@ -655,7 +655,7 @@ class EasyAccessController extends Controller
                     $user_status = 'failed';
                     $status = 'failed';
                     $api_response = $response;
-                    $message = isset($result['true_response']) ? str_replace("'", "", $result['true_response']) : ($result['true_response'] ?? '');
+                    $message = isset ($result['true_response']) ? str_replace("'", "", $result['true_response']) : ($result['true_response'] ?? '');
                     $payload = $payload;
                     $status_code = 0;
                     $description = $result['message'] ?? $true_response ?? '';
@@ -696,12 +696,12 @@ class EasyAccessController extends Controller
         return $format;
     }
 
-    
+
 
     // public function fetchAndUpdateBalance($api)
     // {
     //     $newBalance = $this->balance($api, 'no-format');
-        
+
     //     if (isset($newBalance['status']) && $newBalance['status'] == 'success') {
     //         $api->update([
     //             'balance' => $newBalance['balance'],
@@ -711,7 +711,7 @@ class EasyAccessController extends Controller
     //     return $api;
     // }
 
-    public function balance($api, $no_format=null)
+    public function balance($api, $no_format = null)
     {
         try {
             $url = "https://easyaccess.com.ng/api/wallet_balance.php";
@@ -746,7 +746,7 @@ class EasyAccessController extends Controller
             //     ]);
             // }
 
-            if (empty($response)) {
+            if (empty ($response)) {
                 $status = 'failed';
                 $status_code = 0;
                 $balance = null;
@@ -774,7 +774,7 @@ class EasyAccessController extends Controller
             ];
         }
 
-        if (isset($no_format)) {
+        if (isset ($no_format)) {
             $format = [
                 'status' => $status,
                 'balance' => $balance,
@@ -783,5 +783,63 @@ class EasyAccessController extends Controller
         }
 
         return $format;
+    }
+
+    function requery($api, $reference)
+    {
+        $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
+        try {
+
+            if (env('APP_ENV') != 'local') {
+                $response = $this->basicApiCall($url, ['reference' => $reference], ['AuthorizationToken' => $api->api_key]);
+            } else {
+                $response = json_decode('{"success":"true","message":"Dear Customer, You have successfully shared 500MB Data to 23481643xxxxx. Your SME data balance is 13xxx.xxGB expires 27\/08\/2022. Thankyou","network":"MTN","mobileno":"081643xxxxx","amount":"129","data_type":"SME","reference_no":"ID2765423xxxxx","client_reference":null,"transaction_date":"28-05-2022 01:25:53 am","status":"Successful","auto_refund_status":"success"}');
+            }
+
+
+            $status = isset ($response['status']) ? strtolower($response['status']) : 'failed';
+            $auto_refund_status = isset ($response['auto_refund_status']) ? strtolower($response['auto_refund_status']) : 'nil';
+
+            if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
+                $user_status = 'delivered';
+                $status = 'success';
+                $api_response = $response;
+                $description = $response['message'];
+                $message = $response['message'];
+                $payload = $url;
+                $status_code = 1;
+                $extras = null;
+            } else {
+                $user_status = 'failed';
+                $status = 'failed';
+                $api_response = $response;
+                $description = $response['message'];
+                $message = $response['message'];
+                $payload = $url;
+                $status_code = 0;
+            }
+
+            $format = [
+                'status' => $status,
+                'user_status' => $user_status ?? null,
+                'api_response' => $api_response ?? null,
+                'description' => $description ?? null,
+                'message' => $message ?? null,
+                'payload' => $payload,
+                'status_code' => $status_code,
+                'extras' => $extras ?? null
+            ];
+
+            return $format;
+        } catch (\Exception $th) {
+            return $format = [
+                'status' => 'attention-required',
+                'response' => '',
+                'description' => 'Transaction completed',
+                'api_response' => $api_response ?? $response,
+                'payload' => $url,
+                'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
+            ];
+        }
     }
 }

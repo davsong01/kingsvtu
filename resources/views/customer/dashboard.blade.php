@@ -6,7 +6,7 @@
         <div class="content-wrapper">
             @include('admin.includes.popup')
             @include('admin.includes.scroller')
-            <p class="" style="background: #3864dcc7;width: fit-content;padding: 10px;border-radius: 5px;color: white;">Referral Link: <span id="referral-link">{{ url('/register'). '?referral='.auth()->user()->username }}</span> <span><i onclick="copyLink()" class="fa fa-copy" style="color: #00ff58;"></i></span> </p>
+            <p class="" style="background: #3864dcc7;width: fit-content;padding: 10px;border-radius: 5px;color: white;">Referral Link: <span id="referral-link">{{ url('/register'). '?referral='.auth()->user()->username }}</span> <span style="cursor: pointer;"><i onclick="copyLink()" class="fa fa-copy" style="color: #00ff58;"></i></span> </p>
             <div class="content-header row">
             </div>
             <div class="content-body">
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                         </div>
-              
+
                     </div>
                 </section>
                 <!-- Dashboard Ecommerce ends -->
@@ -105,16 +105,19 @@
     <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
     <script>
         function copyLink(){
-            var copyText = document.getElementById('referral-link').innerHTML;
-            //  document.getElementById("referral-link");
-
-            copyText.select();
-            copyText.setSelectionRange(0, 99999); // For mobile devices
-
-            navigator.clipboard.writeText(copyText.value);
-
-            // Alert the copied text
-            alert("Link Copied");
+            (async () => {
+                try {
+                    var copyText = document.getElementById('referral-link');
+                    let text = copyText.innerHTML
+                    await navigator.clipboard.writeText(text);
+                    copyText.innerHTML = 'Link copied!';
+                    setTimeout(() => {
+                        copyText.innerHTML = text;
+                    }, 3000);
+                } catch (error) {
+                    alert(error.message)
+                }
+            })();
         }
     </script>
 @endsection

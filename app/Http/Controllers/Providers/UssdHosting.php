@@ -399,8 +399,8 @@ class UssdHosting extends Controller
     function requery($api, $request_id)
     {
 
+        $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
         try {
-            $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
 
             if (env('APP_ENV') != 'local') {
                 $res = Http::post($url);
@@ -416,7 +416,7 @@ class UssdHosting extends Controller
                     'api_response' => json_encode($res),
                     'description' => 'Transaction successful',
                     'message' => $res->comment ?? null,
-                    'payload' => $payload,
+                    'payload' => $url,
                     'status_code' => 1,
                     'extras' => null,
                 ];
@@ -427,7 +427,7 @@ class UssdHosting extends Controller
                     'api_response' => json_encode($res),
                     'description' => 'Transaction completed',
                     'message' => $res->comment ?? null,
-                    'payload' => $payload,
+                    'payload' => $url,
                     'status_code' => 1,
                     'extras' => null,
                 ];

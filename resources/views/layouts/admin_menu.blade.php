@@ -80,6 +80,28 @@
                     </ul>
                 </li>
             @endif
+            @if (in_array('Email Management', $allowedMenu))
+                <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24"
+                            viewBox="0 -960 960 960" width="24">
+                            <path
+                                d="M280-600v-80h560v80H280Zm0 160v-80h560v80H280Zm0 160v-80h560v80H280ZM160-600q-17 0-28.5-11.5T120-640q0-17 11.5-28.5T160-680q17 0 28.5 11.5T200-640q0 17-11.5 28.5T160-600Zm0 160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520q17 0 28.5 11.5T200-480q0 17-11.5 28.5T160-440Zm0 160q-17 0-28.5-11.5T120-320q0-17 11.5-28.5T160-360q17 0 28.5 11.5T200-320q0 17-11.5 28.5T160-280Z"
+                                fill="white" />
+                        </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Email Management</span></a>
+                    <ul class="menu-content">
+                        @if (in_array('api.index', $allowedRoutes))
+                            <li class="{{ Route::is('emails.*') ? 'active' : '' }}"><a href="{{ route('emails.index') }}"><i
+                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">Emails</span></a>
+                            </li>
+                        @endif
+                        @if (in_array('emails.index', $allowedRoutes))
+                            <li class="{{ Route::is('emails.*') ? 'active' : '' }}"><a
+                                    href="{{ route('emails.pending') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                        class="menu-item" data-i18n="Input">Pending Emails</span></a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
             @if (in_array('Customers', $allowedMenu))
                 <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" fill="white"
                             height="24" viewBox="0 -960 960 960" width="24">
@@ -141,7 +163,7 @@
                     </ul>
                 </li>
             @endif
-           
+
             @if (in_array('Financials', $allowedMenu))
                 <li class="nav-item"><a href="#"><svg fill="white" xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
