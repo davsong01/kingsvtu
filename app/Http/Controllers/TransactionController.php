@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
+use App\Models\BillerLog;
 use App\Models\PaymentGateway;
 
 class TransactionController extends Controller
@@ -29,9 +30,17 @@ class TransactionController extends Controller
             'products' => function ($query) {
                 return $query->where('status', 'active')->get();
             }
-        ])->where('slug', $slug)->first();
+        ])->where('status', 'active')->where('slug', $slug)->first();
 
-        if (!empty ($category) && $category->status == 'active') {
+        // $category = Category::with([
+        //     'products' => function ($query) {
+        //         return $query->whereHas('variations', function ($q) {
+        //             $q->where('status', 'Active');
+        //         })->where('status', 'active')->get();
+        //     }
+        // ])->where('slug', $slug)->first();
+    
+        if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {
             return back();
@@ -46,7 +55,6 @@ class TransactionController extends Controller
         if ($blacklist) {
             return back()->with('error', 'Account blacklisted!, kindly reach out to support!');
         }
-
 
         // Check Transaction pin
         $pinCheck = $this->checkTransactionPin($request);
@@ -211,14 +219,12 @@ class TransactionController extends Controller
                 $res = [
                     'status' => $query['status'],
                     'message' => 'Transaction Successful!',
-                    // 'extras' => 'Transaction Successful!',
                 ];
 
                 $user_status = 'success';
                 $balance_after = $request['balance_before'] - $request['total_amount'];
             } else if (isset ($query) && $query['status_code'] == 0) {
                 // Log wallet
-
                 $wallet = new WalletController();
                 $request['type'] = 'credit';
                 $wallet->logWallet($request);
@@ -228,7 +234,6 @@ class TransactionController extends Controller
                 $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
                 $balance_after = $request['balance_before'];
                 $user_status = 'failed';
-
             } else {
                 $user_status = 'failed';
                 $res = [
@@ -239,6 +244,16 @@ class TransactionController extends Controller
                 $balance_after = $request['balance_before'] - $request['total_amount'];
             }
 
+            $extra_info = [];
+            $customer_details = BillerLog::where('service_id', $transaction->product->slug)->where('billers_code', $transaction->unique_element)->first();
+            if(!empty($customer_details)){
+                $customer_details = json_decode($customer_details->refined_data, true);
+            }else{
+                $customer_details = [];
+            }
+            
+            $info = $query['extra_info'] ?? [];
+            $extra_info = array_merge($info, $customer_details);
             // Update Transaction
             $transaction->update([
                 'balance_after' => $balance_after,
@@ -248,7 +263,7 @@ class TransactionController extends Controller
                 'extras' => $query['extras'] ?? null,
                 'status' => $query['status'] ?? 'attention-required',
                 'descr' => $query['description'],
-                'extra_info' => $query['extra_info'] ?? null,
+                'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
                 'user_status' => $user_status ?? null
             ]);
 
@@ -331,7 +346,11 @@ class TransactionController extends Controller
                 'title' => $verify['title'],
                 'renewal_amount' => $verify['renewal_amount']
             ];
-        } else if (isset ($query) && $query['status_code'] == 0) {
+          
+            if(isset($verify['raw_response'])){
+                $this->refineAndLogBiller($verify, $variation->category,$request['unique_element'],$request['product_slug']);
+            }
+        } else if (isset($query) && $query['status_code'] == 0) {
             $res = [
                 'status' => $verify['status_code'],
                 'message' => $verify['message'],
@@ -374,11 +393,11 @@ class TransactionController extends Controller
             $type = 'variation';
         }
 
-        $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');
-
-        $suffix = (isset ($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
-
-        if (!empty ($request->raw) && $request->raw == 'yes') {
+        $discount = $this->getDiscount($resource, $type, $request->amount, 'yes');        
+        // $suffix = (isset($discount['type']) && $discount['type'] == 'percentage') ? number_format($discount['rate']) . '% off' : 'Discounted to ' . getSettings()->currency . number_format($discount['rate'], 2);
+        $suffix = '';
+    
+        if(!empty($request->raw) && $request->raw == 'yes'){
             return [
                 'discount' => $discount['rate'],
                 'message' => '<span class="pay">You will pay </span><strong><span class="rate">' . getSettings()->currency . number_format($discount['discounted_price']) . '</span></strong><span class="suffix">(' . $suffix . ')</span>',
@@ -397,15 +416,15 @@ class TransactionController extends Controller
         $level = auth()->user()->customer->customer_level;
         $amount = $amount;
 
-        if ($type == 'variation') {
-            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->first();
-            if ($resource->fixed_price == 'Yes') {
+        if($type == 'variation'){
+            $findDiscount = Discount::where(['customer_level' => $level, 'variation_id' => $resource->id])->where('price', '>', 0)->first();
+            if($resource->fixed_price == 'Yes'){
                 $amount = $resource->system_price;
             }
         }
 
         if ($type == 'product') {
-            $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->first();
+            $findDiscount = Discount::where(['customer_level' => $level, 'product_id' => $resource->id])->where('price', '>',0)->first();
         }
 
         if (!empty ($findDiscount) && $findDiscount->price > 0) {
@@ -419,9 +438,20 @@ class TransactionController extends Controller
                 $discount = ($price / 100) * $amount;
                 $discounted_price = $amount - $discount;
             }
+
         }
 
-        if (!empty ($getRate)) {
+        $discounted_price = floor($discounted_price ?? $amount); // to floor down percentage based discounts
+        // $discounted_price = intval(floor($discounted_price ?? $amount)); // to floor down percentage based discounts
+        
+        if($resource->fixed_price == 'Yes'){
+            $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
+        } 
+        // dd($resource->category->discount_type, $amount, $discount, $discounted_price);
+        $discounted_price = $discounted_price <= 0 ? $resource->system_price : $discounted_price;
+        
+        if(!empty($getRate)){
+
             $response = [
                 'amount' => $amount ?? 0,
                 'discount' => $discount ?? 0,

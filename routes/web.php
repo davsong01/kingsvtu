@@ -15,6 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\VariationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\BillerLogController;
 use App\Http\Controllers\CustomerLevelController;
 use App\Http\Controllers\EmailLogController;
 use App\Http\Controllers\PaymentGatewayController;
@@ -34,6 +35,7 @@ use App\Http\Controllers\ReservedAccountNumberController;
 
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallback'])->name('log.payment.response');
 Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
+Route::get('cron/sendemails', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
 
 Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
@@ -135,6 +137,8 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
         Route::get('verify-biller', 'verifyBiller')->name('admin.verifybiller');
         Route::post('verify-post', 'verifyPost')->name('admin.verify.post');
     });
+
+    Route::resource('billerlog', BillerLogController::class);
 
     Route::get('settings-update', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::post('settings-update', [SettingsController::class, 'update'])->name('settings.update');

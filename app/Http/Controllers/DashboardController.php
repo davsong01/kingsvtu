@@ -51,7 +51,7 @@ class DashboardController extends Controller
             $customers = User::where('type', 'customer')->count();
 
             $apis = API::get();
-           
+            
             return view('admin.dashboard', compact('customer',  'credit', 'credit_count', 'debit', 'debit_count', 'referral_debit', 'referral_credit', 'referral_credit_count', 'referral_debit_count', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
         } else {
             return view('customer.dashboard', compact('customer'));
@@ -62,17 +62,12 @@ class DashboardController extends Controller
     {
         $firstdayofmonth = Carbon::today()->startOfMonth();
 
-        $count = TransactionLog::with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
+        $count = TransactionLog::whereIn('status',['completed','delivered','success'])->where('balance_after','<','balance_before')->with('customer')->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
             ->groupBy('customer_id')
             ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
             ->orderBy('total_amount', 'DESC')->first();
+        
         return $count;
-
-        // TransactionLog::select('customer_id', 'total_amount')
-        //     ->groupBy('total_amount')
-        //     ->orderByRaw('COUNT(*) DESC, total_amount ASC LIMIT 1');
-
-        // dd($count->get());
     }
 
     public function resetTransactionPin()

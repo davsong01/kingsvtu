@@ -125,14 +125,22 @@ class AdminController extends Controller
             'product' => 'required',
             'api' => 'required',
         ]);
-
+       
         if ($val->fails()) return ['code' => 0, 'message' => $val->errors()->first()];
         $api = API::find($request->api);
         $data['request']['variation_name'] = $request->type;
         $data['request']['unique_element'] = $request->value;
         $data['request']['product_slug'] = $request->product;
         $data['api'] = $api;
-
-        return app("App\Http\Controllers\Providers\\" . $api->file_name)->verify($data, true);
+        $product = Product::where('slug', $request->product)->first();
+        $verify = app("App\Http\Controllers\Providers\\" . $api->file_name)->verify($data, true);
+        
+        if (isset($verify) && $verify['status_code'] == 1) {
+            if (isset($verify['raw_response'])) {
+                $this->refineAndLogBiller($verify, $product->category, $request->value, $product->slug);
+            }
+        }
+        
+        return $verify;
     }
 }
