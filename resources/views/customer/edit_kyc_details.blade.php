@@ -183,7 +183,7 @@
                                                                                 <option value="">Select</option>
                                                                                 <option value="Driver's Licence">Driver's Licence</option>
                                                                                 <option value="Voter's Card">Voter's Card</option>
-                                                                                <option value="Utility Bill">Utility Bill</option>
+                                                                                <option value="Nin Slip">Nin Slip</option>
                                                                                 <option value="International Passport">International Passport</option>
                                                                             </select>
                                                                         </fieldset>
