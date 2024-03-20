@@ -27,27 +27,40 @@ if (!function_exists("logEmails")) {
 }
 
 if (!function_exists("sendEmail")) {
-    function sendEmail($count)
+    function sendEmail($count, $single = false)
     {
-        $pendingMails = EmailLog::where('status', 'pending')->take($count);
+        if ($single){
+            $pendingMails = EmailLog::where('id', 'pending')->take($count);
+        } else {
+            $pendingMails = EmailLog::where('status', 'pending')->take($count);
+        }
+
 
         if ($pendingMails) {
             $clonePendingMail = clone $pendingMails;
             foreach (array_chunk($clonePendingMail->toArray(), 100) as $key => $value) {
                 $current = $pendingMails[$key];
-                try {
-                    Mail::to($current->recipient)->send(new EmailMessages([
-                        'subject' => $current->subject,
-                        'body' => $current->content,
-                    ]));
-
-                    $current->status = 'sent';
-                    $current->save();
-                } catch (\Throwable $th) {
-                    $current->status = 'failed';
-                    $current->save();
-                }
+                sendEmailObject($current);
             }
+        }
+    }
+}
+
+if (!function_exists('sendEmailObject')) {
+    function sendEmailObject ($current) {
+        try {
+            Mail::to($current->recipient)->send(new EmailMessages([
+                'subject' => $current->subject,
+                'body' => $current->content,
+            ]));
+
+            $current->status = 'sent';
+            $current->save();
+            return true;
+        } catch (\Throwable $th) {
+            $current->status = 'failed';
+            $current->save();
+            return false;
         }
     }
 }
@@ -64,6 +77,7 @@ if (!function_exists("sendEmails")) {
         try {
 
             Mail::to($email_to)->send(new EmailMessages($data));
+            return true;
         } catch (\Exception $e) {
             \Log::info($e->getMessage());
         }

@@ -65,7 +65,6 @@ class EmailLogController extends Controller
      */
     public function update(Request $request, EmailLog $id)
     {
-        dd($request->all());
         $id->content = $request->message;
         $id->save();
         return back()->with('message', 'Email has been updated');
@@ -87,5 +86,14 @@ class EmailLogController extends Controller
         EmailLog::where('status', '!=', 'pending')->delete();
 
         return back()->with('message', 'Emails cleared successfully');
+    }
+
+    public function send(EmailLog $id)
+    {
+        $stat = sendEmailObject($id);
+        if ($stat) {
+            return back()->with('message', 'Email sent!');
+        }
+        return back()->with('error', 'Email not sent!');
     }
 }

@@ -148,6 +148,7 @@ class RoleSeeder extends Seeder
             'permission.destroy',
             'permission.create',
             'permission.store',
+            'emails-send'
         ];
 
         // RolePermission::truncate();
