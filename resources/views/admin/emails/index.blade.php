@@ -152,6 +152,9 @@
                                                     </a>
                                                 @endif
                                                 @if ($mail->status == 'pending')
+                                                    <a class="btn btn-success btn-sm mr-1 mb-1" href="{{ route('emails-send', $mail->id) }}">
+                                                        Send
+                                                    </a>
                                                     <button type="button" class="btn btn-danger btn-sm mr-1 mb-1 edit-mail"
                                                         data-toggle="modal" data-target="#large"
                                                         data-id="{{ route('emails.update', $mail->id) }}">
@@ -178,7 +181,7 @@
                                         </div>
                                         <form action="" method="post" class="form-actions">
                                             @method('PATCH')
-                                            <div class="modal-body" style="max-height: 30rem">
+                                            <div class="modal-body" style="min-height: 30rem">
                                                 <fieldset class="form-group">
                                                     {{-- <label for="type"></label> --}}
                                                     <div id="toolbar-container">
@@ -269,15 +272,6 @@
         $(document).ready(function() {
             $('.js-example-basic-single').select2();
         });
-
-        $('.edit-mail').click(function() {
-            let btn = $(this);
-            let id = btn.data('id');
-            let content = btn.parents('tr').find('.content').data('content');
-            $('.editor').html(content);
-            $('.form-actions').prop('action', id);
-        });
-
         let quill = new Quill('.editor', {
             theme: 'snow',
             toolbar: true,
@@ -286,6 +280,14 @@
                 syntax: true,
                 toolbar: '#toolbar-container',
             },
+        });
+
+        $('.edit-mail').click(function() {
+            let btn = $(this);
+            let id = btn.data('id');
+            let content = btn.parents('tr').find('.content').data('content');
+            $('.editor p').html(content)
+            $('.form-actions').prop('action', id);
         });
 
         $('form').on('submit', (e) => {

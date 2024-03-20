@@ -94,6 +94,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::resource('customer-blacklist', BlackListController::class);
     Route::resource('announcement', AnnouncementController::class);
     Route::get('emails/send/{count?}', [EmailLogController::class, 'sendMail'])->name('emails.send');
+    Route::get('emails/fire-mail/{id}', [EmailLogController::class, 'send'])->name('emails-send');
     Route::get('emails/pending', [EmailLogController::class, 'pending'])->name('emails.pending');
     Route::get('emails/resend/{id}', [EmailLogController::class, 'resend'])->name('emails.resend');
     Route::patch('emails/update/{id}', [EmailLogController::class, 'update'])->name('emails.update');
