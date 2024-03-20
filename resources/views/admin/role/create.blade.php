@@ -29,7 +29,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Mew Admin</h4>
+                                    <h4 class="card-title">New Admin</h4>
                                     <p>Create new Role</p>
                                     @include('layouts.alerts')
                                 </div>

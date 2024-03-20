@@ -149,7 +149,7 @@ class RoleSeeder extends Seeder
             'permission.store',
             'emails-send',
             'customerlevel.index',
-        
+            'role.store',
 
         ];
 
