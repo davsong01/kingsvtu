@@ -81,7 +81,7 @@
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Email Management</span></a>
                     <ul class="menu-content">
                         @if (in_array('api.index', $allowedRoutes))
-                            <li class="{{ Route::is('emails.*') ? 'active' : '' }}"><a href="{{ route('emails.index') }}"><i
+                            <li class="{{ Route::is('emails.index') ? 'active' : '' }}"><a href="{{ route('emails.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Emails</span></a>
                             </li>
                         @endif

@@ -122,6 +122,8 @@ class MonnifyController extends Controller
                 "Authorization: Bearer " . $token . "",
             ];
 
+            $data["preferredBanks"] = $data["preferredBanks"] ?? null;
+            $getAllAvailableBanks = empty($data["preferredBanks"]) ? true : false;
             $payload = json_encode([
                 "customer_id" => $data["customer_id"],
                 "bvn" => $data["BVN"],
@@ -131,6 +133,7 @@ class MonnifyController extends Controller
                 "contractCode" => $this->api->contract_id,
                 "getAllAvailableBanks" => $data["getAllAvailableBanks"],
                 "accountReference" => $this->generateRequestId(),
+                'getAllAvailableBanks' => $getAllAvailableBanks,
                 "preferredBanks" => $data["preferredBanks"],
             ]);
 

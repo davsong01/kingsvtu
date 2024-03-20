@@ -36,80 +36,11 @@
                         @include('layouts.alerts')
                     </div>
                     <div class="card-body">
-                        <div class="col-md-12">
-                            {{-- <form action="{{ route('admin.trans') }}" method="GET">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="email">Transaction Email</label>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter customer email address" value="{{ \Request::get('email')}}">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="phone">Transaction Phone</label>
-                                            <input type="phone" class="form-control" id="phone" name="phone" placeholder="Enter customer phone number" value="{{ \Request::get('phone')}}">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="service">Service</label>
-                                            <select class="form-control" name="service" id="service">
-                                                <option value="">Select</option>
-                                                @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}" {{ \Request::get('service') == $product->id ? 'selected' : ''}}>{{ $product->display_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="transaction_id">Transaction ID</label>
-                                            <input type="text" class="form-control" id="transaction_id" name="transaction_id" placeholder="Enter transaction ID" value="{{ \Request::get('transaction_id')}}">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="unique_element">Unique Element</label>
-                                            <input type="text" class="form-control" id="unique_element" name="unique_element" placeholder="Enter unique element" value="{{ \Request::get('unique_element') }}">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <fieldset class="form-group">
-                                            <label for="status">Status</label>
-                                            <select class="form-control" name="status" id="status">
-                                                <option value="">Select</option>
-                                                <option value="delivered" {{ \Request::get('status') == 'delivered' ? 'selected' : ''}}>Delivered</option>
-                                                <option value="failed" {{ \Request::get('status') == 'failed' ? 'selected' : ''}}>Failed</option>
-                                                <option value="attention-required" {{ \Request::get('status') == 'attention-required' ? 'selected' : ''}}>Attention Required</option>
-                                            </select>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <fieldset class="form-group">
-                                            <label for="from">From</label>
-                                            <input type="date" class="form-control" value="{{ \Request::get('from')}}" name="from">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <fieldset class="form-group">
-                                            <label for="to">To</label>
-                                            <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <input type="submit" class="form-control btn btn-primary mt-2" value="Search">
-                                    </div>
-                                </div>
-                            </form> --}}
-                            <hr>
-                        </div>
                         <div class="table-responsive">
-                            {{-- <form method="post"> --}}
                             <table id="table-extended-success" class="table mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Recipients</th>
+                                        <th>Recipient</th>
                                         <th>Subject</th>
                                         <th>Content</th>
                                         <th>Status</th>
@@ -120,7 +51,7 @@
                                     @foreach ($emails as $mail)
                                         <tr>
                                             <td>
-                                                {{ $mail->recipient }}
+                                                {{ $mail->recipient }} <br><small style="color:black">Created on: <strong>{{ $mail->created_at }}</strong></small>
                                             </td>
                                             <td>
                                                 {{ $mail->subject }}
@@ -131,7 +62,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                {{ $mail->status }}
+                                                {{ ucfirst($mail->status) }}
                                             </td>
                                             <td>
                                                 @if ($mail->status != 'pending')

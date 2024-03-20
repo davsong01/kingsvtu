@@ -53,14 +53,13 @@ class RoleSeeder extends Seeder
             'product.edit',
             'product.update',
             'product.destroy',
-
             'role.show',
             'role.index',
             'role.edit',
             'role.update',
             'role.destroy',
             'role.create',
-
+    
             'category.show',
             'category.index',
             'category.edit',
@@ -148,7 +147,10 @@ class RoleSeeder extends Seeder
             'permission.destroy',
             'permission.create',
             'permission.store',
-            'emails-send'
+            'emails-send',
+            'customerlevel.index',
+        
+
         ];
 
         // RolePermission::truncate();
