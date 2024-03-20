@@ -47,8 +47,7 @@
                                                         placeholder="First name" required>
                                                 </div>
                                                 <div class="form-group col-sm-6 col-12">
-                                                    <label class="text-bold-600" for="lastName">Last Name <span
-                                                            class="text-danger">*</span></label>
+                                                    <label class="text-bold-600" for="lastName">Last Name <span class="text-danger">*</span></label>
                                                     <input type="text" class="form-control" id="lastName"
                                                         name="last_name" value="{{ $admin->lastname }}"
                                                         placeholder="Last name" required>
@@ -85,7 +84,6 @@
                                                 </fieldset>
                                             </fieldset>
                                             </div>
-                                            
                                             <div class="">
                                                 <input type="hidden" value="{{ $admin->id }}" name="id" />
                                                 <button class="btn btn-primary" type="submit">Submit</button>

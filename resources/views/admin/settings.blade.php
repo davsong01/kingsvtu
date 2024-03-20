@@ -15,7 +15,7 @@ use App\Models\PaymentGateway;
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
-                                 <div class="content-body">
+                                <div class="content-body">
                                     <!-- Nav Filled Starts -->
                                     <section id="nav-filled">
                                         <div class="row">
@@ -30,7 +30,6 @@ use App\Models\PaymentGateway;
                                                             <form action="{{route('settings.update')}}" method="POST" enctype="multipart/form-data">
                                                                 @csrf
                                                                 <div class="row">
-                                                                   
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
                                                                             <label for="official_email">Official Email</label>
@@ -105,29 +104,55 @@ use App\Models\PaymentGateway;
                                                                             <label for="">Payment Gateway</label>
                                                                             <input type="text" class="form-control" id="" value="{{ PaymentGateway::where('status', 'active')->value('name') }}" disabled>
                                                                         </fieldset>
-                                                                        <fieldset class="form-group">
-                                                                            <label for="basicInputFile">Logo</label>
-                                                                            <div class="custom-file">
-                                                                                <input type="file" accept="image/*" class="custom-file-input" id="image" name="logo">
-                                                                                <label class="custom-file-label" for="image">Replace Logo</label>
+                                                                        <div class="row">
+                                                                            <div class="col-md-8">
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="basicInputFile">Logo</label>
+                                                                                    <div class="custom-file">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="logo">
+                                                                                        <label class="custom-file-label" for="image">Replace Logo</label>
+                                                                                    </div>
+                                                                                </fieldset>
                                                                             </div>
-                                                                        </fieldset>
-
-                                                                        <fieldset class="form-group">
-                                                                            <label for="basicInputFile">Favicon</label>
-                                                                            <div class="custom-file">
-                                                                                <input type="file" accept="image/*" class="custom-file-input" id="favicon" name="favicon">
-                                                                                <label class="custom-file-label" for="image">Replace Favicon</label>
+                                                                            <div class="col-md-4">
+                                                                                @if(!empty(getSettings()->logo))
+                                                                                    <img style="height:62px;width:auto" src="{{ asset(getSettings()->logo)}}" alt="">
+                                                                                @endif
                                                                             </div>
-                                                                        </fieldset>
-                                                                        <fieldset class="form-group">
-                                                                            <label for="basicInputFile">Dashboard Logo</label>
-                                                                            <div class="custom-file">
-                                                                                <input type="file" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
-                                                                                <label class="custom-file-label" for="image">Replace Dashboard Logo</label>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-md-8">
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="basicInputFile">Favicon</label>
+                                                                                    <div class="custom-file">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="favicon" name="favicon">
+                                                                                        <label class="custom-file-label" for="image">Replace Favicon</label>
+                                                                                    </div>
+                                                                                </fieldset>
                                                                             </div>
-                                                                        </fieldset>
-                                                                       
+                                                                            <div class="col-md-4">
+                                                                                @if(!empty(getSettings()->favicon))
+                                                                                    <img style="height:62px;width:auto" src="{{ asset(getSettings()->favicon)}}" alt="">
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                        
+                                                                        <div class="row">
+                                                                            <div class="col-md-8">
+                                                                                <fieldset class="form-group">
+                                                                                    <label for="basicInputFile">Dashboard Logo</label>
+                                                                                    <div class="custom-file">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
+                                                                                        <label class="custom-file-label" for="image">Replace Dashboard Logo</label>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                            </div>
+                                                                            <div class="col-md-4">
+                                                                                @if(!empty(getSettings()->dashboard_logo))
+                                                                                    <img style="height:62px;width:auto" src="{{ asset(getSettings()->dashboard_logo)}}" alt="">
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
                                                                         <fieldset class="form-group">
                                                                             <label for="seo_title">SEO Title</label>
                                                                             <input type="text" class="form-control" id="seo_title" name="seo_title" value="{{ $settings->seo_title ?? old('seo_title') }}" placeholder="SEO Title">
