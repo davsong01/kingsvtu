@@ -135,11 +135,11 @@
                                             </td>
                                             <td>
                                                 @if ($mail->status != 'pending')
-                                                    <a class="btn btn-primary btn-sm mr-1 mb-1"
-                                                        href="{{ route('emails.resend', $mail->id) }}">
-                                                        <i class="fa fa-refresh"></i><span
-                                                            class="align-middle ml-25">View</span>
-                                                    </a>
+                                                    <button type="button" class="btn btn-primary btn-sm mr-1 mb-1 edit-mail"
+                                                        data-toggle="modal" data-target="#large"
+                                                        data-id="view">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </button>
                                                     <a class="btn btn-warning btn-sm mr-1 mb-1"
                                                         href="{{ route('emails.resend', $mail->id) }}">
                                                         <i class="fa fa-refresh"></i><span
@@ -152,7 +152,8 @@
                                                     </a>
                                                 @endif
                                                 @if ($mail->status == 'pending')
-                                                    <a class="btn btn-success btn-sm mr-1 mb-1" href="{{ route('emails-send', $mail->id) }}">
+                                                    <a class="btn btn-success btn-sm mr-1 mb-1"
+                                                        href="{{ route('emails-send', $mail->id) }}">
                                                         Send
                                                     </a>
                                                     <button type="button" class="btn btn-danger btn-sm mr-1 mb-1 edit-mail"
@@ -242,7 +243,7 @@
                                                     <i class="bx bx-x d-block d-sm-none"></i>
                                                     <span class="d-none d-sm-block">Close</span>
                                                 </button>
-                                                <button type="submit" class="btn btn-primary ml-1" {{-- data-dismiss="modal" --}}>
+                                                <button type="submit" class="btn btn-primary ml-1 update-btn" {{-- data-dismiss="modal" --}}>
                                                     <i class="bx bx-check d-block d-sm-none"></i>
                                                     <span class="d-none d-sm-block">Update</span>
                                                 </button>
@@ -288,6 +289,11 @@
             let content = btn.parents('tr').find('.content').data('content');
             $('.editor p').html(content)
             $('.form-actions').prop('action', id);
+            if (id == 'view') {
+                $('.update-btn').hide();
+            }/*  else {
+                $('.update-btn').show();
+            } */
         });
 
         $('form').on('submit', (e) => {
