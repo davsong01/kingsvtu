@@ -7,7 +7,7 @@
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" href="/">
-                    <div class="brand-logo"><img style="width: auto;height: 65px;text-align: center;margin: auto;" src="{{ asset(getSettings()->dashboard_logo) }}" />
+                    <div class="brand-logo"><img style="text-align: center;margin: auto;max-width: 200px;padding-top: 56.25%;" src="{{ asset(getSettings()->dashboard_logo) }}" />
                     </div>
                     {{-- <div class="brand-logo"><img style="height: auto;" class="logo" src="{{ asset('site/dashboard_logo.jpeg')}}" /></div> --}}
 
