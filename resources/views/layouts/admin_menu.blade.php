@@ -80,13 +80,13 @@
                                 fill="white" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Email Management</span></a>
                     <ul class="menu-content">
-                        @if (in_array('api.index', $allowedRoutes))
+                        @if (in_array('emails.index', $allowedRoutes))
                             <li class="{{ Route::is('emails.index') ? 'active' : '' }}"><a href="{{ route('emails.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Emails</span></a>
                             </li>
                         @endif
-                        @if (in_array('emails.index', $allowedRoutes))
-                            <li class="{{ Route::is('emails.*') ? 'active' : '' }}"><a
+                        @if (in_array('emails.pending', $allowedRoutes))
+                            <li class="{{ Route::is('emails.pending') ? 'active' : '' }}"><a
                                     href="{{ route('emails.pending') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input">Pending Emails</span></a>
                             </li>

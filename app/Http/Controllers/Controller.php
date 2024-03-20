@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BillerLog;
 use Image;
+use Carbon\Carbon;
+use App\Models\EmailLog;
+use App\Models\BillerLog;
+use App\Mail\EmailMessages;
 use App\Models\GeneralSetting;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -231,6 +235,66 @@ class Controller extends BaseController
             }
         } catch (\Throwable $th) {
             //throw $th;
+        }
+    }
+
+    public function cronSendEmails()
+    {
+        set_time_limit(3000);
+        $hourlyRate = 150;
+        $oneHourAgo = Carbon::now()->subHours(1);
+        ini_set('max_execution_time', 600); //5 minutes
+        // $this->purgeSentEmails();
+        // Check how many have been sent within the hour
+        $sentWithinTheHour = EmailLog::where('status', 'sent')->whereBetween('sent_at', [$oneHourAgo, now()])->count();
+      
+        // \Log::info('Emails sending start at: ' .now());
+        if ($sentWithinTheHour >= $hourlyRate) {
+            \Log::info(now() . ' : Hourly email rate exceeded on server. ' . $sentWithinTheHour . ' emails already sent this hour');
+            echo ('Hourly email rate exceeded on server. ' . $sentWithinTheHour . ' emails already sent this hour');
+        } else {
+            $pick = $hourlyRate - $sentWithinTheHour;
+
+            $emails = EmailLog::where('status', 'pending')->whereNull('sent_at')->take($pick)->get();
+            $count = 0;
+            
+            foreach ($emails as $email) {
+                $data['recipient'] = $email->recipient;
+                $data['content'] = $email->content;
+                $data['subject'] = $email->subject;
+
+                $res = $this->sendEmailReal($data);
+
+                if (isset($res) && ($res['message'] && $res['message'] == 'success')) {
+                    $count++;
+                    $email->status = 'sent';
+                    $email->sent_at = now();
+                    $email->save();
+                } else {
+                    $email->errors = $res['error'] ?? 'unknown error';
+                    $email->save();
+                }
+            }
+            echo $count . ' emails sent successfully';
+        }
+    }
+
+    public function sendEmailReal($current)
+    {
+        try {
+            Mail::to($current['recipient'])->send(new EmailMessages([
+                'subject' => $current['subject'],
+                'body' => $current['content'],
+            ]));
+
+            return [
+                'message' => 'success',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'message' => 'error',
+                'error' => $e->getMessage(),
+            ];
         }
     }
 

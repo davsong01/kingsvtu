@@ -23,9 +23,8 @@ class EmailLogController extends Controller
 
     public function resend(Request $request, EmailLog $id)
     {
-        $id->status = 'pending';
-        $id->save();
-        return back()->with('message', 'Email updated successfully!');
+        $this->sendEmailReal($id->toArray());
+        return back()->with('message', 'Email resent successfully!');
     }
 
     /**
@@ -73,9 +72,10 @@ class EmailLogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(EmailLog $emailLog)
+    public function destroy(EmailLog $id)
     {
-        //
+        $id->delete();
+        return back()->with('message', 'Delete successful');
     }
 
     public function sendMail ($count = 100) {
@@ -88,12 +88,23 @@ class EmailLogController extends Controller
         return back()->with('message', 'Emails cleared successfully');
     }
 
-    public function send(EmailLog $id)
+    public function send(EmailLog $log)
     {
-        $stat = sendEmailObject($id);
-        if ($stat) {
+        $res = $this->sendEmailReal($log->toArray());
+
+        if (isset($res) && ($res['message'] && $res['message'] == 'success')) {
+            $log->status = 'sent';
+            $log->errors = null;
+            $log->sent_at = now();
+            $log->save();
+
             return back()->with('message', 'Email sent!');
+        } else {
+            $log->errors = $res['error'] ?? 'unknown error';
+            $log->save();
+
+            return back()->with('error', 'There was an error while sending email ... '. $res['error']);
+
         }
-        return back()->with('error', 'Email not sent!');
     }
 }

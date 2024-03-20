@@ -28,8 +28,8 @@
                         <div class="d-flex justify-content-between">
                             <h4 class="card-title">Email Management</h4>
                             @if (Route::is('emails.index'))
-                                <a class="btn btn-danger mr-1 mb-1" href="{{ route('emails.sweep') }}">
-                                    <i class="fa fa-trash"></i><span class="align-middle ml-25">Clear Emails</span>
+                                <a onclick="confirm('You are about to clear emails')" class="btn btn-danger mr-1 mb-1" href="{{ route('emails.sweep') }}">
+                                    <i class="fa fa-trash"></i><span class="align-middle ml-25">Clear Sent Emails</span>
                                 </a>
                             @endif
                         </div>
@@ -51,7 +51,11 @@
                                     @foreach ($emails as $mail)
                                         <tr>
                                             <td>
-                                                {{ $mail->recipient }} <br><small style="color:black">Created on: <strong>{{ $mail->created_at }}</strong></small>
+                                                {{ $mail->recipient }} <br>
+                                                <small style="color:black">Created on: <strong>{{ $mail->created_at }}</strong></small> 
+                                                @if($mail->status == 'sent') <br>
+                                                <small style="color:green">Sent at: <strong>{{ $mail->sent_at }}</strong></small> 
+                                                @endif
                                             </td>
                                             <td>
                                                 {{ $mail->subject }}
@@ -76,7 +80,7 @@
                                                         <i class="fa fa-refresh"></i><span
                                                             class="align-middle ml-25">Resend</span>
                                                     </a>
-                                                    <a class="btn btn-danger btn-sm mr-1 mb-1"
+                                                    <a onclick="confirm('You are about to delete a logged email')" class="btn btn-danger btn-sm mr-1 mb-1"
                                                         href="{{ route('emails.destroy', $mail->id) }}">
                                                         <i class="fa fa-trash"></i><span
                                                             class="align-middle ml-25">Delete</span>

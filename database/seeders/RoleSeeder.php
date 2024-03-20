@@ -150,6 +150,7 @@ class RoleSeeder extends Seeder
             'emails-send',
             'customerlevel.index',
             'role.store',
+            'emails.destroy'
 
         ];
 
