@@ -367,7 +367,7 @@ class DashboardController extends Controller
 
     public function downlines($id = null)
     {
-        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->latest();
+        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->orderBy('created_at','DESC')->get();
 
         if ($id) {
             $refs = $refs->where('referred_customer_id', $id)->get();
@@ -376,6 +376,13 @@ class DashboardController extends Controller
         }
 
         return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
+    }
+
+    public function allDownlines(){
+        $refs = User::where('referral', auth()->user()->username)->orderBy('created_at','DESC')->get();
+        
+        return view('customer.referals', ['refs' => $refs]);
+
     }
 
     function downlinesWithdrawal()

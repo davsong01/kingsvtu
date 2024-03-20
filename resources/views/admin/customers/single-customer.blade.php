@@ -174,6 +174,16 @@ use App\Models\BlackList;
                                                         <option value="delete" @selected($user->status == 'delete')>Delete</option>
                                                     </select>
                                                 </fieldset>
+                                        
+                                                <fieldset class="form-group">
+                                                    <label for="customerlevel">Customer Level</label>
+                                                    <select name="customerlevel" class="form-control" id="customerlevel">
+                                                        <option value="">Select Customerlevel</option>
+                                                        @foreach ($customerLevels as $level)
+                                                        <option value="{{ $level->id }}" {{$user->customer->customer_level == $level->id ? 'selected':''}}>{{ $level->name}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </fieldset>
                                                 <fieldset class="form-group">
                                                     <label for="email">Email</label>
                                                     <input type="email" disabled class="form-control" id="email" placeholder="Email" value="{{ $user->email }}">
@@ -440,7 +450,14 @@ use App\Models\BlackList;
                                                                 <tr>
                                                                     <td>{{ ucfirst($account->account_name) }}</td>
                                                                     <td>{{ ucfirst($account->bank_name) }}</td>
-                                                                    <td>{{ ucfirst($account->account_number) }}</td>
+                                                                    <td>{{ ucfirst($account->account_number) }} <br>
+                                                                    <small style="color:black"><strong>Created on: {{$account->created_at}} </strong>
+                                                                        @if(!empty($account->admin_id)) <br>
+                                                                        By: <strong>{{ $account->admin->user->firstname . ' '. $account->admin->user->lastname}}</strong>
+                                                                        @else   <br>
+                                                                        By: <strong>SYSTEM</strong>
+                                                                        @endif
+                                                                    </small></td>
                                                                     <td>
                                                                         <a title ="View Transactions" href="{{route('account.transactions', $account->id)}}">
                                                                         {!! getSettings()->currency !!}{{ number_format($account->transactions->sum('total_amount'), 2) }} <small><strong>({{number_format($account->transactions->count())}})</strong></small></a>
@@ -594,10 +611,10 @@ use App\Models\BlackList;
                                     
                                     <select class="form-control js-example-basic-single" name="bank[]" id="bank" required multiple>
                                         <option value="">Select</option>
-                                        {{-- <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option> --}}
+                                        <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option>
                                         <option value="035" {{ old('bank') == '035' ? 'selected' : ''}}>Wema Bank</option>
                                         <option value="232" {{ old('bank') == '232' ? 'selected' : ''}}>Sterling Bank</option>
-                                        {{-- <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option>  --}}
+                                        <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option> 
                                     </select>
                                 </fieldset>
                             </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\CustomerLevel;
 use App\Models\ReferralEarning;
 use App\Models\ReservedAccountNumber;
 use App\Models\User;
@@ -87,6 +88,7 @@ class CustomerController extends Controller
         $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
         $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->orderBy('created_at', 'desc')->get();
+        $customerLevels = CustomerLevel::orderBy('order','ASC')->get();
 
         return view(
             'admin.customers.single-customer',
@@ -95,6 +97,7 @@ class CustomerController extends Controller
                 'downlines' => $downlines,
                 'accounts' => $reservedAccount,
                 'balances' => $balances,
+                'customerLevels' => $customerLevels
             ]
         );
     }
@@ -107,19 +110,16 @@ class CustomerController extends Controller
             'lastname' => 'required',
         ]);
 
-        // $update = User::where('id', $id)->update([
-        //     'status' => $request->status,
-        //     'firstname' => $request->firstname,
-        //     'lastname' => $request->lastname,
-        // ]);
+        $user = User::where('id', $id)->first();
+        $user->update($request->except(['_token', 'ip', 'customerlevel']));
 
-        $update = User::where('id', $id)->update($request->except(['_token', 'ip']));
-
-        if ($update) {
-            return back()->with('message', 'Update successful!');
-        } else {
-            return back()->with('error', 'Failed to update profile');
+        if(!empty($request->customerlevel)){
+            $user->customer->customer_level = $request->customerlevel;
+            $user->customer->save();
         }
+
+        return back()->with('message', 'Update successful!');
+    
     }
 
     function filterEmail(Request $request)

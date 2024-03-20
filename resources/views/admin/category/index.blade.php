@@ -68,7 +68,9 @@
                                                         <td style="color:{{ $category->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($category->status) }}</td>
                                                         <td>{{ $category->created_at }}</td>
                                                         <td>
+                                                            @if(hasAccess('category.edit'))
                                                             <a href="{{ route('category.edit', $category->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                                            @endif
                                                             @if($category->products_count < 1)
                                                             <form action="{{ route('category.destroy', $category->id) }}"
                                                                 class="btn btn-custon-four btn-bg-cl-social" method="POST"

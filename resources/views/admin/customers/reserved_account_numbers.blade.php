@@ -58,10 +58,14 @@
                                                         <td><p>
                                                             {{$number->customer->user->name}} <br>
                                                             <a title="View Customer" target="_blank" href="{{route('customers.edit', $number->customer->id)}}">{{$number->customer->user->email}}</a> <br>
-                                                            @if(!empty($number->admin))
-                                                            <span style="color:black"><small>Created by: {{$number->admin->user->name}}</small></span>
-                                                            @endif
                                                              
+                                                                <small style="color:black"><strong>Created on: {{$number->created_at}} </strong>
+                                                                    @if(!empty($number->admin_id)) <br>
+                                                                    By: <strong>{{ $number->admin->user->firstname . ' '. $number->admin->user->lastname}}</strong>
+                                                                    @else   <br>
+                                                                    By: <strong>SYSTEM</strong>
+                                                                    @endif
+                                                                </small>
                                                             </p>
                                                         </td>
                                                         <td><p>

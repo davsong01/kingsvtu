@@ -1272,4 +1272,17 @@ if (!function_exists("announcements")) {
             }
         }
     }
+
+    if (!function_exists("hasAccess")) {
+        function hasAccess($route)
+        {
+            $routes = auth()->user()->admin->rolepermissions();
+
+            if (in_array($route, $routes)) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
 }

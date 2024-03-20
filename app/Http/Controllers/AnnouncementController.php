@@ -59,7 +59,7 @@ class AnnouncementController extends Controller
      */
     public function show(Announcement $announcement)
     {
-        dd($announcement);
+        
     }
 
     /**

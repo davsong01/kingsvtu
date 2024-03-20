@@ -39,7 +39,7 @@
                                     value="{{ old('username') }}" placeholder="Username" required>
                             </div>
                             <div class="form-group mb-50 col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="ref">Referral ID</label>
+                                <label class="text-bold-600" for="ref">Referral Username</label>
                                 <input type="text" class="form-control" id="referral" name="referral"
                                     value="{{ request()->referral }}" placeholder="Enter referral id">
                             </div>

@@ -68,6 +68,7 @@ Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
         Route::get('downlines/process/withdrawal', [DashboardController::class, 'downlinesWithdrawal'])->name('downlines.withdraw');
         Route::post('downlines/withdraw', [DashboardController::class, 'processWithdrawal'])->name('process.withdrawal');
         Route::get('downlines/{id?}', [DashboardController::class, 'downlines'])->name('downlines');
+        Route::get('alldownlines', [DashboardController::class, 'allDownlines'])->name('alldownlines');
     });
     Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
     Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
