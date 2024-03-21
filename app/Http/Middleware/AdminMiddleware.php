@@ -15,9 +15,8 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-       
         if(auth()->user()->type !== 'admin'){
-            return redirect(route('customer.dashboard'));
+            return redirect(route('dashboard'));
         }
 
         return $next($request);

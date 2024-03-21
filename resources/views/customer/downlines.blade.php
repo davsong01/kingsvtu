@@ -76,11 +76,11 @@
                                                         <tr>
                                                             <td>{{ $ref->referredCustomer->user->username }}</td>
                                                             @if (!$check)
-                                                                <td>{!! getSettings()->currency . number_format($ref->total) !!}</td>
-                                                            @else
+                                                                <td>{!! getSettings()->currency . number_format($ref->total_earnings()) !!}</td>
+                                                                @else
                                                                 <td>{{ $ref->transaction->product_name }}</td>
                                                                 <td>{!! getSettings()->currency . number_format($ref->transaction->amount) !!}</td>
-                                                                <td>{!! getSettings()->currency . number_format($ref->amount) !!}</td>
+                                                                <td>{!! getSettings()->currency . number_format($ref->amount,2) !!}</td>
                                                             @endif
                                                             <td>{{ $ref->created_at->toDateTimeString() }}</td>
                                                             @if (!$check)
