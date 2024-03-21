@@ -68,7 +68,6 @@ class AnnouncementController extends Controller
     public function edit(Announcement $announcement)
     {
         return view ('admin.announcement.edit', ['announcement' => $announcement]);
-
     }
 
     /**

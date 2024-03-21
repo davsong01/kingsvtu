@@ -82,7 +82,7 @@ class RoleSeeder extends Seeder
             'announcement.edit',
             'announcement.update',
             'announcement.destroy',
-
+        
             'api.show',
             'api.index',
             'api.edit',
@@ -150,8 +150,15 @@ class RoleSeeder extends Seeder
             'emails-send',
             'customerlevel.index',
             'role.store',
-            'emails.destroy'
+            'emails.destroy',
+            'announcement.store',
 
+            'paymentgateway.show',
+            'paymentgateway.edit',
+            'paymentgateway.update',
+            'paymentgateway.destroy',
+            'paymentgateway.create',
+            'paymentgateway.store',
         ];
 
         // RolePermission::truncate();
