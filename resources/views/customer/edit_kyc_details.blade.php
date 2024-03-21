@@ -190,7 +190,7 @@
                                                                     </div>
                                                                     <div class="col-md-6">   
                                                                     <fieldset class="form-group">
-                                                                        <label for="IDCARD">ID CARD <small style="font-weight: bold;color:red">(Not more that 200 kilobytes)</small> </label>
+                                                                        <label for="IDCARD">ID CARD <small style="font-weight: bold;color:red">(Not more that 500 kilobytes)</small> </label>
                                                                         <input type="file" name="IDCARD"  class="form-control" required>
                                                                     </fieldset>
                                                                 </div>

@@ -301,7 +301,7 @@ class DashboardController extends Controller
             "LGA" => "nullable",
             "DOB" => "nullable",
             "BVN" => "nullable",
-            "IDCARD" => "sometimes|image|max:200",
+            "IDCARD" => "sometimes|image|max:500",
             "IDCARDTYPE" => "nullable"
         ]);
 
