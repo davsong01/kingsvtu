@@ -66,7 +66,9 @@
                                                         <td>{{ ucfirst($permission->status) }}</td>
                                                         
                                                         <td>
+                                                            @if(hasAccess('permission.edit'))
                                                             <a href="{{ route('permission.edit', $permission->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach

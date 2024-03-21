@@ -75,10 +75,14 @@
                                                         <td>{{ $product->status }}</td>
                                                         <td>{{ $product->created_at }}</td>
                                                         <td>
+                                                            @if(hasAccess('product.edit'))
                                                             <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button></a>
                                                             <a class="btn btn-info btn-sm mr-1 mb-1" onclick="return confirm('{{$product->name}} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Duplicate</span></button></a>
+                                                            @endif
                                                             @if($product->has_variations == 'yes')
+                                                            @if(hasAccess('product.edit'))
                                                             <a class="btn btn-dark btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Edit Variations</span></button></a>
+                                                            @endif
                                                             @endif
                                                         </td>
                                                     </tr>

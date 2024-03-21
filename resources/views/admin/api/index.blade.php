@@ -68,7 +68,9 @@
                                                         <td style="color:{{ $api->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($api->status) }}</td>
                                                         <td>{{ $api->created_at }}</td>
                                                         <td>
+                                                            @if(hasAccess('api.edit'))
                                                             <a href="{{ route('api.edit', $api->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                                            @endif
                                                             <a id="api-{{$api->id}}" onclick="getBalance('{{$api->id}}')" style="color:white" class="btn btn-info btn-sm mr-1 mb-1"><span id="icon-{{ $api->id }}"><i class="fa fa-refresh"></i></span><span class="align-middle ml-25">Check balance</span></a>
                                                             <span id="balance-{{$api->id}}" style="font-weight: bold;color: black;"></span>
                                                             

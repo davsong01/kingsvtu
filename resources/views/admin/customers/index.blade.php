@@ -46,8 +46,10 @@
                                             </td>
                                             <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
                                             <td>
+                                                @if(hasAccess('customers.edit'))
                                                 <a href="{{ route('customers.edit', $customer->id) }}"><button type="button" class="btn btn-info btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View</span></button>
                                                 </a>
+                                                @endif
                                                 
                                             </td>
                                         </tr>
