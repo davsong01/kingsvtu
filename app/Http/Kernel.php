@@ -68,5 +68,7 @@ class Kernel extends HttpKernel
         'ipcheck' => \App\Http\Middleware\CheckIpMiddleware::class,
         'kyc' => \App\Http\Middleware\KycMiddleware::class,
         'adminRoute' => \App\Http\Middleware\RouteProtectionMiddleware::class,
+        'reserved_account' => \App\Http\Middleware\ReservedAccountCreationMiddleware::class,
+        'tpin' => \App\Http\Middleware\TransactionPinMiddleware::class,
     ];
 }

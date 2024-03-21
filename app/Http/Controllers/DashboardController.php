@@ -76,6 +76,10 @@ class DashboardController extends Controller
         return view('customer.reset_pin');
     }
 
+    public function createTransactionPin(){
+        return view('customer.create_pin');
+    }
+
     public function showUpgradeForm()
     {
         $levels = CustomerLevel::orderBy('order', 'ASC')->where('id', '>', auth()->user()->customer->level->id)->get();
@@ -158,6 +162,36 @@ class DashboardController extends Controller
         // Log transaction email
         $this->sendTransactionEmail($transaction, auth()->user());
         return redirect(route('dashboard'))->with('message', 'Upgrade successful');
+    }
+
+    public function processCreateTransactionPin(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'password' => 'required',
+            'transaction_pin' => 'numeric|required|min:1000|max:99999',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->with('error', $validator->messages()->first());
+        }
+    
+        if (!Hash::check($request->password, auth()->user()->password)) {
+            return back()->with('error', 'Incorrect password !!!');
+        }
+
+        $new_pin = base64_encode(base64_encode(base64_encode($request->transaction_pin)));
+    
+        auth()->user()->transaction_pin = $new_pin;
+        auth()->user()->save();
+        // Send email
+        $subject = "New Transaction PIN set";
+        $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">You have successfully created a transaction PIN on account ' . config('app.name') . ' Please use your PIN when carrying out transactions.<b><hr/><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+
+        logEmails(auth()->user()->email, $subject, $body);
+        
+        return redirect(route('dashboard'))->with('message', 'You have successfully created a transaction PIN');
     }
 
     public function processResetTransactionPin(Request $request)
@@ -310,6 +344,13 @@ class DashboardController extends Controller
             "lastname" => $lastname,
         ]);
 
+        // verify BVN automatically
+        $this->updateKycData('BVN', $request->BVN, auth()->user()->customer->id, 'verified');
+
+        auth()->user()->customer->update([
+            "kyc_status" => 'verified',
+        ]);
+
         // Create reserved account
         $name = $firstname . ' ' . $lastname . ' ' . $middlename;
 
@@ -325,12 +366,6 @@ class DashboardController extends Controller
         $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
         
         if ($reserved['status'] && $reserved['status'] == 'success') {
-            $this->updateKycData('BVN', $request->BVN, auth()->user()->customer->id, 'verified');
-
-            auth()->user()->customer->update([
-                "kyc_status" => 'verified',
-            ]);
-
             return back()->with('message', 'KYC Update completed');
         } else {
             return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Please refresh this page');

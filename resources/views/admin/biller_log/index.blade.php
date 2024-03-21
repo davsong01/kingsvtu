@@ -23,7 +23,7 @@
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="/"><i class="bx bx-home-alt"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Biller Logs</a>
+                                    <li class="breadcrumb-item"><a href="{{ route('billerlog.index') }}">Biller Logs</a>
                                     </li>
                                     <li class="breadcrumb-item active">All Biller's Information
                                     </li>

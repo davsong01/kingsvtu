@@ -42,15 +42,22 @@ Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallbac
 Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
 Route::get('cron/sendemails', [Controller::class, 'cronSendEmails']);
 
-Route::middleware(['auth', 'verified', 'ipcheck'])->group(function () {
-    Route::get('/', [DashboardController::class, 'index']);
+Route::middleware(['auth', 'verified','ipcheck'])->group(function () {
+    Route::get('/create-transaction-pin', [DashboardController::class, 'createTransactionPin'])->name('customer.create.pin');
+    Route::post('/create-transaction-pin', [DashboardController::class, 'processCreateTransactionPin'])->name('customer.process.create.pin');
+});
+
+Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
+    Route::middleware('reserved_account')->group(function () {
+        Route::get('/', [DashboardController::class, 'index']);
+        // Route::get('/dashboard', [DashboardController::class, 'index'])->name('customer.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    });
     Route::get('/reset-transaction-pin', [DashboardController::class, 'resetTransactionPin'])->name('customer.reset.pin');
     Route::post('/process-transaction-pin-reset', [DashboardController::class, 'processResetTransactionPin'])->name('process.transaction.pin.reset');
     Route::get('confirm_reset_pin', [DashboardController::class, 'resetPin2']);
     Route::post('reset_pin_final', [DashboardController::class, 'finalProcessPin'])->name('final.pin.reset');
     // Route::post('change-pin', [HomeController::class, 'processResetPin'])->name('pin.process.reset');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('customer.dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
     Route::get('customer-get-variations/{product}', [VariationController::class, 'getCustomerVariations'])->name('get.customer.variations');
 
