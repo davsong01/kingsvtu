@@ -22,7 +22,9 @@
                                         <th>Level</th>
                                         <th>Balance</th>
                                         <th>Joined</th>
+                                        @if(hasAccess('customers.edit'))
                                         <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -32,8 +34,8 @@
                                                 <P>
                                                     Name:<a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">
                                                         {{ $customer->firstname . ' ' . $customer->lastname }}</a> <br>
-                                                       Email:  {{ $customer->email }} <br>
-                                                       Phone Number: {{ $customer->phone }}
+                                                    Email:  {{ $customer->email }} <br>
+                                                    Phone Number: {{ $customer->phone }}
                                                 </P>
                                             </td>
                                             
@@ -45,13 +47,12 @@
                                                 Referral:  {!! getSettings()->currency !!}{{ number_format(referralBalance($customer)) }} <br>
                                             </td>
                                             <td>{{ $customer->created_at->toDateString('en-GB') }}</td>
+                                            @if(hasAccess('customers.edit'))
                                             <td>
-                                                @if(hasAccess('customers.edit'))
                                                 <a href="{{ route('customers.edit', $customer->id) }}"><button type="button" class="btn btn-info btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View</span></button>
                                                 </a>
-                                                @endif
-                                                
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

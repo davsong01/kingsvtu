@@ -56,7 +56,9 @@
                                                         <th>Products</th>
                                                         <th>Status</th>
                                                         <th>Date Added</th>
+                                                        @if(hasAccess('category.edit') || hasAccess('category.destroy'))
                                                         <th>Actions</th>
+                                                        @endif
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -67,6 +69,7 @@
                                                         <td>{{ $category->products_count }}</td>
                                                         <td style="color:{{ $category->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($category->status) }}</td>
                                                         <td>{{ $category->created_at }}</td>
+                                                        @if(hasAccess('category.edit') || hasAccess('category.destroy'))
                                                         <td>
                                                             @if(hasAccess('category.edit'))
                                                             <a href="{{ route('category.edit', $category->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
@@ -85,6 +88,7 @@
                                                             @endif
                                                             @endif
                                                         </td>
+                                                        @endif
                                                     </tr>
                                                     @endforeach
                                                 </tbody>

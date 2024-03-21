@@ -58,7 +58,9 @@
                                                         <th>Order</th>
                                                         <th>Customers Count</th>
                                                         <th>Upgrade Amount</th>
+                                                        @if(hasAccess('customerlevel.edit') || hasAccess('customerlevel.destroy'))
                                                         <th>Actions</th>
+                                                        @endif
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -69,32 +71,33 @@
                                                             <td>{{ $level->customers_count }}</td>
                                                             <td>{!! getSettings()['currency'] !!}{{ number_format($level->upgrade_amount) }}
                                                             </td>
+                                                            @if(hasAccess('customerlevel.edit') || hasAccess('customerlevel.destroy'))
                                                             <td>
-                                                                @if (hasAccess('category.edit'))
-                                                                    <a
-                                                                        href="{{ route('customerlevel.edit', $level->id) }}"><button
-                                                                            type="button"
-                                                                            class="btn btn-primary btn-sm mr-1 mb-1"><span
-                                                                                class="align-middle ml-25">View/Edit</span></button></a>
+                                                                @if(hasAccess('customerlevel.edit'))
+                                                                    <a href="{{ route('customerlevel.edit', $level->id) }}"><button
+                                                                    type="button" class="btn btn-primary btn-sm mr-1 mb-1"><span class="align-middle ml-25">View/Edit</span></button></a>
                                                                 @endif
-                                                                @if ($level->customers_count < 1)
-                                                                    <form
-                                                                        action="{{ route('customerlevel.destroy', $level->id) }}"
-                                                                        class="btn btn-custon-four btn-bg-cl-social"
-                                                                        method="POST"
-                                                                        onsubmit="return confirm('Are you sure you want to delete forever?');">
-                                                                        {{ csrf_field() }}
-                                                                        {{ method_field('DELETE') }}
+                                                                @if(hasAccess('customerlevel.destroy'))
+                                                                    @if ($level->customers_count < 1)
+                                                                        <form
+                                                                            action="{{ route('customerlevel.destroy', $level->id) }}"
+                                                                            class="btn btn-custon-four btn-bg-cl-social"
+                                                                            method="POST"
+                                                                            onsubmit="return confirm('Are you sure you want to delete forever?');">
+                                                                            {{ csrf_field() }}
+                                                                            {{ method_field('DELETE') }}
 
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger btn-sm mr-1 mb-1"
-                                                                            data-toggle="tooltip"
-                                                                            title="Delete Customer Level">Delete Customer
-                                                                            Level
-                                                                        </button>
-                                                                    </form>
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger btn-sm mr-1 mb-1"
+                                                                                data-toggle="tooltip"
+                                                                                title="Delete Customer Level">Delete Customer
+                                                                                Level
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
                                                                 @endif
                                                             </td>
+                                                            @endif
                                                         </tr>
                                                     @endforeach
                                                 </tbody>

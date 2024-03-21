@@ -53,7 +53,9 @@
                                                     <tr>
                                                         <th>Name</th>
                                                         <th>Status</th>
+                                                        @if(hasAccess('paymentgateway.edit'))
                                                         <th>Actions</th>
+                                                        @endif
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -61,11 +63,11 @@
                                                     <tr>
                                                         <td>{{ $gateway->name }}</td>
                                                         <td style="color:{{ $gateway->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($gateway->status) }}</td>
+                                                        @if(hasAccess('paymentgateway.edit'))
                                                         <td>
-                                                            @if(hasAccess('paymentgateway.edit'))
                                                             <a href="{{ route('paymentgateway.edit', $gateway->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View/Edit</span></button></a>
-                                                            @endif
                                                         </td>
+                                                        @endif
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
