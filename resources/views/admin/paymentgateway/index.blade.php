@@ -62,7 +62,9 @@
                                                         <td>{{ $gateway->name }}</td>
                                                         <td style="color:{{ $gateway->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($gateway->status) }}</td>
                                                         <td>
+                                                            @if(hasAccess('paymentgateway.edit'))
                                                             <a href="{{ route('paymentgateway.edit', $gateway->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="fa fa-edit"></i><span class="align-middle ml-25">View/Edit</span></button></a>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                     @endforeach

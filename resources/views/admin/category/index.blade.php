@@ -72,6 +72,7 @@
                                                             <a href="{{ route('category.edit', $category->id) }}"><button type="button" class="btn btn-primary btn-sm mr-1 mb-1"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View/Edit</span></button></a>
                                                             @endif
                                                             @if($category->products_count < 1)
+                                                            @if(hasAccess('category.destroy'))
                                                             <form action="{{ route('category.destroy', $category->id) }}"
                                                                 class="btn btn-custon-four btn-bg-cl-social" method="POST"
                                                                 onsubmit="return confirm('Are you sure you want to delete forever?');">
@@ -81,6 +82,7 @@
                                                                 <button type="submit" class="btn btn-danger btn-sm mr-1 mb-1"
                                                                     data-toggle="tooltip" title="Delete Customer Level"><i class="fa fa-trash"></i> Delete Category                                                                </button>
                                                             </form>
+                                                            @endif
                                                             @endif
                                                         </td>
                                                     </tr>

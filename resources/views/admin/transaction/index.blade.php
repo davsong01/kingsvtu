@@ -187,9 +187,11 @@
                                                 <td>{{ $transaction->unique_element }}</td>
 
                                                 <td>
+                                                    @if(hasAccess('admin.single.transaction.view'))
                                                     <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->id) }}">
                                                         <i class="fa fa-eye"></i><span class="align-middle ml-25">View</span>
                                                     </a>
+                                                    @endif
 
                                                 </td>
                                             </tr>
