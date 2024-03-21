@@ -134,6 +134,9 @@ class DashboardController extends Controller
                 'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was successful',
             ]);
 
+            $user = auth()->user();
+            app('App\Http\Controllers\TransactionController')->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request_id, 50);
+
             // Log wallet
             $wal = $wallet->logWallet($request->all());
 
@@ -367,14 +370,15 @@ class DashboardController extends Controller
 
     public function downlines($id = null)
     {
-        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->orderBy('created_at','DESC')->get();
-
+        $refs = ReferralEarning::with('tearnings')->where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->orderBy('created_at','DESC');
+        
         if ($id) {
             $refs = $refs->where('referred_customer_id', $id)->get();
         } else {
-            $refs = $refs->groupBy('referred_customer_id')->get(['*', DB::raw('sum(amount) as total')]);
+            $refs = $refs->groupBy('referred_customer_id')->get();
         }
-
+        // dd($refs->sum('amount'), $refs->get());
+        // dd(['*', DB::raw('sum(amount) as total')])
         return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
     }
 

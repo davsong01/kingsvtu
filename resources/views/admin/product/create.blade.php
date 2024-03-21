@@ -113,6 +113,10 @@
                                                                                         <option value="no" {{ old('allow_subscription_type') == 'no' ? 'selected' : ''}}>No</option>
                                                                                     </select>
                                                                                 </fieldset>
+                                                                                 <fieldset class="form-group" id="referral_percentage">
+                                                                                    <label for="referral_percentage">Referral Percentage(%)</label>
+                                                                                    <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
+                                                                                </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="description">Description</label>
                                                                                     <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ old('description')}}"></textarea>

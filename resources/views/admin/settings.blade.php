@@ -94,10 +94,10 @@ use App\Models\PaymentGateway;
                                                                                 <option value="inactive" {{ $settings->referral_system_status == 'inactive' ? 'selected' : ''}}>InActive</option>
                                                                             </select>
                                                                         </fieldset>
-                                                                        <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
+                                                                        {{-- <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
                                                                             <label for="referral_percentage">Referral Percentage(%)</label>
                                                                             <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $settings->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
-                                                                        </fieldset>
+                                                                        </fieldset> --}}
                                                                     </div>
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">

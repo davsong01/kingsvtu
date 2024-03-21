@@ -215,7 +215,7 @@ class TransactionController extends Controller
             DB::beginTransaction();
             if (isset ($query) && $query['status_code'] == 1) {
                 $user = auth()->user();
-                $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id']);
+                $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
                 $res = [
                     'status' => $query['status'],
                     'message' => 'Transaction Successful!',
@@ -703,54 +703,58 @@ class TransactionController extends Controller
         return view('customer.reports', compact('products', 'categories'));
     }
 
-    function referralReward($ref, $amount, $customer_id, $transaction_id)
+    function referralReward($ref, $amount, $customer_id, $transaction_id, $referral_percentage)
     {
         if ($ref) {
-            $user = User::where('username', $ref)->first();
-            $curUser = auth()->user();
-            if ($user) {
+            if(!empty($referral_percentage)){
                 $sett = getSettings();
-                if ($sett->referral_system_status == 'active') {
-                    $cut = $sett->referral_percentage;
-                    $cal = $cut / 100 * $amount;
+                $percentage = $referral_percentage;
+                $user = User::where('username', $ref)->first();
+                $curUser = auth()->user();
 
-                    $customer = $user->customer;
-                    $current = $customer->referal_wallet;
-
-                    $sum = $current + $cal;
-                    $this->logEarnings(
-                        'credit',
-                        $customer->id,
-                        $customer_id,
-                        $cal,
-                        $current,
-                        $sum,
-                        $transaction_id,
-                    );
-                    $customer->referal_wallet = $sum;
-                    $customer->save();
-                    $host = env('APP_URL');
-                    $rewardMail = <<<__here
-Dear $user->firstname $user->lastname,
-
-Congratulations! We are excited to inform you that you have earned a commission from a transaction made by your referred friend. Your support and engagement in our referral program are truly appreciated.
-
-Here are the details of the transaction:
-
-Referred Friend's Name: $curUser->firstname
-
-Commission Earned: $cal
-
-Total Commission Earned: $cal
-
-Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
-
-Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.
-
-Thank you once again for being a valued member of our community. We look forward to your continued success in our referral program!
-__here;
-
-                    logEmails($user->email, 'Referral Commission', $rewardMail);
+                if ($user) {
+                    if ($sett->referral_system_status == 'active') {
+                        $cut = $percentage;
+                        $cal = ($cut / 100) * $amount;
+    
+                        $customer = $user->customer;
+                        $current = $customer->referal_wallet;
+    
+                        $sum = $current + $cal;
+                        $this->logEarnings(
+                            'credit',
+                            $customer->id,
+                            $customer_id,
+                            $cal,
+                            $current,
+                            $sum,
+                            $transaction_id,
+                        );
+                        $customer->referal_wallet = $sum;
+                        $customer->save();
+                        $host = env('APP_URL');
+                        $rewardMail = <<<__here
+                            Dear $user->firstname $user->lastname,
+    
+                            Congratulations! We are excited to inform you that you have earned a commission from a transaction made by your referred friend. Your support and engagement in our referral program are truly appreciated.
+    
+                            Here are the details of the transaction:
+    
+                            Referred Friend's Name: $curUser->firstname
+    
+                            Commission Earned: $cal
+    
+                            Total Commission Earned: $cal
+    
+                            Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
+    
+                            Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.
+    
+                            Thank you once again for being a valued member of our community. We look forward to your continued success in our referral program!
+                            __here;
+    
+                        logEmails($user->email, 'Referral Commission', $rewardMail);
+                    }
                 }
             }
         }
