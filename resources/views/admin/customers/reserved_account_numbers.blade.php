@@ -57,8 +57,8 @@
                                                     <tr>
                                                         <td><p>
                                                             {{$number->customer->user->name}} <br>
-                                                            <a title="View Customer" target="_blank" href="{{route('customers.edit', $number->customer->id)}}">{{$number->customer->user->email}}</a> <br>
-                                                             
+                                                            <a title="View Customer" target="_blank" href="{{route('customers.edit', $number->customer->user->id)}}">{{$number->customer->user->email}}</a> <br>
+                                                            
                                                                 <small style="color:black"><strong>Created on: {{$number->created_at}} </strong>
                                                                     @if(!empty($number->admin_id)) <br>
                                                                     By: <strong>{{ $number->admin->user->firstname . ' '. $number->admin->user->lastname}}</strong>
