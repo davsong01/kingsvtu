@@ -16,7 +16,7 @@ class ReservedAccountCreationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->user()->customer->kyc_status == 'verified'){
+        if(isset(auth()->user()->customer) && auth()->user()->customer->kyc_status == 'verified'){
             if(auth()->user()->customer->reserved_accounts->count() < 1){
                 $name = auth()->user()->firstname . ' ' . auth()->user()->lastname . ' ' . auth()->user()->middlename;
 
