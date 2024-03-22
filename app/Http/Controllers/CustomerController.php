@@ -64,7 +64,7 @@ class CustomerController extends Controller
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
         } else {
-            return back()->with('error', 'Error: ' . $reserved['data']);
+            return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Something went wrong');
         }
     }
 
