@@ -615,9 +615,9 @@ class EasyAccessController extends Controller
             if (env('ENT') == 'local') {
                 // $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
 
-                $response = '{"success":"true","message":"Data Purchase was Successful","network":"GLO","mobileno":"07058075235","dataplan":"500MB","amount":110,"balance_before":"22760","balance_after":22650,"true_response":null,"transaction_date":"22-03-2024 08:47:37 am","reference_no":"DT13950b79483553","client_reference":"2024032208472598067","status":"Successful","auto_refund_status":null}';
+                // $response = '{"success":"true","message":"Data Purchase was Successful","network":"GLO","mobileno":"07058075235","dataplan":"500MB","amount":110,"balance_before":"22760","balance_after":22650,"true_response":null,"transaction_date":"22-03-2024 08:47:37 am","reference_no":"DT13950b79483553","client_reference":"2024032208472598067","status":"Successful","auto_refund_status":null}';
                 
-                $response = json_decode($response, true);
+                // $response = json_decode($response, true);
             }
 
             $result = $response;
@@ -793,22 +793,25 @@ class EasyAccessController extends Controller
         return $format;
     }
 
-    function requery($api, $reference)
+    function requery($transaction)
     {
+        $api = $transaction->api;
+        $request_id = $transaction->reference_id;
+
         $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
         try {
 
             if (env('APP_ENV') != 'local') {
-                $response = $this->basicApiCall($url, ['reference' => $reference], ['AuthorizationToken' => $api->api_key]);
+                $response = $this->basicApiCall($url, ['reference' => $request_id], ['AuthorizationToken' => $api->api_key]);
             } else {
-                $response = json_decode('{"success":"true","message":"Dear Customer, You have successfully shared 500MB Data to 23481643xxxxx. Your SME data balance is 13xxx.xxGB expires 27\/08\/2022. Thankyou","network":"MTN","mobileno":"081643xxxxx","amount":"129","data_type":"SME","reference_no":"ID2765423xxxxx","client_reference":null,"transaction_date":"28-05-2022 01:25:53 am","status":"Successful","auto_refund_status":"success"}');
+                $response = json_decode('{"success":"true","message":"Dear Customer, You have successfully shared 500MB Data to 23481643xxxxx. Your SME data balance is 13xxx.xxGB expires 27\/08\/2022. Thankyou","network":"MTN","mobileno":"081643xxxxx","amount":"129","data_type":"SME","reference_no":"ID2765423xxxxx","client_reference":null,"transaction_date":"28-05-2022 01:25:53 am","status":"Successful","auto_refund_status":"success"}', true);
             }
 
+            $status = isset($result['status']) ? strtolower($result['status']) : 'false';
+            $success = isset($result['success']) ? strtolower($result['success']) : 'failed';
+            // $auto_refund_status = isset ($response['auto_refund_status']) ? strtolower($response['auto_refund_status']) : 'nil';
 
-            $status = isset ($response['status']) ? strtolower($response['status']) : 'failed';
-            $auto_refund_status = isset ($response['auto_refund_status']) ? strtolower($response['auto_refund_status']) : 'nil';
-
-            if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
+            if (isset($status) && $status !== "failed" && $success !== 'false') {
                 $user_status = 'delivered';
                 $status = 'success';
                 $api_response = $response;
@@ -838,7 +841,6 @@ class EasyAccessController extends Controller
                 'extras' => $extras ?? null
             ];
 
-            return $format;
         } catch (\Exception $th) {
             return $format = [
                 'status' => 'attention-required',
@@ -849,5 +851,7 @@ class EasyAccessController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
+
+        return $format;
     }
 }

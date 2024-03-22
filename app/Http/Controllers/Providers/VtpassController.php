@@ -243,7 +243,7 @@ class VtpassController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-
+        
         return $format;
     }
 

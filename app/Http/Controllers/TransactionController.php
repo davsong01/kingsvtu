@@ -1126,10 +1126,10 @@ class TransactionController extends Controller
 
         if (!$trans) return ['status' => 'failed', 'message' => 'Transaction not found!'];
 
-        $requestId = explode('KVTU-', $trans->transaction_id)[1];
+        // $requestId = explode('KVTU-', $trans->transaction_id)[1];
 
-        $api = $trans->api;
-        $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($api, $requestId);
+        // $api = $trans->api;
+        $query = app("App\Http\Controllers\Providers\\" . $trans->api->file_name)->requery($trans);
 
         return $query;
     }
