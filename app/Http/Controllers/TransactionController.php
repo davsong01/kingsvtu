@@ -503,7 +503,7 @@ class TransactionController extends Controller
             'total_amount' => $data['total_amount'],
             'amount' => $data['amount'],
             'balance_before' => $data['balance_before'],
-            'balance_after' => $data['balance_after'] ?? $data['balance_before'],
+            'balance_after' => $data['balance_after'] ?? ($data['balance_before'] - $data['total_amount']),
             'product_id' => $data['product_id'] ?? null,
             'product_name' => $data['product_name'] ?? null,
             'variation_id' => $data['variation_id'] ?? null,

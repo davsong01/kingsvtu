@@ -612,11 +612,16 @@ class EasyAccessController extends Controller
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
 
-            // if (env('ENT') == 'local') {
-            //     $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
-            //     $result = json_decode($response);
-            // }
+            if (env('ENT') == 'local') {
+                // $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
+
+                // $response = '{"success":"true","message":"Data Purchase was Successful","network":"GLO","mobileno":"07058075235","dataplan":"500MB","amount":110,"balance_before":"22760","balance_after":22650,"true_response":null,"transaction_date":"22-03-2024 08:47:37 am","reference_no":"DT13950b79483553","client_reference":"2024032208472598067","status":"Successful","auto_refund_status":null}';
+                
+                // $response = json_decode($response, true);
+            }
+
             $result = $response;
+            
             if (empty ($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
@@ -627,7 +632,6 @@ class EasyAccessController extends Controller
                 $status_code = 0;
             } else {
                 $pinsx = [];
-
                 if (isset ($result) && !empty ($result)) {
                     foreach ($result as $key => $value) {
                         if (strpos($key, 'pin') !== false) {
@@ -641,8 +645,8 @@ class EasyAccessController extends Controller
 
                 $status = isset ($result['status']) ? strtolower($result['status']) : 'failed';
                 $auto_refund_status = isset ($result['auto_refund_status']) ? strtolower($result['auto_refund_status']) : 'nil';
-
-                if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed' && $auto_refund_status != 'nil') {
+                
+                if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed') {
                     $user_status = 'delivered';
                     $status = 'success';
                     $api_response = $response;
@@ -672,7 +676,7 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
                 'extras' => $extras ?? null
             ];
-
+            
             // dd($resX, $postdata['payload'], $postdata['headers']);
         } catch (\Throwable $th) {
             $format = [
@@ -692,7 +696,7 @@ class EasyAccessController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
-
+        dd($format);
         return $format;
     }
 

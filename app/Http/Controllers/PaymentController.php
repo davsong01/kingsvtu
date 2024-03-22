@@ -105,7 +105,7 @@ class PaymentController extends Controller
             $tlk = 'PICKED-' . time();
             $ids = array_column($calls, 'id');
             ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
-
+             
             $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
 
             foreach ($calls as $call) {

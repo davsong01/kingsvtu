@@ -16,10 +16,10 @@ class TransactionPinMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(empty(auth()->user()->transaction_pin)){
+        if(empty(auth()->user()->transaction_pin) && auth()->user()->type == 'customer'){
             return redirect(route('customer.create.pin'));
-
         }
+        
         return $next($request);
     }
 }
