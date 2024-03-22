@@ -138,7 +138,14 @@ class MonnifyController extends Controller
             ]);
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            
+            // trap monnify response
+            $log = [
+                'payload' => json_decode($payload, true),
+                'response' => $response
+            ];
+
+            logEmails('davedeloper@gmail.com', 'Reserved Account Number Response on KingsVTU', json_encode($log));
+            // End trap monnify response
             if (
                 $response && $response['responseCode'] == 0 &&
                 $response['responseMessage'] == 'success'
