@@ -161,6 +161,7 @@ class RoleSeeder extends Seeder
             'paymentgateway.store',
             'product.create',
             'category.create',
+            'customerlevel.create',
         ];
 
         // RolePermission::truncate();

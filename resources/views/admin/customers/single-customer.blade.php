@@ -446,7 +446,7 @@ use App\Models\BlackList;
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($accounts as $key => $account)
-                                                            @if ($account->paymentgateway_id === 1)
+                                                            @if ($account->paymentgateway_id == 1)
                                                                 <tr>
                                                                     <td>{{ ucfirst($account->account_name) }}</td>
                                                                     <td>{{ ucfirst($account->bank_name) }}</td>

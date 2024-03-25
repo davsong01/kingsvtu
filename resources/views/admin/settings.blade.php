@@ -116,7 +116,7 @@ use App\Models\PaymentGateway;
                                                                             </div>
                                                                             <div class="col-md-4">
                                                                                 @if(!empty(getSettings()->logo))
-                                                                                    <img style="height:62px;width:auto" src="{{ asset(getSettings()->logo)}}" alt="">
+                                                                                    <img style="height:auto;width:120px" src="{{ asset(getSettings()->logo)}}" alt="">
                                                                                 @endif
                                                                             </div>
                                                                         </div>
@@ -142,7 +142,7 @@ use App\Models\PaymentGateway;
                                                                                 <fieldset class="form-group">
                                                                                     <label for="basicInputFile">Dashboard Logo</label>
                                                                                     <div class="custom-file">
-                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
+                                                                                        <input type="file" style="height:auto;width:120px" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
                                                                                         <label class="custom-file-label" for="image">Replace Dashboard Logo</label>
                                                                                     </div>
                                                                                 </fieldset>

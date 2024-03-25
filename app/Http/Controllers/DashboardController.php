@@ -368,7 +368,8 @@ class DashboardController extends Controller
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'KYC Update completed');
         } else {
-            return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Please refresh this page');
+            $error = $reserved['data'] ?? 'Please refresh this page';
+            return back()->with('error', 'Error: ' . $error);
         }
     }
 
