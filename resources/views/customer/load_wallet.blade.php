@@ -88,7 +88,7 @@
                                                                             </p>    
                                                                             <div>
                                                                                 <h5>Wallet Funding Account Details</h5>
-                                                                                <div class="table-responsive mt-2 d-lg-block d-none">
+                                                                                <div class="table-responsive mt-2">
                                                                                     <table class="table table-striped">
                                                                                         <thead>
                                                                                             <tr>
