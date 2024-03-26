@@ -60,7 +60,7 @@ class CustomerController extends Controller
 
         $admin_id = auth()->user()->admin->id;
         $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data, $admin_id);
-        
+
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
         } else {
@@ -88,7 +88,7 @@ class CustomerController extends Controller
         $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
         $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->orderBy('created_at', 'desc')->get();
-    
+
         $customerLevels = CustomerLevel::orderBy('order','ASC')->get();
 
         return view(
@@ -120,7 +120,7 @@ class CustomerController extends Controller
         }
 
         return back()->with('message', 'Update successful!');
-    
+
     }
 
     function filterEmail(Request $request)
