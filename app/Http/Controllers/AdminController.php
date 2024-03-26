@@ -125,7 +125,7 @@ class AdminController extends Controller
             'product' => 'required',
             'api' => 'required',
         ]);
-       
+    
         if ($val->fails()) return ['code' => 0, 'message' => $val->errors()->first()];
         $api = API::find($request->api);
         $data['request']['variation_name'] = $request->type;

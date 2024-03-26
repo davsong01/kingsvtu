@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'adminRoute' => \App\Http\Middleware\RouteProtectionMiddleware::class,
         'reserved_account' => \App\Http\Middleware\ReservedAccountCreationMiddleware::class,
         'tpin' => \App\Http\Middleware\TransactionPinMiddleware::class,
+        'api-auth' => \App\Http\Middleware\ApiAuthMiddleware::class,
     ];
 }

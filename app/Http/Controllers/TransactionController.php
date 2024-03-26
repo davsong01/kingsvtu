@@ -338,7 +338,7 @@ class TransactionController extends Controller
                 'title' => $verify['title'],
                 'renewal_amount' => $verify['renewal_amount']
             ];
-          
+        
             if(isset($verify['raw_response'])){
                 $this->refineAndLogBiller($verify, $variation->category,$request['unique_element'],$request['product_slug']);
             }

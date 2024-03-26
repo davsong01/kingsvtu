@@ -301,13 +301,13 @@ class DashboardController extends Controller
             "LGA" => "nullable",
             "DOB" => "nullable",
             "BVN" => "nullable",
-            "IDCARD" => "sometimes|image|max:500",
+            // "IDCARD" => "sometimes|image|max:500",
             "IDCARDTYPE" => "nullable"
         ]);
 
-        if (!empty($request->IDCARD)) {
-            $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
-        }
+        // if (!empty($request->IDCARD)) {
+        //     $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
+        // }
 
         $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
         foreach ($input as $key => $value) {

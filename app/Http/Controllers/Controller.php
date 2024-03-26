@@ -231,7 +231,7 @@ class Controller extends BaseController
                     'raw_data' => json_encode($data['raw_response'])
                 ]);
 
-                return;
+                return $refinedData;
             }
         } catch (\Throwable $th) {
             //throw $th;

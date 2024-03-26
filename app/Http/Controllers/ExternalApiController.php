@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\ResponseService;
 use App\Services\ApiResponseService;
+use Illuminate\Support\Facades\Validator;
 
 class ExternalApiController extends Controller
 {
@@ -43,7 +44,23 @@ class ExternalApiController extends Controller
         return $this->toJson($products);
     }
 
-    
+    public function verifyBiller(Request $request){
+        $validator = Validator::make($request->all(), [
+            "variation_slug" => "required|string",
+            "billersCode" => "required|string",
+            "product_slug" => "required|string"
+        ]);
 
+        if ($validator->fails()) {
+            return $this->responseService->formatServiceResponse("error", "", $validator->errors()->all(), null);
+        }
+
+        $verifyBiller = $this->apiResponseService->verifyBiller($request);
+        return $this->toJson($verifyBiller);
+    }
+
+    public function getBalance(){
+        
+    }
     
 }

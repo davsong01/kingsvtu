@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Variation;
+use Illuminate\Http\Request;
 use App\Services\ResponseService;
 use Illuminate\Support\Facades\Validator;
 
@@ -88,18 +89,19 @@ class ApiResponseService
     public function getVariationsByProductSlug($slug){
         $product = Product::where('slug',$slug)->where('status','active')->where('has_variations','yes')->first();
         if(empty($product)) return $this->responseService->formatServiceResponse("error", '', ['Invalid product slug provided'], null);
-    
-        $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
-        dd($variations);
+        
+        $variations = Variation::select('id','product_id','slug','category_id','system_price as price','system_name as name','min','max','fixed_price')->where('product_id', $product->id)->where('status', 'active')->orderBy('id', 'DESC')->get();
+        
+        $allVariations = [];
         foreach ($variations as $key => $variation) {
             $req = new Request([
                 'variation_id' => $variation->id,
                 'raw' => 'yes',
             ]);
 
-            $discount = app('App\Http\Controllers\TransactionController')->getCustomerDiscount($req);
+            // $discount = app('App\Http\Controllers\TransactionController')->getCustomerDiscount($req);
 
-            $variation->discount = $discount;
+            // $variation->discount = $discount;
 
             // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
             if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
@@ -117,9 +119,80 @@ class ApiResponseService
             } else {
                 $variation->unique_element = $variation->category->unique_element;
             }
+
+            $allVariations[] = [
+                'name' => $variation->name,
+                'price' =>  $variation->price,
+                'variation_slug' =>  $variation->slug,
+                'min' => $variation->min, 
+                'max' => $variation->max,
+                'fixed_price' => $variation->fixed_price,
+                'verifiable' => $variation->verifiable,
+                'unique_element' => $variation->unique_element,
+            ];
         }
-        return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $data);        
+
+        $variations = [
+            'product_name' => $product->display_name,
+            'variations' => $allVariations,
+        ];
+
+        return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $variations);        
     }
+
+    public function verifyBiller(Request $request)
+    {
+        $variation = Variation::where('slug', $request->variation_slug)->first();
+        
+        if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
+            $element = specialVerifiableVariations()[$variation->slug];
+        } else {
+            $element = $variation->category->unique_element;
+        }
+
+        $product = $variation->product;
+        $api = $variation->api;
+        $file_name = $variation->api->file_name;
+
+        $request['product_name'] = $product->name ?? null;
+        $request['variation_name'] = $variation->slug ?? null;
+        $request['category_id'] = $product->category->id ?? null;
+        $request['product_slug'] = $variation->product->slug ?? null;
+        $request['network'] = $variation->network ?? null;
+
+        $request['unique_element'] = $request->billersCode;
+
+        $data = [
+            'variation' => $variation,
+            'product' => $product,
+            'api' => $api,
+            'request' => $request
+        ];
+    
+        // Get Api
+        $verify = app("App\Http\Controllers\Providers\\" . $file_name)->verify($data);
+        
+        if (isset($verify) && $verify['status_code'] == 1) {
+            if (isset($verify['raw_response'])) {
+                $refinedData = app('App\Http\Controllers\TransactionController')->refineAndLogBiller($verify, $variation->category, $request['unique_element'], $request['product_slug']);
+            }
+
+            return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $refinedData);        
+
+        } else {
+            $res = $verify['message'] ?? 'Biller not reachable at the moment, please try again later';
+            return $this->responseService->formatServiceResponse("failed", $res, [], null);
+        }
+    }
+
+    public function getBalance($user){
+        $wallet = new WalletController();
+        $balance = $wallet->getWalletBalance($user);
+        
+        return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $balance);        
+    }
+
+
 
 
     // public function doCurl(string $url, string $method="GET", mixed $payload=null) {
