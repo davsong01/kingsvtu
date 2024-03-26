@@ -105,7 +105,7 @@ class PaymentController extends Controller
             $tlk = 'PICKED-' . time();
             $ids = array_column($calls, 'id');
             ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
-             
+            
             $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
 
             foreach ($calls as $call) {
@@ -124,6 +124,8 @@ class PaymentController extends Controller
                     $payment_type = $call['payment_method'];
 
                     if ($payment_type === 'CARD') {
+                        $extra_charge = getSettings()->card_funding_extra_charge > 0 ? getSettings()->card_funding_extra_charge : 0;
+
                         continue;
                     }
 
@@ -132,10 +134,8 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                        $extra_charge = getSettings()->card_funding_extra_charge > 0 ? getSettings()->card_funding_extra_charge : 0;
-
                         $provider_charge = $provider->reserved_account_payment_charge ?? 0;
-                        $provider_charge = $provider_charge + $extra_charge;
+                        // $provider_charge = $provider_charge + $extra_charge;
                         $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
                     }

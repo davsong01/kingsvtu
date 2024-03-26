@@ -12,7 +12,6 @@
     </div>
     <div class="shadow-bottom"></div>
     <div class="main-menu-content" style="margin-top: 20px;" >
-         
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
             {{-- start --}}
             <?php

@@ -1,7 +1,9 @@
 <?php
 
+use Spatie\FlareClient\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ExternalApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::controller(ExternalApiController::class)->middleware(['ipcheck'])->prefix('v1')->group(function () {
+    // Get all Categories
+    Route::get('/category', 'getCategories');
+    // Get all products
+    Route::get('/products/{category_slug}', 'getProductsByCategory');
+    Route::get('/variations/{product_slug}', 'getVariationsByProductSlug');
+    // Get balance
+    Route::get('/get-balance', 'getBalance');
+    // Query
+    Route::post('/query', 'makePayment');
+    // Requery
+    Route::post('/re-query', 'makePayment');
+    // Verify
+    Route::post('/verify-biller', 'verifyBiller');
 });

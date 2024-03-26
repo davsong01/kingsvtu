@@ -33,7 +33,7 @@ class VariationController extends Controller
             $discount = app('App\Http\Controllers\TransactionController')->getCustomerDiscount($req);
             
             $variation->discount = $discount;
-       
+    
             // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
             if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->verifiable = 'yes';
