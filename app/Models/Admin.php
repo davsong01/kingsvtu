@@ -41,5 +41,17 @@ class Admin extends Model
     function user () {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function roleIds(){
+        $permission = $this->permissions;
+        $allPermissions = [];
+        if (empty($permission)) {
+            return $allPermissions;
+        } else {
+            $allroles = explode(",", $permission);
+            $allPermissions= Role::where('status', 'active')->whereIn('id', $allroles)->pluck('id')->toArray();
+            return $allPermissions;
+        }
+    }
     
 }

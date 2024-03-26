@@ -18,10 +18,10 @@ class RouteProtectionMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $curRouteName = Route::currentRouteName();
-
+        
         $routes = auth()->user()->admin->rolepermissions();
         // dd($routes, $curRouteName);
-        if (in_array($curRouteName, $routes)) {
+        if (in_array($curRouteName, $routes) || in_array(1, auth()->user()->admin->roleIds())) {
             return $next($request);
         } else {
             return back()->with('error', 'You cannot access this resource');

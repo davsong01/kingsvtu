@@ -90,6 +90,7 @@ class RoleSeeder extends Seeder
             'api.destroy',
 
             'customerlevel.show',
+            'customerlevel.show',
             'customerlevel.edit',
             'customerlevel.update',
             'customerlevel.destroy',

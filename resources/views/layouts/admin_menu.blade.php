@@ -24,7 +24,7 @@
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation"
             data-icon-style="lines">
             {{-- Menu start --}}
-            @if (in_array('Dashboard', $allowedMenu))
+            @if (in_array('Dashboard', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Route::is('dashboard') ? 'active' : '' }} nav-item"><a
                         href="{{ route('dashboard') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24"
                             viewBox="0 -960 960 960" fill="white" width="24">
@@ -33,7 +33,7 @@
                         </svg><span class="menu-title" data-i18n="Form Layout">&nbsp;Dashboard</span></a>
                 </li>
             @endif
-            @if (in_array('Announcement', $allowedMenu))
+            @if (in_array('Announcement', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a
                         href="{{ route('announcement.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
@@ -43,7 +43,7 @@
                         {{-- <svg xmlns="http://www.w3.org/2000/svg" fill="white" height="24" viewBox="0 -960 960 960" width="24"><path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/></svg> --}}
                         <span class="menu-title">&nbsp;Announcement</span></a></li>
             @endif
-            @if (in_array('Catalogue', $allowedMenu))
+            @if (in_array('Catalogue', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24"
                             viewBox="0 -960 960 960" width="24">
                             <path
@@ -51,19 +51,19 @@
                                 fill="white" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Catalogue</span></a>
                     <ul class="menu-content">
-                        @if (in_array('api.index', $allowedRoutes))
+                        @if (in_array('api.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('api.*') ? 'active' : '' }}"><a href="{{ route('api.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">API
                                         Providers</span></a>
                             </li>
                         @endif
-                        @if (in_array('category.index', $allowedRoutes))
+                        @if (in_array('category.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('category.*') ? 'active' : '' }}"><a
                                     href="{{ route('category.index') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input Groups">Categories</span></a>
                             </li>
                         @endif
-                        @if (in_array('product.index', $allowedRoutes))
+                        @if (in_array('product.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('product.*') ? 'active' : '' }}"><a
                                     href="{{ route('product.index') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input">Products</span></a>
@@ -72,7 +72,7 @@
                     </ul>
                 </li>
             @endif
-            @if (in_array('Email Management', $allowedMenu))
+            @if (in_array('Email Management', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24"
                             viewBox="0 -960 960 960" width="24">
                             <path
@@ -80,12 +80,12 @@
                                 fill="white" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Email Management</span></a>
                     <ul class="menu-content">
-                        @if (in_array('emails.index', $allowedRoutes))
+                        @if (in_array('emails.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('emails.index') ? 'active' : '' }}"><a href="{{ route('emails.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Emails</span></a>
                             </li>
                         @endif
-                        @if (in_array('emails.pending', $allowedRoutes))
+                        @if (in_array('emails.pending', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('emails.pending') ? 'active' : '' }}"><a
                                     href="{{ route('emails.pending') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item" data-i18n="Input">Pending Emails</span></a>
@@ -94,20 +94,20 @@
                     </ul>
                 </li>
             @endif
-            @if (in_array('Customers', $allowedMenu))
+            @if (in_array('Customers', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="nav-item"><a href="#"><svg xmlns="http://www.w3.org/2000/svg" fill="white"
                             height="24" viewBox="0 -960 960 960" width="24">
                             <path
                                 d="M660-570q-25 0-42.5-17.5T600-630q0-25 17.5-42.5T660-690q25 0 42.5 17.5T720-630q0 25-17.5 42.5T660-570Zm-360 0q-25 0-42.5-17.5T240-630q0-25 17.5-42.5T300-690q25 0 42.5 17.5T360-630q0 25-17.5 42.5T300-570Zm180 110q-25 0-42.5-17.5T420-520q0-25 17.5-42.5T480-580q25 0 42.5 17.5T540-520q0 25-17.5 42.5T480-460Zm0-220q-25 0-42.5-17.5T420-740q0-25 17.5-42.5T480-800q25 0 42.5 17.5T540-740q0 25-17.5 42.5T480-680Zm0 520q-20 0-40.5-3t-39.5-8v-143q0-35 23.5-60.5T480-400q33 0 56.5 25.5T560-314v143q-19 5-39.5 8t-40.5 3Zm-140-32q-20-8-38.5-18T266-232q-28-20-44.5-52T205-352q0-26-5.5-48.5T180-443q-10-13-37.5-39.5T92-532q-11-11-11-28t11-28q11-11 28-11t28 11l153 145q20 18 29.5 42.5T340-350v158Zm280 0v-158q0-26 10-51t29-42l153-145q12-11 28.5-11t27.5 11q11 11 11 28t-11 28q-23 23-50.5 49T780-443q-14 20-19.5 42.5T755-352q0 36-16.5 68.5T693-231q-16 11-34.5 21T620-192Z" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Customers</span></a>
                     <ul class="menu-content">
-                        @if (in_array('customers', $allowedRoutes))
+                        @if (in_array('customers', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('customers') ? 'active' : '' }}"><a
                                     href="{{ route('customers') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item">All Customers</span></a>
                             </li>
                         @endif
-                        @if (in_array('customers.active', $allowedRoutes))
+                        @if (in_array('customers.active', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('customers.active.*') ? 'active' : '' }}"><a
                                     href="{{ route('customers.active', 'active') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item"
@@ -115,7 +115,7 @@
                                         Customers</span></a>
                             </li>
                         @endif
-                        @if (in_array('customers.suspended', $allowedRoutes))
+                        @if (in_array('customers.suspended', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Request::is('customers-suspended/suspended') ? 'active' : '' }}"><a
                                     href="{{ route('customers.suspended', 'suspended') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item"
@@ -123,13 +123,13 @@
                             </li>
                         @endif
 
-                        @if (in_array('customer-blacklist.index', $allowedRoutes))
+                        @if (in_array('customer-blacklist.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class=""><a href="{{ request()->route()->getPrefix() }}/customer-blacklist"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item"
                                         data-i18n="Input Groups">Blacklisted Customers</span></a>
                             </li>
                         @endif
-                        @if (in_array('customerlevel.index', $allowedRoutes))
+                        @if (in_array('customerlevel.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a
                                     href="{{ route('customerlevel.index') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item"
@@ -139,20 +139,20 @@
                     </ul>
                 </li>
             @endif
-            @if (in_array('User Management', $allowedMenu))
+            @if (in_array('User Management', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="nav-item"><a href="#"><svg fill="white" xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
                             <path
                                 d="M400-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm560 40-12-60q-12-5-22.5-10.5T584-204l-58 18-40-68 46-40q-2-14-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T628-460l12-60h80l12 60q12 5 22.5 11t21.5 15l58-20 40 70-46 40q2 12 2 25t-2 25l46 40-40 68-58-18q-11 8-21.5 13.5T732-180l-12 60h-80Zm40-120q33 0 56.5-23.5T760-320q0-33-23.5-56.5T680-400q-33 0-56.5 23.5T600-320q0 33 23.5 56.5T680-240ZM400-560q33 0 56.5-23.5T480-640q0-33-23.5-56.5T400-720q-33 0-56.5 23.5T320-640q0 33 23.5 56.5T400-560Zm0-80Zm12 400Z" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;User Management</span></a>
                     <ul class="menu-content">
-                        @if (in_array('admins', $allowedRoutes))
+                        @if (in_array('admins', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admins') ? 'active' : '' }}"><a href="{{ route('admins') }}"><i
                             class="bx bx-right-arrow-alt"></i><span class="menu-item">All
                                         Admins</span></a>
                             </li>
                         @endif
-                        {{-- @if (in_array('role.index', $allowedRoutes)) --}}
+                        {{-- @if (in_array('role.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds())) --}}
                             <li class="{{ Route::is('role.index') ? 'active' : '' }}"><a href="{{ route('role.index') }}"><i
                             class="bx bx-right-arrow-alt"></i><span class="menu-item">All
                                         Roles</span></a>
@@ -166,67 +166,67 @@
                 </li>
             @endif
 
-            @if (in_array('Financials', $allowedMenu))
+            @if (in_array('Financials', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="nav-item"><a href="#"><svg fill="white" xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
                             <path
                                 d="M80-200v-80h400v80H80Zm0-200v-80h200v80H80Zm0-200v-80h200v80H80Zm744 400L670-354q-24 17-52.5 25.5T560-320q-83 0-141.5-58.5T360-520q0-83 58.5-141.5T560-720q83 0 141.5 58.5T760-520q0 29-8.5 57.5T726-410l154 154-56 56ZM560-400q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Z" />
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Financials</span></a>
                     <ul class="menu-content">
-                        @if (in_array('admin.trans', $allowedRoutes))
+                        @if (in_array('admin.trans', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.trans') ? 'active' : '' }}"><a
                                     href="{{ route('admin.trans') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item">Product Purchase Log</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.walletfundinglog', $allowedRoutes))
+                        @if (in_array('admin.walletfundinglog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.walletfundinglog') ? 'active' : '' }}"><a
                                     href="{{ route('admin.walletfundinglog') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Funding
                                         Log</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.walletlog', $allowedRoutes))
+                        @if (in_array('admin.walletlog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.walletlog') ? 'active' : '' }}"><a
                                     href="{{ route('admin.walletlog') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item">Wallet
                                         Log</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.earninglog', $allowedRoutes))
+                        @if (in_array('admin.earninglog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.earninglog') ? 'active' : '' }}"><a
                                     href="{{ route('admin.earninglog') }}"><i class="bx bx-right-arrow-alt"></i><span
                                         class="menu-item">Earnings
                                         Log</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.credit.customer', $allowedRoutes))
+                        @if (in_array('admin.credit.customer', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.credit.customer') ? 'active' : '' }}"><a
                                     href="{{ route('admin.credit.customer') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Credit
                                         Customer</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.debit.customer', $allowedRoutes))
+                        @if (in_array('admin.debit.customer', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.debit.customer') ? 'active' : '' }}"><a
                                     href="{{ route('admin.debit.customer') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit
                                         Customer</span></a>
                             </li>
                         @endif
-                        @if (in_array('admin.verifybiller', $allowedRoutes))
+                        @if (in_array('admin.verifybiller', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                         <li class="{{ Route::is('admin.verifybiller') ? 'active' : '' }}"><a
                              href="{{ route('admin.verifybiller') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
                         </li>
                         @endif
-                        @if (in_array('billerlog.index', $allowedRoutes))
+                        @if (in_array('billerlog.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                         <li class="{{ Route::is('billerlog.index') ? 'active' : '' }}"><a
                              href="{{ route('billerlog.index') }}"><i
                                  class="bx bx-right-arrow-alt"></i><span class="menu-item">Biller Logs</span></a>
                         </li>
                         @endif
-                        @if (in_array('admin.reserved.accounts', $allowedRoutes))
+                        @if (in_array('admin.reserved.accounts', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
                             <li class="{{ Route::is('admin.reserved.accounts') ? 'active' : '' }}"><a
                                     href="{{ route('admin.reserved.accounts') }}"><i
                                         class="bx bx-right-arrow-alt"></i><span class="menu-item">Reserved Account
@@ -236,7 +236,7 @@
                     </ul>
                 </li>
             @endif
-            {{-- @if (in_array('Profile', $allowedMenu)) --}}
+            {{-- @if (in_array('Profile', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds())) --}}
                 <li class="{{ Request::path() == 'profile' ? 'active' : '' }}"><a
                         href="{{ route('profile.edit') }}"><svg xmlns="http://www.w3.org/2000/svg"
                             height="24"fill="white" viewBox="0 -960 960 960" width="24">
@@ -245,7 +245,7 @@
                         </svg><span class="menu-title">&nbsp;My Profile</span></a>
                 </li>
             {{-- @endif --}}
-            @if (in_array('Callback Analysis', $allowedMenu))
+            @if (in_array('Callback Analysis', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'callback.analysis' ? 'active' : '' }}"><a
                         href="{{ route('callback.analysis') }}"><svg xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
@@ -255,7 +255,7 @@
                         </svg><span class="menu-title">&nbsp;Callback Analysis</span></a>
                 </li>
             @endif
-            @if (in_array('KYC Management', $allowedMenu))
+            @if (in_array('KYC Management', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'admin.kyc' ? 'active' : '' }}"><a
                         href="{{ route('admin.kyc') }}"><svg xmlns="http://www.w3.org/2000/svg" height="24"
                             viewBox="0 -960 960 960" fill="white" width="24">
@@ -264,7 +264,7 @@
                         </svg><span class="menu-title">&nbsp;KYC Management</span></a>
                 </li>
             @endif
-            @if (in_array('Payment Gateway Settings', $allowedMenu))
+            @if (in_array('Payment Gateway Settings', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a
                         href="{{ route('paymentgateway.index') }}"><svg xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
@@ -273,7 +273,7 @@
                                 fill="white" />
                         </svg><span class="menu-title">&nbsp;Payment Gateway Settings</span></a></li>
             @endif
-            @if (in_array('General Settings', $allowedMenu))
+            @if (in_array('General Settings', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a
                         href="{{ route('settings.edit') }}"><svg fill="white" xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
