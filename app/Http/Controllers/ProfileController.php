@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -19,7 +20,7 @@ class ProfileController extends Controller
     {
         if (auth()->user()->type == 'admin') {
             return view('admin.edit_profile');
-        }else{
+        } else {
             return view('customer.edit_profile');
         }
     }
@@ -59,5 +60,28 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    function generateKeys()
+    {
+        $user = auth()->user();
+
+        $public = str()->random(52);
+        $secret = str()->random(52);
+        $api = strrev(md5($user->username));
+
+        $user->update([
+            'api_key' => $api,
+            'public_key' => Hash::make($public),
+            'secret_key' => Hash::make($secret),
+        ]);
+
+        return [
+            'code' => 1,
+            'data' => [
+                'public' => 'PK-'. $public,
+                'secret' => 'SK-'. $secret,
+            ],
+        ];
     }
 }
