@@ -11,7 +11,7 @@ class KycDataController extends Controller
 
     public function adminKycIndex()
     {
-        $customers = Customer::with('user')->paginate(20);
+        $customers = Customer::with('user')->get();
         return view('admin.customers.kyc_data', compact('customers'));
     }
 

@@ -66,8 +66,8 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
-        $public = str()->random(52);
-        $secret = str()->random(52);
+        $public = 'KPK-'.str()->random(30);
+        $secret = 'KSK-' . str()->random(30);
         $api = strrev(md5($user->username));
 
         $user->update([
@@ -79,8 +79,8 @@ class ProfileController extends Controller
         return [
             'code' => 1,
             'data' => [
-                'public' => 'PK-'. $public,
-                'secret' => 'SK-'. $secret,
+                'public' => $public,
+                'secret' => $secret,
             ],
         ];
     }

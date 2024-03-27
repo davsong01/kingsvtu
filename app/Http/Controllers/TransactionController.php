@@ -53,7 +53,6 @@ class TransactionController extends Controller
 
         if (!$pinCheck) {
             return back()->with('error', 'Invalid Transaction PIN!');
-            return back()->with('error', 'Invalid Transaction PIN!');
         }
 
         // Get product
@@ -70,7 +69,7 @@ class TransactionController extends Controller
         if ($product->has_variations == 'yes') {
             $variation = Variation::where('id', $request->variation)->where('product_id', $product->id)->first();
 
-            if ($variation->fixedPrice == 'Yes') {
+            if ($variation->fixed_price == 'Yes') {
                 $request['amount'] = $variation->system_price;
             } elseif ($product->allow_subscription_type == 'yes' && $variation->category->unique_element == 'iuc_number') {
                 if (!empty ($request->bouquet) && $request->bouquet == 'renew') {
@@ -201,7 +200,7 @@ class TransactionController extends Controller
         $file_name = $api->file_name;
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
-
+        
         try {
             //code...
             DB::beginTransaction();
@@ -276,7 +275,7 @@ class TransactionController extends Controller
             ]);
             // \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
         }
-
+        
         return $transaction;
     }
 

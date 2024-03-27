@@ -60,6 +60,26 @@ class ExternalApiController extends Controller
     }
 
     public function getBalance(){
+        $balance = $this->apiResponseService->getBalance(auth()->user());
+        return $this->toJson($balance);
+    }
+
+    public function makePayment(Request $request){
+        $validator = Validator::make($request->all(), [
+            "product_slug" => "required|string",
+            "variation_slug" => "sometimes|string",
+            "billersCode" => "required|string",
+            "request_id" => "required|string",
+            "phone" => "required|string",
+        ]);
+
+        if ($validator->fails()) {
+            return $this->toJson($this->responseService->formatServiceResponse("error", "", $validator->errors()->all(), null));
+        }
+        return $this->toJson($this->apiResponseService->initializeTransaction($request));
+    }
+
+    public function queryTransaction($request_id){
 
     }
     

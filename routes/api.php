@@ -35,6 +35,6 @@ Route::controller(ExternalApiController::class)->prefix('v1')->group(function ()
         // Query
         Route::post('/query', 'makePayment');
         // Requery
-        Route::post('/re-query', 'makePayment');
+        Route::post('/re-query', 'queryTransaction');
     });
 });

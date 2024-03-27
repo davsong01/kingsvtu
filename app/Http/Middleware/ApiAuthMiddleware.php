@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\ResponseService;
 use App\Services\ApiResponseService;
@@ -62,7 +63,7 @@ class ApiAuthMiddleware
         }
 
         $user = User::where("api_key", $request->header("api-key"))->first();
-
+        
         if (empty($user)) {
             $json = [
                 'status' => 'error',

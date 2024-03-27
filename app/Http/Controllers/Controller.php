@@ -298,4 +298,13 @@ class Controller extends BaseController
         }
     }
 
+    public function checkRequestIDFormat($requestId) {
+        $requestIdTime = date("Y-m-d H:i", strtotime(substr($requestId,0,12)));
+    
+        if($requestIdTime > Carbon::now()->addMinutes(5) || $requestIdTime < Carbon::now()->addMinutes(-5)){
+            return false;
+        }else{
+            return true;
+        }
+    }
 }

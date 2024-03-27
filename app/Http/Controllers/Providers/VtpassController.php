@@ -81,9 +81,9 @@ class VtpassController extends Controller
                 'amount' => $request['amount'],
                 'url' => $url
             ];
-
+            
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-
+            
             $successCodes = ['000'];
             $failCodes = ['016'];
 
@@ -143,8 +143,8 @@ class VtpassController extends Controller
                 'status' => 'attention-required',
                 'response' => '',
                 'description' => 'Transaction completed',
-                'api_response' => $response,
-                'payload' => $payload,
+                'api_response' => $response ?? null,
+                'payload' => $payload ?? null,
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
@@ -364,7 +364,6 @@ class VtpassController extends Controller
             }
         } catch (\Throwable $th) {
             $fail_response = 'An error occured while trying to verify, please try again';
-            // dd($th->getMessage() . ' ' . $th->getFile() . ' Line: ' . $th->getLine());
             $final_response = [
                 'status' => 'failed',
                 'status_code' => '500',
