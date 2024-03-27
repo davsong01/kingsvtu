@@ -60,7 +60,7 @@ class ExternalApiController extends Controller
     }
 
     public function getBalance(){
-        
+
     }
     
 }
