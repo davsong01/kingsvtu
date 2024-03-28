@@ -23,7 +23,6 @@ class DashboardController extends Controller
     public function index()
     {
         $customer = $this->customerOfTheMonth();
-        dd($customer);
         if (auth()->user()->type == 'admin') {
             $transaction_debit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
                 ->where('wallets.type', 'debit')->whereIn('status', ['success', 'delivered']);
