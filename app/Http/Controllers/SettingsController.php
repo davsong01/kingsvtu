@@ -55,6 +55,7 @@ class SettingsController extends Controller
                 'google_ad_code' => '',
                 'seo_title' => '',
                 'seo_description' => '',
+                'support_link' => '',
             ]);
         }
 

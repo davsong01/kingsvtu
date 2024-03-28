@@ -60,4 +60,8 @@ class TransactionLog extends Model
     {
         return $this->wallet->type ?? 'new';
     }
+
+    public function upgrade_level(){
+        return $this->belongsTo(CustomerLevel::class, 'upgrade_level');
+    }
 }

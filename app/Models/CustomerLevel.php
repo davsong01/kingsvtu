@@ -28,4 +28,8 @@ class CustomerLevel extends Model
         $price = Discount::where('variation_id', $product_id)->whereNull('variation_id')->value('price');
         return $price;
     }
+
+    public function transaction(){
+        return $this->hasOne(TransactionLog::class, 'upgrade_level');
+    }
 }

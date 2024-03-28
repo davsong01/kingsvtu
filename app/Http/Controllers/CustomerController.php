@@ -115,10 +115,18 @@ class CustomerController extends Controller
         $user->update($request->except(['_token', 'ip', 'customerlevel']));
 
         if(!empty($request->customerlevel)){
-            $user->customer->customer_level = $request->customerlevel;
+            $level = CustomerLevel::where('id', $request->customerlevel)->first();
+            $user->customer->customer_level = $level->id;
+
+            if(!empty($level->transaction)){
+                $level->transaction->update([
+                    'status' => 'success',
+                    'descr' => 'Level Upgrade from ' . $user->customer->level->name . ' to ' . $level->name . ' was successful',
+                ]);
+                $user->customer->api_access = 'active';
+            }
             $user->customer->save();
         }
-
         return back()->with('message', 'Update successful!');
 
     }

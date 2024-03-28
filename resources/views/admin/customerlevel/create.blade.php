@@ -64,7 +64,7 @@
                                                         <input type="number" class="form-control" name="order" value="{{ old('order') }}" placeholder="Enter order" id="order" required>
                                                     </fieldset>
                                                 </div>
-                                               
+                                            
                                                 <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Submit</button>
     

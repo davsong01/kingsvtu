@@ -180,7 +180,7 @@ use App\Models\BlackList;
                                                     <select name="customerlevel" class="form-control" id="customerlevel">
                                                         <option value="">Select Customerlevel</option>
                                                         @foreach ($customerLevels as $level)
-                                                        <option value="{{ $level->id }}" {{$user->customer->customer_level == $level->id ? 'selected':''}}>{{ $level->name}}</option>
+                                                        <option value="{{ $level->id }}" {{$user->customer->customer_level == $level->id ? 'selected':''}}>{{ $level->name}} {{ $level->make_api_level == 'yes' ? '(API ACCESS)' : ''}}</option>
                                                         @endforeach
                                                     </select>
                                                 </fieldset>

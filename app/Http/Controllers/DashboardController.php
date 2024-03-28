@@ -130,12 +130,20 @@ class DashboardController extends Controller
             DB::beginTransaction();
             // Log basic transaction
             $transaction = app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
-
-            $transaction->update([
-                'balance_after' => $balance - $price,
-                'status' => 'success',
-                'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was successful',
-            ]);
+            if($level->make_api_level == 'yes'){
+                $transaction->update([
+                    'balance_after' => $balance - $price,
+                    'upgrade_level' => $level->id,
+                    'status' => 'pending',
+                    'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was requested',
+                ]);
+            }else{
+                $transaction->update([
+                    'balance_after' => $balance - $price,
+                    'status' => 'success',
+                    'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was successful',
+                ]);
+            }
 
             $user = auth()->user();
             app('App\Http\Controllers\TransactionController')->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request_id, 50);
@@ -147,11 +155,16 @@ class DashboardController extends Controller
             $wallet->updateCustomerWallet(auth()->user(), $price, $request['type']);
 
             // Update customer level
-            auth()->user()->customer->update([
-                'customer_level' => $level->id
-            ]);
+            if ($level->make_api_level == 'no') {
+                auth()->user()->customer->update([
+                    'customer_level' => $level->id
+                ]);
+            }
 
             DB::commit();
+            if ($level->make_api_level == 'yes') {
+                return redirect()->away(getSettings()->support_link);
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             // \Log::error(['Upgrade Error' => 'Message: '.$th->getMessage().' File: '.$th->getFile().' Line: '.$th->getLine()]);
@@ -165,7 +178,6 @@ class DashboardController extends Controller
 
     public function processCreateTransactionPin(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'password' => 'required',
             'transaction_pin' => 'numeric|required|min:1000|max:99999',
@@ -286,6 +298,10 @@ class DashboardController extends Controller
     {
         $kyc = $this->getKycStatus(auth()->user());
         return view('customer.edit_kyc_details', compact('kyc'));
+    }
+
+    public function apiSettings(){
+        return view('customer.api_settings');
     }
 
     public function processUpdateKycInfo(Request $request)

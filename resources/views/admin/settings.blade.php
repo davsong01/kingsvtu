@@ -158,6 +158,15 @@ use App\Models\PaymentGateway;
                                                                             <input type="text" class="form-control" id="seo_title" name="seo_title" value="{{ $settings->seo_title ?? old('seo_title') }}" placeholder="SEO Title">
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
+                                                                            <label for="support_link">Support Link</label>
+                                                                            <input type="text" class="form-control" id="support_link" name="support_link" value="{{ $settings->support_link ?? old('support_link') }}" placeholder="Support Link">
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="api_documentation_link">API Documentation Link</label>
+                                                                            <input type="text" class="form-control" id="api_documentation_link" name="api_documentation_link" value="{{ $settings->api_documentation_link ?? old('api_documentation_link') }}" placeholder="API Documentation Link">
+                                                                        </fieldset>
+                                                                        
+                                                                        <fieldset class="form-group">
                                                                             <label for="seo_description">SEO Description</label>
                                                                             <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $settings->seo_description ?? old('seo_description') }}" placeholder="SEO Description" required>{{ $settings->seo_description ?? old('seo_description') }}</textarea>
                                                                         </fieldset>
