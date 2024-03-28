@@ -9,7 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/vendors.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/vendors/css/tables/datatable/datatables.min.css') }}">
     <!-- END: Vendor CSS-->
-
 @endsection
 @section('content')
     <!-- Content wrapper -->
@@ -66,7 +65,11 @@
                                                 <tbody>
                                                     @foreach ($levels as $level)
                                                         <tr>
-                                                            <td>{{ $level->name }}</td>
+                                                            <td>{{ $level->name }}
+                                                                @if($level->make_api_level == 'yes')
+                                                                <button class="btn btn-primary">API</button>
+                                                                @endif
+                                                            </td>
                                                             <td>{{ $level->order }}</td>
                                                             <td>{{ $level->customers_count }}</td>
                                                             <td>{!! getSettings()['currency'] !!}{{ number_format($level->upgrade_amount) }}

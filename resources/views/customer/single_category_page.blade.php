@@ -116,7 +116,7 @@
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
                                                                                 <label for="phone">Phone Number</label>
-                                                                                <input type="text" class="form-control" id="phone" name="phone" value="{{ auth()->user()->phone ?? old('phone')}}" required>
+                                                                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone')}}" required>
                                                                             </fieldset>
                                                                         </div>
                                                                         {{-- <fieldset class="form-group position-relative has-icon-left">

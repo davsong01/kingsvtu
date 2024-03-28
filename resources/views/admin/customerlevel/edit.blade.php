@@ -52,11 +52,21 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <fieldset class="form-group">
+                                                        <label for="make_api_level">Make API Level</label>
+                                                        <select class="form-control" name="make_api_level" id="make_api_level" required>
+                                                            <option value="">Select</option>
+                                                            <option value="yes" {{ $customerlevel->make_api_level == 'yes' ? 'selected' : '' }}>Yes
+                                                            </option>
+                                                            <option value="no" {{ $customerlevel->make_api_level == 'make_api_level' ? 'selected' : '' }}>No
+                                                            </option>
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
                                                         <label for="order">Order</label>
                                                         <input type="number" class="form-control" name="order" value="{{ $customerlevel->order ?? old('order') }}" placeholder="Enter order" id="order" required>
                                                     </fieldset>
-                                                    
                                                 </div>
+                                                
                                                 <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Update</button>
     

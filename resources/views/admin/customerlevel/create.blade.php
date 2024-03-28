@@ -43,19 +43,28 @@
                                                         <label for="name">Name</label>
                                                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Enter name" required>
                                                     </fieldset>
-                                                     <fieldset class="form-group">
+                                                    <fieldset class="form-group">
                                                         <label for="upgrade_amount">Upgrade Amount</label>
                                                         <input type="text" class="form-control" id="upgrade_amount" name="upgrade_amount" value="{{ old('upgrade_amount') }}" placeholder="Enter Upgrade amount" required>
                                                     </fieldset>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <fieldset class="form-group">
+                                                        <label for="make_api_level">Make API Level</label>
+                                                        <select class="form-control" name="make_api_level" id="make_api_level" required>
+                                                            <option value="">Select</option>
+                                                            <option value="yes" {{ old('make_api_level') == 'yes' ? 'selected' : '' }}>Yes
+                                                            </option>
+                                                            <option value="no" {{ old('make_api_level') == 'make_api_level' ? 'selected' : '' }}>No
+                                                            </option>
+                                                        </select>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
                                                         <label for="order">Order</label>
                                                         <input type="number" class="form-control" name="order" value="{{ old('order') }}" placeholder="Enter order" id="order" required>
                                                     </fieldset>
-                                                    
-                                                   
                                                 </div>
+                                               
                                                 <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Submit</button>
     

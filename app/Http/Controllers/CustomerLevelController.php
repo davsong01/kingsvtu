@@ -32,12 +32,14 @@ class CustomerLevelController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'make_api_level' => 'required',
             'order' => 'required|unique:customer_levels,order',
             'upgrade_amount' => 'required',
         ]);
 
         CustomerLevel::updateOrCreate([
             'name' => $request->name,
+            'make_api_level' => $request->make_api_level,
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
         ]);
@@ -70,10 +72,12 @@ class CustomerLevelController extends Controller
             'name' => 'required',
             'order' => 'required|unique:customer_levels,order,' . $customerlevel->id,
             'upgrade_amount' => 'required',
+            'make_api_level' => 'required',
         ]);
 
         $customerlevel->update([
             'name' => $request->name,
+            'make_api_level' => $request->make_api_level,
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
         ]);

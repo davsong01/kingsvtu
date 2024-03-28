@@ -41,7 +41,7 @@ class CustomerController extends Controller
                 ->orWhere('phone', 'like', $key);
         }
 
-        $customers = $customers->latest()->paginate(20);
+        $customers = $customers->latest()->get();
 
         return view('admin.customers.index', ['customers' => $customers]);
     }
