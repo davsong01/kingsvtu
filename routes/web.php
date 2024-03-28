@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use App\Models\RolePermission;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,18 @@ use App\Http\Controllers\ReservedAccountNumberController;
 
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallback'])->name('log.payment.response');
 Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
-Route::get('cron/sendemails', [Controller::class, 'cronSendEmails']);
+Route::get( 'cron/sendemails', [Controller::class, 'cronSendEmails']);
+Route::get('generate-api-keys', function(){
+    $users = User::all();
+
+    foreach($users as $user){
+        if(empty($user->api_key)){
+            $user->update([
+                'api_key' => strrev(md5($user->username))
+            ]);
+        }
+    }
+});
 
 Route::middleware(['auth', 'verified','ipcheck'])->group(function () {
     Route::get('/create-transaction-pin', [DashboardController::class, 'createTransactionPin'])->name('customer.create.pin');

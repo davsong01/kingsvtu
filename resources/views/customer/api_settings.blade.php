@@ -159,7 +159,7 @@
                 beforeSend: () => {},
                 success: res => {
                     let data = res.data;
-
+                    
                     $('#public span').html(data.public);
                     $('#secret span').html(data.secret);
                 },

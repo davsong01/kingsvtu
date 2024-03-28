@@ -55,6 +55,9 @@ class RegisteredUserController extends Controller
             'status' => 'active',
         ]);
 
+        $user->update([
+            'api_key' =>  strrev(md5($user->username)),
+        ]);
         event(new Registered($user));
 
         $customer = Customer::create([

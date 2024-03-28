@@ -68,7 +68,7 @@ class ProfileController extends Controller
 
         $public = 'KPK-'.str()->random(30);
         $secret = 'KSK-' . str()->random(30);
-        $api = strrev(md5($user->username));
+        $api = !empty($user->api_key) ? $user->api_key : strrev(md5($user->username));
 
         $user->update([
             'api_key' => $api,
@@ -79,6 +79,7 @@ class ProfileController extends Controller
         return [
             'code' => 1,
             'data' => [
+                'api_key' => $api,
                 'public' => $public,
                 'secret' => $secret,
             ],

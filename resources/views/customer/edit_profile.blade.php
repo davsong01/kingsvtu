@@ -238,6 +238,7 @@
                 success: res => {
                     let data = res.data;
 
+                    $('#api_key span').html(data.api_key);
                     $('#public span').html(data.public);
                     $('#secret span').html(data.secret);
                 },
