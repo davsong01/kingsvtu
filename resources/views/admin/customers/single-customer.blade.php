@@ -569,18 +569,22 @@ use App\Models\BlackList;
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-6 col-sm-6">
+                                                {{-- <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-dark">
                                                         <div class="card-body">
                                                             <div class="card-content">
                                                                 <h5 class="card-title white">
                                                                     Password Reset
                                                                 </h5>
-                                                                <a href="" class="btn btn-danger" type="submit">Trigger Password Reset Mail</a>
+                                                                <form action="{{route('password.email')}}" method="post">
+                                                                    @csrf
+                                                                    <input type="hidden" type="text" name="email" value="{{ $user->email }}">
+                                                                    <button class="btn btn-danger" type="submit">Trigger Password Reset Mail</button>
+                                                                </form>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-light">
                                                         <div class="card-body">
@@ -590,7 +594,8 @@ use App\Models\BlackList;
                                                                 </h5>
                                                                 <form action="{{route('process.transaction.pin.reset')}}" method="post">
                                                                     @csrf
-                                                                    <input type="hidden" type="text">
+                                                                    
+                                                                    <input type="hidden" type="text" name="user_id" value="{{ $user->id }}">
                                                                     <button class="btn btn-danger" type="submit">Trigger Transaction PIN Reset Mail</button>
                                                                 </form>
                                                             </div>
