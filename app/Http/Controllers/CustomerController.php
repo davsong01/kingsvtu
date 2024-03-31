@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Customer;
+use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
 use App\Models\ReferralEarning;
-use App\Models\ReservedAccountNumber;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Models\ReservedAccountNumber;
 
 class CustomerController extends Controller
 {
@@ -137,5 +139,47 @@ class CustomerController extends Controller
         $user = User::where('email', 'like', $key)->get();
 
         return $user->toArray();
+    }
+
+    public function resetTransactionPin(Request $request, User $user){
+        $this->validate($request, [
+            'new_transaction_pin' => 'required',
+        ]);
+
+        $new_pin = base64_encode(base64_encode(base64_encode($request->new_transaction_pin)));
+        $settings = getSettings();
+        $user->transaction_pin = $new_pin;
+        $user->save();
+
+        // Send email
+        $subject = "New Transaction Pin";
+        $body = '<p>Hello! ' . $user->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">Your transaction PIN has been reset by ADMIN on ' . config('app.name') . ' at ' . Carbon::now()->format('jS F, Y, h:iA') . '.</strong><br><br>Your new transaction PIN is <br><strong>'.$request->new_transaction_pin. '</strong><br>. If you did not request a Transaction PIN change, Kindly notify us via WhatsApp us via whatsapp( ' . $settings->whatsapp_no . ') immediately.<b><hr/><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+
+        logEmails($user->email, $subject, $body);
+
+        return back()->with('message', 'Transaction PIN successfully reset to: '.$request->new_transaction_pin);
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        $this->validate($request, [
+            'new_password' => 'required',
+        ]);
+
+        $password = Hash::make($request->new_password);
+
+        $settings = getSettings();
+        $user->password = $password;
+        $user->save();
+        
+        // Send email
+        $subject = "New Password Pin";
+        $body = '<p>Hello! ' . $user->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">Your password has been reset by ADMIN on ' . config('app.name') . ' at ' . Carbon::now()->format('jS F, Y, h:iA') . '.</strong><br><br>Your new password is <br><strong>' . $request->new_password . '</strong><br>. If you did not request a password reset, Kindly notify us via WhatsApp us via whatsapp( ' . $settings->whatsapp_no . ') immediately.<b><hr/><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
+
+        logEmails($user->email, $subject, $body);
+
+        return back()->with('message', 'Transaction PIN successfully reset to: ' . $request->new_password);
     }
 }

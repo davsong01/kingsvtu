@@ -107,9 +107,9 @@ use App\Models\PaymentGateway;
                                                                         <div class="row">
                                                                             <div class="col-md-8">
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="basicInputFile">Logo</label>
+                                                                                    <label for="logo">Logo</label>
                                                                                     <div class="custom-file">
-                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="image" name="logo">
+                                                                                        <input type="file" accept="image/*" class="custom-file-input" id="logo" name="logo">
                                                                                         <label class="custom-file-label" for="image">Replace Logo</label>
                                                                                     </div>
                                                                                 </fieldset>
@@ -123,7 +123,7 @@ use App\Models\PaymentGateway;
                                                                         <div class="row">
                                                                             <div class="col-md-8">
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="basicInputFile">Favicon</label>
+                                                                                    <label for="favicon">Favicon</label>
                                                                                     <div class="custom-file">
                                                                                         <input type="file" accept="image/*" class="custom-file-input" id="favicon" name="favicon">
                                                                                         <label class="custom-file-label" for="image">Replace Favicon</label>
@@ -140,10 +140,10 @@ use App\Models\PaymentGateway;
                                                                         <div class="row">
                                                                             <div class="col-md-8">
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="basicInputFile">Dashboard Logo</label>
+                                                                                    <label for="dashboard_logo">Dashboard Logo</label>
                                                                                     <div class="custom-file">
                                                                                         <input type="file" style="height:auto;width:120px" accept="image/*" class="custom-file-input" id="dashboard_logo" name="dashboard_logo">
-                                                                                        <label class="custom-file-label" for="image">Replace Dashboard Logo</label>
+                                                                                        <label class="custom-file-label" for="dashboard_logo">Replace Dashboard Logo</label>
                                                                                     </div>
                                                                                 </fieldset>
                                                                             </div>

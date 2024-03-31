@@ -74,8 +74,8 @@ use App\Models\BlackList;
                                     <h5 class="card-title mt-1">
                                         {{ ucfirst($user->firstname) . ' ' . ucfirst($user->middlename) . ' ' . ucfirst($user->lastname) }}
                                         ({{ $user->customer->customer_level ?? 'Level 1' }})</h5>
-                                    <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
-                                    <a href="mailto:{{ $user->phone }}">{{ $user->phone }}</a>
+                                        Email: <br><a href="mailto:{{ $user->email }}">{{ $user->email }}</a> <br>
+                                        Phone: <br>{{ $user->phone }}
                                 </div>
                             </div>
                             <div class="col-sm-10">
@@ -430,8 +430,7 @@ use App\Models\BlackList;
                                             @empty($accounts)
                                                 <p>No reserved account has been created by this customer</p>
                                             @else
-                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#reserved">
-                                                Create Reserved Account
+                                            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#reserved">Create Reserved Account
                                             </button>
 
                                                 <table able class="table table-striped dataex-html5-selectors">
@@ -568,40 +567,35 @@ use App\Models\BlackList;
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                {{-- <div class="col-md-6 col-sm-6">
+                                                @if(hasAccess('admin.password.reset'))
+                                                <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-dark">
                                                         <div class="card-body">
                                                             <div class="card-content">
                                                                 <h5 class="card-title white">
                                                                     Password Reset
                                                                 </h5>
-                                                                <form action="{{route('password.email')}}" method="post">
-                                                                    @csrf
-                                                                    <input type="hidden" type="text" name="email" value="{{ $user->email }}">
-                                                                    <button class="btn btn-danger" type="submit">Trigger Password Reset Mail</button>
-                                                                </form>
+                                                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#reset-password">Click to reset password</button>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div> --}}
+                                                </div>
+                                                @endif
+                                                @if(hasAccess('admin.transaction.pin.reset'))
                                                 <div class="col-md-6 col-sm-6">
                                                     <div class="card bg-lighten-2 p-0 bg-light">
                                                         <div class="card-body">
                                                             <div class="card-content">
                                                                 <h5 class="card-title white">
-                                                                    Transaction PIN Reset
+                                                                    Reset Transaction PIN
                                                                 </h5>
-                                                                <form action="{{route('process.transaction.pin.reset')}}" method="post">
-                                                                    @csrf
-                                                                    
-                                                                    <input type="hidden" type="text" name="user_id" value="{{ $user->id }}">
-                                                                    <button class="btn btn-danger" type="submit">Trigger Transaction PIN Reset Mail</button>
-                                                                </form>
+                                                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#reset-transaction-pin">Click to reset</button>
+                                                                
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -626,20 +620,7 @@ use App\Models\BlackList;
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            {{-- <div class="col-md-3">
-                                <fieldset class="form-group">
-                                    <label for="trans_lower_amt">Funding Lower Limit</label>
-                                    <input type="text" class="form-control" id="trans_lower_amt" name="trans_lower_amt"  value="" placeholder="Transaction Lower Limit" required>
-                                </fieldset>
-                            </div>
-                            <div class="col-md-3">
-                                <fieldset class="form-group">
-                                    <label for="trans_upper_amt">Funding Upper Limit</label>
-                                    <input type="text" class="form-control" id="trans_upper_amt" name="trans_upper_amt"  value="" placeholder="Transaction Upper Limit" required>
-                                </fieldset>
-                            </div> --}}
                             <div class="col-md-12">
-                                
                                 <fieldset class="form-group">
                                     <label for="bank" style="display: block">Bank(s)</label>
                                     
@@ -668,6 +649,76 @@ use App\Models\BlackList;
             </div>
         </div>
     </div>
+    @if(hasAccess('admin.transaction.pin.reset'))
+    <div class="modal fade text-left" id="reset-transaction-pin" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title white" id="myModalLabel160">Reset Transaction PIN for: {{ $user->name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </div>
+                <form action="{{route('admin.transaction.pin.reset', $user->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <fieldset class="form-group">
+                                    <label for="new_transaction_pin">New Trasaction PIN</label>
+                                    <input type="text" class="form-control" name="new_transaction_pin" value="{{ old('new_transaction_pin') }}">
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-1"><span class="d-none d-sm-block">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
+    @if(hasAccess('admin.password.reset'))
+    <div class="modal fade text-left" id="reset-password" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title white" id="myModalLabel160">Reset Password for: {{ $user->name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bx bx-x"></i>
+                    </button>
+                </div>
+                <form action="{{route('admin.password.reset', $user->id)}}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <fieldset class="form-group">
+                                    <label for="new_password">New Password</label>
+                                    <input type="text" class="form-control" name="new_password" value="{{ old('new_password') }}">
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ml-1"><span class="d-none d-sm-block">Submit</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
     <div id="myModal" class="modal modalPix">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
             <img class="modal-content" id="img01">

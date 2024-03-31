@@ -180,6 +180,9 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('verify-transaction/{reference}/{provider_id?}', [PaymentController::class, 'verifyPayment'])->name('transaction.verify');
 
     Route::resource('paymentgateway', PaymentGatewayController::class);
+
+    Route::post('transaction-pin-reset/{user}', [CustomerController::class, 'resetTransactionPin'])->name('admin.transaction.pin.reset');
+    Route::post('password-reset/{user}', [CustomerController::class, 'resetPassword'])->name('admin.password.reset');
 });
 
 require __DIR__ . '/auth.php';

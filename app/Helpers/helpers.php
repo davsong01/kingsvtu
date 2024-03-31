@@ -1277,8 +1277,8 @@ if (!function_exists("announcements")) {
         function hasAccess($route)
         {
             $routes = auth()->user()->admin->rolepermissions();
-
-            if (in_array($route, $routes)) {
+            
+            if (in_array($route, $routes)|| in_array(1, auth()->user()->admin->roleIds())) {
                 return true;
             }else{
                 return false;

@@ -163,6 +163,8 @@ class RoleSeeder extends Seeder
             'product.create',
             'category.create',
             'customerlevel.create',
+            'admin.transaction.pin.reset',
+            'admin.password.reset'
         ];
 
         // RolePermission::truncate();
