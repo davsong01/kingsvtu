@@ -31,7 +31,16 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->user()->fill($request->validated());
-        auth()->user()->update(Arr::except($request->all(), ['_token']));
+
+        if(!empty($request->new_transaction_pin)){
+            $request['transaction_pin'] = base64_encode(base64_encode(base64_encode($request->new_transaction_pin)));
+        }
+
+        if (!empty($request->new_password)) {
+            $request['password'] = Hash::make($request->new_password);
+        }
+        
+        auth()->user()->update(Arr::except($request->all(), ['_token','new_password','new_transaction_pin']));
         // if ($request->user()->isDirty('email')) {
         //     $request->user()->email_verified_at = null;
         // }

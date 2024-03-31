@@ -183,6 +183,8 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
 
     Route::post('transaction-pin-reset/{user}', [CustomerController::class, 'resetTransactionPin'])->name('admin.transaction.pin.reset');
     Route::post('password-reset/{user}', [CustomerController::class, 'resetPassword'])->name('admin.password.reset');
+    Route::post('customer-update-kyc/{customer}', [CustomerController::class, 'processCustomerUpdateKycInfo'])->name('admin.customer.update.kyc');
+    
 });
 
 require __DIR__ . '/auth.php';

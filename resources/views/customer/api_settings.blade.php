@@ -44,7 +44,7 @@
                                 <div class="card-content">
                                     <div class="card-body">
                                         <p>Share your referral links with friends to earn handsome rewards
-                                            <div class="text-primary">{{ env('APP_URL') . '/register/' . auth()->user()->username }}</div>
+                                            <div class="text-primary">{{ url('/register'). '?referral='.auth()->user()->username }}</div>
                                         </p>
                                     </div>
                                 </div>

@@ -85,7 +85,8 @@
                                         <p>
                                             Share your referral links with friends to earn handsome rewards
                                         <div class="text-primary">
-                                            {{ url('/register'). '?referral='.auth()->user()->username }}</div>
+                                            {{ url('/register'). '?referral='.auth()->user()->username }}
+                                        </div>
                                         </p>
                                     </div>
                                 </div>

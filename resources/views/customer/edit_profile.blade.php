@@ -45,8 +45,8 @@
                                     <div class="card-body">
                                         <p>
                                             Share your referral links with friends to earn handsome rewards
-                                        <div class="text-primary">
-                                            {{ env('APP_URL') . '/register/' . auth()->user()->username }}</div>
+                                            <div class="text-primary">{{ url('/register'). '?referral='.auth()->user()->username }}
+                                            </div>
                                         </p>
                                     </div>
                                 </div>
@@ -136,6 +136,14 @@
                                                                                 value="{{ auth()->user()->email }}">
                                                                         </fieldset>
                                                                     </div>
+                                                                    
+                                                                    <div class="col-md-6">
+                                                                        <fieldset class="form-group">
+                                                                            <label for="new_transaction_pin">New Transaction PIN</label>
+                                                                            <input type="text" class="form-control" name="new_transaction_pin">
+                                                                        </fieldset>
+                                                                    </div>
+                                                                   
                                                                     @if (auth()->user()->type == 'customer')
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
@@ -149,6 +157,12 @@
                                                                             </fieldset>
                                                                         </div>
                                                                     @endif
+                                                                     <div class="col-md-6">
+                                                                        <fieldset class="form-group">
+                                                                            <label for="new_password">New Password</label>
+                                                                            <input type="text" class="form-control" name="new_password">
+                                                                        </fieldset>
+                                                                    </div>
                                                                 </div>
                                                                 <div class="row">
                                                                     <div class="col-md-12">
@@ -167,60 +181,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="content-body">
-                                    <!-- Nav Filled Starts -->
-                                    <section id="nav-filled">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="col-md-12">
-                                                        <div class="card-header d-flex justify-content-between align-items-center" style="padding:1.4rem 0.7rem">
-                                                            
-                                                            <div>
-                                                                <h4 class="card-title">Generate Keys</h4>
-                                                                <p>
-                                                                    Click the generate new API keys button above to generate API public and secret keys.
-                                                                    <br>NOTE: You can only view these keys once, however you can generate new public and secret keys as many times as you want.                                                                </p>
-                                                                    <button class="btn btn-danger api-key-btn">Generate New API
-                                                                        Keys</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-content">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-8">
-                                                                    <label class="label" for="">API Key</label>
-                                                                    <div class="key-field" id="api">
-                                                                        <span>{{ auth()->user()->api_key }}</span>
-                                                                        <i class="fa fa-copy text-danger copy"></i>
-                                                                    </div>
-                                                                    <label class="label" for="">Public Key</label>
-
-                                                                    <div class="key-field" id="public">
-                                                                        <span></span>
-                                                                        <i class="fa fa-copy text-primary copy"></i>
-                                                                    </div>
-                                                                    <label class="label" for="">Secret Key</label>
-
-                                                                    <div class="key-field" id="secret">
-                                                                        <span></span>
-                                                                        <i class="fa fa-copy text-primary copy"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-                                    <!-- Nav Filled Ends -->
-                                </div>
-                            </div>
-                        </div>
+                      
                     </div>
                 </section>
             </div>

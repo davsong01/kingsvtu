@@ -329,7 +329,7 @@ class DashboardController extends Controller
             "STATE" => "nullable",
             "LGA" => "nullable",
             "DOB" => "nullable",
-            "BVN" => "nullable",
+            "BVN" => "nullable|string|min:11|max:11",
             // "IDCARD" => "sometimes|image|max:500",
             "IDCARDTYPE" => "nullable"
         ]);
@@ -347,22 +347,6 @@ class DashboardController extends Controller
             }
         }
 
-        // if (!empty($request->BVN)) {
-        //     // Verify BVN first
-        //     $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
-        //     $lastname = $input['LAST_NAME'] ?? auth()->user()->lastname;
-        //     $middlename = $input['MIDDLE_NAME'] ?? auth()->user()->middlename;
-
-        //     $data = [
-        //         'name' => $firstname . ' ' . $lastname . ' ' . $middlename,
-        //         'bvn' => $input['BVN'],
-        //         'dateOfBirth' => $input['DOB'],
-        //         'mobileNo' => $input['PHONE_NUMBER']
-        //     ];
-
-        //     $verify = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyBVN($data);
-        //     dd($verify);
-        // }
         $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
         $lastname = $input['LAST_NAME'] ?? auth()->user()->lastname;
         $middlename = $input['MIDDLE_NAME'] ?? auth()->user()->middlename;
