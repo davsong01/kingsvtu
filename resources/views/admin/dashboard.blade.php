@@ -16,11 +16,10 @@
                             <a href="{{ route('customers.edit', $customer->customer_id)}}">
                             <div class="card text-center">
                                 <div class="card-content">
-                                    <div class="card-body py-1">
+                                    <div class="card-body py-1" style="min-height: 133px;">
                                         <span style="margin-top:5px"></span>
                                         <div class="text-muted line-ellipsis"><strong>Customer of the month</strong></div>
-                                        
-                                        <h1 class="text-primary text-bold-500">{{$customer->customer->user->username}}</h1>
+                                        <h4 class="text-primary text-bold-500">{{$customer->customer->user->username}}</h4>
                                         <h4 class="mb-0">{{number_format($customer->count)}}+ Transactions</h4>
                                     </div>
                                 </div>
