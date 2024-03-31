@@ -568,6 +568,35 @@ use App\Models\BlackList;
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="card bg-lighten-2 p-0 bg-dark">
+                                                        <div class="card-body">
+                                                            <div class="card-content">
+                                                                <h5 class="card-title white">
+                                                                    Password Reset
+                                                                </h5>
+                                                                <a href="" class="btn btn-danger" type="submit">Trigger Password Reset Mail</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-sm-6">
+                                                    <div class="card bg-lighten-2 p-0 bg-light">
+                                                        <div class="card-body">
+                                                            <div class="card-content">
+                                                                <h5 class="card-title white">
+                                                                    Transaction PIN Reset
+                                                                </h5>
+                                                                <form action="{{route('process.transaction.pin.reset')}}" method="post">
+                                                                    @csrf
+                                                                    <input type="hidden" type="text">
+                                                                    <button class="btn btn-danger" type="submit">Trigger Transaction PIN Reset Mail</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

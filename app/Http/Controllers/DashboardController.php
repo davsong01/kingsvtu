@@ -207,25 +207,32 @@ class DashboardController extends Controller
 
     public function processResetTransactionPin(Request $request)
     {
-        $settings = $this->settings();
-
-        $validator = Validator::make($request->all(), [
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->with('error', $validator->messages()->first());
+        if(auth()->user()->type == 'customer'){
+            $settings = getsettings();
+        
+            $validator = Validator::make($request->all(), [
+                'password' => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return back()->with('error', $validator->messages()->first());
+            }
+    
+            if (!Hash::check($request->password, auth()->user()->password)) {
+                return back()->with('error', 'Incorrect password !!!');
+            }
         }
 
-        if (!Hash::check($request->password, auth()->user()->password)) {
-            return back()->with('error', 'Incorrect password !!!');
+        if (auth()->user()->type == 'customer') {
+            $user = auth()->user();
+        }else{
+            $user = User::where('id',$request->user_id)->first();
         }
-
         $token = Str::random(60);
         $hashedToken = base64_encode(base64_encode($token));
         $expiry = Carbon::now()->addMinute(15);
 
-        TransactionPinResetToken::updateOrCreate(['user_id' => auth()->user()->id, 'status' => 'pending'], [
+        TransactionPinResetToken::updateOrCreate(['user_id' =>$user->id ?? auth()->user()->id, 'status' => 'pending'], [
             'user_id' => auth()->user()->id,
             'token' => $token,
             'expiry' => $expiry,
@@ -233,12 +240,12 @@ class DashboardController extends Controller
 
         // Send email
         $subject = "You requested a Transaction PIN Reset Link";
-        $body = '<p>Hello! ' . auth()->user()->firstname . '</p>';
+        $body = '<p>Hello! ' . $user->firstname ?? auth()->user()->firstname . '</p>';
         $reset_link = url('/') . "/confirm_reset_pin?token=" . $hashedToken;
         $body .= '<p style="line-height: 2.0;">Please <strong>login</strong> to your account on ' . config('app.name') . ' and click the button below to reset your transaction pin. <br> <a class="btn btn-info" target="_blank" href="' . $reset_link . '" style="position: margin:5px; relative;margin-bottom:50px;color: #fff;font-weight: 500;padding: 8px 20px;font-size: 13px;line-height: 24px;letter-spacing: 0.01em;border-radius: 4px;border: 1px solid;transition: all .4s ease;background:#950eb3;text-align: center;white-space: nowrap;vertical-align: middle;text-decoration:none">RESET PIN</a><br/><br><strong>Please note that this link expires after ' . $expiry->format('jS F, Y, h:iA') . '.</strong><br><br>If you did not request a Transaction PIN change, Kindly notify us via WhatsApp us via whatsapp( ' . $settings->whatsapp_no . ') immediately.<b><hr/><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
-
+        
         logEmails(auth()->user()->email, $subject, $body);
-
+        dd($subject, $body);
         return back()->with('message', 'We have sent you a Transaction Pin reset email, please check your email and follow the instructions to reset Transaction PIN');
     }
 

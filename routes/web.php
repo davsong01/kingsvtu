@@ -44,7 +44,7 @@ Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackRespon
 Route::get( 'cron/sendemails', [Controller::class, 'cronSendEmails']);
 Route::get('generate-api-keys', function(){
     $users = User::all();
-
+    
     foreach($users as $user){
         if(empty($user->api_key)){
             $user->update([
