@@ -57,7 +57,7 @@ class ApiResponseService
 
     public function getCategories(){
         try {
-            $categories = Category::where('status', 'active')->orderBy('order', 'ASC')->select('display_name','status','slug', 'description')->get();
+            $categories = Category::where('status', 'active')->orderBy('order', 'ASC')->select('display_name','status','slug', 'description','icon','unique_element')->get();
             return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $categories);
         } catch (\Throwable $err) {
             $errorMessage = env("ENT") == "live" ? "Internal Server Exception" : $err->getMessage();
