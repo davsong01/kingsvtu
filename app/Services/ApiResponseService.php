@@ -57,7 +57,7 @@ class ApiResponseService
 
     public function getCategories(){
         try {
-            $categories = Category::where('status', 'active')->orderBy('order', 'ASC')->select('display_name','status','slug', 'description','icon','unique_element')->get();
+            $categories = Category::where('status', 'active')->orderBy('order', 'ASC')->select('display_name','status','slug', 'description','icon','unique_element','discount_type')->get();
             return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $categories);
         } catch (\Throwable $err) {
             $errorMessage = env("ENT") == "live" ? "Internal Server Exception" : $err->getMessage();
@@ -76,7 +76,7 @@ class ApiResponseService
             return $this->responseService->formatServiceResponse("error", '', ['Invalid slug provided'], null);
         }
         
-        $products = $category->products->select('id', 'display_name', 'slug', 'description', 'has_variations');
+        $products = $category->products->select('id', 'display_name', 'slug', 'description', 'has_variations','min', 'max', 'system_price AS price', 'allow_quantity', 'quantity_graduation', 'fixed_price', 'allow_subscription_type', 'description');
         
         $data = [
             'display_name' => $category->display_name,
