@@ -186,6 +186,7 @@ class CustomerController extends Controller
     public function processCustomerUpdateKycInfo(Request $request, Customer $customer)
     {
         $input = $this->validate($request, [
+            "BVN" => "nullable",
             "FIRST_NAME" => "nullable",
             "MIDDLE_NAME" => "nullable",
             "LAST_NAME" => "nullable",
@@ -194,49 +195,37 @@ class CustomerController extends Controller
             "STATE" => "nullable",
             "LGA" => "nullable",
             "DOB" => "nullable",
-            "BVN" => "nullable",
-            "IDCARDTYPE" => "nullable"
+            "IDCARDTYPE" => "nullable",
+            "IDCARD" => "nullable",
         ]);
-
-        $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
+       
+        $instantVerify = ['BVN','FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
         $user = $customer->user;
-
+        
         foreach ($input as $key => $value) {
-            if (in_array($key, $instantVerify)) {
-                app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'verified');
-            } else {
-                app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'unverified');
-            }
+            app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'verified');
+            // if (in_array($key, $instantVerify)) {
+            // } else {
+            //     app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'unverified');
+            // }
         }
 
         $firstname = $input['FIRST_NAME'] ?? $user->firstname;
         $lastname = $input['LAST_NAME'] ?? $user->lastname;
         $middlename = $input['MIDDLE_NAME'] ?? $user->middlename;
 
-       $user->update([
+        $user->update([
             "firstname" => $firstname,
             "middlename" => $middlename,
             "lastname" => $lastname,
         ]);
-
+       
         // verify BVN automatically
         app('App\Http\Controllers\DashboardController')->updateKycData('BVN', $request->BVN,$customer->id, 'verified');
-
+       
         $customer->update([
             "kyc_status" => 'verified',
         ]);
-
-        // Create reserved account
-        $name = $firstname . ' ' . $lastname . ' ' . $middlename;
-
-        $data = [
-            'BVN' => $request->BVN ?? kycStatus('BVN', $customer->id)['value'],
-            'customerName' => $name,
-            'accountName' => $firstname,
-            'customerEmail' => $user->email,
-            'customer_id' => $user->customer->id,
-            'getAllAvailableBanks' => true,
-        ];
 
         return back()->with('message', 'KYC Update completed');
         

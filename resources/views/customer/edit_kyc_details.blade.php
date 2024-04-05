@@ -173,7 +173,7 @@
                                                                 @if(kycStatus('IDCARD', auth()->user()->customer->id)['status'] == 'verified')
                                                                 <div class="col-md-6 mb-2"> 
                                                                     <label for="idcard">ID CARD</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                                    <input autocomplete="false" type="text" class="form-control" value="{{(kycStatus('IDCARDTYPE', auth()->user()->customer->id)['value'] ) }}" disabled>
+                                                                    <input type="text" class="form-control" value="{{(kycStatus('IDCARDTYPE', auth()->user()->customer->id)['value'] ) }}" disabled>
                                                                 </div>
                                                                 @else 
                                                                     <div class="col-md-6">   
@@ -191,7 +191,7 @@
                                                                     <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         <label for="IDCARD">ID CARD <small style="font-weight: bold;color:red">(Not more that 500 kilobytes)</small> </label>
-                                                                        <input type="file" name="IDCARD"  class="form-control" required>
+                                                                        <input type="file" name="IDCARD" class="form-control" required>
                                                                     </fieldset>
                                                                 </div>
                                                                 @endif

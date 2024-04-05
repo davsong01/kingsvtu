@@ -73,10 +73,14 @@ class ApiResponseService
         ])->where('status', 'active')->where('slug', $slug)->first();
 
         if (empty($category)) {
-            return $this->responseService->formatServiceResponse("error", '', ['Invalid slug provided'], null);
+            return $this->responseService->formatServiceResponse("error", '', ['Invalid Category slug provided'], null);
+        }
+
+        if ($category->status == 'inactive') {
+            return $this->responseService->formatServiceResponse("error", '', ['Category is inactive'], null);
         }
         
-        $products = $category->products->select('id', 'display_name', 'slug', 'description', 'has_variations','min', 'max', 'system_price AS price', 'allow_quantity', 'quantity_graduation', 'fixed_price', 'allow_subscription_type', 'description');
+        $products = $category->products->select('id', 'display_name', 'slug', 'description', 'has_variations','min', 'max', 'system_price', 'allow_quantity', 'quantity_graduation', 'fixed_price', 'allow_subscription_type', 'description');
         
         $data = [
             'display_name' => $category->display_name,

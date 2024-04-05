@@ -283,7 +283,7 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('FIRST_NAME', $user->customer->id)['status'] == 'verified')
                                                                 <label for="FIRST_NAME">First Name</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                                <input type="text" class="form-control" value="{{ kycStatus('FIRST_NAME', $user->customer->id)['value'] }}" disabled>
+                                                                <input type="text" class="form-control" value="{{ kycStatus('FIRST_NAME', $user->customer->id)['value'] }}">
                                                                 @else
                                                                 <label for="FIRST_NAME">First Name</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="text" name="FIRST_NAME" class="form-control" value="{{ $user->firstname }}" required>
@@ -393,10 +393,10 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('IDCARDTYPE', $user->customer->id)['status'] == 'verified')
                                                                 <label for="IDCARDTYPE">ID Card Type</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                                <input type="text" class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}">
+                                                                <input type="text" disabled class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}">
                                                                 @else
                                                                 <label for="IDCARDTYPE">ID Card Type</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                <input type="date" name="IDCARDTYPE"  class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}" required>
+                                                                <input type="file" name="IDCARDTYPE"  class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}" required>
                                                                 @endif
                                                             </fieldset>
                                                         </div>
@@ -407,8 +407,7 @@ use App\Models\BlackList;
                                                                 <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value'])}}" onclick="zoomImg(this)">
                                                                 @else
                                                                 <label for="IDCARD">ID Card</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                
-                                                                <input type="date" name="IDCARD"  class="form-control" value="{{ kycStatus('IDCARD', $user->customer->id)['value'] }}" required>
+                                                                <input type="file" name="IDCARD"  class="form-control" value="{{ kycStatus('IDCARD', $user->customer->id)['value'] }}" required>
                                                                 @endif
                                                             </fieldset>
                                                         </div>
@@ -416,7 +415,7 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('BVN', $user->customer->id)['status'] == 'verified')
                                                                 <label for="bvn">BVN</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                                <input autocomplete="false" type="text" class="form-control" value="{{ kycStatus('BVN', $user->customer->id)['value'] }}">
+                                                                <input type="text" class="form-control" name="BVN" value="{{ kycStatus('BVN', $user->customer->id)['value'] }}">
                                                                 @else
                                                                 <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>

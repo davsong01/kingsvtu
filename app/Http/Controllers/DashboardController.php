@@ -388,11 +388,24 @@ class DashboardController extends Controller
     
     public function updateKycData($key, $value, $customer_id, $status)
     {
+        KycData::updateOrCreate([
+            'customer_id' => $customer_id,
+            'key' => $key,
+            // 'value' => $value,
+        ], [
+            'customer_id' => $customer_id,
+            'key' => $key,
+            'value' => $value,
+            'status' => $status
+        ]);
+        
         $check = KycData::where(['customer_id' => $customer_id, 'key' => $key, 'status' => 'verified'])->first();
+        
         if (!$check) {
             KycData::updateOrCreate([
                 'customer_id' => $customer_id,
                 'key' => $key,
+                'value' => $value,
             ], [
                 'customer_id' => $customer_id,
                 'key' => $key,
@@ -400,7 +413,7 @@ class DashboardController extends Controller
                 'status' => $status
             ]);
         }
-
+       
         return;
     }
 
