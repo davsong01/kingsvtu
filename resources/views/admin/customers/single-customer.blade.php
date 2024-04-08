@@ -71,11 +71,17 @@ use App\Models\BlackList;
                                             </svg>
                                         </div>
                                     @endif
-                                    <h5 class="card-title mt-1">
+                                    <h5 class="card-title mt-1" style="text-align: center !important;">
                                         {{ ucfirst($user->firstname) . ' ' . ucfirst($user->middlename) . ' ' . ucfirst($user->lastname) }}
                                         ({{ $user->customer->customer_level ?? 'Level 1' }})</h5>
-                                        Email: <br><a href="mailto:{{ $user->email }}">{{ $user->email }}</a> <br>
-                                        Phone: <br>{{ $user->phone }}
+                                        <p  style="text-align: center !important;">
+                                            Email: <br><a href="mailto:{{ $user->email }}">{{ $user->email }}</a> <br>
+                                            Phone: <br>{{ $user->phone }} <br>
+                                            @if($user->customer->api_access == 'active')
+                                            <button class="btn btn-success btn-sm">API (active)</button>
+                                            @endif
+                                        </p>
+
                                 </div>
                             </div>
                             <div class="col-sm-10">

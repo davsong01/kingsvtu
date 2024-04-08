@@ -125,8 +125,9 @@ class CustomerController extends Controller
                     'status' => 'success',
                     'descr' => 'Level Upgrade from ' . $user->customer->level->name . ' to ' . $level->name . ' was successful',
                 ]);
-                $user->customer->api_access = 'active';
             }
+            
+            $user->customer->api_access = 'active';
             $user->customer->save();
         }
         return back()->with('message', 'Update successful!');
