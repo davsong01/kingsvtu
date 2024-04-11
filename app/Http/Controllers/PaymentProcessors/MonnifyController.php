@@ -171,12 +171,13 @@ class MonnifyController extends Controller
                         'status' => 'success',
                         'data' => '',
                     ];
+                }else{
+                    $data = [
+                        'status' => 'failed',
+                        'data' => $response['responseMessage'] ?? 'No Accounts set by Provider',
+                    ];
                 }
 
-                $data = [
-                    'status' => 'failed',
-                    'data' => $response['responseMessage'] ?? 'No Accounts set by Provider',
-                ];
             } else {
                 $data = [
                     'status' => 'failed',

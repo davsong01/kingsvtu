@@ -611,15 +611,6 @@ class EasyAccessController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-
-            if (env('ENT') == 'local') {
-                // $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
-
-                // $response = '{"success":"true","message":"Data Purchase was Successful","network":"GLO","mobileno":"07058075235","dataplan":"500MB","amount":110,"balance_before":"22760","balance_after":22650,"true_response":null,"transaction_date":"22-03-2024 08:47:37 am","reference_no":"DT13950b79483553","client_reference":"2024032208472598067","status":"Successful","auto_refund_status":null}';
-                
-                // $response = json_decode($response, true);
-            }
-
             $result = $response;
             
             if (empty ($response)) {
@@ -670,6 +661,11 @@ class EasyAccessController extends Controller
                 }
             }
 
+            // Sandbox inclusion
+            if (env('SANDBOX') == 'yes') {
+                return $this->sandboxResponse();
+            }
+            // End sandbox inclusion
             $format = [
                 'status' => $status,
                 'user_status' => $user_status ?? null,
@@ -703,22 +699,6 @@ class EasyAccessController extends Controller
     
         return $format;
     }
-
-
-
-    // public function fetchAndUpdateBalance($api)
-    // {
-    //     $newBalance = $this->balance($api, 'no-format');
-
-    //     if (isset($newBalance['status']) && $newBalance['status'] == 'success') {
-    //         $api->update([
-    //             'balance' => $newBalance['balance'],
-    //         ]);
-    //     }
-
-    //     return $api;
-    // }
-
     public function balance($api, $no_format = null)
     {
         try {
@@ -830,6 +810,37 @@ class EasyAccessController extends Controller
                 $status_code = 0;
             }
 
+
+            // Sandbox inclusion
+            if (env('SANDBOX') == 'yes') {
+                if ($payload['mobileno'] == '08180010243') {
+                    $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
+
+                    $result = json_decode($response, true);
+
+                    $pinsx = [];
+                    if (isset($result) && !empty($result)) {
+                        foreach ($result as $key => $value) {
+                            if (strpos($key, 'pin') !== false) {
+                                $pinsx[] = $value;
+                            }
+                        }
+                    }
+
+                    $pins = (isset($pinsx) && !empty($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
+                    $true_response = $response['true_response'] ?? ($result['message'] ?? '');
+                } else {
+                    $user_status = 'failed';
+                    $status = 'failed';
+                    $api_response = $response;
+                    $description = 'Transaction Failed';
+                    $message = 'Something went wrong, please try again later';
+                    $payload = $payload;
+                    $status_code = 0;
+                }
+            }
+            // End sandbox inclusion
+
             $format = [
                 'status' => $status,
                 'user_status' => $user_status ?? null,
@@ -853,5 +864,43 @@ class EasyAccessController extends Controller
         }
 
         return $format;
+    }
+
+    public function sandboxResponse(){
+        if ($payload['mobileno'] == '08180010243') {
+            $response = '{"success": "true","message": "Purchase was Successful","network": "MTN","pin": "408335193S","pin2": "184305851S","dataplan": "1.5GB","amount": 574,"balance_before": "27833","balance_after": 27259,"transaction_date": "07-04-2023 07:57:47 pm","reference_no": "ID5345892220","client_reference": "client_ref84218868382855","status": "Successful","auto_refund_status": "success"}';
+
+            $result = json_decode($response, true);
+
+            $pinsx = [];
+            if (isset($result) && !empty($result)) {
+                foreach ($result as $key => $value) {
+                    if (strpos($key, 'pin') !== false) {
+                        $pinsx[] = $value;
+                    }
+                }
+            }
+
+            $pins = (isset($pinsx) && !empty($pinsx)) ? 'PINS: ' . implode(', ', $pinsx) : '';
+            $true_response = $response['true_response'] ?? ($result['message'] ?? '');
+
+            $user_status = 'delivered';
+            $status = 'success';
+            $api_response = $response;
+            $message = $true_response;
+            // $message = $true_response;
+            $description = 'Purchase was succesful';
+            $payload = $payload;
+            $status_code = 1;
+            $extras = $pins;
+        } else {
+            $user_status = 'failed';
+            $status = 'failed';
+            $api_response = $response;
+            $description = 'Transaction Failed';
+            $message = 'Something went wrong, please try again later';
+            $payload = $payload;
+            $status_code = 0;
+        }
     }
 }
