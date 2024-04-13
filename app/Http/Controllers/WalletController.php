@@ -27,7 +27,7 @@ class WalletController extends Controller
             'reason' => $data['reason'] ?? null,
             'payment_method' => $data['payment_method'] ?? null,
         ]);
-
+       
         return $wallet;
     }
 
