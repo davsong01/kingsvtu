@@ -15,6 +15,7 @@ class ExternalApiController extends Controller
 
     public function toJson($response)
     {
+
         if ($response['status'] == "success") {
             return response()->json($response, 200);
         } elseif ($response['status'] == "failed") {
@@ -79,8 +80,15 @@ class ExternalApiController extends Controller
         return $this->toJson($this->apiResponseService->initializeTransaction($request));
     }
 
-    public function queryTransaction($request_id){
+    public function queryTransaction(Request $request){
+        $validator = Validator::make($request->all(), [
+            "request_id" => "required",
+        ]);
 
+        if ($validator->fails()) {
+            return $this->toJson($this->responseService->formatServiceResponse("error", "", $validator->errors()->all(), null));
+        }
+        return $this->toJson($this->apiResponseService->query($request->request_id));
     }
     
 }

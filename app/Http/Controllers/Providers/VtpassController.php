@@ -320,7 +320,7 @@ class VtpassController extends Controller
                 'billersCode' => $data['request']['unique_element'],
                 'url' => $url
             ];
-
+            
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
             
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {

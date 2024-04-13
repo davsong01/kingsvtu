@@ -36,14 +36,13 @@
                                             class="font-medium-2 mr-50 text-bold-600">{!! getSettings()->currency. number_format($debit) !!}</s!!an><br><span
                                             class="text-danger">Debit</span>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="col-md-12">
-                            <form action="{{ route('admin.walletfundinglog') }}" method="GET">
+                            <form action="{{ route('admin.walletlog') }}" method="GET">
                                 <div class="row">
                                     <div class="col-md-4">
                                         <fieldset class="form-group">
