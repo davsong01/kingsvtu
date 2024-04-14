@@ -80,11 +80,32 @@ class ApiResponseService
             return $this->responseService->formatServiceResponse("error", '', ['Category is inactive'], null);
         }
         
-        $products = $category->products->select('id', 'display_name', 'slug', 'description', 'has_variations','min', 'max', 'system_price', 'allow_quantity', 'quantity_graduation', 'fixed_price', 'allow_subscription_type', 'description');
-        
+        $products = $category->products;
+    
+        $productsM = [];
+
+        foreach($products as $product){
+            $array[] = [
+                'display_name' => $product['display_name'],
+                'slug' => $product['slug'],
+                'has_variations' => $product['has_variations'],
+                'min' => $product['min'], 
+                'max' => $product['max'],
+                'system_price' => $product['system_price'],
+                'allow_quantity' => $product['allow_quantity'], 
+                'quantity_graduation' => $product['quantity_graduation'], 
+                'fixed_price' => $product['fixed_price'],
+                'allow_subscription_type' => $product['allow_subscription_type'], 
+                'description' => $product['description'],
+                'image' => isset($product['image']) ?  url('/') . '/' . $product['image'] : ''
+            ];
+
+            $productsM = $array;
+        }
+
         $data = [
             'display_name' => $category->display_name,
-            'products' => $products,
+            'products' => $productsM,
         ];
 
         return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], $data);        
