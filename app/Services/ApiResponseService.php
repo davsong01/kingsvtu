@@ -367,11 +367,13 @@ class ApiResponseService
         }
 
         // Log Transaction Email
+        
         $data = [
             'status' => $transaction->status,
             'request_id' => $transaction->reference_id,
             "transaction_id" => $transaction->transaction_id,
-            'api_status' => $transaction->user_status,
+            'api_status' => $transaction->status,
+            // 'api_status' => $transaction->user_status,
             'amount' => $transaction->amount,
             'discount' => $transaction->discount,
             'total_amount' => $transaction->total_amount,
