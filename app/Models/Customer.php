@@ -38,4 +38,9 @@ class Customer extends Model
     {
         return $this->hasMany(TransactionLog::class);
     }
+
+    public function shop_request()
+    {
+        return $this->hasOne(ShopRequests::class, 'customer_id')->whereIn('status',['pending','approved']);
+    }
 }

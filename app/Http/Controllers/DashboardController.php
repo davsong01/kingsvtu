@@ -9,6 +9,7 @@ use App\Models\Customer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
+use App\Models\CustomerLevelBenefit;
 use App\Models\PaymentGateway;
 use App\Models\TransactionLog;
 use Illuminate\Support\Carbon;
@@ -81,8 +82,9 @@ class DashboardController extends Controller
 
     public function showUpgradeForm()
     {
-        $levels = CustomerLevel::orderBy('order', 'ASC')->where('id', '>', auth()->user()->customer->level->id)->get();
-        return view('customer.upgrade_level', compact('levels'));
+        $levels = CustomerLevel::orderBy('order', 'ASC')->get();
+        $benefits = CustomerLevelBenefit::all();
+        return view('customer.upgrade_level', compact('levels', 'benefits'));
     }
 
     public function showLoadWalletPge()

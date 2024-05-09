@@ -22,17 +22,59 @@
                         <div class="card">
                                 <div class="content-body">
                                 <!-- Nav Filled Starts -->
-                                <section id="nav-filled">
+                                <section id="headers">
                                     <div class="row">
-                                        <div class="col-md-9">
+                                        <div class="col-12">
                                             <div class="card">
-                                                <div class="col-md-12"> 
-                                                    <div class="card-header" style="padding:1.4rem 0.7rem">
-                                                        <h4 class="card-title">Upgrade Level</h4>
-                                                        @include('layouts.alerts')
-                                                    </div>
+                                                <div class="card-header">
+                                                    <h4 class="card-title">Upgrade Level</h4>
+                                                    @include('layouts.alerts')
                                                 </div>
                                                 <div class="card-content">
+                                                    @if($benefits->count() > 0)
+                                                    <div class="card-body card-dashboard">
+                                                        <p class="card-text">Please go through the benefits attached to the levels below</p>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-striped table-bordered complex-headers">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="align-top">Benefits</th>
+                                                                        @foreach ($levels as $level)
+                                                                        <th class="align-top">{{ $level->name }}</th>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                    
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style="color:black">Price</td>
+                                                                        @foreach ($levels as $level)
+                                                                        <td>{!! getSettings()['currency'] !!}{{$level->upgrade_amount}}</td>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                    @foreach ($benefits as $benefit)
+                                                                    <tr>
+                                                                        <td style="color:black">{!! $benefit->content !!}</td>
+                                                                        @foreach ($levels as $level)
+                                                                        <td>
+                                                                            {{in_array($level->id, $benefit->customer_levels) ? 'Yes' : 'No'}}
+                                                                        </td>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                    @endforeach
+                                                                    <tr>
+                                                                        <td style="color:black"></td>
+                                                                        @foreach ($levels as $level)
+                                                                        <td>
+                                                                            {{ $level->extra_benefit }}
+                                                                        </td>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                    
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
                                                     <div class="card-body">
                                                         <form action="{{route('customer.level.upgrade.process')}}" method="POST" autocomplete="off">
                                                             @csrf
@@ -43,7 +85,9 @@
                                                                         <select class="form-control" name="level" id="level" required>
                                                                         <option value="">Select</option>
                                                                         @foreach ($levels as $level)
-                                                                            <option value="{{ $level->id  }}" {{ auth()->user()->customer->level->id == $level->id ? 'selected' : ''}}>{{ $level->name }}({!!getSettings()['currency']!!}{{ $level->upgrade_amount }})</option>
+                                                                            @if($level->id > auth()->user()->customer->level->id)
+                                                                                <option value="{{ $level->id  }}" {{ auth()->user()->customer->level->id == $level->id ? 'selected' : ''}}>{{ $level->name }}({!!getSettings()['currency']!!}{{ $level->upgrade_amount }})</option>
+                                                                            @endif
                                                                         @endforeach
                                                                     </select>
                                                                     </fieldset>
@@ -53,15 +97,13 @@
                                                             </div>
                                                         </form>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            {!! getSettings()->google_ad_code !!}
-                                        </div>
                                     </div>
                                 </section>
-                                <!-- Nav Filled Ends -->
+                                
                             </div>
                         </div>
                     </div>

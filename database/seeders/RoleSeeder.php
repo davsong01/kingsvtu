@@ -45,6 +45,8 @@ class RoleSeeder extends Seeder
             'KYC Management',
             'Payment Gateway Settings',
             'General Settings',
+            'Level Benefits',
+            'Shop Creation Requests'
         ];
 
         $permissions = [
@@ -94,6 +96,12 @@ class RoleSeeder extends Seeder
             'customerlevel.edit',
             'customerlevel.update',
             'customerlevel.destroy',
+
+            'levelbenefit.show',
+            'levelbenefit.show',
+            'levelbenefit.edit',
+            'levelbenefit.update',
+            'levelbenefit.destroy',
 
             'duplicate.product',
             'api.balance',
@@ -164,7 +172,11 @@ class RoleSeeder extends Seeder
             'category.create',
             'customerlevel.create',
             'admin.transaction.pin.reset',
-            'admin.password.reset'
+            'admin.password.reset',
+            'customer.shop.requests',
+            'approve.shop.requests',
+            'decline.shop.requests',
+            'delete.shop.request'
         ];
 
         // RolePermission::truncate();

@@ -35,6 +35,7 @@ class CustomerLevelController extends Controller
             'make_api_level' => 'required',
             'order' => 'required|unique:customer_levels,order',
             'upgrade_amount' => 'required',
+            'extra_benefit' => 'nullable',
         ]);
 
         CustomerLevel::updateOrCreate([
@@ -42,6 +43,7 @@ class CustomerLevelController extends Controller
             'make_api_level' => $request->make_api_level,
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
+            'extra_benefit' => $request->extra_benefit,
         ]);
 
         return redirect(route('customerlevel.index'))->with('message', 'Created successfully');
@@ -73,6 +75,7 @@ class CustomerLevelController extends Controller
             'order' => 'required|unique:customer_levels,order,' . $customerlevel->id,
             'upgrade_amount' => 'required',
             'make_api_level' => 'required',
+            'extra_benefit' => 'required',
         ]);
 
         $customerlevel->update([
@@ -80,6 +83,7 @@ class CustomerLevelController extends Controller
             'make_api_level' => $request->make_api_level,
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
+            'extra_benefit' => $request->extra_benefit,
         ]);
 
         return redirect(route('customerlevel.index'))->with('message', 'Updated successfully');
@@ -93,6 +97,7 @@ class CustomerLevelController extends Controller
         if ($customerlevel->customers->count() > 0) {
             return back()->with('error', 'Level cannot be deleted because it has customers');
         } else {
+            $customerlevel->delete();
             return back()->with('message', 'Level deleted successfully');
         }
     }

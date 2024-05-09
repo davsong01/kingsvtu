@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KycDataController;
 use App\Http\Controllers\PaymentController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\CustomerLevelController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ReservedAccountController;
+use App\Http\Controllers\CustomerLevelBenefitController;
 use App\Http\Controllers\ReservedAccountNumberController;
 
 /*
@@ -89,7 +91,9 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
         Route::get('downlines/{id?}', [DashboardController::class, 'downlines'])->name('downlines');
         Route::get('alldownlines', [DashboardController::class, 'allDownlines'])->name('alldownlines');
         Route::get('api-settings', [DashboardController::class, 'apiSettings'])->name('api.settings');
-        
+
+        Route::get('customer-shop-create', [ShopController::class, 'create'])->name('customer.shop.create');
+        Route::post('customer-shop-store', [ShopController::class, 'store'])->name('customer.shop.store');        
     });
     Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
     Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
@@ -152,6 +156,12 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('customer/edit/{id}', [CustomerController::class, 'singleCustomer'])->name('customers.edit');
     Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers.update');
     Route::resource('customerlevel', CustomerLevelController::class);
+    Route::resource('levelbenefit', CustomerLevelBenefitController::class);
+    Route::get('customer-shop-requests', [ShopController::class, 'shopRequests'])->name('customer.shop.requests');        
+    Route::get('approve-customer-shop-requests/{shoprequest}', [ShopController::class, 'approveRequests'])->name('approve.shop.requests');        
+    Route::get('decline-customer-shop-requests/{shoprequest}', [ShopController::class, 'declineRequests'])->name('decline.shop.requests');        
+    Route::get('delete-customer-shop-requests/{shoprequest}', [ShopController::class, 'deleteRequests'])->name('delete.shop.requests');        
+
 
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');

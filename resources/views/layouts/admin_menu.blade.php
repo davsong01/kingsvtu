@@ -136,6 +136,20 @@
                                         data-i18n="Input Groups">Customer Levels</span></a>
                             </li>
                         @endif
+                        @if (in_array('levelbenefit.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
+                            <li class="{{ Route::is('levelbenefit.*') ? 'active' : '' }}"><a
+                                    href="{{ route('levelbenefit.index') }}"><i
+                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
+                                        data-i18n="Input Groups">Level Benefits</span></a>
+                            </li>
+                        @endif
+                        @if (in_array('customer.shop.requests', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
+                            <li class="{{ Route::is('customer.shop.requests') ? 'active' : '' }}"><a
+                                    href="{{ route('customer.shop.requests') }}"><i
+                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
+                                        data-i18n="Input Groups">Shop Creation Requests</span></a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
