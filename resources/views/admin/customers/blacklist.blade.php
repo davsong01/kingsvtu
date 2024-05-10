@@ -60,7 +60,7 @@
             </section>
         </div>
     </div>
-
+    @endsection
     @section('page-script')
         <script>
             $('.custom-control-input').on('change', function toggleStatus () {
