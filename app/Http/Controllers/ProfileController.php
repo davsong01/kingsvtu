@@ -84,7 +84,7 @@ class ProfileController extends Controller
             'public_key' => Hash::make($public),
             'secret_key' => Hash::make($secret),
         ]);
-
+        
         return [
             'code' => 1,
             'data' => [

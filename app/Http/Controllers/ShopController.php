@@ -79,7 +79,7 @@ class ShopController extends Controller
             $details['json'] = Hash::make(env('MULTI_SHOP_KEY'));
             // Send details
             $response = $this->basicApiCall($url, $details, []);
-
+            
             // Update status 
             if(!empty($response['status']) && $response['status'] == 'success'){
                 $shoprequest->update([

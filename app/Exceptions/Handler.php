@@ -21,10 +21,32 @@ class Handler extends ExceptionHandler
     /**
      * Register the exception handling callbacks for the application.
      */
+    public function render($request, \Throwable $exception)
+    {
+        if ($exception instanceof TokenMismatchException) {
+            // Handle CSRF token mismatch (419 error) here
+            return response()->view('errors.404', [], 404);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            // Handle 404 errors here
+            return response()->view('errors.404', [], 404);
+        }
+
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            // Handle Method Not Allowed errors here
+            return response()->view('errors.404', [], 405);
+        }
+
+        return parent::render($request, $exception);
+    }
+
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
             //
         });
     }
+
+
 }
