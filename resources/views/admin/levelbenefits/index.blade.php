@@ -21,7 +21,7 @@
                         <div class="col-12">
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a href="/"><i class="bx bx-home-alt"></i></a>
+                                    <li class="breadcrumb-item"><a href="{{ route('dashboard', request()->array)}}"><i class="bx bx-home-alt"></i></a>
                                     </li>
                                     <li class="breadcrumb-item"><a href="{{ route('levelbenefit.index') }}">Customer
                                             Levels Benefits</a>
@@ -61,14 +61,18 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    @if($benefits->count() > 0)
                                                     @foreach ($benefits as $level)
                                                         <tr>
                                                             <td>{{ $level->title }}</td>
-                                                            <td>@foreach($levels as $l)
-                                                                @if(in_array($l->id, $level->customer_levels))
-                                                                {{$l->name}}<strong style="color:red"> | </strong>
+                                                            <td>
+                                                                @if($levels->count() > 0)
+                                                                    @foreach($levels as $l)
+                                                                    @if(in_array($l->id, $level->customer_levels))
+                                                                    {{$l->name}}<strong style="color:red"> | </strong>
+                                                                    @endif
+                                                                    @endforeach
                                                                 @endif
-                                                                @endforeach
                                                             @if(hasAccess('levelbenefit.edit') || hasAccess('levelbenefit.destroy'))
                                                             <td>
                                                                 @if(hasAccess('levelbenefit.edit'))
@@ -96,6 +100,7 @@
                                                             @endif
                                                         </tr>
                                                     @endforeach
+                                                    @endif
                                                 </tbody>
 
                                             </table>

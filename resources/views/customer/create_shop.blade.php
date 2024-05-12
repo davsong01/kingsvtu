@@ -64,7 +64,7 @@
                                                             Prior to completing the accompanying form, kindly review the outlined steps: <br>
                                                             <strong>STEPS FOR ESTABLISHING YOUR NEW STORE</strong>
                                                             <ol>
-                                                                <li>Provide your shop particulars. Your shop slug, serving as the subdomain for your shop, should be included. Note that spaces and special characters will be excluded. For instance, your shop could be accessed via {{url('/')}}/{shop_slug}</li>
+                                                                <li>Provide your shop particulars. Your shop slug, serving as the subdomain for your shop, should be included. Note that spaces and special characters will be excluded. For instance, your shop could be accessed via {{ env('SHOPS_BASE_URL')}}/{shop_slug}</li>
                                                                 <li>Furnish Shop Admin details.</li>
                                                                 <li>Submit your information.</li>
                                                                 <li>Following these steps, an administrator will review your shop request, and you will subsequently receive an email notification after the review. </li>
