@@ -68,7 +68,10 @@
                                                             <td>
                                                                 @if($levels->count() > 0)
                                                                     @foreach($levels as $l)
-                                                                    @if(in_array($l->id, $level->customer_levels))
+                                                                    @php
+                                                                        $customer_levels = $level->customer_levels ?? [];
+                                                                    @endphp
+                                                                    @if(in_array($l->id, $customer_levels ?? []))
                                                                     {{$l->name}}<strong style="color:red"> | </strong>
                                                                     @endif
                                                                     @endforeach

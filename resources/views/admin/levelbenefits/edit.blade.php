@@ -101,10 +101,13 @@
                                                     </fieldset>
                                                 </div>
                                                 @foreach ($levels as $level)
+                                                @php
+                                                    $customer_levels = $levelbenefit->customer_levels ?? [];
+                                                @endphp
                                                 <div class="col-md-4">
                                                     <fieldset class="form-group">
                                                         <div class="checkbox checkbox-shadow checkbox-sm selectAll mr-50">
-                                                            <input type="checkbox" name="customer_levels[]" id="{{$level->id}}" value="{{$level->id}}" {{in_array($level->id, $levelbenefit->customer_levels) ? 'checked' : ''}}>
+                                                            <input type="checkbox" name="customer_levels[]" id="{{$level->id}}" value="{{$level->id}}" {{in_array($level->id, $customer_levels) ? 'checked' : ''}}>
                                                             <label for="{{$level->id}}">{{$level->name}}</label>
                                                         </div>
                                                     </fieldset>
