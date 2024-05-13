@@ -66,7 +66,7 @@
                                                                         <td style="color:black"></td>
                                                                         @foreach ($levels as $level)
                                                                         <td>
-                                                                            {{ $level->extra_benefit }}
+                                                                            {!! $level->extra_benefit !!}
                                                                         </td>
                                                                         @endforeach
                                                                     </tr>

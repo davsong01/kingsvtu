@@ -31,7 +31,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h4 class="card-title">Customer Level Benefit</h4>
-                                    <p style="color:red">This controls the customer level benefits shows as a table on the level upgrade page. Please enter content and select approprait customer level to active for this content.</p>
+                                    <p style="color:red">This controls the customer level benefits shows as a table on the level upgrade page. Please enter content and select appropraite customer level to active for this content.</p>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">

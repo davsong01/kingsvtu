@@ -70,8 +70,8 @@ class ShopController extends Controller
         $details['merchant_name'] = $customer->user->firstname . ' '. $customer->user->lastname;
 
         $details['api_key'] = $customer->user->api_key;
-        $details['secret_key'] = $customer->user->secret_key;
-        $details['public_key'] = $customer->user->public_key;
+        // $details['secret_key'] = $customer->user->secret_key;
+        // $details['public_key'] = $customer->user->public_key;
 
         try {
             DB::beginTransaction();
