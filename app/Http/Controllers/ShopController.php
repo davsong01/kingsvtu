@@ -135,10 +135,9 @@ class ShopController extends Controller
 
     public function deleteRequests(Request $request, ShopRequests $shoprequest)
     {
-        if($shoprequest->status == 'approved'){
-            return back()->with('error', 'Approved shot cannot be deleted');
-        }
-
+        // if($shoprequest->status == 'approved'){
+        //     return back()->with('error', 'Approved shop cannot be deleted');
+        // }
         $url = env('MULTI_SHOP_BASE_URL') . 'delete-shop/'.$shoprequest->merchant_id;
         $details['json'] = Hash::make(env('MULTI_SHOP_KEY'));
         

@@ -68,12 +68,12 @@
                                                 </a>
                                                 @endif
                                                 @if($request->status == 'approved')
-                                                <a target="_blank" href="{{ env('SHOPS_BASE_URL').$request->request_details['shop_slug'] }}"><button type="button" class="btn btn-danger btn-sm mr-1 mb-1"><i class="fa fa-link"></i><span class="align-middle ml-25">Visit shop</span></button>
+                                                <a target="_blank" href="{{ env('SHOPS_BASE_URL').$request->request_details['shop_slug'] }}"><button type="button" class="btn btn-info btn-sm mr-1 mb-1"><i class="fa fa-link"></i><span class="align-middle ml-25">Visit shop</span></button>
                                                 </a>
                                                 @else 
-                                                <a href="{{ route('delete.shop.requests', $request->id) }}"><button type="button" class="btn btn-danger btn-sm mr-1 mb-1"><i class="fa fa-times"></i><span class="align-middle ml-25">Delete Request</span></button>
-                                                </a>
-                                                @endif
+                                            
+                                            @endif
+                                            <a href="{{ route('delete.shop.requests', $request->id) }}"><button type="button" class="btn btn-danger btn-sm mr-1 mb-1"><i class="fa fa-times"></i><span class="align-middle ml-25">Delete Request</span></button></a>
                                             </td>
                                         </tr>
                                     @endforeach
