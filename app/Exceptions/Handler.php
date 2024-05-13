@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -23,22 +26,23 @@ class Handler extends ExceptionHandler
      */
     public function render($request, \Throwable $exception)
     {
+       
         if ($exception instanceof TokenMismatchException) {
             // Handle CSRF token mismatch (419 error) here
             \Log::error(['419 Error' => $exception->getMessage()]);
-            return response()->view('errors.404', [], 419);
+            return response()->view('errors.404', ['exception' => $exception], 419);
         }
 
         if ($exception instanceof NotFoundHttpException) {
             // Handle 404 errors here
             \Log::error(['404 Error' => $exception->getMessage()]);
-            return response()->view('errors.404', [], 404);
+            return response()->view('errors.404', ['exception' => $exception], 404);
         }
 
         if ($exception instanceof MethodNotAllowedHttpException) {
             // Handle Method Not Allowed errors here
             \Log::error(['405 Error' => $exception->getMessage()]);
-            return response()->view('errors.404', [], 405);
+            return response()->view('errors.404', ['exception' => $exception], 405);
         }
 
         return parent::render($request, $exception);
