@@ -149,8 +149,8 @@ class ShopController extends Controller
         // Send details
         
         $response = $this->basicApiCall($url, $payload, []);
-
-        return back()->with('message', $response['message'] ?: 'Shop Details Update');
+        $message =  $response['message'] ?? 'Shop Details Update';
+        return back()->with('message', $message);
             
     }
     

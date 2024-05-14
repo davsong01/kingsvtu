@@ -190,8 +190,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                                <a href="{{ env('SHOPS_BASE_URL').auth()->user()->customer->shop_request->request_details['shop_slug'] }}" class="btn btn-info" target="_blank">Visit shop</a>
-                                            </div>
+                                            <a href="{{ env('SHOPS_BASE_URL').auth()->user()->customer->shop_request->request_details['shop_slug'] }}" class="btn btn-info" target="_blank">Visit shop</a>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">   
@@ -206,6 +206,24 @@
                                                 <input type="text" name="shop_slug" class="form-control" value="{{auth()->user()->customer->shop_request->request_details['shop_slug'] }}" disabled>
                                             </fieldset>
                                         </div>
+                                        <div class="col-md-6">   
+                                            <fieldset class="form-group">
+                                                <label for="shop_name">Subscription Start Date</label>
+                                                <input type="text" class="form-control" value="{{auth()->user()->customer->shop_request->request_details['subscription_start'] }}" disabled>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-md-6">   
+                                            <fieldset class="form-group">
+                                                <label for="shop_name">Subscription End Date</label>
+                                                <input type="text" class="form-control" value="{{auth()->user()->customer->shop_request->request_details['subscription_end'] }}" disabled>
+                                            </fieldset>
+                                        </div>
+                                        {{-- <div class="col-md-6">   
+                                            <fieldset class="form-group">
+                                                <label for="shop_name">Custom Domain</label>
+                                                <input type="text" class="form-control" value="{{auth()->user()->customer->shop_request->request_details['custom_domain'] }}" disabled>
+                                            </fieldset>
+                                        </div> --}}
                                         
                                     </div>
                                 @else
