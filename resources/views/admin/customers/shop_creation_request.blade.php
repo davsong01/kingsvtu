@@ -165,6 +165,16 @@ use Carbon\Carbon;
                                                                             <input type="text" class="form-control tiny" id="custom_domain" name="custom_domain"  value="{{ $request->request_details['custom_domain'] ?? old('custom_domain') }}" placeholder="custom_domain">
                                                                         </fieldset>
                                                                     </div>
+                                                                    <div class="col-md-4">
+                                                                        <fieldset class="form-group">
+                                                                        <label for="shop_status">Shop Status</label>
+                                                                        <select class="form-control" name="shop_status" id="shop_status" required>
+                                                                            <option value="">Select</option>
+                                                                            <option value="active" {{ $request->shop_status == 'active' ? 'selected' : ''}}>Active</option>
+                                                                            <option value="inactive" {{ $request->shop_status == 'inactive' ? 'selected' : ''}}>InActive</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </fieldset>
                                                                 </div>
                                                             </section>
                                                             
