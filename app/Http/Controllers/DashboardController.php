@@ -145,10 +145,11 @@ class DashboardController extends Controller
                     'status' => 'success',
                     'descr' => 'Level Upgrade from ' . auth()->user()->customer->level->name . ' to ' . $level->name . ' was successful',
                 ]);
-            }
 
-            $user = auth()->user();
-            app('App\Http\Controllers\TransactionController')->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request_id, 50);
+                $user = auth()->user();
+                app('App\Http\Controllers\TransactionController')->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request_id, 50);
+
+            }
 
             // Log wallet
             $wal = $wallet->logWallet($request->all());

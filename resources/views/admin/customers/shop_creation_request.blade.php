@@ -73,7 +73,7 @@
                                                 @else 
                                             
                                             @endif
-                                            <a href="{{ route('delete.shop.requests', $request->id) }}"><button type="button" class="btn btn-danger btn-sm mr-1 mb-1"><i class="fa fa-times"></i><span class="align-middle ml-25">Delete Request</span></button></a>
+                                            <a href="{{ route('delete.shop.requests', $request->id) }}"><button type="button" class="btn btn-danger btn-sm mr-1 mb-1"><i class="fa fa-times"></i><span class="align-middle ml-25">Delete</span></button></a>
                                             </td>
                                         </tr>
                                     @endforeach
