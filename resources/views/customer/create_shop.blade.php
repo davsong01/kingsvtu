@@ -218,6 +218,12 @@
                                                 <input type="text" class="form-control" value="{{auth()->user()->customer->shop_request->request_details['subscription_end'] }}" disabled>
                                             </fieldset>
                                         </div>
+                                        <div class="col-md-6">   
+                                            <fieldset class="form-group">
+                                                <label for="">Shop Status</label>
+                                                <input style="color:{{ auth()->user()->customer->shop_request->shop_status == 'active' ? 'green' : 'red'}}" type="text" class="form-control" value="{{ ucfirst(auth()->user()->customer->shop_request->shop_status) }}" disabled>
+                                            </fieldset>
+                                        </div>
                                         {{-- <div class="col-md-6">   
                                             <fieldset class="form-group">
                                                 <label for="shop_name">Custom Domain</label>

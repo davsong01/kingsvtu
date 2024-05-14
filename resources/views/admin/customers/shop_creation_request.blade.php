@@ -67,6 +67,7 @@ use Carbon\Carbon;
                                                     <strong style="color:blue">Sub start:</strong> {{ !empty($request->request_details['subscription_start']) ? date("M jS, Y", strtotime($request->request_details['subscription_start'])) : date("M jS, Y", strtotime(Carbon::now())) }} <br>
                                                     <strong style="color:blue">Sub end:</strong> {{ !empty($request->request_details['subscription_end']) ? date("M jS, Y", strtotime($request->request_details['subscription_end'])) : date("M jS, Y", strtotime(Carbon::now())) }}
 
+                                                    <strong>Shop Status:</strong><span style="color:{{ $request->shop_status == 'active' ? 'green' : 'red'}}">{{ ucfirst($request->shop_status )}}</span>
                                                     
                                                 </P>
                                             </td>
