@@ -6,6 +6,7 @@ use App\Models\Settings;
 use Illuminate\Support\Str;
 use App\Models\ShopRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -40,6 +41,9 @@ class ShopController extends Controller
         }
         $setting = Settings::first();
         $data['shop_slug'] = Str::slug($request->shop_slug);
+        $data['subscription_start'] = '';
+        $data['subscription_end'] ='';
+        $data['custom_domain'] ='';
 
         $body = '<p>Hello! Admin</p>';
         $body .= '<p style="line-height: 2.0;">Please login to approve a shop creation request </strong><br><br>Warm Regards. (' . config('app.name') . ')<br/></p>';
@@ -70,6 +74,7 @@ class ShopController extends Controller
         $details['merchant_name'] = $customer->user->firstname . ' '. $customer->user->lastname;
 
         $details['api_key'] = $customer->user->api_key;
+        
         // $details['secret_key'] = $customer->user->secret_key;
         // $details['public_key'] = $customer->user->public_key;
 
@@ -116,6 +121,40 @@ class ShopController extends Controller
         return back()->with('message', 'Shop Approved and created successfully');
     }
 
+    public function updateRequests(Request $request, ShopRequests $shoprequest)
+    {
+        $customer = $shoprequest->customer;
+        $details = $shoprequest->request_details;
+        
+        $new_data = [];
+
+        foreach($details as $key=>$value){
+            $new_data[$key] = $request[$key] ?? $value;
+        }
+
+        $shoprequest->update([
+            'request_details' => $new_data
+        ]);
+
+        $payload = [
+            'store_slug' => $new_data['shop_slug'],
+            'store_name' => $new_data['shop_name'],
+            'subscription_start' => $new_data['subscription_start'],
+            'subscription_end' => $new_data['subscription_end'],
+            'currency' => $new_data['currency']
+        ];
+
+        $url = env('MULTI_SHOP_BASE_URL') . 'update-shop/' . $shoprequest->merchant_id;
+        $payload['json'] = Hash::make(env('MULTI_SHOP_KEY'));
+        // Send details
+        
+        $response = $this->basicApiCall($url, $payload, []);
+
+        return back()->with('message', $response['message'] ?: 'Shop Details Update');
+            
+    }
+    
+
     public function declineRequests(Request $request, ShopRequests $shoprequest)
     {
         $shoprequest->update([
@@ -125,7 +164,7 @@ class ShopController extends Controller
         $customer = $shoprequest->customer;
         
         // Send email
-        $subject = 'Shop Request Approved!';
+        $subject = 'Shop Request Declined!';
         $body = 'Hello ' . $customer->user->firstname . '<br>Your request to create a new shop affiliated to ' . config('app.name') . ' has been declined.<br><br>Warm Regards<br>
             ' . config('app.name');
 
@@ -135,22 +174,28 @@ class ShopController extends Controller
 
     public function deleteRequests(Request $request, ShopRequests $shoprequest)
     {
-        // if($shoprequest->status == 'approved'){
-        //     return back()->with('error', 'Approved shop cannot be deleted');
-        // }
-        $url = env('MULTI_SHOP_BASE_URL') . 'delete-shop/'.$shoprequest->merchant_id;
-        $details['json'] = Hash::make(env('MULTI_SHOP_KEY'));
-        
-        // Send details
-        $response = $this->basicApiCall($url, $details, []);
-        
-        // Update status 
-        if (!empty($response['status']) && $response['status'] == 'success') {
+        if($shoprequest->status == 'approved'){
+            $url = env('MULTI_SHOP_BASE_URL') . 'delete-shop/'.$shoprequest->merchant_id;
+            $details['json'] = Hash::make(env('MULTI_SHOP_KEY'));
+            
+            $this->basicApiCall($url, $details, []);
+            if (!empty($response['status']) && $response['status'] == 'success') {
+                $shoprequest->delete();
+                return back()->with('message', 'Operation successful');
+            } else {
+                return back()->with('error', $response['message'] ?? 'Could not delete on destination server. Something went wrong!');
+            }
+        }else{
             $shoprequest->delete();
-        } else {
-            return back()->with('error', $response['message'] ?? 'Could not delete. Something went wrong!');
+            return back()->with('message', 'Operation successful');
         }
+    }
 
-        return back()->with('message', 'Operation successful');
+    public function accessRequests(Request $request, ShopRequests $shoprequest){
+        $json = Hash::make(env('MULTI_SHOP_KEY'));
+        $url = env('MULTI_SHOP_BASE_URL') . 'admin-access-store?merchant_id=' . $shoprequest->merchant_id .'&json='.$json;
+        // Send details
+       
+        return redirect()->away($url);
     }
 }

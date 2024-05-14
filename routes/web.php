@@ -157,11 +157,13 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers.update');
     Route::resource('customerlevel', CustomerLevelController::class);
     Route::resource('levelbenefit', CustomerLevelBenefitController::class);
+
     Route::get('customer-shop-requests', [ShopController::class, 'shopRequests'])->name('customer.shop.requests');        
     Route::get('approve-customer-shop-requests/{shoprequest}', [ShopController::class, 'approveRequests'])->name('approve.shop.requests');        
     Route::get('decline-customer-shop-requests/{shoprequest}', [ShopController::class, 'declineRequests'])->name('decline.shop.requests');        
     Route::get('delete-customer-shop-requests/{shoprequest}', [ShopController::class, 'deleteRequests'])->name('delete.shop.requests');        
-
+    Route::post('update-customer-shop-requests/{shoprequest}', [ShopController::class, 'updateRequests'])->name('update.shop.requests');
+    Route::get('access-shop-requests/{shoprequest}', [ShopController::class, 'accessRequests'])->name('shop.access');        
 
     Route::get('pull-variations/{product}', [VariationController::class, 'pullVariations'])->name('variations.pull');
     Route::post('update-variations/{product}', [VariationController::class, 'updateVariations'])->name('variations.update');
