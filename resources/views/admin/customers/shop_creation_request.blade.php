@@ -1,3 +1,9 @@
+
+<?php 
+
+use Carbon\Carbon;
+
+?>
 @extends('layouts.app')
 @section('title', 'All shops')
 @section('page-css')
@@ -57,8 +63,9 @@
                                                     <strong>Official Email:</strong>{{ $request->request_details['official_email'] }} <br>
                                                     <strong>Currency:</strong> {{ $request->request_details['currency'] }}
                                                     {{-- @if($request->status == 'approved') --}} <br>
-                                                    <strong style="color:blue">Sub start:</strong> {{ isset($request->request_details['subscription_start']) ? date("M jS, Y", strtotime($request->request_details['subscription_start'])) : date("M jS, Y", strtotime(Carbo::now())) }} <br>
-                                                    <strong style="color:blue">Sub end:</strong> {{ isset($request->request_details['subscription_end']) ? date("M jS, Y", strtotime($request->request_details['subscription_end'])) : date("M jS, Y", strtotime(Carbo::now())) }}
+                                                   
+                                                    <strong style="color:blue">Sub start:</strong> {{ !empty($request->request_details['subscription_start']) ? date("M jS, Y", strtotime($request->request_details['subscription_start'])) : date("M jS, Y", strtotime(Carbon::now())) }} <br>
+                                                    <strong style="color:blue">Sub end:</strong> {{ !empty($request->request_details['subscription_end']) ? date("M jS, Y", strtotime($request->request_details['subscription_end'])) : date("M jS, Y", strtotime(Carbon::now())) }}
 
                                                     
                                                 </P>

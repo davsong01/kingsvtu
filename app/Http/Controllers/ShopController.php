@@ -71,8 +71,10 @@ class ShopController extends Controller
         $details['password'] = $password ;
         $details['store_name'] = $details['shop_name'];
         $details['store_slug'] = $details['shop_slug'];
+        $details['subscription_start'] = !empty($details['subscription_start']) ? $details['subscription_start'] : Carbon::now();
+        $details['subscription_end'] = !empty($details['subscription_end']) ? $details['subscription_end'] : Carbon::now()->addYear();
         $details['merchant_name'] = $customer->user->firstname . ' '. $customer->user->lastname;
-
+        
         $details['api_key'] = $customer->user->api_key;
         
         // $details['secret_key'] = $customer->user->secret_key;
