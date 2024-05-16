@@ -19,6 +19,7 @@ class PaymentGatewayController extends Controller
         if ($paymentgateway->count() < 1) {
             $paymentgateway = PaymentGateway::create([
                 'name' => 'Monnify',
+                'slug' => 'monnify',
                 'base_url' => 'https://api.monnify.com/api/v1',
                 'password' => '12345678',
                 'api_key' => '1234567890',
@@ -51,6 +52,8 @@ class PaymentGatewayController extends Controller
     {
         $this->validate($request, [
             "name" => "required",
+            "slug" => "required",
+            "reserved_account_payment_charge_type" => 'required',
             "password" => "nullable",
             "api_key" => "nullable",
             "secret_key" => "nullable",
@@ -65,6 +68,8 @@ class PaymentGatewayController extends Controller
 
         $paymentgateway->update([
             "name" => $request->name,
+            "slug" => $request->slug,
+            'reserved_account_payment_charge_type' => $request->reserved_account_payment_charge_type,
             "password" => $request->password,
             "api_key" => $request->api_key,
             "secret_key" => $request->secret_key,

@@ -43,4 +43,9 @@ class Customer extends Model
     {
         return $this->hasOne(ShopRequests::class, 'customer_id')->whereIn('status',['pending','approved']);
     }
+
+    public function multiplekycdata()
+    {
+        return $this->hasMany(KycData::class);
+    }
 }

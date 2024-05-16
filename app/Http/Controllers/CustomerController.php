@@ -61,7 +61,8 @@ class CustomerController extends Controller
         ];
 
         $admin_id = auth()->user()->admin->id;
-        $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data, $admin_id);
+        $reserved = createReservedAccount($data, $admin_id);
+
 
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
@@ -199,10 +200,9 @@ class CustomerController extends Controller
             "IDCARDTYPE" => "nullable",
             "IDCARD" => "nullable",
         ]);
-       
+        
         $instantVerify = ['BVN','FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
         $user = $customer->user;
-        
         foreach ($input as $key => $value) {
             app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'verified');
             // if (in_array($key, $instantVerify)) {
