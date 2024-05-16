@@ -160,6 +160,10 @@ class ShopController extends Controller
 
     public function declineRequests(Request $request, ShopRequests $shoprequest)
     {
+        if($shoprequest->status == 'approved'){
+            return back()->with('error','This request is already approved');
+        }
+        
         $shoprequest->update([
             'status' => 'declined',
             'admin_id' => auth()->user()->admin->id
@@ -172,6 +176,8 @@ class ShopController extends Controller
             ' . config('app.name');
 
         sendEmails($shoprequest->customer->user->email, $subject, $body);
+
+        $shoprequest->delete();
         return back()->with('message', 'Operation successful');
     }
 
