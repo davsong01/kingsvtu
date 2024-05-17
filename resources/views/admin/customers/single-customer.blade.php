@@ -455,10 +455,12 @@ use App\Models\BlackList;
                                                     </thead>
                                                     <tbody>
                                                         @foreach ($accounts as $key => $account)
-                                                            @if ($account->paymentgateway_id == 1)
+                                                            {{-- @if ($account->paymentgateway_id == 1) --}}
                                                                 <tr>
                                                                     <td>{{ ucfirst($account->account_name) }}</td>
-                                                                    <td>{{ ucfirst($account->bank_name) }}</td>
+                                                                    <td>{{ ucfirst($account->bank_name) }} <br>
+                                                                        <button class="btn btn-{{$account->gateway->slug == 'monnify' ? 'info' : 'primary'}} btn-sm">{{ $account->gateway->name }}</button>
+                                                                    </td>
                                                                     <td>{{ ucfirst($account->account_number) }} <br>
                                                                     <small style="color:black"><strong>Created on: {{$account->created_at}} </strong>
                                                                         @if(!empty($account->admin_id)) <br>
@@ -472,15 +474,14 @@ use App\Models\BlackList;
                                                                         {!! getSettings()->currency !!}{{ number_format($account->transactions->sum('total_amount'), 2) }} <small><strong>({{number_format($account->transactions->count())}})</strong></small></a>
                                                                     </td>
                                                                     <td>
-                                                                        <div
-                                                                            @if($account->transactions->count() < 1)
-                                                                            <a>
-                                                                            <a onclick="return confirm('You are about to delete a reserved account!')"class="btn btn-danger btn-sm mr-1 mb-1" href="{{ route('reserved_account.delete', $account->id) }}"><i class="bx bxs-trash"></i><span class="align-middle ml-25">Delete</span></button></a>
+                                                                        <div>
+                                                                            @if($account->transactions->count() < 1 && $account->gateway->slug == 'monnify')
+                                                                            <a onclick="return confirm('You are about to delete a reserved account!')"class="btn btn-danger btn-sm mr-1 mb-1" href="{{ route('reserved_account.delete', $account->id) }}"><i class="bx bxs-trash"></i><span class="align-middle ml-25">Delete</span></a>
                                                                             @endif
                                                                         </div>
                                                                     </td>
                                                                 </tr>
-                                                            @endif
+                                                            {{-- @endif --}}
                                                         @endforeach
                                                     </tbody>
                                                 </table>
@@ -636,9 +637,11 @@ use App\Models\BlackList;
                                     
                                     <select class="form-control js-example-basic-single" name="bank[]" id="bank" required multiple>
                                         <option value="">Select</option>
+                                        @if(getSettings()->gateway->slug == 'monnify')
                                         <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option>
                                         <option value="035" {{ old('bank') == '035' ? 'selected' : ''}}>Wema Bank</option>
                                         <option value="232" {{ old('bank') == '232' ? 'selected' : ''}}>Sterling Bank</option>
+                                         @endif
                                         <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option> 
                                     </select>
                                 </fieldset>

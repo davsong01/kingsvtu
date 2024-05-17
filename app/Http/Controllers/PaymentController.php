@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
 use App\Models\TransactionLog;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\ReservedAccountNumber;
 use App\Models\ReservedAccountCallback;
-use App\Http\Controllers\PaymentProccessors\MonnifyController;
+use App\Http\Controllers\PaymentProcessors\SquadController;
+use App\Http\Controllers\PaymentProcessors\MonnifyController;
 
 class PaymentController extends Controller
 {
@@ -51,6 +53,7 @@ class PaymentController extends Controller
         $request['unique_element'] = 'WALLET-FUNDING';
         $request['provider_charge'] = $provider_charge;
         $request['wallet_funding_provider'] = $provider->id;
+        $request['api_id'] = $provider->id;
 
         $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
 
@@ -65,14 +68,26 @@ class PaymentController extends Controller
         }
     }
 
-    public function dumpCallback(Request $request, $provider)
+    public function dumpCallback(Request $request, $provider, $internal = 'no')
     {
+        if (!$provider) {
+            die();
+        }
+
         if ($provider == 1) {
             $account_number = $request['eventData']['destinationAccountInformation']['accountNumber'];
             $session_id = $request['eventData']['paymentSourceInformation'][0]['sessionId'];
             $transaction_reference = $request['eventData']['transactionReference'] ?? $request['eventData']['paymentReference'];
             $payment_method = $request['eventData']['paymentMethod'];
             $paid_on = $request['eventData']['paidOn'];
+        }
+
+        if ($provider == 2) {
+            $account_number = $request['virtual_account_number'];
+            $session_id = $request['transaction_reference'];
+            $transaction_reference = $request['transaction_reference'];
+            $payment_method = $request['channel'];
+            $paid_on = Carbon::parse($request['transaction_date']);
         }
 
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
@@ -86,6 +101,17 @@ class PaymentController extends Controller
                 'payment_method' => $payment_method,
                 'transaction_reference' => $transaction_reference,
             ]);
+            if ($internal == 'yes') {
+                return ['message' => 'success'];
+            } else {
+                return response()->json(['message' => 'success'], 200);
+            }
+        }else{
+            if ($internal == 'yes') {
+                return ['error' => 'Likely duplicate'];
+            } else {
+                return response()->json(['message' => 'success'], 200);
+            }
         }
     }
 
@@ -106,21 +132,22 @@ class PaymentController extends Controller
             $ids = array_column($calls, 'id');
             ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
             
-            $calls = ReservedAccountCallback::where(['status' => $tlk])->get()->toArray();
+            $calls = ReservedAccountCallback::where(['status' => $tlk])->get();
 
             foreach ($calls as $call) {
-                $decodeCall = json_decode($call['raw'], true);
-                $account = ReservedAccountNumber::with('customer')->where('account_number', $call['account_number'])->first();
-                $provider = PaymentGateway::where('id', $call['provider_id'])->first();
-
+                $decodeCall = json_decode($call->raw, true);
+                $account = ReservedAccountNumber::with('customer')->where('account_number', $call->account_number)->first();
+                $provider = PaymentGateway::where('id', $call->provider_id)->first();
+                
                 if (!$account) {
+                    ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-account']);
                     continue;
                 }
 
                 $customer = $account->customer;
                 $user = $account->customer->user;
 
-                if ($call['provider_id'] == 1) {
+                if ($call->provider_id == 1) {
                     $payment_type = $call['payment_method'];
 
                     if ($payment_type === 'CARD') {
@@ -128,16 +155,36 @@ class PaymentController extends Controller
 
                         continue;
                     }
+                    
+                    $monnify = new MonnifyController($provider);
+                    $analyze = $monnify->verifyTransaction($call->transaction_reference);
 
-                    $analyze = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->verifyTransaction($call['transaction_reference']);
-                    ReservedAccountCallback::where('id', $call['id'])->update(['raw_requery' => json_encode($analyze['data'])]);
+                    ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                        $provider_charge = $provider->reserved_account_payment_charge ?? 0;
-                        // $provider_charge = $provider_charge + $extra_charge;
+                        
                         $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
+
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
+                    } else {
+                        ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
+                    }
+                }
+
+                if ($call->provider_id == 2) {
+                    $squad = new SquadController($provider);
+                    $analyze = $squad->verifyTransaction($call->transaction_reference);
+
+                    ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
+
+                    if (isset($analyze) && $analyze['status'] == 'success') {
+                        $payment_method = $provider->name . '(BANK_TRANSFER)';
+                        
+                        $original_amount = $analyze['data']['principal_amount'];
+                        $transaction_id = $analyze['data']['transactionReference'] ?? $call->transaction_reference;
+                    } else {
+                        ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
                     }
                 }
 
@@ -146,12 +193,10 @@ class PaymentController extends Controller
                     $wallet = new WalletController();
                     $balance = $wallet->getWalletBalance($user);
                     $reference = $this->generateRequestId();
-                    // if (!empty($provider->reserved_account_payment_charge)) {
-                    //     // $provider_charge = ($provider->reserved_account_payment_charge / 100) * $original_amount;
-                    //     $provider_charge = $provider_charge;
-                    // } else {
-                    //     $provider_charge = 0;
-                    // }
+
+                    $provider_charge_setting = getPaymentGatewayReservedAccountCharge($provider->id) ?? 0;
+                    $provider_charge = calculatePaymentGatewayReservedAccountCharge($provider_charge_setting, $original_amount) ?? 0;
+                    
                     $amount = $original_amount - $provider_charge;
 
                     $request['type'] = 'credit';
@@ -173,15 +218,16 @@ class PaymentController extends Controller
                     $request['quantity'] = 1;
                     $request['unique_element'] = 'WALLET-FUNDING';
                     $request['provider_charge'] = $provider_charge;
-                    $request['wallet_funding_provider'] = $call['provider_id'];
-                    $request['account_number'] =  $call['account_number'];
+                    $request['wallet_funding_provider'] = $call->provider_id;
+                    $request['account_number'] = $call->account_number;
+                    $request['api_id'] = $provider->id;
 
                     $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
                     
                     $transaction->update([
                         'balance_after' => $balance + $amount,
                         'status' => 'delivered',
-                        'descr' => 'Wallet Funding Via Account: ' . $call['account_number'] . ' of ' . getSettings()->currency . number_format($amount, 2) . ' was successful',
+                        'descr' => 'Wallet Funding Via Account: ' . $call->account_number . ' of ' . getSettings()->currency . number_format($amount, 2) . ' was successful',
                     ]);
 
 
@@ -194,13 +240,13 @@ class PaymentController extends Controller
 
                     // Update Customer Wallet
                     $wallet->updateCustomerWallet($user, $amount, $request['type']);
-                    ReservedAccountCallback::where('id', $call['id'])->update(['transaction_id' => $transaction_id]);
+                    ReservedAccountCallback::where('id', $call->id)->update(['transaction_id' => $transaction_id]);
 
                     $this->sendTransactionEmail($transaction, $user);
                 }
 
                 //
-                ReservedAccountCallback::where('id', $call['id'])->update(['status' => 'analyzed']);
+                ReservedAccountCallback::where('id', $call->id)->update(['status' => 'analyzed']);
                 DB::commit();
             }
         } catch (\Throwable $th) {
@@ -288,7 +334,7 @@ class PaymentController extends Controller
 
     public function callBackAnalysis()
     {
-        $calls = ReservedAccountCallback::orderBy('status', 'DESC')->paginate();
+        $calls = ReservedAccountCallback::with('gateway')->orderBy('status', 'DESC')->paginate();
         return view('admin.transaction.raw_callbacks', compact('calls'));
     }
 }

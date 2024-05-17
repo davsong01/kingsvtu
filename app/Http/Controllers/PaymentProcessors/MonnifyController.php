@@ -60,7 +60,7 @@ class MonnifyController extends Controller
             } else {
                 $real = [
                     'status' => 'failed',
-                    'data' => $response['responseMessage'],
+                    'data' => $response['responseMessage'] ?? 'NO RESPONSE',
                 ];
             }
 

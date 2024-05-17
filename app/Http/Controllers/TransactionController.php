@@ -7,10 +7,11 @@ use App\Models\Wallet;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
+use App\Models\BillerLog;
 use App\Models\BlackList;
 use App\Models\Variation;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Http\Request;
+use App\Models\PaymentGateway;
 use App\Models\TransactionLog;
 use App\Services\ExcelService;
 use App\Models\ReferralEarning;
@@ -19,8 +20,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
-use App\Models\BillerLog;
-use App\Models\PaymentGateway;
+use Illuminate\Contracts\Database\Query\Builder;
+use App\Http\Controllers\PaymentProcessors\SquadController;
+use App\Http\Controllers\PaymentProcessors\MonnifyController;
 
 class TransactionController extends Controller
 {
@@ -513,7 +515,7 @@ class TransactionController extends Controller
             'domain_name' => Session::get('domain_name') ?? null,
             'descr' => $data['descr'] ?? null,
         ];
-
+        
         $trans = TransactionLog::create($pre);
         return $trans;
     }
@@ -881,7 +883,7 @@ class TransactionController extends Controller
         $totalTransSuccess = $transactionsS->whereIn('status', ['delivered', 'success'])->sum('amount');
         $totalTransFailed = $transactionsF->where('status', 'failed')->sum('amount');
         $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
-        $providers = PaymentGateway::latest();
+        $providers = PaymentGateway::all();
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
@@ -896,6 +898,11 @@ class TransactionController extends Controller
             $transactions = $transactions->where('transaction_id', $request->transaction_id);
         }
 
+
+        if ($request->payment_provider) {
+            $transactions = $transactions->where('wallet_funding_provider', $request->payment_provider);
+        }
+
         if ($request->type) {
             $transactions = $transactions->where('type', $request->type);
         }
@@ -908,7 +915,7 @@ class TransactionController extends Controller
             $time = $request->to . ' 00:00:00';
             $transactions = $transactions->where('created_at', $time);
         }
-
+        // dd($request->all());
         $transactions = $transactions->paginate(20);
 
         return view('admin.transaction.wallet_funding', [
@@ -1117,10 +1124,22 @@ class TransactionController extends Controller
 
         if (!$trans) return ['status' => 'failed', 'message' => 'Transaction not found!'];
 
-        // $requestId = explode('KVTU-', $trans->transaction_id)[1];
 
-        // $api = $trans->api;
-        $query = app("App\Http\Controllers\Providers\\" . $trans->api->file_name)->requery($trans);
+        if($trans->reason == 'WALLET-FUNDING'){
+            if ($trans->wallet_funding_provider == 1) {
+                $monnify = new MonnifyController($trans->provider);
+                return $monnify->verifyTransaction($trans->transaction_reference);
+            }
+
+            if ($trans->wallet_funding_provider == 2) {
+                $squad = new SquadController($trans->provider);
+                return $squad->verifyTransaction($trans->transaction_reference);
+            }
+
+        }else{
+            $api = $trans->api;
+        }
+        $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
 
         return $query;
     }

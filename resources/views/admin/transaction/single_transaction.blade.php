@@ -83,17 +83,15 @@
                                                                 @else
                                                                 <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 @endif
-
                                                             </div>
                                                                 <div class="col-md-5">
                                                                     <h5 style="color:black"><strong>{{ $transaction->product_name }}</strong></h5>
                                                                     <h5 class="mb-1">
                                                                         {{ $transaction->transaction_id }}</h5> <br>
-
-                                                                    {{ $transaction->created_at }}
+                                                                        {{ $transaction->created_at }}
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
-                                                                     <br>
-                                                                     <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
+                                                                    <br>
+                                                                    <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-md-3">
@@ -127,9 +125,9 @@
                                                                     <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->descr) }}</strong></span><br><br>
                                                                     <strong>Real Status</strong> <br>
                                                                     <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->status) }}</strong></span><br><br>
-                                                                    @if(!in_array($transaction->status, ['completed','success']))
+                                                                    {{-- @if(!in_array($transaction->status, ['completed','success']))
                                                                     <a id="qw_resolve" class="btn btn-success btn-sm" style="color:#fff;"><svg fill="white" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M754-81q-8 0-15-2.5T726-92L522-296q-6-6-8.5-13t-2.5-15q0-8 2.5-15t8.5-13l85-85q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l204 204q6 6 8.5 13t2.5 15q0 8-2.5 15t-8.5 13l-85 85q-6 6-13 8.5T754-81Zm0-95 29-29-147-147-29 29 147 147ZM205-80q-8 0-15.5-3T176-92l-84-84q-6-6-9-13.5T80-205q0-8 3-15t9-13l212-212h85l34-34-165-165h-57L80-765l113-113 121 121v57l165 165 116-116-43-43 56-56H495l-28-28 142-142 28 28v113l56-56 142 142q17 17 26 38.5t9 45.5q0 24-9 46t-26 39l-85-85-56 56-42-42-207 207v84L233-92q-6 6-13 9t-15 3Zm0-96 170-170v-29h-29L176-205l29 29Zm0 0-29-29 15 14 14 15Zm549 0 29-29-29 29Z"/></svg> Resolve</a>
-                                                                    @endif
+                                                                    @endif --}}
                                                                     {{-- Description <br> --}}
                                                                     {{-- <span style="color:{{ $color }}"><strong>{{ ucfirst($transaction->descr) }}</strong></span><br><br> --}}
                                                                 </div>
@@ -157,7 +155,7 @@
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <strong class="heads">Payment Details</strong> <br>
-                                                                    <strong>PAYMENT METHOD: </strong> {{ $transaction->payment_method}} <br>
+                                                                    <strong>PAYMENT METHOD: </strong><span> {{ $transaction->payment_method}}</span> <br>
                                                                     <strong>CHANNEL: </strong>{{ $transaction->channel}} <br>
                                                                     <strong>CUST. EMAIL: </strong>{{ $transaction->customer_email }} <br>
                                                                     <strong>PHONE: </strong>{{ $transaction->customer_phone }} <br>

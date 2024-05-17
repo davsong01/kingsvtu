@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PaymentGateway;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Settings extends Model
 {
     use HasFactory;
     protected $guarded = [];
 
+    public function gateway(){
+        return $this->belongsTo(PaymentGateway::class, 'payment_gateway');
+    }
 }
