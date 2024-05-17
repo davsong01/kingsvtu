@@ -883,7 +883,7 @@ class TransactionController extends Controller
         $totalTransSuccess = $transactionsS->whereIn('status', ['delivered', 'success'])->sum('amount');
         $totalTransFailed = $transactionsF->where('status', 'failed')->sum('amount');
         $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
-        $providers = PaymentGateway::latest();
+        $providers = PaymentGateway::all();
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
@@ -898,6 +898,11 @@ class TransactionController extends Controller
             $transactions = $transactions->where('transaction_id', $request->transaction_id);
         }
 
+
+        if ($request->payment_provider) {
+            $transactions = $transactions->where('wallet_funding_provider', $request->payment_provider);
+        }
+
         if ($request->type) {
             $transactions = $transactions->where('type', $request->type);
         }
@@ -910,7 +915,7 @@ class TransactionController extends Controller
             $time = $request->to . ' 00:00:00';
             $transactions = $transactions->where('created_at', $time);
         }
-
+        // dd($request->all());
         $transactions = $transactions->paginate(20);
 
         return view('admin.transaction.wallet_funding', [

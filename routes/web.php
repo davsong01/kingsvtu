@@ -29,6 +29,7 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\ReservedAccountController;
 use App\Http\Controllers\CustomerLevelBenefitController;
 use App\Http\Controllers\ReservedAccountNumberController;
+use App\Http\Controllers\PaymentProcessors\SquadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -149,6 +150,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('single-transaction-view/{transaction}', [TransactionController::class, 'singleTransactionView'])->name('admin.single.transaction.view');
     Route::get('query-wallet/{transactionlog?}', [TransactionController::class, 'queryWallet'])->name('admin.query.wallet');
     Route::get('requery-transaction/{transactionlog?}', [TransactionController::class, 'requery'])->name('admin.requery.transaction');
+    Route::get('admin-callback-error-logs', [SquadController::class, 'getCallbackLogs'])->name('callback-error-logs');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');

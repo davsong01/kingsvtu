@@ -9,6 +9,9 @@
                     <div class="card-header">
                         <!-- head -->
                         <h5 class="card-title mb-2">Raw Callbacks</h5>
+                         @if(!empty(getSettings()) && getSettings()->payment_gateway == 2)
+                        <a href="{{ route('callback-error-logs')}}" class="btn btn-info">Fetch Callbacks from Squad Logs</a>
+                        @endif
                         <div class="d-inline-block">
                             <!-- chart-1   -->
                             <div class="d-flex market-statistics-1">

@@ -151,6 +151,7 @@
                                                 </td>
                                                 <td>
                                                     <small>
+                                                        <button class="btn btn-{{ $transaction->provider->id == 1 ? 'light' : 'dark'}} btn-sm">{{$transaction->provider->name}}</button> <br>
                                                     <strong>Account Number: </strong>{{ $transaction->account_number }} <br>
                                                     <strong>Amount: </strong>{!! getSettings()->currency. number_format($transaction->amount, 2) !!} <br>
                                                     <strong>Charge: </strong>{!! getSettings()->currency. number_format($transaction->provider_charge, 2) !!} <br>
