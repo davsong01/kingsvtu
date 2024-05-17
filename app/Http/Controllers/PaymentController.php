@@ -53,6 +53,7 @@ class PaymentController extends Controller
         $request['unique_element'] = 'WALLET-FUNDING';
         $request['provider_charge'] = $provider_charge;
         $request['wallet_funding_provider'] = $provider->id;
+        $request['api_id'] = $provider->id;
 
         $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request->all());
 
@@ -219,6 +220,7 @@ class PaymentController extends Controller
                     $request['provider_charge'] = $provider_charge;
                     $request['wallet_funding_provider'] = $call->provider_id;
                     $request['account_number'] = $call->account_number;
+                    $request['api_id'] = $provider->id;
 
                     $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
                     
@@ -332,7 +334,7 @@ class PaymentController extends Controller
 
     public function callBackAnalysis()
     {
-        $calls = ReservedAccountCallback::orderBy('status', 'DESC')->paginate();
+        $calls = ReservedAccountCallback::with('gateway')->orderBy('status', 'DESC')->paginate();
         return view('admin.transaction.raw_callbacks', compact('calls'));
     }
 }

@@ -29,9 +29,11 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($calls as $call)
+                                    
                                         <tr>
                                             <td>
                                                 <small style="color:black">
+                                                    <button class="btn btn-dark btn-sm">{{$call->gateway?->name}} </button> <br>
                                                     <strong>Account Number:</strong><br> {{$call->account_number}} <br>
                                                     <strong>Session ID:</strong> <br>{{$call->session_id }} <br>
                                                     <strong>Reference ID:</strong><br> {{$call->transaction_reference }} <br>
