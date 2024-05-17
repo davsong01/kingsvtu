@@ -80,8 +80,9 @@ class CustomerController extends Controller
             try {
                 $data = [
                     // 'BVN' => $customer->user->bvn ?? kycStatus('BVN', $customer->id)['value'],
-                    // 'customerName' => $customer->user->name,
-                    // 'accountName' => $customer->user->firstname,
+                    'customerFirstName' => $customer->user->firstname,
+                    'customerLastName' => $customer->user->lastname,
+                    'customerPhone' => $customer->user->phone,
                     'customerEmail' => $customer->user->email,
                     'customer_id' => $customer->id,
                 ];

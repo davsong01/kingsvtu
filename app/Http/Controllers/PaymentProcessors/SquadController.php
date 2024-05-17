@@ -112,9 +112,9 @@ class SquadController extends Controller
 
         $payload = [
             "customer_identifier" =>  'KGSVTU-'.$data['customer_id'],
-            "first_name" => $kycData['FIRST_NAME'] ?? NULL,
-            "last_name" => $kycData['LAST_NAME'] ?? NULL,
-            "mobile_num" => $kycData['PHONE_NUMBER'],
+            "first_name" => $data["customerFirstName"] ?? $kycData['FIRST_NAME'] ?? NULL,
+            "last_name" => $data["customerLastName"] ?? $kycData['LAST_NAME'] ?? NULL,
+            "mobile_num" => $data["customerPhone"] ?? $kycData['PHONE_NUMBER'],
             "email" => $data["customerEmail"],
             "bvn" => $kycData['BVN'],
             "dob" => $kycData['DATE_OF_BIRTH'] ?? '19/09/1980',
