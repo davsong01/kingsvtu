@@ -123,7 +123,6 @@ class SquadController extends Controller
         ];
         
         $response = $this->makeCall($url, $payload);
-        \Log::info(['Generating accounts for squad' => $response, 'url' => $url, 'payload' => $payload]);
         
         if (
             isset($response) && $response['success'] == true &&
@@ -265,6 +264,8 @@ class SquadController extends Controller
         }
 
         $response = curl_exec($curl);
+        \Log::info(['Generating accounts for squad' => $response, 'url' => $url, 'payload' => $payload]);
+
         curl_close($curl);
         return json_decode($response, true);
     }
