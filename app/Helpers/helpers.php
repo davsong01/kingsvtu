@@ -44,6 +44,41 @@ if (!function_exists("extractKeyValuesFromMultiDimensionalArray")) {
     }
 }
 
+if (!function_exists("calculatePaymentGatewayReservedAccountCharge")) {
+    function calculatePaymentGatewayReservedAccountCharge($data, $amount)
+    {
+        if ($data['type'] == 'flat') {
+            $charge = $data['value'];
+        } else {
+            $charge =  $data['value'] / 100 * $amount;
+        }
+        return $charge;
+    }
+}
+
+if (!function_exists("getPaymentGatewayReservedAccountCharge")) {
+    function getPaymentGatewayReservedAccountCharge($provider = null)
+    {
+        $gateway = PaymentGateway::where('id', $provider)->first();
+        
+        if ($gateway->reserved_account_payment_charge_type == 'flat') {
+            $charge = $gateway->reserved_account_payment_charge;
+            $display_value = isset(getSettings()->currency) ? getSettings()->currency : '' . number_format($charge, 1);
+            $type = 'flat';
+        } else {
+            $charge = $gateway->reserved_account_payment_charge;
+            $display_value = $charge . '%';
+            $type = 'percentage';
+        }
+
+        return [
+            'type' => $type,
+            'value' => $charge,
+            'display_value' => $display_value
+        ];
+    }
+}
+
 if (!function_exists("createReservedAccount")) {
     function createReservedAccount($data = null, $admin_id = null)
     {

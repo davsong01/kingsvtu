@@ -42,7 +42,7 @@ use App\Http\Controllers\ReservedAccountNumberController;
 */
 
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallback'])->name('log.payment.response');
-Route::get('analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
+Route::get('cron/analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
 Route::get( 'cron/sendemails', [Controller::class, 'cronSendEmails']);
 Route::get('generate-api-keys', function(){
     $users = User::all();

@@ -83,17 +83,15 @@
                                                                 @else
                                                                 <img id="product-image" width="60" height="60" src="{{ asset($transaction->product->image) }}" alt="" class="product-image" style="margin:5px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
                                                                 @endif
-
                                                             </div>
                                                                 <div class="col-md-5">
                                                                     <h5 style="color:black"><strong>{{ $transaction->product_name }}</strong></h5>
                                                                     <h5 class="mb-1">
                                                                         {{ $transaction->transaction_id }}</h5> <br>
-
-                                                                    {{ $transaction->created_at }}
+                                                                        {{ $transaction->created_at }}
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
-                                                                     <br>
-                                                                     <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
+                                                                    <br>
+                                                                    <a href="{{ route('transaction.receipt.download', $transaction->id)}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-md-3">
