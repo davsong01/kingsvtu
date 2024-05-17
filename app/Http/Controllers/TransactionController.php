@@ -514,6 +514,7 @@ class TransactionController extends Controller
             'ip_address' => Session::get('ip_address') ?? null,
             'domain_name' => Session::get('domain_name') ?? null,
             'descr' => $data['descr'] ?? null,
+            'channel' => $data['channel'] ?? 'web',
         ];
         
         $trans = TransactionLog::create($pre);

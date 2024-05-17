@@ -346,6 +346,7 @@ class ApiResponseService
         $request['request_id'] = $request->request_id;
         $request['transaction_id'] = 'KVTU-' .  $request['request_id'];
         $request['unique_element'] = $request->billersCode;
+        $request['channel'] = 'api';
 
         // Process Transaction
         try {

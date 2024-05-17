@@ -57,6 +57,8 @@ class CustomerController extends Controller
             'customerEmail' => $customer->user->email,
             'customer_id' => $customer->id,
             'preferredBanks' => $request->bank,
+            'customerFirstName' => $customer->user->firstname,
+            'customerLastName' => $customer->user->lastname,
             'getAllAvailableBanks' => false
         ];
 
