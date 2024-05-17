@@ -63,12 +63,47 @@ class CustomerController extends Controller
         $admin_id = auth()->user()->admin->id;
         $reserved = createReservedAccount($data, $admin_id);
 
-
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
         } else {
             return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Something went wrong');
         }
+    }
+
+    public function generateReservedAccounts(){
+        $customers = Customer::whereDoesntHave('reserved_accounts', function ($query) {
+            $query->where('paymentgateway_id', 2);
+        })->where('kyc_status', 'verified')->get();
+
+        foreach($customers as $customer){
+            $count = 0;
+            try {
+                $data = [
+                    // 'BVN' => $customer->user->bvn ?? kycStatus('BVN', $customer->id)['value'],
+                    // 'customerName' => $customer->user->name,
+                    // 'accountName' => $customer->user->firstname,
+                    'customerEmail' => $customer->user->email,
+                    'customer_id' => $customer->id,
+                ];
+
+                $admin_id = auth()->user()->admin->id;
+                
+                $reserved = createReservedAccount($data, $admin_id);
+                
+                if ($reserved['status'] && $reserved['status'] == 'success') {
+                    $count+=1;
+                }
+                
+                continue;
+            } catch (\Throwable $th) {
+                // dd($th->getMessage());
+                return back()->with('error', 'Could not complete the process. Only '. $count. ' Customer(s) have Squad account numbers generated!');
+            }
+            
+        }
+
+        return back()->with('message', $count . ' Customer(s) now have Squad account numbers generated!');
+
     }
 
     function singleCustomer($id)
