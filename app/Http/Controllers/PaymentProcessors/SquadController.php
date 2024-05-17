@@ -123,7 +123,8 @@ class SquadController extends Controller
         ];
         
         $response = $this->makeCall($url, $payload);
-       
+        \Log::info(['Generating accounts for squad' => $response, 'url' => $url, 'payload' => $payload]);
+        
         if (
             isset($response) && $response['success'] == true &&
             $response['message'] == 'Success'

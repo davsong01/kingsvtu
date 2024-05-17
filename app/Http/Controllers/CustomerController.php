@@ -90,7 +90,6 @@ class CustomerController extends Controller
                 $admin_id = auth()->user()->admin->id;
                 
                 $reserved = createReservedAccount($data, $admin_id);
-                \Log::info(['Generate multiple accounts for squad' => $reserved]);
                 
                 if ($reserved['status'] && $reserved['status'] == 'success') {
                     $count+=1;
