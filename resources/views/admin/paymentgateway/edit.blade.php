@@ -92,8 +92,8 @@
                                                             <option value="percentage" {{ $paymentgateway->reserved_account_payment_charge_type == 'percentage' ? 'selected' : ''}}>Percentage</option>
                                                         </select>
                                                     </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">({!! getSettings()->currency !!})</span></label>
+                                                     <fieldset class="form-group">
+                                                        <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">({{ getPaymentGatewayReservedAccountCharge($paymentgateway->id)['type'] }}) </span></label>
                                                         <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter flat reserved account payment charge" required>
                                                     </fieldset>
                                                     
