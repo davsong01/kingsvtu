@@ -1140,6 +1140,7 @@ class TransactionController extends Controller
         }else{
             $api = $trans->api;
         }
+        
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
 
         return $query;

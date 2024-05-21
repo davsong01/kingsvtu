@@ -148,7 +148,7 @@ class PaymentController extends Controller
                 $user = $account->customer->user;
 
                 if ($call->provider_id == 1) {
-                    $payment_type = $call['payment_method'];
+                    $payment_type = $call->payment_method;
 
                     if ($payment_type === 'CARD') {
                         $extra_charge = getSettings()->card_funding_extra_charge > 0 ? getSettings()->card_funding_extra_charge : 0;
