@@ -151,6 +151,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('query-wallet/{transactionlog?}', [TransactionController::class, 'queryWallet'])->name('admin.query.wallet');
     Route::get('requery-transaction/{transactionlog?}', [TransactionController::class, 'requery'])->name('admin.requery.transaction');
     Route::get('admin-callback-error-logs', [SquadController::class, 'getCallbackLogs'])->name('callback-error-logs');
+    Route::get('requery-callback-analysis/{reference}', [TransactionController::class, 'requeryCallback'])->name('admin.requery.callback');
 
     Route::get('customers/{status?}', [CustomerController::class, 'customers'])->name('customers');
     Route::get('customers-active/{status}', [CustomerController::class, 'customers'])->name('customers.active');

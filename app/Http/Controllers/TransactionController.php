@@ -1140,9 +1140,37 @@ class TransactionController extends Controller
         }else{
             $api = $trans->api;
         }
-        
+
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
 
         return $query;
+    }
+
+    public function requeryCallback($reference)
+    {
+        $transaction = ReservedAccountCallback::where('transaction_reference', $reference)->first();
+
+        if ($transaction->provider_id == 1) {
+            $monnify = new MonnifyController($transaction->gateway);
+            return $monnify->verifyTransaction($reference);
+        }
+
+        if ($transaction->wallet_funding_provider == 2) {
+            $squad = new SquadController($transaction->gateway);
+            return $squad->verifyTransaction($reference);
+        }
+    }
+
+    public function changeTransactionMethod(Request $request, Airtime2CashTransactions $transaction)
+    {
+
+        $transaction->update([
+            'payment_method' => $request->payment_method,
+            'bank_code' => $request->bank ?? $transaction->bank_code,
+            'account_number' => $request->account_number ?? $transaction->account_number,
+            'account_name' => $request->account_name ?? $transaction->account_name,
+        ]);
+
+        return back()->with('Operation successful');
     }
 }
