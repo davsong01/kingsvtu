@@ -17,6 +17,7 @@ use App\Services\ExcelService;
 use App\Models\ReferralEarning;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Models\ReservedAccountCallback;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\WalletController;
@@ -1149,12 +1150,11 @@ class TransactionController extends Controller
     public function requeryCallback($reference)
     {
         $transaction = ReservedAccountCallback::where('transaction_reference', $reference)->first();
-
+        
         if ($transaction->provider_id == 1) {
             $monnify = new MonnifyController($transaction->gateway);
             return $monnify->verifyTransaction($reference);
         }
-
         if ($transaction->wallet_funding_provider == 2) {
             $squad = new SquadController($transaction->gateway);
             return $squad->verifyTransaction($reference);

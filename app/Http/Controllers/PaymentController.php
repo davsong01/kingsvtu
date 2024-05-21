@@ -337,4 +337,12 @@ class PaymentController extends Controller
         $calls = ReservedAccountCallback::with('gateway')->orderBy('status', 'DESC')->paginate();
         return view('admin.transaction.raw_callbacks', compact('calls'));
     }
+
+    public function resetCallBackResponse(ReservedAccountCallback $callback)
+    {
+        $callback->status = 'pending';
+        $callback->save();
+
+        return back()->with('message', 'Operation Successful');
+    }
 }
