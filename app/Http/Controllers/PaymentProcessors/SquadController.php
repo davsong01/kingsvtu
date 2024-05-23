@@ -112,16 +112,16 @@ class SquadController extends Controller
 
         $payload = [
             "customer_identifier" =>  'KGSVTU-'.$data['customer_id'],
-            "first_name" => $data["customerFirstName"] ?? $kycData['FIRST_NAME'] ?? NULL,
-            "last_name" => $data["customerLastName"] ?? $kycData['LAST_NAME'] ?? NULL,
+            "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? NULL),
+            "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? NULL),
             "mobile_num" => $data["customerPhone"] ?? $kycData['PHONE_NUMBER'],
             "email" => $data["customerEmail"],
-            "bvn" => $kycData['BVN'],
+            "bvn" => $kycData['BVN'] ?? ($customer->kycdata->BVN ?? ''), 
             "dob" => $kycData['DATE_OF_BIRTH'] ?? '19/09/1980',
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
         ];
-        
+        dd($payload, $customer->kycdata);
         $response = $this->makeCall($url, $payload);
         
         if (
