@@ -100,7 +100,7 @@ class CustomerController extends Controller
                 continue;
             } catch (\Throwable $th) {
                 // dd($th->getMessage());
-                return back()->with('error', 'Could not complete the process. Only '. $count. ' Customer(s) have Squad account numbers generated!');
+                return back()->with('error', 'Could not complete the process. Only '. $count. ' Customer(s) have Squad account numbers generated!| '. $th->getMessage());
             }
             
         }
