@@ -105,7 +105,7 @@ class CustomerController extends Controller
             
         }
 
-        return back()->with('message', $count . ' Customer(s) now have Squad account numbers generated!');
+        return back()->with('message', $count . ' Customer(s) now have Squad account numbers generated!| '.json_encode($reserved));
 
     }
 

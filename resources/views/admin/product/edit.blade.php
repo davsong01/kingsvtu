@@ -145,7 +145,7 @@
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="description">Description</label>
-                                                                                    <textarea style="height: 117px !important" class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ $product->description ??  old('description')}}"></textarea>
+                                                                                    <textarea style="height: 117px !important" class="form-control" id="description" name="description" rows="3" placeholder="Description" value="{{ $product->description ?? old('description')}}"></textarea>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="seo_title">SEO Title</label>
@@ -208,7 +208,6 @@
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
                                                                                 @foreach($customerlevel as $level)
-                                                                                {{-- {{dd($product->category->discount_type )}} --}}
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
                                                                                     <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]" step=".01" value="{{ $product->customer_level_price($level->id) }}">

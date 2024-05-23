@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Add Category')
+@section('title', 'Add Customer Level')
 @section('content')
 <!-- Content wrapper -->
  <div class="app-content content">
