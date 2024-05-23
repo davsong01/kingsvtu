@@ -109,7 +109,7 @@ class SquadController extends Controller
                 $gender = "2";
             }
         }
-        dd($data["customerFirstName"], $kycData);
+        
         $payload = [
             "customer_identifier" =>  'KGSVTU-'.$data['customer_id'],
             "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? NULL),
