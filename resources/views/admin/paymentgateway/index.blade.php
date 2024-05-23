@@ -66,7 +66,7 @@
                                                         <td>
                                                             <a href="{{ url('/').'/log-p-callback/'.$gateway->id }}">{{ url('/').'/log-p-callback/'.$gateway->id }}</a> <br>
                                                             
-                                                            @if($gateway->id == 2 && getSettings()->payment_gateway == 2)
+                                                            @if($gateway->id == 2)
                                                             <a class="btn btn-info btn-sm" href="{{ route('admin.generate.reserved.accounts') }}">Generate Reserved Accounts</a>
                                                             @endif
                                                         </td>
