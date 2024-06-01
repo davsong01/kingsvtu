@@ -94,6 +94,58 @@ use App\Models\PaymentGateway;
                                                                                 <option value="inactive" {{ $settings->referral_system_status == 'inactive' ? 'selected' : ''}}>InActive</option>
                                                                             </select>
                                                                         </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="type">Bank Transfer Note</label>
+                                                                            <div id="toolbar-container">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-font"></select>
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-color"></select>
+                                                                                    <select class="ql-background"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-script" value="sub"></button>
+                                                                                    <button class="ql-script" value="super"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-header" value="1"></button>
+                                                                                    <button class="ql-header" value="2"></button>
+                                                                                    <button class="ql-blockquote"></button>
+                                                                                    <button class="ql-code-block"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered"></button>
+                                                                                    <button class="ql-list" value="bullet"></button>
+                                                                                    <button class="ql-indent" value="-1"></button>
+                                                                                    <button class="ql-indent" value="+1"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-direction" value="rtl"></button>
+                                                                                    <select class="ql-align"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-link"></button>
+                                                                                    <button class="ql-image"></button>
+                                                                                    <button class="ql-video"></button>
+                                                                                    <button class="ql-formula"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean"></button>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="editor" style="min-height: 240px">
+                                                                                {!! old('bank_transfer_note') ?? $settings->bank_transfer_note !!}
+                                                                            </div>
+                                                                            <input name="bank_transfer_note" type="hidden" id="bank_transfer_note" />
+                                                                        </fieldset>
                                                                         {{-- <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
                                                                             <label for="referral_percentage">Referral Percentage(%)</label>
                                                                             <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $settings->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
@@ -176,6 +228,7 @@ use App\Models\PaymentGateway;
                                                                             <label for="seo_description">SEO Description</label>
                                                                             <textarea class="form-control" id="seo_description" rows="3" name="seo_description" value="{{ $settings->seo_description ?? old('seo_description') }}" placeholder="SEO Description" required>{{ $settings->seo_description ?? old('seo_description') }}</textarea>
                                                                         </fieldset>
+                                                                        
                                                                         <fieldset class="form-group">
                                                                             <label for="google_ad_code">Google Ad Code</label>
                                                                             <textarea class="form-control" id="google_ad_code" rows="3" name="google_ad_code" value="{{ $settings->google_ad_code ?? old('google_ad_code') }}" placeholder="Google ad code">{{ $settings->google_ad_code ?? old('google_ad_code') }}</textarea>
@@ -205,6 +258,9 @@ use App\Models\PaymentGateway;
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
 <script>
     $('#referral_system_status').on('change', function (e) {
         var referral_system_status = $('#referral_system_status').val();
@@ -223,7 +279,21 @@ use App\Models\PaymentGateway;
             });
         }
     });
-   
+    let quill = new Quill('.editor', {
+        theme: 'snow',
+        toolbar: true,
+        placeholder: 'Enter bank transfer note...',
+        modules: {
+            syntax: true,
+            toolbar: '#toolbar-container',
+        },
+    });
+
+    $('form').on('submit', () => {
+        var myEditor = document.querySelector('.editor')
+        var html = myEditor.children[0].innerHTML;
+        $('#bank_transfer_note').val(html);
+    });
 </script>
 
 @endsection
