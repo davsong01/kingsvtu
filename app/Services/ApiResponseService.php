@@ -202,7 +202,6 @@ class ApiResponseService
                 app('App\Http\Controllers\TransactionController')->refineAndLogBiller($verify, $variation->category, $request['unique_element'], $request['product_slug']);
             }
 
-            ;
             return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], array_merge($verify['raw_response']['content'], ['product' => $product->display_name]));        
 
         } else {

@@ -116,7 +116,7 @@
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
                                                                                 <label for="phone">Phone Number</label>
-                                                                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone')}}" required>
+                                                                                <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone')}}" maxlength="11" required>
                                                                             </fieldset>
                                                                         </div>
                                                                         {{-- <fieldset class="form-group position-relative has-icon-left">
@@ -184,7 +184,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="closeModal()">Close</button>
     </div>
     </form>
     </div>
@@ -195,6 +195,9 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
 <script>
+    function closeModal(){
+        $('#verify-modal').modal('hide');
+    }
     function verify(e){
         $("#amount").attr({
             "required": true,

@@ -322,7 +322,6 @@ class VtpassController extends Controller
             ];
             
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            
             if (isset($response['code']) && $response['code'] == 000 && !empty($response['content']) && !empty($response['content']['Customer_Name'])) {
                 $message = '';
                 $message .= isset($response['content']['Customer_Name']) ? 'Account Name: ' . $response['content']['Customer_Name'] : '';
@@ -349,6 +348,7 @@ class VtpassController extends Controller
                     'renewal_amount' => $response['content']['Renewal_Amount'] ?? '',
                     'raw_response' => $response,
                 ];
+
             } else {
                 $fail_response =  $fail_response = 'Validation Error: ' . ($response['content']['error'] ?? 'Unable to verify at the moment, please try again');
 
