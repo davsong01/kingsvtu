@@ -202,8 +202,9 @@ class TransactionController extends Controller
         // Get Api
         $file_name = $api->file_name;
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
         
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
+       
         try {
             //code...
             DB::beginTransaction();
@@ -1079,6 +1080,7 @@ class TransactionController extends Controller
     public function queryWallet(Request $request, TransactionLog $transactionlog)
     {
         $type = $request->type;
+        
         $check = Wallet::where('transaction_id', $transactionlog->transaction_id)
             ->where('type', $type)
             ->get();
@@ -1126,7 +1128,6 @@ class TransactionController extends Controller
 
         if (!$trans) return ['status' => 'failed', 'message' => 'Transaction not found!'];
 
-
         if($trans->reason == 'WALLET-FUNDING'){
             if ($trans->wallet_funding_provider == 1) {
                 $monnify = new MonnifyController($trans->provider);
@@ -1143,7 +1144,12 @@ class TransactionController extends Controller
         }
 
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
-
+        
+        if(!empty($query) && !empty($query['api_response'])){
+            $trans->update([
+                'api_response' => json_encode($query['api_response'])
+            ]);
+        }
         return $query;
     }
 
