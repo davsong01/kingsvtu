@@ -16,7 +16,7 @@ class CustomerController extends Controller
 {
     function customers(Request $request, $status = null)
     {
-        $customers = User::where('type', '!=', 'admin');
+        $customers = User::where('type', '!=', 'admin')->orderBy('created_at', 'DESC');
 
         if ($status) {
             if ($status == 'active') {
@@ -43,7 +43,7 @@ class CustomerController extends Controller
                 ->orWhere('phone', 'like', $key);
         }
 
-        $customers = $customers->latest()->get();
+        $customers = $customers->get();
 
         return view('admin.customers.index', ['customers' => $customers]);
     }
