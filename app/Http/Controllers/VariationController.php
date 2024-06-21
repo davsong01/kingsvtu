@@ -16,14 +16,19 @@ class VariationController extends Controller
         Session::put('page', '1');
 
         // Get Variations from Filename
-        $variations = app("App\Http\Controllers\Providers\\" . $api->file_name)->getVariations($product);
+        try {
+            //code...
+            $variations = app("App\Http\Controllers\Providers\\" . $api->file_name)->getVariations($product);
+            return back()->with('message', 'Variations pulled successfully');
+        } catch (\Throwable $th) {
+            return back()->with('error', 'No Variations found: '.$th->getMessage());
+        }
 
-        return back()->with('message', 'Variations pulled successfully');
     }
 
     public function getCustomerVariations(Product $product)
     {
-        $variations = Variation::where('product_id', $product->id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
+        $variations = Variation::where('product_id', $product->id)->where('api_id',$product->api_id)->where('status', 'active')->orderBy('system_price', 'ASC')->get();
         foreach ($variations as $key => $variation) {
             $req = new Request([
                 'variation_id' => $variation->id,

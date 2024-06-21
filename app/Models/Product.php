@@ -15,7 +15,7 @@ class Product extends Model
 
     public function variations()
     {
-        return $this->hasMany(Variation::class)->orderBy('created_at', 'DESC');
+        return $this->hasMany(Variation::class)->orderBy('created_at', 'DESC')->where('api_id', $this->api_id);
     }
 
     public function api()

@@ -189,7 +189,7 @@ class TransactionController extends Controller
     public function transactionReceipt($transaction_id)
     {
         $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
-
+        
         $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
         return $pdf->download($transaction['transaction_id'] . '.pdf');
         // return view('customer.receipts.transaction_receipt', compact('transaction'));

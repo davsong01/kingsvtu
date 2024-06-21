@@ -371,7 +371,7 @@
                         if (data && data.length > 0) {
                             for (t = 0; t <= data.length; t++) {
                                 $('#variation').append(`<option value="${data[t].id}" data-min="${data[t].min}" data-max="${data[t].max}" data-isFixed="${data[t].fixed_price}" data-amount="${data[t].system_price}"> ${data[t].system_name}</option>`);
-
+                                
                                 variations.push({
                                     "id": data[t].id,
                                     "verifiable": data[t].verifiable,

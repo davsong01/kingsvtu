@@ -35,7 +35,7 @@ class SimServerHostingController extends Controller
                 "process" => "direct_to_device",
                 "api_key" => $api->api_key,
                 "code" => $step1,
-                "device_id" => 'not yet',
+                "device_id" => $this->generateRequestId(),
                 "device_key" => "not yet"
             );
 
@@ -101,7 +101,7 @@ class SimServerHostingController extends Controller
         $payload = array(
             "process" => "check_status",
             "api_key" => $api->api_key,
-            "order_id" => 1
+            "order_id" => $transaction->reference_id
         );
 
         $payload = json_encode($payload);

@@ -128,6 +128,7 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 'active')->get();
         $variations = Variation::where('product_id', $product->id)->where('api_id', $product->api_id)->get();
+        
         $apis = API::where('status', 'active')->get();
         $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
 
