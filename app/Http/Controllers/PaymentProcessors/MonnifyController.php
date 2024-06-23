@@ -124,6 +124,7 @@ class MonnifyController extends Controller
 
             $data["preferredBanks"] = $data["preferredBanks"] ?? null;
             $getAllAvailableBanks = empty($data["preferredBanks"]) ? true : false;
+    
             $payload = json_encode([
                 "customer_id" => $data["customer_id"],
                 "bvn" => $data["BVN"],

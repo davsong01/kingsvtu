@@ -15,6 +15,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with(['api', 'variations'])->orderBy('created_at', 'DESC')->get();
+        
         return view('admin.product.index', compact('products'));
     }
 
@@ -137,7 +138,6 @@ class ProductController extends Controller
 
     public function update(Product $product, Request $request)
     {
-
         $this->validate($request, [
             "name" => "required",
             "display_name" => "required",
@@ -163,11 +163,40 @@ class ProductController extends Controller
             'multistep' => 'nullable',
             "allow_subscription_type" => "nullable",
             'referral_percentage' => 'nullable',
-
         ]);
 
         if (!empty($request->image)) {
             $image = $this->uploadFile($request->image, 'products');
+        }
+
+        $currentVariations = Variation::where('product_id', $product->id)->where('api_id', $product->api_id)->get();
+        $apivariations = Variation::where('product_id', $product->id)->where('api_id', $request->api)->pluck('slug')->toArray();
+        
+        if (!empty($request->copy_variations) && $request->copy_variations == 'yes') {
+            foreach ($currentVariations as $variation) {
+                $newVariation = $variation->replicate();
+ 
+                if ($variation->api_id != $request->api && !in_array($variation->slug, $apivariations)) {
+                    $newVariation->api_id = $request->api;
+                    $newVariation->save();
+
+                    // Duplicate discounts
+                    $discounts = $variation->discounts;
+                    
+                    foreach($discounts as $discount){
+                        Discount::updateOrCreate([
+                            "product_id" => $product->id,
+                            "variation_id" => $newVariation->id
+                        ],[
+                            "product_id" => $product->id,
+                            "variation_id" => $newVariation->id,
+                            "customer_level" => $discount->customer_level,
+                            "price" => $discount->price,
+                            "status" => $discount->status,
+                        ]);
+                    }
+                }
+            }
         }
 
         $product->update([
@@ -212,6 +241,7 @@ class ProductController extends Controller
             }
         }
 
+        
         return back()->with('message', 'Update Successfull');
     }
 }

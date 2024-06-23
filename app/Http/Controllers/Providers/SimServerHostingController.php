@@ -35,26 +35,16 @@ class SimServerHostingController extends Controller
                 "process" => "direct_to_device",
                 "api_key" => $api->api_key,
                 "code" => $step1,
-                "device_id" => $this->generateRequestId(),
-                "device_key" => "not yet"
+                "order_id" => $this->generateRequestId(),
+                "device_key" => $api->secret_key,
+                "device_id" => $api->public_key,
             );
 
             $payload = json_encode($payload);
             $res = $this->basicApiCall($url, $payload, [], 'POST');
-
-            if (!empty($res) && ($res['status'] == false)) {
-                $format = [
-                    'status' => 'failed',
-                    'user_status' => 'failed',
-                    'api_response' => json_encode($res),
-                    'description' => 'Transaction completed',
-                    'message' => null,
-                    'payload' => $payload,
-                    'status_code' => 0,
-                    'extras' => null,
-                ];
-                
-            } else {
+            \Log::info(['simserverhosting' =>$res]);
+            // dd($res, $payload);
+            if (!empty($res) && ($res['status'] == true)) {
                 $format = [
                     'status' => 'delivered',
                     'user_status' => 'delivered',
@@ -63,6 +53,18 @@ class SimServerHostingController extends Controller
                     'message' => null,
                     'payload' => $payload,
                     'status_code' => 1,
+                    'extras' => null,
+                ];
+                
+            } else {
+                $format = [
+                    'status' => 'failed',
+                    'user_status' => 'failed',
+                    'api_response' => json_encode($res),
+                    'description' => 'Transaction completed',
+                    'message' => null,
+                    'payload' => $payload,
+                    'status_code' => 0,
                     'extras' => null,
                 ];
             }
@@ -105,21 +107,20 @@ class SimServerHostingController extends Controller
         );
 
         $payload = json_encode($payload);
+        // \Log::info(['payload' => $payload]);
         $res = $this->basicApiCall($url, $payload, [], 'POST');
-        dd($res, $payload);
         try {
 
             $res = Http::post($url);
             $res = $res->object();
-            dd('stop here untill there is a subscription');
-
-            if ($res->success) {
+        
+            if ($res->status == true) {
                 $format = [
                     'status' => 'delivered',
                     'user_status' => 'delivered',
-                    'api_response' => json_encode($res),
+                    'api_response' => $res,
                     'description' => 'Transaction successful',
-                    'message' => $res->comment ?? null,
+                    'message' => $res->server_message ?? null,
                     'payload' => $url,
                     'status_code' => 1,
                     'extras' => null,
@@ -128,11 +129,11 @@ class SimServerHostingController extends Controller
                 $format = [
                     'status' => 'failed',
                     'user_status' => 'failed',
-                    'api_response' => json_encode($res),
+                    'api_response' => $res,
                     'description' => 'Transaction completed',
-                    'message' => $res->comment ?? null,
+                    'message' => $res->server_message ?? null,
                     'payload' => $url,
-                    'status_code' => 1,
+                    'status_code' => 0,
                     'extras' => null,
                 ];
             }
@@ -144,7 +145,7 @@ class SimServerHostingController extends Controller
                 'user_status' => 'failed',
                 'api_response' => json_encode($res),
                 'description' => 'Transaction failed',
-                'message' => $res->comment ?? null,
+                'message' => $res->server_message ?? null,
                 'payload' => $payload ?? '',
                 'status_code' => 1,
                 'extras' => null,

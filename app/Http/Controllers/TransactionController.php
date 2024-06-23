@@ -204,7 +204,7 @@ class TransactionController extends Controller
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
         
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
-       
+    
         try {
             //code...
             DB::beginTransaction();
@@ -1150,7 +1150,8 @@ class TransactionController extends Controller
                 'api_response' => json_encode($query['api_response'])
             ]);
         }
-        return $query;
+
+        return response()->json($query);
     }
 
     public function requeryCallback($reference)

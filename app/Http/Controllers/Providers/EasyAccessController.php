@@ -718,7 +718,6 @@ class EasyAccessController extends Controller
             //         "email" => "example@gmail.com",
             //         "balance" => 12450,
             //         "funding_acctno1" => 2001245621,
-            //         "funding_bank1" => "Sterling Bank",
             //         "funding_acctno2" => 2001245622,
             //         "funding_bank2" => "Wema Bank",
             //         "funding_acctno3" => "2001245623",

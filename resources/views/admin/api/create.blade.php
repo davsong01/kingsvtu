@@ -88,11 +88,11 @@
                                                         <input type="text" class="form-control" name="api_key" value="{{ old('api_key') }}" placeholder="Enter api key" id="api_key">
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="secret_key">Secret Key</label>
+                                                        <label for="secret_key">Secret Key/Device Key</label>
                                                         <input type="text" class="form-control" name="secret_key" value="{{ old('secret_key') }}" placeholder="Enter secret key" id="secret_key">
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="public_key">Public Key</label>
+                                                        <label for="public_key">Public Key/Device Id</label>
                                                         <input type="text" class="form-control" name="public_key" value="{{ old('public_key') }}"  placeholder="Enter public key" id="public_key">
                                                     </fieldset>
                                                 </div>

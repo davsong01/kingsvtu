@@ -30,8 +30,8 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Withdraw Earnings</h4>
-                                    <p>Withdraw your downline earnings to wallet</p>
+                                    <h4 class="card-title">Withdraw Commission</h4>
+                                    <p>Withdraw your commission to wallet</p>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">

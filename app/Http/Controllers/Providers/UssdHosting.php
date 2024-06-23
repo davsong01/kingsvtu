@@ -413,7 +413,7 @@ class UssdHosting extends Controller
                 $format = [
                     'status' => 'delivered',
                     'user_status' => 'delivered',
-                    'api_response' => json_encode($res),
+                    'api_response' => $res,
                     'description' => 'Transaction successful',
                     'message' => $res->comment ?? null,
                     'payload' => $url,
@@ -424,7 +424,7 @@ class UssdHosting extends Controller
                 $format = [
                     'status' => 'failed',
                     'user_status' => 'failed',
-                    'api_response' => json_encode($res),
+                    'api_response' => $res,
                     'description' => 'Transaction completed',
                     'message' => $res->comment ?? null,
                     'payload' => $url,
@@ -468,7 +468,6 @@ class UssdHosting extends Controller
         //             "email" => "example@gmail.com",
         //             "balance" => 12450,
         //             "funding_acctno1" => 2001245621,
-        //             "funding_bank1" => "Sterling Bank",
         //             "funding_acctno2" => 2001245622,
         //             "funding_bank2" => "Wema Bank",
         //             "funding_acctno3" => "2001245623",

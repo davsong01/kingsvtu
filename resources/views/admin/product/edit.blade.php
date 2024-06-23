@@ -170,6 +170,14 @@
                                                                                         @endforeach
                                                                                     </select>
                                                                                 </fieldset>
+                                                                                <fieldset class="form-group" id="copy-variations-div" style="display:none">
+                                                                                    <label for="copy_variations">Copy Product variations</label>
+                                                                                    <select class="form-control tiny" name="copy_variations" id="copy_variations">
+                                                                                        <option value="">Select</option>
+                                                                                        <option value="yes" {{ $product->copy_variations == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                        <option value="no" {{ $product->copy_variations == 'no' ? 'selected' : ''}}>No</option> 
+                                                                                    </select>
+                                                                                </fieldset>
                                                                                 <fieldset class="form-group">
                                                                                     <label for="servercode">Server Code/Server Token</label>
                                                                                     <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ $product->servercode ?? old('servercode')}}">
@@ -249,10 +257,8 @@
                                                                             <a href="{{ route('variations.pull', $product->id) }}" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Pull Variations</a>
                                                                         @else
                                                                             <a style="width:fit-content;" href="{{ route('variations.pull', $product->id) }}" class="btn btn-info mb-2 mt-1 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Re Pull Variations</a>
-
                                                                             <form action="{{route('variations.update', $product->id)}}" method="POST" enctype="multipart/form-data">
                                                                                 @csrf
-                                                                               
                                                                                 @foreach($product->variations as $variation)
                                                                                 <div class="row" style="margin-bottom:10px">
                                                                                     <div class="col-md-3">
@@ -374,9 +380,7 @@
                                             </div>
                                         </div>
                                     </section>
-                                    <!-- Nav Filled Ends -->
                                 </div>
-                               
                             </div>
                         </div>
                     </div>
@@ -387,6 +391,22 @@
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script>
+    $("#api").on('change', function(e) {
+        var id = $("#api").val();
+        var currentId = "{{ $product->api->id }}";
+        var hasVariations = "{{ $product->has_variations }}";
+        
+        if(id != currentId && hasVariations == 'yes'){
+            $("#copy-variations-div").show();
+            $("#copy_variations").val('');
+        }else{
+            $("#copy-variations-div").hide();
+            $("#copy_variations").val('');
+        }
+    });
+</script>
+
 <script>
     $("#add-mode").on('click', function () {
         //get last ID
@@ -487,7 +507,7 @@
         </div>`
         $("#mode-holder").append(child);      
     });
-
+    
     $("#mode-holder").on('click','.remove-mode', function(e) {
         var removeId = $(e.target).attr('id').split('-');
         var id = removeId[2];

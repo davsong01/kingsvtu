@@ -65,19 +65,17 @@ class VariationController extends Controller
         if (isset($request->level)) {
             foreach ($request->level as $key => $level) {
                 foreach ($level as $k => $price) {
-                    // if (!empty($price)) {
-                        Discount::updateOrCreate([
-                            'customer_level' => $key,
-                            'product_id' => $request->product_id,
-                            'variation_id' => $k,
-                        ], [
-                            'status' => 'active',
-                            'customer_level' => $key,
-                            'product_id' => $request->product_id,
-                            'variation_id' => $k,
-                            'price' => $price ?? 0
-                        ]);
-                    // }
+                    Discount::updateOrCreate([
+                        'customer_level' => $key,
+                        'product_id' => $request->product_id,
+                        'variation_id' => $k,
+                    ], [
+                        'status' => 'active',
+                        'customer_level' => $key,
+                        'product_id' => $request->product_id,
+                        'variation_id' => $k,
+                        'price' => $price ?? 0
+                    ]);
                 }
             }
         }

@@ -115,6 +115,10 @@
                 if(data.status == 'success'){
                     $("#api-"+id).hide(); 
                     $("#balance-"+id).html('<span>'+data.balance+'</span>'); 
+                }else{
+                    $("#api-"+id).show(); 
+                    console.log(data.balanc);
+                    $("#balance-"+id).html('<span>N/A</span>'); 
                 }
             },
             error: function (data) {

@@ -92,7 +92,18 @@ class APIController extends Controller
     public function getBalance(API $api)
     {
         $file_name = $api->file_name;
-        $res = app("App\Http\Controllers\Providers\\" . $file_name)->balance($api);
+
+        try {
+            $res = app("App\Http\Controllers\Providers\\" . $file_name)->balance($api);
+            //code...
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => 'failed',
+                'status_code' => 0,
+                'balance' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
+            ];
+            //throw $th;
+        }
         
         return response()->json($res);
     }
