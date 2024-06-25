@@ -13,7 +13,7 @@ class MobileAirtimeNgController extends Controller
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];
         $slug = strtolower($slug);
-       
+    
         if (str_contains($slug, 'mtn-vtu') || str_contains($slug, 'mtn-airtime') || $slug == 'mtn') {
             $network = 15;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";

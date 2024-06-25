@@ -18,6 +18,7 @@ return new class extends Migration
                 $table->integer('category_id');
                 $table->integer('api_id');
                 $table->string('api_name')->nullable();
+                $table->string('api_code')->nullable();
                 $table->string('status')->default('active');
                 $table->string('slug')->unique();
                 $table->string('system_name')->nullable();

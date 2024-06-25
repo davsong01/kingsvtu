@@ -208,7 +208,7 @@ class TransactionController extends Controller
         try {
             //code...
             DB::beginTransaction();
-            if (isset ($query) && $query['status_code'] == 1) {
+            if (isset ($query) && $query['status_code'] == 1) { // Success
                 $user = auth()->user();
                 $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
                 $res = [
@@ -218,7 +218,17 @@ class TransactionController extends Controller
 
                 $user_status = 'success';
                 $balance_after = $request['balance_before'] - $request['total_amount'];
-            } else if (isset ($query) && $query['status_code'] == 0) {
+            }else if (isset($query) && $query['status_code'] == 2) { // Pending
+                $user = auth()->user();
+                // $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
+                $res = [
+                    'status' => $query['status'],
+                    'message' => 'Transaction Pending!',
+                ];
+
+                $user_status = 'success';
+                $balance_after = $request['balance_before'] - $request['total_amount'];
+            }else if (isset($query) && $query['status_code'] == 0) { // Failed or attention-required
                 // Log wallet
                 $wallet = new WalletController();
                 $request['type'] = 'credit';
@@ -254,7 +264,7 @@ class TransactionController extends Controller
                 'balance_after' => $balance_after,
                 'request_data' => $query['payload'],
                 'api_response' => $query['api_response'] ?? null,
-                'failure_reason' => $failure_reason,
+                'failure_reason' => $query['failure_reason'] ?? $failure_reason,
                 'extras' => $query['extras'] ?? null,
                 'status' => $query['status'] ?? 'attention-required',
                 'descr' => $query['description'],
@@ -275,7 +285,8 @@ class TransactionController extends Controller
             $balance_after = $request['balance_before'];
 
             $transaction->update([
-                'balance_after' => $balance_after
+                'balance_after' => $balance_after,
+                'failure_reason' => $th->getMessage().' Line: '.$th->getLine(). ' File: '.$th->getFile(),
             ]);
             // \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
         }

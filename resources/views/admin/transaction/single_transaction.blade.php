@@ -197,11 +197,20 @@
                                                                     <strong class="heads">API Response ({{ $transaction->api->name ?? null }})</strong> <br>
                                                                     <div>
                                                                         <code style="margin:10px 0">
-                                                                            {!! $transaction->api_response!!}
+                                                                            {!! $transaction->api_response!!} 
+                                                                            @if(!empty($transaction->failure_reason))
+                                                                            <br> <br>
+                                                                            <div style="color:black">
+                                                                                <span><strong><u>Failure Reason</u></strong></span> <br>
+                                                                                {!! $transaction->failure_reason!!}
+                                                                                
+                                                                            </div>
+                                                                            @endif
                                                                         </code>
-
+                                                                       
                                                                     </div>
 
+                                                                    
                                                                 </div>
                                                                 @endif
                                                             </div>
