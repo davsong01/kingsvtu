@@ -119,13 +119,42 @@ class OgDamsSimHostingController extends Controller
         $slug = $request['product_slug'];
         $slug = strtolower($slug);
         
-        try {
-            if (str_contains($product->category->slug, 'airtime')){
-                $url = $api->live_base_url . 'vend/data';
-            }
+        if (str_contains($slug, 'mtn')) {
+            $network = 1;
+        }
 
-            if (str_contains($product->category->slug, 'airtime')) {
+        if (str_contains($slug, 'airtel')) {
+            $network = 2;
+        }
+
+        if (str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) {
+            $network = 4;
+        }
+
+        if (str_contains($slug, 'glo')) {
+            $network = 3;
+        }
+
+        try {
+            if (str_contains($product->category->slug, 'data')){
                 $url = $api->live_base_url . 'vend/data';
+                $payload = array(
+                    "networkId" => $network,
+                    "phoneNumber" => $request['unique_element'],
+                    "planId" => $variation->api_code,
+                    "reference" => $this->generateRequestId(),
+                );
+            }
+            
+            if (str_contains($product->category->slug, 'airtime') || str_contains($product->category->slug, 'mtn-ussd')) {
+                $url = $api->live_base_url . 'vend/airtime';
+                $payload = array(
+                    "networkId" => $network,
+                    "amount" => $request['amount'],
+                    "phoneNumber" => $request['unique_element'],
+                    "type" => "vtu",
+                    "reference" =>  $this->generateRequestId()
+                );
             }
 
             if ($product->has_variations == 'yes') {
@@ -134,25 +163,15 @@ class OgDamsSimHostingController extends Controller
                 $variation = $product;
             }
 
-            if (str_contains($slug, 'mtn')) {
-                $network = 1;
-            }
-
             $headers = [
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $api->api_key,
             ];
-
-            $payload = array(
-                "networkId" => $network,
-                "phoneNumber" => $request['unique_element'],
-                "planId" => $variation->api_code,
-                "reference" => $this->generateRequestId(),
-            );
             
             $payload = json_encode($payload);
+            
             $res = $this->basicApiCall($url, $payload, $headers, 'POST');
-            // \Log::info(['ogdams query response' =>$res]);
+            \Log::info(['ogdams query response' =>$res]);
         
             if (!empty($res) && ($res['status'] == true)) {
                 if($res['code'] == 424){
@@ -194,10 +213,11 @@ class OgDamsSimHostingController extends Controller
 
             return $format;
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             return [
                 'status' => 'attention-required',
                 'user_status' => 'completed',
-                'api_response' => json_encode($res),
+                'api_response' => isset($res) ? json_encode($res) : '',
                 'description' => 'Transaction completed',
                 'message' => $res->comment ?? null,
                 'payload' => $payload ?? '',
