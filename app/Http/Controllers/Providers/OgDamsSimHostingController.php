@@ -231,7 +231,7 @@ class OgDamsSimHostingController extends Controller
     {
         try {
             $url = $api->live_base_url;
-            $url = $url . "get/balances";
+            $url = $url . "get/balances.php";
 
             $headers = [
                 'Content-Type: application/json',
