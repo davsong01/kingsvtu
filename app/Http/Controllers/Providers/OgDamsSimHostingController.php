@@ -137,7 +137,7 @@ class OgDamsSimHostingController extends Controller
 
         try {
             if (str_contains($product->category->slug, 'data')){
-                $url = $api->live_base_url . 'vend/data';
+                $url = $api->live_base_url . 'vend/data.php';
                 $payload = array(
                     "networkId" => $network,
                     "phoneNumber" => $request['unique_element'],
@@ -147,7 +147,7 @@ class OgDamsSimHostingController extends Controller
             }
             
             if (str_contains($product->category->slug, 'airtime') || str_contains($product->category->slug, 'mtn-ussd')) {
-                $url = $api->live_base_url . 'vend/airtime';
+                $url = $api->live_base_url . 'vend/airtime.php';
                 $payload = array(
                     "networkId" => $network,
                     "amount" => $request['amount'],
@@ -169,10 +169,9 @@ class OgDamsSimHostingController extends Controller
             ];
             
             $payload = json_encode($payload);
-            
+           
             $res = $this->basicApiCall($url, $payload, $headers, 'POST');
-            \Log::info(['ogdams query response' =>$res]);
-        
+            
             if (!empty($res) && ($res['status'] == true)) {
                 if($res['code'] == 424){
                     $format = [
