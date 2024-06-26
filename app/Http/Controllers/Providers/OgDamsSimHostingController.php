@@ -25,7 +25,9 @@ class OgDamsSimHostingController extends Controller
         
         // mtn sme
         $mtnSmePlanIds = [1, 2, 3, 4, 5, 109];
-        $mtnCgPlanIds = [94, 95, 96, 97, 98, 99, 101, 102, 103, 104, 105, 106, 107, 108, 940., 950, 960, 970, 980, 990, 1010, 1020, 1030, 1040, 1060, 1070, 1080];
+        $mtnCgPlanIds = [94, 95, 96, 97, 98, 99, 101, 102, 103, 104, 105, 106, 107, 108, 940, 950, 960, 970, 980, 990, 1010, 1020, 1030, 1040, 1060, 1070, 1080, 11110, 11111, 11112];
+        $mtnGiftingPlanIds = [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043];
+        
         $mtnAwoofPlanIds = [11113, 11114, 11115];
         $mtnNetWorkId = 1;
     
@@ -85,6 +87,32 @@ class OgDamsSimHostingController extends Controller
 
                 // Mtn Awoof
                 if (in_array($product->slug, ['mtn-awoof']) && in_array($variation['planId'], $mtnAwoofPlanIds) && $variation['networkId'] == 1) {
+                    Variation::updateOrCreate([
+                        'product_id' => $product['id'],
+                        'category_id' => $product['category_id'],
+                        'api_id' => $product['api']['id'],
+                        'api_name' => $variation['name'],
+                        'api_code' => $variation['planId'],
+                        'slug' => $variation['planId'],
+                    ], [
+                        'product_id' => $product['id'],
+                        'category_id' => $product['category_id'],
+                        'api_id' => $product['api']['id'],
+                        'api_name' => $variation['name'],
+                        'slug' => $variation['planId'],
+                        'api_code' => $variation['planId'],
+                        'system_name' => $variation['name'],
+                        'fixed_price' => 'Yes',
+                        'api_price' => $variation['price'],
+                        'system_price' => $variation['price'],
+                        'min' => $variation['minimum_amount'] ?? null,
+                        'max' => $variation['maximum_amount'] ?? null,
+                        'status' => 'inactive'
+                    ]);
+                }
+
+                // Mtn Gifting
+                if (in_array($product->slug, ['mtn-gifting']) && in_array($variation['planId'], $mtnGiftingPlanIds) && $variation['networkId'] == 1) {
                     Variation::updateOrCreate([
                         'product_id' => $product['id'],
                         'category_id' => $product['category_id'],
