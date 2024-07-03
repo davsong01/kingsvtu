@@ -18,43 +18,6 @@ class ApiResponseService
     
     }
 
-    public function generateAccessToken() {
-        $payload = [
-            "public_key" => $this->posWebServicePublicKey,
-            "type" => "service_access"
-        ];
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, url($this->posWebServiceUrl."/api/auth/generate_key"));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt(
-            $ch,
-            CURLOPT_HTTPHEADER,
-            array(
-                'Content-Type: application/json',
-                'Accept: application/json',
-                'private-key: ' . $this->posWebServicePrivateKey
-            )
-        );
-
-        $response = curl_exec($ch);
-        $decodedResponse = json_decode($response, true);
-        
-        if(isset($decodedResponse['status']) && $decodedResponse['status'] == "1000" && isset($decodedResponse['data'])) {
-            ServiceAuthToken::updateOrCreate(["service" => "POS_SERVICE_ACCESS_TOKEN"],[
-                'service' => "POS_SERVICE_ACCESS_TOKEN",
-                "token" => $decodedResponse['data']['key']
-            ]);
-
-            return $this->responseService->formatServiceResponse("success", "Token set successfully", [], null);
-        }
-
-        return $this->responseService->formatServiceResponse("failed", "Token failed to set", [], null);
-    }
-
     public function getCategories(){
         try {
             $categories = Category::where('status', 'active')->orderBy('order', 'ASC')->select('name','display_name','status','slug', 'description','icon','unique_element','discount_type')->get();
@@ -170,6 +133,16 @@ class ApiResponseService
         $variation = Variation::where('slug', $request->variation_slug)->first();
         $product = Product::where('slug', $request->product_slug)->first();
         
+        if(!empty($product) && $product->status == 'inactive'){
+            $res['message'] = $product->display_name. ' is unavailable at the momement, Please try again later';
+            return $this->responseService->formatServiceResponse("failed", $res['message'], [], 422);
+        }
+        
+        if (!empty($variation) && $variation->status == 'inactive') {
+            $res['message'] = $product->display_name.' - '.$variation->system_name . ' is unavailable at the momement, Please try again later';
+            return $this->responseService->formatServiceResponse("failed", $res['message'], [], 422);
+        }
+
         if (in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
             $element = specialVerifiableVariations()[$variation->slug];
         } else {
@@ -205,7 +178,9 @@ class ApiResponseService
             return $this->responseService->formatServiceResponse("success", "Retrieved successfully", [], array_merge($verify['raw_response']['content'], ['product' => $product->display_name]));        
 
         } else {
-            $res = $verify['message']. $file_name ?? 'Biller not reachable at the moment, please try again later';
+            $res = $verify['message'] ?? 'Biller not reachable at the moment, please try again later';
+            \Log::info(['Verification Error: ' => $verify['message'], 'provider' => $file_name, 'Full response: ' => $verify ]);
+            
             return $this->responseService->formatServiceResponse("failed", $res, [], null);
         }
     }
@@ -229,6 +204,18 @@ class ApiResponseService
 
         // Get product
         $product = Product::where('slug', $request->product_slug)->first();
+        $variation = Variation::where('slug', $request->variation_slug)->first();
+
+        if (!empty($product) && $product->status == 'inactive') {
+            $res['message'] = $product->display_name . ' is unavailable at the momement, Please try again later';
+            return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
+        }
+
+        if (!empty($variation) && $variation->status == 'inactive') {
+            $res['message'] = $product->display_name . ' - ' . $variation->system_name . ' is unavailable at the momement, Please try again later';
+            return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
+        }
+        
         $category = $product->category_id;
         
         if (empty($product)) {

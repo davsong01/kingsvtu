@@ -27,9 +27,9 @@ Route::controller(ExternalApiController::class)->prefix('v1')->group(function ()
     // Get variations
     Route::get('/variations/{product_slug}', 'getVariationsByProductSlug');
     // Verify
-    Route::post('/verify-biller', 'verifyBiller');
-
+    
     Route::middleware('api-auth')->group(function () {
+        Route::post('/verify-biller', 'verifyBiller');
         // Get balance
         Route::get('/get-balance', 'getBalance');
         // Query

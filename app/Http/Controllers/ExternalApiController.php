@@ -59,6 +59,7 @@ class ExternalApiController extends Controller
         }
 
         $verifyBiller = $this->apiResponseService->verifyBiller($request);
+       
         return $this->toJson($verifyBiller);
     }
 
@@ -69,7 +70,7 @@ class ExternalApiController extends Controller
 
     public function makePayment(Request $request){
         $validator = Validator::make($request->all(), [
-            "product_slug" => "required|string",
+            'product_slug' => 'nullable|exists:products,slug',
             "variation_slug" => "sometimes|string",
             "billersCode" => "required|string",
             "request_id" => "required|string",

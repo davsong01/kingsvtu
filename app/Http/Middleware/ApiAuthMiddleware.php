@@ -63,7 +63,73 @@ class ApiAuthMiddleware
         }
 
         $user = User::where("api_key", $request->header("api-key"))->first();
-        
+        // dd($user);
+        // Check level
+        if($user->customer->level->make_api_level == 'no'){
+            $json = [
+                'status' => 'error',
+                'message' => 'User level not upgraded for API usage',
+                'errors' => 'INVALID USER',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
+        // Check user status
+        if ($user->customer->kyc_status == 'unverified') {
+            $json = [
+                'status' => 'error',
+                'message' => 'User KYC not verified',
+                'errors' => 'INVALID KYC data',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
+        // Check user api access
+        if ($user->customer->api_access == 'inactive') {
+            $json = [
+                'status' => 'error',
+                'message' => 'User not profiled for API usage',
+                'errors' => 'INVALID USER',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
+
+        // Check user email verification
+        if (empty($user->email_verified_at)) {
+            $json = [
+                'status' => 'error',
+                'message' => 'User email not verified',
+                'errors' => 'INVALID USER EMAIL',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
+        // Check user status
+        if ($user->status != 'active') {
+            $json = [
+                'status' => 'error',
+                'message' => 'User account is '. $user->status,
+                'errors' => 'ACCOUNT INACTIVE',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
+        if(empty($user->api_key) || empty($user->public_key) || empty($user->secret_key)){
+            $json = [
+                'status' => 'error',
+                'message' => 'Please set authentication keys',
+                'errors' => 'INVALID CREDENTIALS',
+                'data' => null
+            ];
+            return app('App\Http\Controllers\ExternalApiController')->toJson($json);
+        }
+
         if (empty($user)) {
             $json = [
                 'status' => 'error',
@@ -95,7 +161,7 @@ class ApiAuthMiddleware
                 return app('App\Http\Controllers\ExternalApiController')->toJson($json);
             }
         }
-
+       
         Auth::login($user);
         return $next($request);
     }
