@@ -63,7 +63,9 @@
                                                 <tbody>
                                                     @foreach ( $products as $product )
                                                     <tr>
-                                                        <td><img src="{{asset($product->image)}}" alt="{{$product->image}}" style="width: 50px;float:left">{{ $product->name }}<br> <strong>Slug: </strong>{{ $product->slug }}</td>
+                                                        <td><img src="{{asset($product->image)}}" alt="{{$product->id}}" style="width: 50px;float:left">{{ $product->name }}<br> <strong>Slug: </strong>{{ $product->slug }} <br>
+                                                            <strong>No. of Transactions</strong> {{ number_format($product->transactions->count()) }} <br>
+                                                        </td>
                                                         <td>{{ $product->category->name }} <br>
                                                             <strong>API:</strong> {{ $product->api->name }}
                                                         </td>
