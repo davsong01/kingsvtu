@@ -36,7 +36,7 @@ class Product extends Model
 
     public function transactions()
     {
-        return $this->hasMany(TransactionLog::class, 'product_id');
+        return $this->hasMany(TransactionLog::class, 'product_id')->whereIn('status', ['delivered', 'success']);
     }
 
     public function customer_level_price($level)
