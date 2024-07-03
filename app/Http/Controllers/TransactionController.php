@@ -822,15 +822,13 @@ class TransactionController extends Controller
         if ($request->status) {
             $transactions = $transactions->where('status', $request->status);
         }
-        if ($request->from) {
-            $time = $request->from . ' 00:00:00';
-            $transactions = $transactions->where('created_at', '>', $time);
+        
+        if ($request->from && $request->to) {
+            $from = $request->from . ' 00:00:00';
+            $to = $request->to . ' 23:59:59';
+            $transactions = $transactions->whereBetween('created_at', [$from, $to]);
         }
-        if ($request->to) {
-            $time = $request->to . ' 00:00:00';
-            $transactions = $transactions->where('created_at', $time);
-        }
-
+        
         $transactions = $transactions->paginate(20);
 
         return view('admin.transaction.index', [
