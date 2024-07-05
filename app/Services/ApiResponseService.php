@@ -203,24 +203,29 @@ class ApiResponseService
         }
 
         // Get product
-        $product = Product::where('slug', $request->product_slug)->first();
-        $variation = Variation::where('slug', $request->variation_slug)->first();
+        $product = Product::where('slug', $request->product_slug)->where('status','active')->first();
+        $variation = Variation::where('slug', $request->variation_slug)->where('status', 'active')->first();
 
-        if (!empty($product) && $product->status == 'inactive') {
-            $res['message'] = $product->display_name . ' is unavailable at the momement, Please try again later';
-            return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
-        }
+        // if (!empty($product) && $product->status == 'inactive') {
+        //     $res['message'] = $product->display_name . ' is unavailable at the momement, Please try again later';
+        //     return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
+        // }
 
-        if (!empty($variation) && $variation->status == 'inactive') {
-            $res['message'] = $product->display_name . ' - ' . $variation->system_name . ' is unavailable at the momement, Please try again later';
-            return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
-        }
+        // if (!empty($variation) && $variation->status == 'inactive') {
+        //     $res['message'] = $product->display_name . ' - ' . $variation->system_name . ' is unavailable at the momement, Please try again later';
+        //     return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
+        // }
         
         $category = $product->category_id;
         
         if (empty($product)) {
             return $this->responseService->formatServiceResponse("error", '', ['Invalid product slug!, kindly try again!'], null);
         }
+
+        if ($product->has_variations == 'yes' && empty($variation)) {
+            return $this->responseService->formatServiceResponse("error", '', ['Invalid variation slug!, kindly try again!'], null);
+        }
+
         // Log external API
         $element = $product->category->unique_element;
         $request['unique_element'] = $request->unique_element ?? $request->$element;
