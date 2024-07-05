@@ -242,7 +242,7 @@ class ApiResponseService
                         'unique_element' => $request['unique_element'],
                         'variation' => $variation->id,
                     ]);
-
+                    
                     $res = app('App\Http\Controllers\TransactionController')->verify($req);
                     if (isset($res['renewal_amount'])) {
                         $request['amount'] = $res['renewal_amount'];

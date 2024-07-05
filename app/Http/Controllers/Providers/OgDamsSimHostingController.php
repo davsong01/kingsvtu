@@ -1481,7 +1481,7 @@ class OgDamsSimHostingController extends Controller
            
             $res = $this->basicApiCall($url, $payload, $headers, 'POST');
             
-            if (!empty($res) && ($res['status'] == true)) {
+            if (!empty($res) && isset($res['status']) && ($res['status'] == true)) {
                 if($res['code'] == 424){
                     $format = [
                         'status' => 'failed',
@@ -1505,7 +1505,7 @@ class OgDamsSimHostingController extends Controller
                         'extras' => null,
                     ];
                 }
-                
+            
             } else {
                 $format = [
                     'status' => 'failed',
