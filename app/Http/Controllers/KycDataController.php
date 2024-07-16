@@ -22,17 +22,18 @@ class KycDataController extends Controller
         return $verify;
     }
 
-    public function getLgaByStateName($state)
+    public function getLgaByStateName($state, $value = null)
     {
         $lgas = getLgas($state);
         $res = '';
 
         if (!empty($lgas)) {
             foreach ($lgas as $lga) {
-                $res .= '<option value="' . $lga . '">' . $lga . '</option>';
+                $selected = !empty($value) && $value == $lga ? 'selected' : '';
+                $res .= '<option value="' . $lga . '" ' . $selected . '>' . $lga . '</option>';
             }
         }
-
+        
         return response()->json($res);
     }
 

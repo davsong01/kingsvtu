@@ -210,7 +210,7 @@
             alert("Please enter biller to verify");
             return;
         }
-
+        
         $.LoadingOverlay("show");
         $('#verify-modal').modal('hide');
         var amount = $('#amount').val();

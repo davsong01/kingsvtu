@@ -281,10 +281,20 @@ use App\Models\BlackList;
                                         </div>
                                         <div class="tab-pane" id="kyc" aria-labelledby="about-tab" role="tabpanel">
                                             <h1>KYC Data</h1>
-                                            <form action="{{ route('admin.customer.update.kyc', $user->customer->id) }}" method="POST">
+                                            <form action="{{ route('admin.customer.update.kyc', $user->customer->id) }}" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 <div class="card-content">
                                                     <div class="row">
+                                                        <div class="col-md-6">
+                                                            <h5 class="primary">General KYC Status: <button class="btn btn-primary btn-sm">{{ getFinalKycStatus($user->customer->id) }}</button> </h5>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            {{-- @if(getFinalKycStatus($user->customer->id) == 'unverified' || getFinalKycStatus($user->customer->id) == 'declined') --}}
+                                                            <a onclick="return confirm('You are about to approve KYC details');" href="{{ route('admin.customer.approve.kyc', $user->customer->id) }}" class="btn btn-dark btn-sm"><i class="fa fa-check"></i> Approve and create reserved accounts</a>
+                                                            <a onclick="return confirm('You are about to decline KYC details');" href="{{ route('admin.customer.decline.kyc', $user->customer->id) }}" class="btn btn-danger btn-sm"><i class="fa fa-times"></i> Decline</a>
+                                                            {{-- @endif --}}
+                                                        </div>
+                                                        <hr>
                                                         <div class="col-md-6">
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('FIRST_NAME', $user->customer->id)['status'] == 'verified')
@@ -345,7 +355,7 @@ use App\Models\BlackList;
                                                                 <label for="COUNTRY">Country</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <select name="COUNTRY" id="country" class="form-control">
                                                                     <option value="">Select...</option>
-                                                                    <option value="Nigeria">Nigeria</option>
+                                                                    <option value="Nigeria" {{ kycStatus('COUNTRY', $user->customer->id)['value'] == 'Nigeria' ? 'selected' : '' }}>Nigeria</option>
                                                                 </select>
                                                                 @endif
                                                             </fieldset>
@@ -359,7 +369,7 @@ use App\Models\BlackList;
                                                                 <label for="STATE">State</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <select name="STATE" id="state" class="form-control">
                                                                     @foreach (getStates() as $state)
-                                                                        <option value="{{$state}}"  {{ kycStatus('STATE', $user->customer->id)['value'] ? 'selected' : '' }}>{{$state}}</option>
+                                                                        <option value="{{$state}}" {{ kycStatus('STATE', $user->customer->id)['value'] == $state ? 'selected' : '' }}>{{$state}}</option>
                                                                     @endforeach
                                                                 </select>
                                                                 @endif
@@ -374,10 +384,11 @@ use App\Models\BlackList;
                                                                 @else
                                                                 <label for="LGA">Local Government Area</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <select id="lga" name="LGA" class="form-control" required>
-                                                                    <option value="">Select</option>
+                                                                    <option value="">Select...</option>
+                                                                    <option value="{{ kycStatus('LGA', $user->customer->id)['value']}}" selected>{{ kycStatus('LGA', $user->customer->id)['value'] }}</option>
                                                                     @if (!empty($lgas))
                                                                         @foreach ($lgas as $item)
-                                                                            <option value="{{$item}}" {{ kycStatus('LGA', $user->customer->id)['value'] == $item ? 'selected' : '' }}>{{$item}}</option>
+                                                                            <option value="{{$item}}">{{$item}}</option>
                                                                         @endforeach
                                                                     @endif
                                                                 </select>
@@ -391,7 +402,7 @@ use App\Models\BlackList;
                                                                 <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}">
                                                                 @else
                                                                 <label for="lastname">Date of Birth (As associated with BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                <input type="date" name="DOB"  class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
+                                                                <input type="date" name="DOB" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
                                                                 @endif
                                                             </fieldset>
                                                         </div>
@@ -410,7 +421,7 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('IDCARD', $user->customer->id)['status'] == 'verified')
                                                                 <label for="IDCARD">ID Card</label><span class="verified"><i class="fa fa-check"></i> Verifiedd</span> <br>
-                                                                <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value'])}}" onclick="zoomImg(this)">
+                                                                <img style="width: 60px;cursor:zoom-in;" src="{{isset(kycStatus('IDCARD', $user->customer->id)['value'])}}" onclick="zoomImg(this)">
                                                                 @else
                                                                 <label for="IDCARD">ID Card</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="file" name="IDCARD"  class="form-control" value="{{ kycStatus('IDCARD', $user->customer->id)['value'] }}" required>
@@ -640,7 +651,7 @@ use App\Models\BlackList;
                                         @if(getSettings()->gateway->slug == 'monnify')
                                         <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option>
                                         <option value="035" {{ old('bank') == '035' ? 'selected' : ''}}>Wema Bank</option>
-                                         @endif
+                                        @endif
                                         <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option> 
                                     </select>
                                 </fieldset>
@@ -744,13 +755,14 @@ use App\Models\BlackList;
     <script>
         $(document).ready(function() {
             $('.js-example-basic-single').select2();
-
+            var value = '{{ kycStatus('LGA', $user->customer->id)['value'] }}';
+            
             $('#state').on('change',function () {
                 var state = $('#state').val();
                 $('#lga option:not(:first)').remove();
                 $.ajax({
                     type: "GET",
-                    url: "{{url('/')}}/get-lga-by-statename/"+state,
+                    url: "{{url('/')}}/get-lga-by-statename/"+state+"/"+value,
                     beforeSend: function () {
 
                     },

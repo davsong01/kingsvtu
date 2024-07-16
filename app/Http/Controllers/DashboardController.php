@@ -341,82 +341,39 @@ class DashboardController extends Controller
             $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
         }
 
-        $instantVerify = ['FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
         foreach ($input as $key => $value) {
-            if (in_array($key, $instantVerify)) {
-                $this->updateKycData($key, $value, auth()->user()->customer->id, 'verified');
-            } else {
-                $this->updateKycData($key, $value, auth()->user()->customer->id, 'unverified');
-            }
+            $this->updateKycData($key, $value, auth()->user()->customer->id, 'unverified');
         }
-
-        $firstname = $input['FIRST_NAME'] ?? auth()->user()->firstname;
-        $lastname = $input['LAST_NAME'] ?? auth()->user()->lastname;
-        $middlename = $input['MIDDLE_NAME'] ?? auth()->user()->middlename;
-
-        auth()->user()->update([
-            "firstname" => $firstname,
-            "middlename" => $middlename,
-            "lastname" => $lastname,
-        ]);
-
-        // verify BVN automatically
-        $this->updateKycData('BVN', $request->BVN, auth()->user()->customer->id, 'verified');
 
         auth()->user()->customer->update([
-            "kyc_status" => 'verified',
+            "kyc_status" => 'awaiting-approval',
         ]);
 
-        // Create reserved account
-        $name = $firstname . ' ' . $lastname . ' ' . $middlename;
-
-        $data = [
-            'BVN' => $request->BVN ?? kycStatus('BVN', auth()->user()->customer->id)['value'],
-            'customerName' => $name,
-            'accountName' => $firstname,
-            'customerEmail' => auth()->user()->email,
-            'customer_id' => auth()->user()->customer->id,
-            'getAllAvailableBanks' => true,
-        ];
-
-        $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
-        
-        if ($reserved['status'] && $reserved['status'] == 'success') {
-            return back()->with('message', 'KYC Update completed');
-        } else {
-            $error = $reserved['data'] ?? 'Please refresh this page';
-            return back()->with('error', 'Error: ' . $error);
-        }
     }
     
-    public function updateKycData($key, $value, $customer_id, $status)
+    public function updateKycData($key, $value, $customer_id, $status = null)
     {
-        KycData::updateOrCreate([
-            'customer_id' => $customer_id,
-            'key' => $key,
-            // 'value' => $value,
-        ], [
-            'customer_id' => $customer_id,
-            'key' => $key,
-            'value' => $value,
-            'status' => $status
-        ]);
-        
-        $check = KycData::where(['customer_id' => $customer_id, 'key' => $key, 'status' => 'verified'])->first();
-        
-        if (!$check) {
+        if (!empty($status)) {
             KycData::updateOrCreate([
                 'customer_id' => $customer_id,
                 'key' => $key,
-                'value' => $value,
             ], [
                 'customer_id' => $customer_id,
                 'key' => $key,
                 'value' => $value,
                 'status' => $status
             ]);
+        } else {
+            KycData::updateOrCreate([
+                'customer_id' => $customer_id,
+                'key' => $key,
+            ], [
+                'customer_id' => $customer_id,
+                'key' => $key,
+                'value' => $value,
+            ]);
         }
-       
+        
         return;
     }
 

@@ -161,7 +161,7 @@
                             {{-- {{ $transactions->appends($query) }} --}}
                         </div>
                     </div>
-                     <div class="card-footer">
+                    <div class="card-footer">
                         {!! $transactions->appends($_GET)->links() !!}
                     </div>
                 </div>

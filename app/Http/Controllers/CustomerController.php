@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\KycData;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
@@ -247,47 +248,102 @@ class CustomerController extends Controller
     public function processCustomerUpdateKycInfo(Request $request, Customer $customer)
     {
         $input = $this->validate($request, [
-            "BVN" => "nullable",
             "FIRST_NAME" => "nullable",
             "MIDDLE_NAME" => "nullable",
             "LAST_NAME" => "nullable",
             "PHONE_NUMBER" => "nullable",
+            "BVN" => "nullable",
+            "IDCARDTYPE" => "nullable",
+            "IDCARD" => "nullable",
             "COUNTRY" => "nullable",
             "STATE" => "nullable",
             "LGA" => "nullable",
             "DOB" => "nullable",
-            "IDCARDTYPE" => "nullable",
-            "IDCARD" => "nullable",
         ]);
-        
-        $instantVerify = ['BVN','FIRST_NAME', 'LAST_NAME', 'MIDDLE_NAME', 'DOB', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARD', 'IDCARDTYPE'];
+
         $user = $customer->user;
-        foreach ($input as $key => $value) {
-            app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'verified');
-            // if (in_array($key, $instantVerify)) {
-            // } else {
-            //     app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id, 'unverified');
-            // }
+
+        if (!empty($request->IDCARD)) {
+            $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
+        } else {
+            $input['IDCARD'] = kycStatus('IDCARD', $user->customer->id)['value'];
         }
 
-        $firstname = $input['FIRST_NAME'] ?? $user->firstname;
-        $lastname = $input['LAST_NAME'] ?? $user->lastname;
-        $middlename = $input['MIDDLE_NAME'] ?? $user->middlename;
+        $items = 0;
+        foreach ($input as $key => $value) {
+            if (!empty($value)) {
+                app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id);
+                $items += 1;
+            }
+        }
 
-        $user->update([
-            "firstname" => $firstname,
-            "middlename" => $middlename,
-            "lastname" => $lastname,
-        ]);
-       
-        // verify BVN automatically
-        app('App\Http\Controllers\DashboardController')->updateKycData('BVN', $request->BVN,$customer->id, 'verified');
-       
+        if ($items == count($input)) {
+            $firstname = $input['FIRST_NAME'];
+            $lastname = $input['LAST_NAME'];
+            $middlename = $input['MIDDLE_NAME'];
+
+            $user->update([
+                "firstname" => $firstname,
+                "middlename" => $middlename,
+                "lastname" => $lastname,
+            ]);
+        }
+
+        return back()->with('message', 'Information Update completed, click approve to generate reserved account');        
+    }
+
+    public function approveCustomerKyc(Customer $customer)
+    {
         $customer->update([
             "kyc_status" => 'verified',
         ]);
 
-        return back()->with('message', 'KYC Update completed');
+        KycData::where('customer_id', $customer->id)->update([
+            'status' => 'verified',
+        ]);
+
+        $data = [
+            'BVN' => kycStatus('BVN', $customer->id)['value'],
+            'DOB' => kycStatus('DOB', $customer->id)['value'] ?? '',
+            'customerName' => $customer->user->username,
+            'accountName' => kycStatus('FIRST_NAME', $customer->id)['value'],
+            'customerEmail' => $customer->user->email,
+            'customer_id' => $customer->id,
+            'getAllAvailableBanks' => true,
+        ];
         
+        // Log email
+        $subject = "KYC Info Update";
+        $body = '<p>Hello! ' . $customer->user->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">Your KYC Information has been approved ' . config('app.name') . '<br><br> You can now carry out transactions<br/></p>';
+
+        logEmails($customer->user->email, $subject, $body);
+        $res = createReservedAccount($data);
+
+        // $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
+        if ($reserved['status'] && $reserved['status'] == 'success') {
+            return back()->with('message', 'KYC Approved succesfully and reserved accounts created');
+        } else {
+            return back()->with('error', 'KYC Approved succesfully but NO reserved accounts created');
+        }
+    }
+
+    public function declineCustomerKyc(Customer $customer)
+    {
+        $customer->update([
+            "kyc_status" => 'unverified',
+        ]);
+
+        KycData::where('customer_id', $customer->id)->update([
+            'status' => 'declined',
+        ]);
+
+        $subject = "KYC Info Update";
+        $body = '<p>Hello! ' . $customer->user->firstname . '</p>';
+        $body .= '<p style="line-height: 2.0;">Your KYC Information was declined on ' . config('app.name') . '<br><br> Please revisit the page and enter your details again.<br/></p>';
+
+        logEmails($customer->user->email, $subject, $body);
+
+        return back()->with('message', 'Operation successful');
     }
 }

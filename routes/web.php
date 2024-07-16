@@ -99,7 +99,7 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     Route::get('payment-callback/{provider_id?}', [PaymentController::class, 'analyzePaymentResponse'])->name('payment-callback');
     Route::get('customer-update-kyc-info', [DashboardController::class, 'updateKycInfo'])->name('update.kyc.details');
     Route::post('customer-update-kyc-info', [DashboardController::class, 'processUpdateKycInfo'])->name('update.kyc.details.process');
-    Route::get('get-lga-by-statename/{state}', [KycDataController::class, 'getLgaByStateName'])->name('kyc-get-lga-by-state');
+    Route::get('get-lga-by-statename/{state}/{value?}', [KycDataController::class, 'getLgaByStateName'])->name('kyc-get-lga-by-state');
     Route::post('customer-get-discount', [TransactionController::class, 'getCustomerDiscount'])->name('get.customer.discount');
 
     // Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
@@ -204,6 +204,8 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::post('transaction-pin-reset/{user}', [CustomerController::class, 'resetTransactionPin'])->name('admin.transaction.pin.reset');
     Route::post('password-reset/{user}', [CustomerController::class, 'resetPassword'])->name('admin.password.reset');
     Route::post('customer-update-kyc/{customer}', [CustomerController::class, 'processCustomerUpdateKycInfo'])->name('admin.customer.update.kyc');
+    Route::get('customer-approve-kyc/{customer}', [CustomerController::class, 'approveCustomerKyc'])->name('admin.customer.approve.kyc');
+    Route::get('customer-decline-kyc/{customer}', [CustomerController::class, 'declineCustomerKyc'])->name('admin.customer.decline.kyc');
     
 });
 

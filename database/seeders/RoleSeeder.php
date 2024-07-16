@@ -176,7 +176,9 @@ class RoleSeeder extends Seeder
             'customer.shop.requests',
             'approve.shop.requests',
             'decline.shop.requests',
-            'delete.shop.request'
+            'delete.shop.request',
+            'admin.customer.approve.kyc',
+            'admin.customer.decline.kyc'
         ];
 
         // RolePermission::truncate();
