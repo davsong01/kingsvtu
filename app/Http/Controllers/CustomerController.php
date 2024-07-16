@@ -318,7 +318,7 @@ class CustomerController extends Controller
         $body .= '<p style="line-height: 2.0;">Your KYC Information has been approved ' . config('app.name') . '<br><br> You can now carry out transactions<br/></p>';
 
         logEmails($customer->user->email, $subject, $body);
-        $res = createReservedAccount($data);
+        $reserved = createReservedAccount($data);
 
         // $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
         if ($reserved['status'] && $reserved['status'] == 'success') {
