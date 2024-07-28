@@ -111,6 +111,7 @@
                                                                         <input type="email" name="official_email" class="form-control" value="{{ old('official_email') }}" required>
                                                                     </fieldset>
                                                                 </div>
+                                                                
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         <label for="whatsapp_number">Shop Whatsapp Number</label>

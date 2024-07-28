@@ -128,6 +128,7 @@
                                                                                 value="{{ auth()->user()->phone }}">
                                                                         </fieldset>
                                                                     </div>
+                                                                    
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
                                                                             <label for="email">Email Address</label>
@@ -143,7 +144,7 @@
                                                                             <input type="text" class="form-control" name="new_transaction_pin">
                                                                         </fieldset>
                                                                     </div>
-                                                                   
+                                                
                                                                     @if (auth()->user()->type == 'customer')
                                                                         <div class="col-md-6">
                                                                             <fieldset class="form-group">
@@ -157,7 +158,7 @@
                                                                             </fieldset>
                                                                         </div>
                                                                     @endif
-                                                                     <div class="col-md-6">
+                                                                    <div class="col-md-6">
                                                                         <fieldset class="form-group">
                                                                             <label for="new_password">New Password</label>
                                                                             <input type="text" class="form-control" name="new_password">

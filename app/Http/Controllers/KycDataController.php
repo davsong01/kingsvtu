@@ -26,7 +26,7 @@ class KycDataController extends Controller
     {
         $lgas = getLgas($state);
         $res = '';
-
+        
         if (!empty($lgas)) {
             foreach ($lgas as $lga) {
                 $selected = !empty($value) && $value == $lga ? 'selected' : '';

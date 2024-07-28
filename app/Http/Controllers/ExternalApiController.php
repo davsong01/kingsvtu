@@ -28,7 +28,7 @@ class ExternalApiController extends Controller
             return response()->json($response, 500);
         }
     }
-    
+
     public function getCategories()
     {
         $categories = $this->apiResponseService->getCategories();
@@ -82,7 +82,7 @@ class ExternalApiController extends Controller
         }
 
         // Check request id format
-      
+    
         if (app('App\Http\Controllers\Controller')->checkRequestIDFormat($request->request_id) == false) {
             $log = "IMPROPER REQUEST ID";
             //get full message

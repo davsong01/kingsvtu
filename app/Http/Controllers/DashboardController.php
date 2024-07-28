@@ -314,7 +314,13 @@ class DashboardController extends Controller
     public function updateKycInfo()
     {
         $kyc = $this->getKycStatus(auth()->user());
-        return view('customer.edit_kyc_details', compact('kyc'));
+        $kycStatuses = multipleKycStatuses(['FIRST_NAME', 'MIDDLE_NAME', 'LAST_NAME', 'PHONE_NUMBER', 'COUNTRY', 'STATE', 'LGA', 'DOB', 'IDCARDTYPE', 'IDCARD', 'BVN'], auth()->user()->customer->id);
+        
+        $old_state = $kycStatuses->WHERE('key', 'STATE')->first();
+        $old_state = !empty($old_state->value) ? $old_state->value : null;
+        $oldlgas = getLgas($old_state);
+        
+        return view('customer.edit_kyc_details', compact('kyc', 'kycStatuses', 'oldlgas'));
     }
 
     public function apiSettings(){
@@ -336,7 +342,7 @@ class DashboardController extends Controller
             "IDCARD" => "sometimes|image|max:1024",
             "IDCARDTYPE" => "nullable"
         ]);
-
+        
         if (!empty($request->IDCARD)) {
             $input['IDCARD'] = $this->uploadFile($request->IDCARD, 'kyc');
         }
@@ -349,12 +355,14 @@ class DashboardController extends Controller
             "kyc_status" => 'awaiting-approval',
         ]);
 
+        return back()->with('message', 'Update successful');
+
     }
     
     public function updateKycData($key, $value, $customer_id, $status = null)
     {
         if (!empty($status)) {
-            KycData::updateOrCreate([
+            $data = KycData::updateOrCreate([
                 'customer_id' => $customer_id,
                 'key' => $key,
             ], [
@@ -364,7 +372,7 @@ class DashboardController extends Controller
                 'status' => $status
             ]);
         } else {
-            KycData::updateOrCreate([
+            $data = KycData::updateOrCreate([
                 'customer_id' => $customer_id,
                 'key' => $key,
             ], [

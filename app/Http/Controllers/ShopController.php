@@ -74,7 +74,7 @@ class ShopController extends Controller
         $details['subscription_start'] = !empty($details['subscription_start']) ? $details['subscription_start'] : Carbon::now();
         $details['subscription_end'] = !empty($details['subscription_end']) ? $details['subscription_end'] : Carbon::now()->addYear();
         $details['merchant_name'] = $customer->user->firstname . ' '. $customer->user->lastname;
-       
+        
         $details['api_key'] = $customer->user->api_key;
         
         // $details['secret_key'] = $customer->user->secret_key;
@@ -127,13 +127,11 @@ class ShopController extends Controller
     {
         $customer = $shoprequest->customer;
         $details = $shoprequest->request_details;
-        
-        $new_data = [];
-
+    
         foreach($details as $key=>$value){
             $new_data[$key] = $request[$key] ?? $value;
         }
-       
+        
         $shoprequest->update([
             'request_details' => $new_data,
             'shop_status' => $request->shop_status
@@ -145,8 +143,10 @@ class ShopController extends Controller
             'store_name' => $new_data['shop_name'],
             'subscription_start' => $new_data['subscription_start'],
             'subscription_end' => $new_data['subscription_end'],
+            'custom_domain' => $new_data['custom_domain'],
             'currency' => $new_data['currency']
         ];
+
         $url = env('MULTI_SHOP_BASE_URL') . 'update-shop/' . $shoprequest->merchant_id;
         $payload['json'] = Hash::make(env('MULTI_SHOP_KEY'));
         // Send details

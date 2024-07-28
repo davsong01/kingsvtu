@@ -61,11 +61,12 @@ use Carbon\Carbon;
                                                     <strong>Shop Slug:</strong> {{ $request->request_details['shop_slug'] }} <br>
                                                     <strong>Whatsapp Number:</strong> {{ $request->request_details['whatsapp_number'] }} <br>
                                                     <strong>Official Email:</strong>{{ $request->request_details['official_email'] }} <br>
-                                                    <strong>Currency:</strong> {{ $request->request_details['currency'] }}
+                                                    <strong>Currency:</strong> {{ $request->request_details['currency'] }} 
                                                     {{-- @if($request->status == 'approved') --}} <br>
-                                                   
+                                                
                                                     <strong style="color:blue">Sub start:</strong> {{ !empty($request->request_details['subscription_start']) ? date("M jS, Y", strtotime($request->request_details['subscription_start'])) : date("M jS, Y", strtotime(Carbon::now())) }} <br>
                                                     <strong style="color:blue">Sub end:</strong> {{ !empty($request->request_details['subscription_end']) ? date("M jS, Y", strtotime($request->request_details['subscription_end'])) : date("M jS, Y", strtotime(Carbon::now())) }} <br>
+                                                    
                                                     <strong>Shop Status:</strong><span style="color:{{ $request->shop_status == 'active' ? 'green' : 'red'}}">{{ ucfirst($request->shop_status )}}</span>
                                                     
                                                 </P>
@@ -162,7 +163,7 @@ use Carbon\Carbon;
                                                                     <div class="col-md-4">
                                                                         <fieldset class="form-group">
                                                                             <label for="custom_domain">Custom Domain</label>
-                                                                            <input type="text" class="form-control tiny" id="custom_domain" name="custom_domain"  value="{{ $request->request_details['custom_domain'] ?? old('custom_domain') }}" placeholder="custom_domain">
+                                                                            <input type="text" class="form-control tiny" id="custom_domain" name="custom_domain"  value="{{ $request->request_details['custom_domain'] ?? old('custom_domain') }}" placeholder="Custom Domain">
                                                                         </fieldset>
                                                                     </div>
                                                                     <div class="col-md-4">
