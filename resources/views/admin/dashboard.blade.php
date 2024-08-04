@@ -75,7 +75,7 @@
                                         <div style="margin-top: 4px;" id="transaction-response"></div>
                                         
                                         <p>
-                                            <div style="margin-top:15px" onclick="viewTransactions()" id="view-transactions" class="btn btn-info">View <i style="display:none" id="transaction-spinner" class="fa fa-spinner fa-spin"></i></div>
+                                            <div style="margin-top:22px" onclick="viewTransactions()" id="view-transactions" class="btn btn-info">View <i style="display:none" id="transaction-spinner" class="fa fa-spinner fa-spin"></i></div>
                                         </p>
                                     </div>
                                 </div>
