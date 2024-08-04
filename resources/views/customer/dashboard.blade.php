@@ -1,4 +1,41 @@
 @extends('layouts.app')
+@section('page-css')
+    <style>
+        .card-container {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .card2 {
+            flex-grow: 1;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            padding: 20px;
+            margin: 10px;
+            background-color: #f9f9f9;
+        }
+        .card2 h2 {
+            color: #333;
+            font-size: 20px;
+        }
+        .card2 .amount {
+            font-size: 24px;
+            color: green;
+            margin: 10px 0;
+        }
+        .card2 a {
+            display: block;
+            margin: 5px 0;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .card2 a:hover {
+            text-decoration: underline;
+        }
+    </style>
+@endsection
 @section('content')
     <!-- Content wrapper -->
     <div class="app-content content">
@@ -77,23 +114,36 @@
                         </div>
                         <!-- Multi Radial Chart Starts -->
                         <div class="col-md-6 col-12 dashboard-visit">
-                            <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title">Refer and Earn</h4>
-                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                </div>
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <p>
-                                            Share your referral links with friends to earn handsome rewards
-                                        <div class="text-primary">
-                                            {{ url('/register'). '?referral='.auth()->user()->username }}
+                            <div class="row">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h4 class="card-title">Refer and Earn</h4>
+                                        <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                    </div>
+                                    <div class="card-content">
+                                        <div class="card-body">
+                                            <p>
+                                                Share your referral links with friends to earn handsome rewards
+                                            <div class="text-primary">
+                                                {{ url('/register'). '?referral='.auth()->user()->username }}
+                                            </div>
+                                            </p>
                                         </div>
-                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="card-container">
+                                    <div class="card2">
+                                        <h2>Wallet Bal.</h2>
+                                        <div class="amount">₦37,578</div>
+                                        <a href="#">View-Purchases</a>
+                                        <a href="#">Wallet Summary</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
 
                     </div>
                 </section>
