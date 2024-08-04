@@ -17,7 +17,7 @@ class CustomerController extends Controller
 {
     function customers(Request $request, $status = null)
     {
-        $customers = User::where('type', '!=', 'admin')->orderBy('created_at', 'DESC');
+        $customers = User::with('customer')->where('type', '!=', 'admin')->orderBy('created_at', 'DESC');
 
         if ($status) {
             if ($status == 'active') {
@@ -44,9 +44,40 @@ class CustomerController extends Controller
                 ->orWhere('phone', 'like', $key);
         }
 
-        $customers = $customers->get();
 
-        return view('admin.customers.index', ['customers' => $customers]);
+        if (!empty($request->email)) {
+            $customers = $customers->where('email', 'like', $request->email);
+        }
+        
+        if (!empty($request->phone)) {
+            $customers = $customers->where('phone', 'like', $request->phone);
+        }
+
+        if (isset($request->status)) {
+            $customers = $customers->where('status', $request->status);
+        }
+
+        if (!empty($request->customer_level)) {
+            $customers = $customers->whereHas('customer', function ($query) use ($request) {
+                $query->where('customer_level', $request->customer_level);
+            });
+        }
+
+        if (!empty($request->username)) {
+            $customers = $customers->where('username', 'like', $request->username);
+        }
+
+        if (!empty($request->from) && !empty($request->to)) {
+            $from = $request->from . ' 00:00:00';
+            $to = $request->to . ' 23:59:59';
+
+            $customers = $customers->whereBetween('created_at', [$from, $to]);
+        }
+
+        $customers = $customers->paginate(20);
+        $customer_levels = CustomerLevel::all();
+
+        return view('admin.customers.index', ['customers' => $customers, 'customer_levels' => $customer_levels]);
     }
 
     function unverifiedCustomers(Request $request, $status = null)
@@ -175,8 +206,8 @@ class CustomerController extends Controller
         ]);
 
         $user = User::where('id', $id)->first();
-        $user->update($request->except(['_token', 'ip', 'customerlevel','kyc_status']));
-
+        $user->update($request->except(['_token', 'ip', 'customerlevel', 'kyc_status', 'merchant_settings', 'store_slug', 'store_name', 'merchant_id', 'array']));
+        
         if(!empty($request->customerlevel)){
             $level = CustomerLevel::where('id', $request->customerlevel)->first();
             $user->customer->customer_level = $level->id;
