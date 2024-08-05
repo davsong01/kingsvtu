@@ -172,7 +172,28 @@
                             <div class="row">
                                 @foreach (getCategories() as $category)
                                 <?php
-                                    $colors = ['#ff6347', '#ffcc47', '#47b3ff', '#8a47ff'];
+                                    $colors = [
+                                                '#FF6347', // Tomato
+                                                '#FFD700', // Gold
+                                                '#FF8C00', // Dark Orange
+                                                '#4682B4', // Steel Blue
+                                                '#008080', // Teal
+                                                '#708090', // Slate Gray
+                                                '#20B2AA', // Light Sea Green
+                                                '#FF4500', // Orange Red
+                                                '#6B8E23', // Olive Drab
+                                                '#800080', // Purple
+                                                '#2E8B57', // Sea Green
+                                                '#8A2BE2', // Blue Violet
+                                                '#DC143C', // Crimson
+                                                '#008B8B', // Dark Cyan
+                                                '#1E90FF', // Dodger Blue
+                                                '#C71585', // Medium Violet Red
+                                                '#483D8B', // Dark Slate Blue
+                                                '#FF1493', // Deep Pink
+                                                '#2F4F4F', // Dark Slate Gray
+                                                '#FF8C00'  // Dark Orange];
+                                    ];
                                     $randomColor = $colors[array_rand($colors)];
                                 ?>
                                 <div class="col-md-4" style="padding-bottom: 5px;">
