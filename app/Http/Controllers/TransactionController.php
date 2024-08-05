@@ -34,7 +34,7 @@ class TransactionController extends Controller
                 return $query->where('status', 'active')->get();
             }
         ])->where('status', 'active')->where('slug', $slug)->first();
-    
+            
         if (!empty($category) && $category->status == 'active') {
             return view('customer.single_category_page', compact('category'));
         } else {

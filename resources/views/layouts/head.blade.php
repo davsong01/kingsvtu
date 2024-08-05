@@ -75,7 +75,7 @@
         }
 
         .svg svg{
-            fill: white;
+            fill: white !important;
         }
     </style>
     @yield('page-css')

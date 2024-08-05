@@ -34,6 +34,43 @@
         .card2 a:hover {
             text-decoration: underline;
         }
+
+        .button-container {
+            font-family: Arial, sans-serif;
+        }
+
+        .fund-wallet-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        /* .fund-wallet-btn:hover {
+            background-color: #e5533d;
+        } */
+
+        .icon {
+            /* background: white; */
+            margin-right: 10px;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .display {
+            font-size: 12px;
+        }
+
+        .svg{
+            fill: white !important;
+        }
     </style>
 @endsection
 @section('content')
@@ -115,7 +152,7 @@
                         <!-- Multi Radial Chart Starts -->
                         <div class="col-md-6 col-12 dashboard-visit">
                             <div class="row">
-                                <div class="card">
+                                <div class="card" style="width: 100%;">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h4 class="card-title">Refer and Earn</h4>
                                         <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
@@ -133,18 +170,42 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="card-container">
-                                    <div class="card2">
-                                        <h2>Wallet Bal.</h2>
-                                        <div class="amount">₦37,578</div>
-                                        <a href="#">View-Purchases</a>
-                                        <a href="#">Wallet Summary</a>
+                                @foreach (getCategories() as $category)
+                                <?php
+                                    $colors = [
+                                                '#FF6347', // Tomato
+                                                '#FFD700', // Gold
+                                                '#FF8C00', // Dark Orange
+                                                '#4682B4', // Steel Blue
+                                                '#008080', // Teal
+                                                '#708090', // Slate Gray
+                                                '#20B2AA', // Light Sea Green
+                                                '#FF4500', // Orange Red
+                                                '#6B8E23', // Olive Drab
+                                                '#800080', // Purple
+                                                '#2E8B57', // Sea Green
+                                                '#8A2BE2', // Blue Violet
+                                                '#DC143C', // Crimson
+                                                '#008B8B', // Dark Cyan
+                                                '#1E90FF', // Dodger Blue
+                                                '#C71585', // Medium Violet Red
+                                                '#483D8B', // Dark Slate Blue
+                                                '#FF1493', // Deep Pink
+                                                '#2F4F4F', // Dark Slate Gray
+                                                '#FF8C00'  // Dark Orange];
+                                    ];
+                                    $randomColor = $colors[array_rand($colors)];
+                                ?>
+                                <div class="col-md-4" style="padding-bottom: 5px;">
+                                    <div class="button-container">
+                                        <a target="_blank" href="{{ route('open.transaction.page', $category->slug)}}" class="fund-wallet-btn" style="background-color: {{ $randomColor }}">
+                                            <span class="icon">@if($category->icon){!! $category->icon !!}@else <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z" fill="white"/></svg>@endif</span> <span class="display">&nbsp;{{ $category->display_name }}</span>
+                                        </a>
                                     </div>
                                 </div>
+                                @endforeach
                             </div>
                         </div>
-                        
-
                     </div>
                 </section>
                 <!-- Dashboard Ecommerce ends -->

@@ -13,7 +13,6 @@
     <div class="shadow-bottom"></div>
     <div class="main-menu-content" style="margin-top: 20px;" >
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="lines">
-            {{-- start --}}
             <?php
                 $balance = auth()->user()->type == 'customer' ? getSettings()->currency .number_format(walletBalance(auth()->user()), 2) : 0;
             ?>
