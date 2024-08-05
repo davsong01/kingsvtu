@@ -91,7 +91,7 @@
                             @include('layouts.alerts')
                         </div>
                         @if(!empty($customer))
-                        <div class="col-md-6 col-12 dashboard-greetings">
+                        <div class="col-md-6 dashboard-greetings">
                             <div class="card" style="min-height: 310px;">
                                 <div class="card-header">
                                     <h3 class="greeting-text">Customer of the Month</h3>
@@ -114,8 +114,8 @@
                             </div>
                         </div>
                         @endif
-                        <!-- Greetings Content Starts -->
-                        <div class="col-md-6 col-12 dashboard-greetings">
+                        <!-- Wallet balance -->
+                        <div class="col-md-6 dashboard-greetings">
                             <div class="card" style="min-height: 325px;">
                                 <div class="card-header">
                                     <h3 class="greeting-text">Wallet Balance</h3>
@@ -149,26 +149,29 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Multi Radial Chart Starts -->
-                        <div class="col-md-6 col-12 dashboard-visit">
-                            <div class="row">
-                                <div class="card" style="width: 100%;">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h4 class="card-title">Refer and Earn</h4>
-                                        <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                    </div>
-                                    <div class="card-content">
-                                        <div class="card-body">
-                                            <p>
-                                                Share your referral links with friends to earn handsome rewards
+                    </div>
+                    <div class="row">
+                        <!-- Refer and earn -->
+                        <div class="col-md-6 dashboard-visit">
+                            <div class="card" style="width: 100%;">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h4 class="card-title">Refer and Earn</h4>
+                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-body">
+                                        <p>
+                                            Share your referral links with friends to earn handsome rewards
                                             <div class="text-primary">
-                                                {{ url('/register'). '?referral='.auth()->user()->username }}
+                                                {{ url('/register') . '?referral=' . auth()->user()->username }}
                                             </div>
-                                            </p>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-6">
+                            
                             <div class="row">
                                 @foreach (getCategories() as $category)
                                 <?php

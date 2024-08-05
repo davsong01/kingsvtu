@@ -127,6 +127,7 @@ class DashboardController extends Controller
             ->groupBy('customer_id')
             ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
             ->orderBy('total_amount', 'DESC')->first();
+        
         return $count;
     }
 
