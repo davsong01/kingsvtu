@@ -72,13 +72,11 @@
                                 <div class="card-content">
                                     <div class="card-body py-1">
                                         <div class="text-muted line-ellipsis"><strong>All Transactions</strong></div>
-                                        <span style="margin-top:50px"></span>
-                                        <p>
-                                            <span style="color:black">All:  {!! getSettings()->currency !!}{{ number_format($credit + $debit )}}({{ $debit_count +  $credit_count}}) </span><br>
-                                            <span style="color:green">Credit: {!! getSettings()->currency !!}{{ number_format($credit) }}<small>({{ $credit_count }})</small></span> <br>
-                                            <span style="color:red">Debit: {!! getSettings()->currency !!}{{ number_format($debit) }} <small>({{ $debit_count }})</small></span><br>
-                                        </p>
+                                        <div style="margin-top: 4px;" id="transaction-response"></div>
                                         
+                                        <p>
+                                            <div style="margin-top:22px" onclick="viewTransactions()" id="view-transactions" class="btn btn-info">View <i style="display:none" id="transaction-spinner" class="fa fa-spinner fa-spin"></i></div>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -89,18 +87,15 @@
                                     <div class="card-body py-1">
                                         <div class="text-muted line-ellipsis"><strong>Referral Earnings</strong></div>
                                         <span style="margin-top:50px"></span>
+                                        <div style="margin-top: 10px;" id="referral-response"></div>
+
                                         <p>
-                                            <span style="color:black">All:  {!! getSettings()->currency !!}{{ number_format( $referral_credit + $referral_debit)}}({{$referral_debit_count + $referral_credit_count}}) </span><br>
-                                            <span style="color:green">Credit: {!! getSettings()->currency !!}{{ number_format($referral_credit) }}<small>({{ $referral_credit_count }})</small></span> <br>
-                                            <span style="color:red">Debit: {!! getSettings()->currency !!}{{ number_format($referral_debit) }} <small>({{ $referral_debit_count }})</small></span><br>
+                                            <div style="margin-top:20px" onclick="viewReferral()" id="view-referrals" class="btn btn-info">View <i style="display:none" id="referral-spinner" class="fa fa-spinner fa-spin"></i></div>
                                         </p>
-                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        
                         <div class="col-xl-3 col-12 dashboard-users">
                             <div class="card text-center">
                                 <div class="card-content">
@@ -140,7 +135,6 @@
                                 </div>
                             </div>
                         </div>
-                       
                     </div>
                     <div class="row">
                         <!-- Earning Swiper Starts -->
@@ -196,66 +190,6 @@
 
                             </div>
                         </div>
-                         {{-- <div class="col-xl-6 col-md-6 col-6 dashboard-earning-swiper" id="widget-earnings">
-                            <div class="card">
-                                <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title"><i class="bx bx-dollar font-medium-5 align-middle"></i> <span
-                                            class="align-middle">Earnings</span></h5>
-                                    <i class="bx bx-dots-vertical-rounded font-medium-3 cursor-pointer"></i>
-                                </div>
-                                <div class="card-content">
-                                    <div class="card-body py-1 px-0">
-                                        <!-- earnings swiper starts -->
-                                        <div class="widget-earnings-swiper swiper-container p-1">
-                                            <div class="swiper-wrapper">
-                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center"
-                                                    id="repo-design">
-                                                    <i class="bx bx-pyramid mr-1 font-weight-normal font-medium-4"></i>
-                                                    <div class="swiper-text">
-                                                        <div class="swiper-heading">Repo Design</div>
-                                                        <small class="d-block">Gitlab</small>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center"
-                                                    id="laravel-temp">
-                                                    <i class="bx bx-sitemap mr-50 font-large-1"></i>
-                                                    <div class="swiper-text">
-                                                        <div class="swiper-heading">Designer</div>
-                                                        <small class="d-block">Women Clothes</small>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center"
-                                                    id="admin-theme">
-                                                    <i class="bx bx-check-shield mr-50 font-large-1"></i>
-                                                    <div class="swiper-text">
-                                                        <div class="swiper-heading">Best Sellers</div>
-                                                        <small class="d-block">Clothing</small>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center"
-                                                    id="ux-devloper">
-                                                    <i class="bx bx-devices mr-50 font-large-1"></i>
-                                                    <div class="swiper-text">
-                                                        <div class="swiper-heading">Admin Template</div>
-                                                        <small class="d-block">Global Network</small>
-                                                    </div>
-                                                </div>
-                                                <div class="swiper-slide rounded swiper-shadow py-50 px-2 d-flex align-items-center"
-                                                    id="marketing-guide">
-                                                    <i class="bx bx-book-bookmark mr-50 font-large-1"></i>
-                                                    <div class="swiper-text">
-                                                        <div class="swiper-heading">Marketing Guide</div>
-                                                        <small class="d-block">Books</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- earnings swiper ends -->
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div> --}}
                         <!-- Marketing Campaigns Starts -->
                         {{-- <div class="col-xl-12 col-12 dashboard-marketing-campaign">
                             <div class="card marketing-campaigns">
@@ -484,4 +418,41 @@
 @endsection
 @section('page-script')
     <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+    <script>
+        function viewReferral(){
+            $.ajax({
+                type: "GET",
+                url: "{{url('/')}}/admin/dashboard-widgets/referrals",
+                beforeSend: function () {
+                    $('#referral-spinner').show();
+                },
+                success: function(data, textStatus, jQxhr) {
+                    $('#referral-response').html(data.data);
+                    $('#view-referrals').hide();
+                    $('#referral-spinner').hide();
+                },
+                error: function(jQxhr, textStatus, errorThrown) {
+                    $('#referral-spinner').hide();
+                }
+            });
+        }
+
+        function viewTransactions() {
+            $.ajax({
+                type: "GET",
+                url: "{{url('/')}}/admin/dashboard-widgets/transactions",
+                beforeSend: function () {
+                    $('#transaction-spinner').show();
+                },
+                success: function(data, textStatus, jQxhr) {
+                    $('#transaction-response').html(data.data);
+                    $('#view-transactions').hide();
+                    $('#transaction-spinner').hide();
+                },
+                error: function(jQxhr, textStatus, errorThrown) {
+                    $('#transaction-spinner').hide();
+                }
+            });
+        }
+    </script>
 @endsection
