@@ -71,6 +71,7 @@
                                                             {{$number->account_name}}<br>
                                                             {{$number->account_number}}<br>
                                                             {{$number->bank_name}}<br>
+                                                            <small><strong>Attached BVN: </strong>{{mask($number->bvn)}}</small> <br>
                                                             <button class="btn btn-{{$number->gateway->slug == 'monnify' ? 'info' : 'primary'}} btn-sm">{{ $number->gateway->name }}</button>
                                                             </p>
                                                         </td>
