@@ -76,7 +76,7 @@ class CustomerController extends Controller
 
         $customers = $customers->paginate(20);
         $customer_levels = CustomerLevel::all();
-
+        
         return view('admin.customers.index', ['customers' => $customers, 'customer_levels' => $customer_levels]);
     }
 

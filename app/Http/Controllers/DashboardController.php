@@ -25,31 +25,6 @@ class DashboardController extends Controller
     {
         $customer = $this->customerOfTheMonth();
         if (auth()->user()->type == 'admin') {
-            // $transaction_debit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
-            //     ->where('wallets.type', 'debit')->whereIn('status', ['success', 'delivered']);
-
-            // $transaction_credit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
-            //     ->where('wallets.type', 'credit')->whereIn('status', ['success', 'delivered']);
-
-            // $debit = $transaction_debit->sum('total_amount');
-            // $debit_count = $transaction_debit->count();
-
-            // $credit = $transaction_credit->sum('total_amount');
-            // $credit_count = $transaction_credit->count();
-
-            // $referralC = ReferralEarning::where('type', 'credit');
-            // $referral_credit = $referralC->sum('amount');
-            // $referral_credit_count = $referralC->count();
-
-            // $referralD = ReferralEarning::where('type', 'debit');
-            // $referral_debit = $referralD->sum('amount');
-            // $referral_debit_count = $referralD->count();
-            // $total_wallet_balance = Customer::sum('wallet');
-
-            // $kyc_verified = User::join('customers', 'customers.user_id', 'users.id')->where('users.type', 'customer')->where('kyc_status', 'verified')->count();
-            // $active_customers = TransactionLog::distinct('customer_id')->count();
-            // $customers = User::where('type', 'customer')->count();
-
             // Sum total wallet balance in a single query
             $total_wallet_balance = Customer::sum('wallet');
 
