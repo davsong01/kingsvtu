@@ -161,7 +161,7 @@ class ApiAuthMiddleware
                 return app('App\Http\Controllers\ExternalApiController')->toJson($json);
             }
         }
-       
+        
         Auth::login($user);
         return $next($request);
     }

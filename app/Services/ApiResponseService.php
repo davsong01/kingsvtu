@@ -307,9 +307,9 @@ class ApiResponseService
         // Get Wallet Balance
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
-    
+        
         if ($balance < $request['total_amount']) {
-            return $this->responseService->formatServiceResponse("error", '', ['Insufficient Wallet Balance, Please try again'], null);
+            return $this->responseService->formatServiceResponse("error", '', ['Insufficient Wallet Balance, Please try again. Your wallet balance as at '.now(). ' is: '.number_format($balance)], null);
         }
 
         // Log Wallet

@@ -110,7 +110,7 @@
                                             <input type="text" class="form-control" id="unique_element" name="unique_element" placeholder="Enter unique element" value="{{ \Request::get('unique_element') }}">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="status">Status</label>
                                             <select class="form-control" name="status" id="status">
