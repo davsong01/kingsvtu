@@ -814,7 +814,7 @@ class TransactionController extends Controller
             $transactions = $transactions->where('product_id', $request->service);
         }
         if ($request->transaction_id) {
-            $transactions = $transactions->where('transaction_id', $request->transaction_id);
+            $transactions = $transactions->where('transaction_id', $request->transaction_id)->orWhere('reference_id', $request->transaction_id);
         }
         if ($request->unique_element) {
             $transactions = $transactions->where('unique_element', $request->unique_element);
