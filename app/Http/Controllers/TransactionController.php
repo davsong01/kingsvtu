@@ -802,6 +802,10 @@ class TransactionController extends Controller
         $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
         $products = Product::all();
 
+        if ($request->channel) {
+            $transactions = $transactions->where('channel', $request->channel);
+        }
+
         if ($request->email) {
             $transactions = $transactions->where('customer_email', $request->email);
         }

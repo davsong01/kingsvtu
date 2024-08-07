@@ -67,6 +67,16 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
+                                            <label for="channel">Channel</label>
+                                            <select class="form-control" name="channel" id="channel">
+                                                <option value="">Select</option>
+                                                <option value="website" {{ \Request::get('channel') == 'website' ? 'selected' : ''}}>Website</option>
+                                                <option value="api" {{ \Request::get('channel') == 'api' ? 'selected' : ''}}>API</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <fieldset class="form-group">
                                             <label for="email">Transaction Email</label>
                                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter customer email address" value="{{ \Request::get('email')}}">
                                         </fieldset>
