@@ -27,10 +27,10 @@ class OgDamsSimHostingController extends Controller
         $mtnSmePlanIds = [1, 2, 3, 4, 5, 109];
         $mtnCgPlanIds = [94, 95, 96, 97, 98, 99, 101, 102, 103, 104, 105, 106, 107, 108, 940, 950, 960, 970, 980, 990, 1010, 1020, 1030, 1040, 1060, 1070, 1080, 11110, 11111, 11112, 800, 801, 802, 803, 804, 805, 806, 807, 7600, 7601, 7602, 7603, 7604, 7605, 7606, 7607, 7608, 12000, 12001, 12002, 12003, 12004, 12005, 12006, 12007, 12008, 12009, 12010];
         $mtnGiftingPlanIds = [10000, 10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011, 10012, 10013, 10014, 10015, 10016, 10017, 10018, 10019, 10020, 10021, 10022, 10023, 10024, 10025, 10026, 10027, 10028, 10029, 10030, 10031, 10032, 10033, 10034, 10035, 10036, 10037, 10038, 10039, 10040, 10041, 10042, 10043];
-        
+
         $mtnAwoofPlanIds = [11113, 11114, 11115];
-        $mtnNetWorkId = 1;
-    
+        $airtelAwoofPlanIds = [9000, 9001, 9002, 9003, 9004, 9005, 9006, 9007];
+        
         if(!empty($variations)){
             foreach ($variations as $variation) {
                 // Mtn SME
@@ -111,6 +111,32 @@ class OgDamsSimHostingController extends Controller
                     ]);
                 }
 
+                // Airtel Awoof
+                if (in_array($product->slug, ['airtel-awoof']) && in_array($variation['planId'], $airtelAwoofPlanIds) && $variation['networkId'] == 2) {
+                    Variation::updateOrCreate([
+                        'product_id' => $product['id'],
+                        'category_id' => $product['category_id'],
+                        'api_id' => $product['api']['id'],
+                        'api_name' => $variation['name'],
+                        'api_code' => $variation['planId'],
+                        'slug' => $variation['planId'],
+                    ], [
+                        'product_id' => $product['id'],
+                        'category_id' => $product['category_id'],
+                        'api_id' => $product['api']['id'],
+                        'api_name' => $variation['name'],
+                        'slug' => $variation['planId'],
+                        'api_code' => $variation['planId'],
+                        'system_name' => $variation['name'],
+                        'fixed_price' => 'Yes',
+                        'api_price' => $variation['price'],
+                        'system_price' => $variation['price'],
+                        'min' => $variation['minimum_amount'] ?? null,
+                        'max' => $variation['maximum_amount'] ?? null,
+                        'status' => 'inactive'
+                    ]);
+                }
+            
                 // Mtn Gifting
                 if (in_array($product->slug, ['mtn-gifting','mtn-gifting-data']) && in_array($variation['planId'], $mtnGiftingPlanIds) && $variation['networkId'] == 1) {
                     Variation::updateOrCreate([
@@ -136,6 +162,8 @@ class OgDamsSimHostingController extends Controller
                         'status' => 'inactive'
                     ]);
                 }
+
+
             }
             return true;
         }else {
@@ -409,6 +437,54 @@ class OgDamsSimHostingController extends Controller
                 "planId" => 118,
                 "name" => "20GB [CG]",
                 "price" => "12000.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9000,
+                "name" => "100MB [AWOOF]",
+                "price" => "60.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9001,
+                "name" => "300MB [AWOOF]",
+                "price" => "118.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9002,
+                "name" => "1GB [AWOOF]",
+                "price" => "218.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9003,
+                "name" => "2GB [AWOOF]",
+                "price" => "318.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9004,
+                "name" => "3GB [AWOOF]",
+                "price" => "518.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9005,
+                "name" => "4GB [AWOOF]",
+                "price" => "1018.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9006,
+                "name" => "10GB [AWOOF]",
+                "price" => "2018.00"
+            ],
+            [
+                "networkId" => 2,
+                "planId" => 9007,
+                "name" => "15GB [AWOOF]",
+                "price" => "3018.00"
             ],
             [
                 "networkId" => 3,
