@@ -582,17 +582,51 @@ class EasyAccessController extends Controller
     {
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];
+        $slug = strtolower($slug);
+        $base_url = "https://easyaccess.com.ng/api/";
 
         if (in_array($slug, ['waec-registration', 'waec'])) {
-            $url = "https://easyaccess.com.ng/api/waec_v2.php";
+            $url =  $base_url."waec_v2.php";
         } elseif (in_array($slug, ['neco-registration', 'neco'])) {
-            $url = "https://easyaccess.com.ng/api/neco_v2.php";
+            $url = $base_url . "neco_v2.php";
         } elseif (in_array($slug, ['nabteb-registration', 'nabteb'])) {
-            $url = "https://easyaccess.com.ng/api/nabteb_v2.php";
+            $url = $base_url . "nabteb_v2.php";
         } elseif (in_array($slug, ['nbais-registration', 'nbais'])) {
-            $url = "https://easyaccess.com.ng/api/nbais_v2.php";
-        } else {
-            $url = "https://easyaccess.com.ng/api/data.php";
+            $url = $base_url . "nbais_v2.php";
+        // } elseif (in_array($slug, ['mtn-cg','mtn-sme','mtn-cg'])) {
+        //     $ntwk = '01';
+        //     $url = $base_url . "data.php";
+        // } elseif ($slug == 'airtel-cg' || $slug == 'airtel' || $slug == 'airtel-gifting') {
+        //     $ntwk = '03';
+        //     $url = $api->live_base_url . "data.php";
+        // } elseif ($slug == 'glo-cg' || $slug == 'glo' || $slug == 'glo-data' || $slug == 'glo-gifting') {
+        //     $ntwk = '02';
+        //     $url = $api->live_base_url . "data.php";
+        // } elseif ($slug == '9mobile-sme' || $slug == 'apimobile-sme' || $slug == '9mobile') {
+        //     $ntwk = '04';
+        //     $url = $api->live_base_url . "data.php";
+        // } elseif ($slug == 'mtn-datacard') {
+        //     $ntwk = '01';
+        //     $url = $api->live_base_url . "datacard.php";
+        } else if (in_array($slug, ['mtn', 'mtn-airtime', 'mtn-vtu', 'mtn_airtime'])){
+            $ntwk = '01';
+            $airtime_type = '001';
+            $url =  $base_url ."airtime.php";
+        } else if (in_array($slug, ['airtel', 'airtel-airtime','airtel-vtu', 'airtel_airtime'])) {
+            $ntwk = '03';
+            $airtime_type = '001';
+            $url =  $base_url . "airtime.php";
+        } else if (in_array($slug, ['glo-airtime', 'glo', 'glo-vtu', 'glo_airtime'])) {
+            $ntwk = '02';
+            $airtime_type = '001';
+            $url =  $base_url . "airtime.php";
+        } else if (in_array($slug, ['9mobile-airtime', 'etisalat-airtime'])) {
+            $ntwk = '04';
+            $airtime_type = '001';
+            $url =  $base_url . "airtime.php";
+        } 
+        else {
+            $url = $base_url . "data.php";
         }
 
         try {
@@ -600,19 +634,25 @@ class EasyAccessController extends Controller
                 "AuthorizationToken: " . $api->api_key,
                 'cache-control: no-cache'
             ];
-
             $payload = [
                 'url' => $url,
-                'network' => $request['network'],
+                'network' => $request['network'] ?? $ntwk,
                 'mobileno' => $request['unique_element'] ?? '',
                 'dataplan' => $request['variation_name'],
                 'client_reference' => $request['request_id'],
                 'no_of_pins' => $request['quantity'] ?? '',
+                'amount' => $request['amount'] ?? null,
+                'airtime_type' => $airtime_type ?? null,
             ];
-
-            $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-            $result = $response;
             
+            if(env('ENT') == 'local'){
+                $response = '{"success":"true","message":"Airtime Purchase was Successful","network":"MTN","mobileno":"08164383771","airtimeamount":"100", "amountcharged":97,"balance_before":"358xx","balance_after":"349xx","transaction_date":"13-01-2021 10:38:12 am","reference_no":"ID77607393711","client_reference":"tranx6896598952","status":"Successful","auto_refund_status":"success"}';
+                $response = json_decode($response, true);
+            }else{
+                $response = $this->basicApiCall($url, $payload, $headers, 'POST');
+            }
+
+            $result = $response;
             if (empty ($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
@@ -638,6 +678,7 @@ class EasyAccessController extends Controller
                 $success = isset ($result['success']) ? strtolower($result['success']) : 'failed';
                 $auto_refund_status = isset($result['auto_refund_status']) && strtolower($result['auto_refund_status']) !==  'failed' ? strtolower($result['auto_refund_status']) : 'failed';
                 
+
                 if (isset ($status) && $status !== "failed" && $success !== 'false') {
                 // if (isset ($status) && $status !== "failed" && $auto_refund_status !== 'failed') {
                     $user_status = 'delivered';
@@ -676,8 +717,7 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
                 'extras' => $extras ?? null
             ];
-            
-            // dd($resX, $postdata['payload'], $postdata['headers']);
+            // dd($format);
         } catch (\Throwable $th) {
             $format = [
                 'status' => 'attention-required',

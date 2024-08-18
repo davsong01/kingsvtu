@@ -112,7 +112,7 @@ class OgDamsSimHostingController extends Controller
                 }
 
                 // Airtel Awoof
-                if (in_array($product->slug, ['airtel-awoof']) && in_array($variation['planId'], $airtelAwoofPlanIds) && $variation['networkId'] == 2) {
+                if (in_array($product->slug, ['airtel-awoof', 'airtel-awoof-data']) && in_array($variation['planId'], $airtelAwoofPlanIds) && $variation['networkId'] == 2) {
                     Variation::updateOrCreate([
                         'product_id' => $product['id'],
                         'category_id' => $product['category_id'],

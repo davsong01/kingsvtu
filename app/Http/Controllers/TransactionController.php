@@ -204,7 +204,7 @@ class TransactionController extends Controller
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
         
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
-    
+        dd($query);
         try {
             //code...
             DB::beginTransaction();

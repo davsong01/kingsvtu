@@ -64,7 +64,10 @@
                                                 <tbody>
                                                     @foreach ( $apis as $api )
                                                     <tr>
-                                                        <td>{{ $api->name }}</td>
+                                                        <td>
+                                                            {{ $api->name }}
+
+                                                        </td>
                                                         <td>{{ $api->products_count }}</td>
                                                         <td>{{ $api->file_name }}</td>
                                                         <td style="color:{{ $api->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($api->status) }}</td>
@@ -100,7 +103,7 @@
 @section('page-script')
 
 <script>
-     function getBalance(id){
+    function getBalance(id){
         var url = "{{ url('admin/api-balance') }}/"+id;
         
         $.ajax({
