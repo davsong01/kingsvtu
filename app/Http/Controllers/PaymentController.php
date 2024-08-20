@@ -345,4 +345,13 @@ class PaymentController extends Controller
 
         return back()->with('message', 'Operation Successful');
     }
+
+    public function dumpPurchaseCallback(Request $request, $provider_id){
+        \Log::info([
+            'Purchase Callback' => [
+                    'provider_id' => $provider_id,
+                    'data' => $request->all(),
+            ],
+        ]);
+    }
 }

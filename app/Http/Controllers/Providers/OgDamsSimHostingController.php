@@ -1597,7 +1597,6 @@ class OgDamsSimHostingController extends Controller
 
             return $format;
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             return [
                 'status' => 'attention-required',
                 'user_status' => 'completed',

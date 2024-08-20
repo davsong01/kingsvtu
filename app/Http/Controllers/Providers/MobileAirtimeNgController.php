@@ -30,7 +30,7 @@ class MobileAirtimeNgController extends Controller
             $network = 2;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
         }
-
+        
         try {
             if(env('ENT') == 'local'){
                 $response = [

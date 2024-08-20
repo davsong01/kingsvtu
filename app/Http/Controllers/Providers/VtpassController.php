@@ -23,12 +23,9 @@ class VtpassController extends Controller
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
 
         if (isset($variations['response_description']) && $variations['response_description'] == '000') {
-            // $deleteExistingVariations = Variation::where('product_id', $product->id)->delete();
 
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
             foreach ($variations as $variation) {
-                // if(in_array($variation['variation_code'], $existingVariations)){
-                // }else{
                 Variation::updateOrCreate([
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
@@ -48,7 +45,6 @@ class VtpassController extends Controller
                     'min' => $variation['minimum_amount'] ?? null,
                     'max' => $variation['maximum_amount'] ?? null
                 ]);
-                // }
             }
 
             return true;
@@ -56,7 +52,7 @@ class VtpassController extends Controller
             return false;
         }
     }
-
+    
     public function query($request, $api, $variation, $product)
     {
         // Post data

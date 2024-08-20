@@ -204,7 +204,7 @@ class TransactionController extends Controller
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
         
         $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
-        dd($query);
+        
         try {
             //code...
             DB::beginTransaction();
@@ -232,8 +232,9 @@ class TransactionController extends Controller
                 // Log wallet
                 $wallet = new WalletController();
                 $request['type'] = 'credit';
+                $request['reason'] = 'Product Purchase reversal';
                 $wallet->logWallet($request);
-                $failure_reason = $query['error'] ?? $query['message'];
+                $failure_reason = $query['error'] ?? ($query['message'] ?? $query['failure_reason']);
 
                 // Update Customer Wallet
                 $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
@@ -274,6 +275,7 @@ class TransactionController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             DB::rollBack();
             $wallet = new WalletController();
             $request['type'] = 'credit';

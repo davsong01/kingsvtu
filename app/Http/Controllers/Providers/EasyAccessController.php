@@ -686,7 +686,7 @@ class EasyAccessController extends Controller
                     $api_response = $response;
                     $message = $true_response;
                     // $message = $true_response;
-                    $description = 'Purchase was succesful';
+                    $description = 'Purchase was successful';
                     $payload = $payload;
                     $status_code = 1;
                     $extras = $pins;
@@ -697,7 +697,7 @@ class EasyAccessController extends Controller
                     $message = isset ($result['true_response']) ? str_replace("'", "", $result['true_response']) : ($result['true_response'] ?? '');
                     $payload = $payload;
                     $status_code = 0;
-                    $description = 'Purchase was NOT succesful';
+                    $description = 'Purchase was NOT successful';
                     // $description = $result['message'] ?? $true_response ?? '';
                 }
             }
@@ -928,7 +928,7 @@ class EasyAccessController extends Controller
             $api_response = $response;
             $message = $true_response;
             // $message = $true_response;
-            $description = 'Purchase was succesful';
+            $description = 'Purchase was successful';
             $payload = $payload;
             $status_code = 1;
             $extras = $pins;
