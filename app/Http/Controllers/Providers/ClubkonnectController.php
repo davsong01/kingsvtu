@@ -79,7 +79,7 @@ class ClubkonnectController extends Controller
         $slug = $request['product_slug'];
         $slug = strtolower($slug);
 
-        if (in_array($slug, ['mtn-vtu', 'mtn-airtime','mtn', 'mtn-awufu', 'mtn-awuf'])) {
+        if (in_array($slug, ['mtn-vtu', 'mtn-airtime','mtn', 'mtn-awufu', 'mtn-awuf', 'mtn-awoof','mtn-awoofu'])) {
             $network = '01';
         } elseif (in_array($slug, ['glo', 'glo-vtu','glo-airtime', '⁠glo-x5'])) {
             $network = '02';
