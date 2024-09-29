@@ -82,7 +82,8 @@ class CustomerController extends Controller
 
     function unverifiedCustomers(Request $request, $status = null)
     {
-        $customers = User::whereNull('email_verified_at')->get();
+        set_time_limit(360);
+        $customers = User::select('id', 'firstname', 'lastname', 'email', 'phone', 'created_at', 'email_verified_at', 'username')->whereNull('email_verified_at')->orderBy('created_at', 'DESC')->get();
         return view('admin.customers.unverified', ['customers' => $customers]);
     }
 

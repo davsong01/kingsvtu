@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Models\KycData;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
+use App\Models\KycData;
+use App\Models\Customer;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Config;
+use App\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
@@ -33,6 +34,22 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         // return back()->with('error', 'Registration is currently not available, please try again');
+        $captchaSettings = getSettings()->captcha_settings;
+        if (isset($captchaSettings['captcha_settings_status']) && $captchaSettings['captcha_settings_status'] == 'yes') {
+            if (in_array($captchaSettings['captcha_settings_provider'], ['all', 'simple'])) {
+                $request->validate([
+                    '_answer' => ['required', 'simple_captcha'],
+                ]);
+            }
+
+            if (in_array($captchaSettings['captcha_settings_provider'], ['all', 'google'])) {
+                Config::set('captcha.secret', $captchaSettings['google']['RECAPTCHA_SECRET_KEY']);
+                $request->validate([
+                    'g-recaptcha-response' => ['captcha'],
+                ]);
+            }
+        }
+        
         $request->validate([
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],

@@ -55,6 +55,7 @@
                                 <label for="checkboxGlow3"><p>I agree to the <a target="_blank" href="https://kingsvtu.ng/privacy-policy">privacy policy</a> of {{ config('app.name')}}</p></label>
                             </div>
                         </div>
+                        <x-captcha group-class="mb-50 mt-2" />
 
                         <button type="submit" class="btn btn-primary glow w-100 position-relative">Register</button>
                     </form>

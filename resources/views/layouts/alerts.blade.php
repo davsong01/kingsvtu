@@ -18,6 +18,14 @@
       {!! session()->get('any') !!}
 </div>
 @endif
+@if($errors->any())
+ <div class="alert alert-warning" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      @foreach($errors->all() as $error)
+            {{ $error }}<br>
+      @endforeach
+</div>
+@endif
 
 @if(session()->get('warning'))
 <div class="alert alert-warning" role="alert">
@@ -40,14 +48,7 @@
 </div>
 @endif
 
-@if($errors->any())
- <div class="alert alert-warning" role="alert">
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      @foreach($errors->all() as $error)
-            {{ $error }}<br>
-      @endforeach
-</div>
-@endif
+
 @if(session('resent'))
 <div class="alert alert-success" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

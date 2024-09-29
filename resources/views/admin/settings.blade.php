@@ -95,6 +95,31 @@ use App\Models\PaymentGateway;
                                                                             </select>
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
+                                                                            <label for="captcha_settings_status">Allow Security Captcha on forms</label>
+                                                                            <select name="captcha_settings_status" class="form-control" id="captcha_settings_status">
+                                                                                <option value="">Select</option>
+                                                                                <option value="yes"{{ isset($settings->captcha_settings['captcha_settings_status']) && $settings->captcha_settings['captcha_settings_status'] == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                                                <option value="no" {{  isset($settings->captcha_settings['captcha_settings_status']) && $settings->captcha_settings['captcha_settings_status'] == 'no' ? 'selected' : ''}}>No</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="captcha_settings_provider">Security Captcha Provider</label>
+                                                                            <select name="captcha_settings_provider" class="form-control" id="captcha_settings_provider">
+                                                                                <option value="">Select</option>
+                                                                                <option value="simple" {{  isset($settings->captcha_settings['captcha_settings_provider']) && $settings->captcha_settings['captcha_settings_provider'] == 'simple' ? 'selected' : ''}}>Simple Captcha</option>
+                                                                                <option value="google"{{ isset($settings->captcha_settings['captcha_settings_provider']) && $settings->captcha_settings['captcha_settings_provider'] == 'google' ? 'selected' : ''}}>Google Captcha</option>
+                                                                                <option value="all"{{ isset($settings->captcha_settings['captcha_settings_provider']) && $settings->captcha_settings['captcha_settings_provider'] == 'all' ? 'selected' : ''}}>All</option>
+                                                                            </select>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="RECAPTCHA_SITE_KEY">Google Captcha Site Key</label>
+                                                                            <input type="text" class="form-control" name="RECAPTCHA_SITE_KEY" value="{{ $settings->captcha_settings['google']['RECAPTCHA_SITE_KEY'] ?? old('RECAPTCHA_SITE_KEY') }}">
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="RECAPTCHA_SECRET_KEY">Google Captcha Secret Key</label>
+                                                                            <input type="text" class="form-control" name="RECAPTCHA_SECRET_KEY" value="{{ $settings->captcha_settings['google']['RECAPTCHA_SECRET_KEY'] ?? old('RECAPTCHA_SECRET_KEY') }}">
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
                                                                             <label for="type">Bank Transfer Note</label>
                                                                             <div id="toolbar-container">
                                                                                 <span class="ql-formats">

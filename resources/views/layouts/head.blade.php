@@ -23,6 +23,9 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/components.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/themes/dark-layout.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/themes/semi-dark-layout.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js?render=@yield('CAPTCHA_SITEKEY')"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/themes/dark-layout.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/themes/semi-dark-layout.css') }}">
     <!-- END: Theme CSS-->
 
     <!-- BEGIN: Page CSS-->
@@ -76,6 +79,20 @@
 
         .svg svg{
             fill: white !important;
+        }
+
+        .captcha {
+            width: 100%;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .captcha input {
+            width: 100%;
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
         }
     </style>
     @yield('page-css')
