@@ -162,6 +162,9 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::post('customer/update/{id}', [CustomerController::class, 'updateCustomer'])->name('customers.update');
     Route::get('customers-unverified', [CustomerController::class, 'unverifiedCustomers'])->name('customers.unverified');
     Route::get('customers-verify/{customer}', [CustomerController::class, 'verifyCustomer'])->name('customer.verify');
+    Route::get('customer-delete/{customer}', [CustomerController::class, 'deleteCustomer'])->name('customer.delete');
+    Route::post('verify-actions', [CustomerController::class, 'verifyMultiActions'])->name('verify-users-actions');
+
     
     Route::resource('customerlevel', CustomerLevelController::class);
     Route::resource('levelbenefit', CustomerLevelBenefitController::class);

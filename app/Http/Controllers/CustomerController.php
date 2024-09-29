@@ -87,7 +87,7 @@ class CustomerController extends Controller
         return view('admin.customers.unverified', ['customers' => $customers]);
     }
 
-    function verifyCustomer($customer)
+    function verifyCustomer($customer, $internal = null)
     {
         $customer = User::where('id', $customer)->first();
         if ($customer) {
@@ -101,6 +101,54 @@ class CustomerController extends Controller
         }
     }
 
+    function deleteCustomer($customer, $internal = null)
+    {
+        $user = User::where('id', $customer)->first();
+
+        if ($user && is_null($user->email_verified_at)) {
+            if ($user->customer) {
+                $user->customer->delete();
+            }
+
+            if ($user->reserved_accounts) {
+                $user->reserved_accounts->delete();
+            }
+
+            $user->delete();
+
+            if ($internal) {
+                return true;
+            }
+
+            return back()->with('message', 'Operation successful');
+        } else {
+            if ($internal) {
+                return true;
+            }
+            return back()->with('error', 'Customer not found or already verified');
+        }
+    }
+
+    public function verifyMultiActions(Request $request)
+    {
+        set_time_limit(3600);
+        $customer_ids = $request->customer_ids;
+
+        if (!empty($customer_ids)) {
+            $customer_ids = explode(',', $customer_ids);
+            foreach ($customer_ids as $id) {
+                if ($request->action == 'verify') {
+                    $this->verifyCustomer($id, 'internal');
+                }
+
+                if ($request->action == 'delete') {
+                    $this->deleteCustomer($id, 'internal');
+                }
+            }
+        }
+
+        return back()->with('message', 'Operation Successful');
+    }
 
     public function addReservedAccounts(Request $request, Customer $customer)
     {
