@@ -59,7 +59,7 @@ class ShopController extends Controller
 
     public function shopRequests()
     {
-        $requests = ShopRequests::orderBy('updated_at','DESC')->get();
+        $requests = ShopRequests::orderBy('created_at','DESC')->get();
         return view('admin.customers.shop_creation_request', compact('requests'));
     }
 
