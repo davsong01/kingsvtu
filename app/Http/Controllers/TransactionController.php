@@ -156,7 +156,7 @@ class TransactionController extends Controller
         $request['network'] = $variation->network ?? null;
         $request['reason'] = 'Product Purchase';
         $request['subscription_type'] = $variation->bouquet ?? 'change';
-
+        
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
 
@@ -265,7 +265,7 @@ class TransactionController extends Controller
                 'balance_after' => $balance_after,
                 'request_data' => $query['payload'],
                 'api_response' => $query['api_response'] ?? null,
-                'failure_reason' => $query['failure_reason'] ?? $failure_reason,
+                'failure_reason' => $query['failure_reason'] ?? ($failure_reason ?? 'Unknown Reason'),
                 'extras' => $query['extras'] ?? null,
                 'status' => $query['status'] ?? 'attention-required',
                 'descr' => $query['description'],
@@ -275,7 +275,7 @@ class TransactionController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            dd($th->getMessage());
+            \Log::info($th->getMessage());
             DB::rollBack();
             $wallet = new WalletController();
             $request['type'] = 'credit';
