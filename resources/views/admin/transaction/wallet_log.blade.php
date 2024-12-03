@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header">
                         <!-- head -->
-                        <h5 class="card-title mb-2">Wallet Transactions</h5>
+                        <h5 class="card-title mb-2">Wallet Logs</h5>
                         <div class="d-inline-block">
                             <!-- chart-1   -->
                             <div class="d-flex market-statistics-1">
@@ -114,7 +114,13 @@
                                                     <a href="">{{ $transaction->customer->user->email }}</a> <br>
                                                     {{ $transaction->customer->user->phone }}
                                                 </td>
-                                                <td><a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->transaction_id) }}">{{ $transaction->transaction_id }}</a></td>
+                                                <td>
+                                                    <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->id) }}">{{ $transaction->transaction_id }}</a> <br>
+                                                    <span><strong>Payment Method: </strong> {{ $transaction->transaction_log->payment_method }}
+                                                    {{-- @if($transaction->transaction_log->admin) --}}
+                                                    {{-- <span><strong>Admin: </strong> {{ $transaction->transaction_log->admin->user->name }} --}}
+                                                    {{-- @endif  --}}
+                                                </td>
                                                 <td style="color:{{ $transaction->type == 'credit' ? 'green' : 'red'}}">{{ ucfirst($transaction->type) }}</td>
                                                 <td>{!! getSettings()->currency. number_format($transaction->amount) !!}</td>
                                                 

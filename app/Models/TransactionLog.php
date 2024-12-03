@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Admin;
 use App\Models\Wallet;
 use App\Models\Product;
 use App\Models\Category;
@@ -63,5 +64,10 @@ class TransactionLog extends Model
 
     public function upgrade_level(){
         return $this->belongsTo(CustomerLevel::class, 'upgrade_level');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
     }
 }
