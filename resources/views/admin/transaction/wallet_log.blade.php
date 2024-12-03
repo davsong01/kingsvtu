@@ -79,7 +79,16 @@
                                             <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
+                                        <fieldset class="form-group">
+                                            <label for="paginate">Paginate Records</label>
+                                            <select class="form-control" name="paginate" id="paginate">
+                                                <option value="yes" {{ \Request::get('paginate') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                <option value="no" {{ \Request::get('paginate') == 'no' ? 'selected' : ''}}>No</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-2">
                                         <input type="submit" class="form-control btn btn-primary mt-2" value="Search">
                                     </div>
                                 </div>
@@ -120,9 +129,12 @@
                             {{-- {{ $transactions->appends($query) }} --}}
                         </div>
                     </div>
+                   
+                    @if(request()->paginate == 'yes')
                     <div class="card-footer">
                         {!! $transactions->appends($_GET)->links() !!}
                     </div>
+                    @endif
                 </div>
             </section>
         </div>

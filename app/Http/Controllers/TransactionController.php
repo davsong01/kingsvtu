@@ -850,11 +850,6 @@ class TransactionController extends Controller
     public function walletTransView(Request $request)
     {
         $transactions = Wallet::latest();
-        $transactionsD = clone $transactions;
-        $transactionsC = clone $transactions;
-
-        $debit = $transactionsD->where('type', 'debit')->sum('amount');
-        $credit = $transactionsC->where('type', 'credit')->sum('amount');
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
@@ -874,15 +869,25 @@ class TransactionController extends Controller
         }
 
         if ($request->from) {
-            $time = $request->from . ' 00:00:00';
-            $transactions = $transactions->where('created_at', '>', $time);
+            $from = $request->from . ' 00:00:00';
+            $transactions = $transactions->where('created_at', '>=', $from);
         }
         if ($request->to) {
-            $time = $request->to . ' 00:00:00';
-            $transactions = $transactions->where('created_at', $time);
+            $to = $request->to . ' 23:59:59';
+            $transactions = $transactions->where('created_at', '<=', $to);
         }
 
-        $transactions = $transactions->paginate(20);
+        $transactionsD = clone $transactions;
+        $transactionsC = clone $transactions;
+
+        $debit = $transactionsD->where('type', 'debit')->sum('amount');
+        $credit = $transactionsC->where('type', 'credit')->sum('amount');
+
+        if($request->paginate == 'yes'){
+            $transactions = $transactions->paginate(20);
+        }else{
+            $transactions = $transactions->get();
+        }
 
         return view('admin.transaction.wallet_log', [
             'transactions' => $transactions,
