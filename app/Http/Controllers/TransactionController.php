@@ -522,6 +522,7 @@ class TransactionController extends Controller
             'domain_name' => $data['domain_name'] ?? null,
             'app_version' => Session::get('app_version') ?? null,
             'api_id' => $data['api_id'] ?? null,
+            'admin_id' => $data['admin_id'] ?? null,
             'reason' => $data['reason'] ?? null,
             'wallet_funding_provider' => $data['wallet_funding_provider'] ?? null,
             'provider_charge' => $data['provider_charge'] ?? null,
@@ -1074,7 +1075,7 @@ class TransactionController extends Controller
             $data['reason'] = $reason;
             $data['status'] = 'delivered';
             $data['admin_id'] = auth()->user()->admin->id;
-
+            
             $controller->logTransaction($data);
 
             DB::transaction(function () use ($type, $amount, $tid, $user, $reason) {
