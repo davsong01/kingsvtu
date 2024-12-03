@@ -1053,7 +1053,7 @@ class TransactionController extends Controller
         }
 
         $requestId = $controller->generateRequestId();
-        $tid = 'KVTU-' . $requestId;
+        $tid = 'KVTU-' . $requestId. 'A-'. $type;
         $reason = $type == 'debit' ? 'ADMIN-DEBIT' : 'ADMIN-CREDIT';
         try {
             //code...
@@ -1086,6 +1086,7 @@ class TransactionController extends Controller
                     'amount' => $amount,
                     'reason' => $reason,
                     'transaction_id' => $tid,
+                    'admin_id' => auth()->user()->admin->id,
                     'payment_method' => 'ADMIN-FUNDING',
                 ]);
                 $wallet->updateCustomerWallet($user, $amount, $type);

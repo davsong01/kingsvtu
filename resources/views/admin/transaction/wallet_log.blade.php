@@ -118,8 +118,8 @@
                                                     <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->id) }}">{{ $transaction->transaction_id }}</a> <br>
                                                     <span><strong>Reason: </strong> {{ $transaction->transaction_log->reason }}
                                                     <span><strong>Payment Method: </strong> {{ $transaction->transaction_log->payment_method }}
-                                                    @if($transaction->transaction_log->admin)
-                                                    <span><strong>Admin: </strong> {{ $transaction->transaction_log->admin->user->name }}
+                                                    @if($transaction->admin)
+                                                    <span><strong>Admin: </strong> {{ $transaction->admin->user->name }}
                                                     @endif
                                                 </td>
                                                 <td style="color:{{ $transaction->type == 'credit' ? 'green' : 'red'}}">{{ ucfirst($transaction->type) }}</td>

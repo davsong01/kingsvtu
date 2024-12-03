@@ -25,6 +25,7 @@ class WalletController extends Controller
             'type' => $data['type'],
             'transaction_id' => $data['transaction_id'] ?? null,
             'reason' => $data['reason'] ?? null,
+            'admin_id' => $data['admin_id'] ?? null,
             'payment_method' => $data['payment_method'] ?? null,
         ]);
        
