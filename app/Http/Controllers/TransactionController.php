@@ -850,7 +850,15 @@ class TransactionController extends Controller
 
     public function walletTransView(Request $request)
     {
-        $transactions = Wallet::latest();
+        $transactions = Wallet::with('transaction_log:id,transaction_id,payment_method')
+        ->leftJoin('admins', 'admins.id', '=', 'wallets.admin_id')
+        ->leftJoin('users', 'admins.user_id', '=', 'users.id')
+        ->orderBy('wallets.created_at', 'DESC')
+        ->select(
+            'wallets.*',
+            'users.firstname',
+            'users.lastname'
+        );
 
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
@@ -866,34 +874,36 @@ class TransactionController extends Controller
         }
 
         if ($request->type) {
-            $transactions = $transactions->where('type', $request->type);
+            $transactions = $transactions->where('wallets.type', $request->type);
         }
 
         if ($request->from) {
             $from = $request->from . ' 00:00:00';
-            $transactions = $transactions->where('created_at', '>=', $from);
+            $transactions = $transactions->where('wallets.created_at', '>=', $from);
         }
         if ($request->to) {
             $to = $request->to . ' 23:59:59';
-            $transactions = $transactions->where('created_at', '<=', $to);
+            $transactions = $transactions->where('wallets.created_at', '<=', $to);
         }
 
         $transactionsD = clone $transactions;
         $transactionsC = clone $transactions;
 
-        $debit = $transactionsD->where('type', 'debit')->sum('amount');
-        $credit = $transactionsC->where('type', 'credit')->sum('amount');
-
+        $debit = $transactionsD->where('wallets.type', 'debit')->sum('amount');
+        $credit = $transactionsC->where('wallets.type', 'credit')->sum('amount');
+        
+        // dd($transactions->take(10)->get());
         if($request->paginate == 'yes'){
             $transactions = $transactions->paginate(20);
         }else{
             $transactions = $transactions->get();
         }
-
+        $count = 1;
         return view('admin.transaction.wallet_log', [
             'transactions' => $transactions,
             'debit' => $debit,
             'credit' => $credit,
+            'count' => $count,
             'query' => $request->query(),
         ]);
     }

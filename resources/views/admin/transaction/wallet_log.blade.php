@@ -83,7 +83,7 @@
                                         <fieldset class="form-group">
                                             <label for="paginate">Paginate Records</label>
                                             <select class="form-control" name="paginate" id="paginate">
-                                                <option value="yes" {{ \Request::get('paginate') == 'yes' ? 'selected' : ''}}>Yes</option>
+                                                <option value="yes" selected>Yes</option>
                                                 <option value="no" {{ \Request::get('paginate') == 'no' ? 'selected' : ''}}>No</option>
                                             </select>
                                         </fieldset>
@@ -100,6 +100,7 @@
                                 <table id="table-extended-success" class="table mb-0">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>Customer</th>
                                             <th>Transaction ID</th>
                                             <th>Type</th>
@@ -110,17 +111,19 @@
                                     <tbody>
                                         @foreach ($transactions as $transaction)
                                             <tr>
-                                                <td>{{ $transaction->customer->user->name }} <br>
+                                                <td>{{$count ++}}</td>
+                                                <td>
+                                                    {{ $transaction->customer->user->name }} <br>
                                                     <a href="">{{ $transaction->customer->user->email }}</a> <br>
                                                     {{ $transaction->customer->user->phone }}
                                                 </td>
                                                 <td>
                                                     <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->id) }}">{{ $transaction->transaction_id }}</a> <br>
-                                                    <span><strong>Reason: </strong> {{ $transaction->transaction_log->reason }}
+                                                    <span><strong>Reason: </strong> {{ $transaction->reason }} <br>
                                                     <span><strong>Payment Method: </strong> {{ $transaction->transaction_log->payment_method }}
-                                                    {{-- @if($transaction->admin)
-                                                    <span><strong>Admin: </strong> {{ $transaction->admin->user->name }}
-                                                    @endif --}}
+                                                    @if($transaction->admin) <br>
+                                                    <span><strong>Admin: </strong> {{ $transaction->firstname. ' '.$transaction->lastname }}
+                                                    @endif
                                                 </td>
                                                 <td style="color:{{ $transaction->type == 'credit' ? 'green' : 'red'}}">{{ ucfirst($transaction->type) }}</td>
                                                 <td>{!! getSettings()->currency. number_format($transaction->amount) !!}</td>
