@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Product;
@@ -879,12 +880,20 @@ class TransactionController extends Controller
 
         if ($request->from) {
             $from = $request->from . ' 00:00:00';
-            $transactions = $transactions->where('wallets.created_at', '>=', $from);
+        }else{
+            $from = Carbon::now()->startOfDay();
         }
+
+        $transactions = $transactions->where('wallets.created_at', '>=', $from);
+
         if ($request->to) {
             $to = $request->to . ' 23:59:59';
             $transactions = $transactions->where('wallets.created_at', '<=', $to);
+        } else {
+            $to = Carbon::now();
         }
+
+        $transactions = $transactions->where('wallets.created_at', '<=', $to);
 
         $transactionsD = clone $transactions;
         $transactionsC = clone $transactions;
