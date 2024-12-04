@@ -55,6 +55,8 @@ class ExcelService {
 
     public static function fastExcelExport(array $data, string $name = "Export", $path = "", $filename = "export.xlsx"){
         $data_count = count($data);
+        $filename = !empty($name) ? $name : $filename;
+        
         if ($data_count < LIMIT) {
             if ($path == "") {
                 return (new FastExcel(collect($data)))->download($filename);

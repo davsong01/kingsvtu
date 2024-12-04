@@ -44,20 +44,20 @@
                         <div class="col-md-12">
                             <form action="{{ route('admin.walletlog') }}" method="GET">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <fieldset class="form-group">
                                             <label for="email">Customer Email</label>
                                             <input type="email" class="form-control" id="email" name="email" placeholder="Enter customer email address" value="{{ \Request::get('email')}}">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <fieldset class="form-group">
                                             <label for="transaction_id">Transaction ID</label>
                                             <input type="text" class="form-control" id="transaction_id" name="transaction_id" placeholder="Enter transaction ID" value="{{ \Request::get('transaction_id')}}">
                                         </fieldset>
                                     </div>
                                     
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="type">Type</label>
                                             <select class="form-control" name="type" id="type">
@@ -67,13 +67,13 @@
                                             </select>
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="from">From</label>
                                             <input type="date" class="form-control" value="{{ \Request::get('from')}}" name="from">
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <fieldset class="form-group">
                                             <label for="to">To</label>
                                             <input type="date" class="form-control" value="{{ \Request::get('to')}}" name="to">
@@ -85,6 +85,16 @@
                                             <select class="form-control" name="paginate" id="paginate">
                                                 <option value="yes" selected>Yes</option>
                                                 <option value="no" {{ \Request::get('paginate') == 'no' ? 'selected' : ''}}>No</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <fieldset class="form-group">
+                                            <label for="sort">Sort & Download</label>
+                                            <select class="form-control" name="sort" id="sort">
+                                                <option value="">Select</option>
+                                                <option value="highest" {{ \Request::get('sort') == 'credit' ? 'selected' : ''}}>Sort By highest</option>
+                                                <option value="lowest" {{ \Request::get('sort') == 'debit' ? 'selected' : ''}}>Sort By lowest</option>
                                             </select>
                                         </fieldset>
                                     </div>

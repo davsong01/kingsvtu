@@ -849,65 +849,187 @@ class TransactionController extends Controller
         ]);
     }
 
+    // public function walletTransView(Request $request)
+    // {
+    //     $transactions = Wallet::with('transaction_log:id,transaction_id,payment_method')
+    //     ->leftJoin('admins', 'admins.id', '=', 'wallets.admin_id')
+    //     ->leftJoin('users', 'admins.user_id', '=', 'users.id')
+    //     ->orderBy('wallets.created_at', 'DESC')
+    //     ->select(
+    //         'wallets.*',
+    //         'users.firstname',
+    //         'users.lastname'
+    //     );
+
+    //     if ($request->email) {
+    //         $user = User::where('email', $request->email)->first();
+    //         if (!empty ($user)) {
+    //             $customer = $user->customer;
+    //             $id = $customer->id;
+    //             $transactions = $transactions->where('customer_id', $id);
+    //         }
+    //     }
+
+    //     if ($request->transaction_id) {
+    //         $transactions = $transactions->where('transaction_id', $request->transaction_id);
+    //     }
+
+    //     if ($request->type) {
+    //         $transactions = $transactions->where('wallets.type', $request->type);
+    //     }
+
+    //     if ($request->from) {
+    //         $from = $request->from . ' 00:00:00';
+    //     }else{
+    //         $from = Carbon::now()->startOfDay();
+    //     }
+
+    //     $transactions = $transactions->where('wallets.created_at', '>=', $from);
+
+    //     if ($request->to) {
+    //         $to = $request->to . ' 23:59:59';
+    //         $transactions = $transactions->where('wallets.created_at', '<=', $to);
+    //     } else {
+    //         $to = Carbon::now();
+    //     }
+
+    //     $transactions = $transactions->where('wallets.created_at', '<=', $to);
+
+    //     $transactionsD = clone $transactions;
+    //     $transactionsC = clone $transactions;
+
+    //     $debit = $transactionsD->where('wallets.type', 'debit')->sum('amount');
+    //     $credit = $transactionsC->where('wallets.type', 'credit')->sum('amount');
+
+    //     // dd($transactions->take(10)->get());
+    //     if($request->paginate == 'yes'){
+    //         $transactions = $transactions->paginate(20);
+    //     }else{
+    //         $transactions = $transactions->get();
+    //     }
+    //     $count = 1;
+    //     return view('admin.transaction.wallet_log', [
+    //         'transactions' => $transactions,
+    //         'debit' => $debit,
+    //         'credit' => $credit,
+    //         'count' => $count,
+    //         'query' => $request->query(),
+    //     ]);
+    // }
+
     public function walletTransView(Request $request)
     {
+        // Initial query
         $transactions = Wallet::with('transaction_log:id,transaction_id,payment_method')
         ->leftJoin('admins', 'admins.id', '=', 'wallets.admin_id')
         ->leftJoin('users', 'admins.user_id', '=', 'users.id')
-        ->orderBy('wallets.created_at', 'DESC')
         ->select(
             'wallets.*',
             'users.firstname',
             'users.lastname'
-        );
+        )
+            ->orderBy('wallets.created_at', 'DESC'); // Default ordering
 
+        // Filter by email
         if ($request->email) {
             $user = User::where('email', $request->email)->first();
-            if (!empty ($user)) {
+            if (!empty($user)) {
                 $customer = $user->customer;
                 $id = $customer->id;
                 $transactions = $transactions->where('customer_id', $id);
             }
         }
 
+        // Filter by transaction ID
         if ($request->transaction_id) {
             $transactions = $transactions->where('transaction_id', $request->transaction_id);
         }
 
+        // Filter by wallet type
         if ($request->type) {
             $transactions = $transactions->where('wallets.type', $request->type);
         }
 
-        if ($request->from) {
-            $from = $request->from . ' 00:00:00';
-        }else{
-            $from = Carbon::now()->startOfDay();
-        }
-
+        // Filter by date range
+        $from = $request->from ? $request->from . ' 00:00:00' : Carbon::now()->startOfDay();
         $transactions = $transactions->where('wallets.created_at', '>=', $from);
 
-        if ($request->to) {
-            $to = $request->to . ' 23:59:59';
-            $transactions = $transactions->where('wallets.created_at', '<=', $to);
-        } else {
-            $to = Carbon::now();
-        }
-
+        $to = $request->to ? $request->to . ' 23:59:59' : Carbon::now();
         $transactions = $transactions->where('wallets.created_at', '<=', $to);
 
+        if ($request->sort === 'highest' || $request->sort === 'lowest') {
+            $transactions = Wallet::query()
+            ->join('customers', 'wallets.customer_id', '=', 'customers.id')
+            ->leftJoin('users', 'customers.user_id', '=', 'users.id')
+            ->selectRaw('
+            wallets.customer_id, 
+            wallets.type, 
+            SUM(wallets.amount) as total_amount, 
+            users.firstname, 
+            users.lastname, 
+            users.email,
+            MIN(wallets.created_at) as first_transaction_date, 
+            MAX(wallets.created_at) as last_transaction_date') 
+            ->groupBy('wallets.customer_id', 'wallets.type', 'users.firstname', 'users.lastname', 'users.email');
+
+            if ($request->type) {
+                $transactions = $transactions->where('wallets.type', $request->type);
+            }
+
+            // Apply the date range filter
+            $from = $request->from ? $request->from . ' 00:00:00' : Carbon::now()->startOfDay();
+            $transactions = $transactions->where('wallets.created_at', '>=', $from);
+
+            $to = $request->to ? $request->to . ' 23:59:59' : Carbon::now();
+            $transactions = $transactions->where('wallets.created_at', '<=', $to);
+
+            // Apply sorting based on total amount
+            $transactions = $transactions->orderByRaw('SUM(wallets.amount) ' . ($request->sort === 'highest' ? 'DESC' : 'ASC'))->get();
+
+            $export = new ExcelService();
+
+            $format = [];
+            
+            // Loop through each transaction and add the date range for each customer
+            foreach ($transactions as $data) {
+                $firstTransactionDate = Carbon::parse($data->first_transaction_date)->format('Y-m-d');
+                $lastTransactionDate = Carbon::parse($data->last_transaction_date)->format('Y-m-d');
+
+                $format[] = [
+                    'Customer Name' => $data->firstname . ' ' . $data->lastname,
+                    'Email' => $data->email,
+                    'Wallet Type' => $data->type,
+                    'Total Amount ' . ucfirst($data->type) => $data->total_amount,
+                    'Date Range' => $firstTransactionDate . ' to ' . $lastTransactionDate,  // Date range per customer
+                ];
+            }
+
+            // Format the dates for the file name
+            $fromFormatted = Carbon::parse($from)->format('Y-m-d');
+            $toFormatted = Carbon::parse($to)->format('Y-m-d');
+
+            // Set the file name for the export
+            $fileName = $request->type . '_report-' . rand(919, 9999) . ' for--' . $fromFormatted . ' to ' . $toFormatted;
+
+            return $export->fastExcelExport($format, $fileName);
+        }
+
+        // Clone queries for totals
         $transactionsD = clone $transactions;
         $transactionsC = clone $transactions;
 
         $debit = $transactionsD->where('wallets.type', 'debit')->sum('amount');
         $credit = $transactionsC->where('wallets.type', 'credit')->sum('amount');
-        
-        // dd($transactions->take(10)->get());
-        if($request->paginate == 'yes'){
+
+        // Paginate or retrieve results
+        if ($request->paginate === 'yes') {
             $transactions = $transactions->paginate(20);
-        }else{
+        } else {
             $transactions = $transactions->get();
         }
+
         $count = 1;
+        
         return view('admin.transaction.wallet_log', [
             'transactions' => $transactions,
             'debit' => $debit,
