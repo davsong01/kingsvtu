@@ -91,7 +91,7 @@ class ProductController extends Controller
                 "servercode" => $request->servercode,
                 "allow_subscription_type" => $request->allow_subscription_type ?? 'no',
                 'ussd_string' => $request->ussd_string,
-                'multistep' => $request->multistep,
+                'multistep' => $request->multistep ?? 'no',
                 'referral_percentage' => $request->referral_percentage,
             ]
         );

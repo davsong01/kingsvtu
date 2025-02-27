@@ -28,7 +28,7 @@ class WalletController extends Controller
             'admin_id' => $data['admin_id'] ?? null,
             'payment_method' => $data['payment_method'] ?? null,
         ]);
-       
+        
         return $wallet;
     }
 

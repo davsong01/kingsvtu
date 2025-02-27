@@ -13,7 +13,8 @@ class MobileAirtimeNgController extends Controller
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];
         $slug = strtolower($slug);
-    
+        $datasize = $variation->system_price;
+        
         if (str_contains($slug, 'mtn-vtu') || str_contains($slug, 'mtn-airtime') || $slug == 'mtn') {
             $network = 15;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
@@ -29,10 +30,13 @@ class MobileAirtimeNgController extends Controller
         } elseif (str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) {
             $network = 2;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+        }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
+            $network = 1;
+            $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&datasize={$datasize}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
         }
         
         try {
-            if(env('ENT') == 'local'){
+            if(env('ENT') != 'local'){
                 $response = [
                     "code" => 100,
                     "message" => "Recharge successful",
@@ -42,6 +46,8 @@ class MobileAirtimeNgController extends Controller
             }else{
                 $response = $this->basicApiCall($url, [], [], 'GET');
             }
+
+            \Log::info(['url' => $url, 'response' => $response]);
 
             if (empty($response) || $response['code'] != 100) {
                 $format = [
