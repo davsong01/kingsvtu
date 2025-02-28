@@ -79,6 +79,12 @@
                                     <input type="number" class="form-control tiny" id="system_price" name="system_price[]"  value="" placeholder="Variation price" required>
                                 </fieldset>
                             </div>
+                            <div class="col-md-2">
+                                <fieldset class="form-group">
+                                    <label for="datasize">Datasize</label>
+                                    <input type="number" class="form-control tiny" id="datasize" name="datasize[]"  value="" placeholder="Variation datasize">
+                                </fieldset>
+                            </div>
                             @foreach($customerlevel as $level)
                             <div class="col-md-3">
                                 <fieldset class="form-group">

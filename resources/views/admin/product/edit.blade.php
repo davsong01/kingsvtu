@@ -215,6 +215,7 @@
                                                                                     <label for="name">System Price ({!! getSettings()['currency']!!})</label>
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
+                                                                                
                                                                                 @foreach($customerlevel as $level)
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
@@ -342,7 +343,13 @@
                                                                                             <input type="number" class="form-control tiny" id="system_price" name="system_price[{{ $variation->id }}]"  value="{{ $variation->system_price }}">
                                                                                         </fieldset>
                                                                                     </div>
-                                                                                   
+
+                                                                                    <div class="col-md-2">
+                                                                                        <fieldset class="form-group">
+                                                                                            <label for="datasize">Datasize</label>
+                                                                                            <input type="number" class="form-control tiny" id="datasize" name="datasize[{{ $variation->id }}]"  value="{{ $variation->datasize }}">
+                                                                                        </fieldset>
+                                                                                    </div>
                                                                                     @foreach($customerlevel as $level)
                                                                                     <div class="col-md-3">
                                                                                         <fieldset class="form-group">
