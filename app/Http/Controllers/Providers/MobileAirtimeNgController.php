@@ -13,7 +13,7 @@ class MobileAirtimeNgController extends Controller
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];
         $slug = strtolower($slug);
-        $datasize = $variation->system_price;
+        $datasize = $variation->datasize;
         
         if (str_contains($slug, 'mtn-vtu') || str_contains($slug, 'mtn-airtime') || $slug == 'mtn') {
             $network = 15;
