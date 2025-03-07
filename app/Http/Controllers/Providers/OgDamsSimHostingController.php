@@ -1526,7 +1526,7 @@ class OgDamsSimHostingController extends Controller
                 $payload = array(
                     "networkId" => $network,
                     "phoneNumber" => $request['unique_element'],
-                    "planId" => $variation->api_code,
+                    "planId" => $variation->api_code ?? $variation->slug,
                     "reference" => $this->generateRequestId(),
                 );
             }
@@ -1554,7 +1554,7 @@ class OgDamsSimHostingController extends Controller
             ];
             
             $payload = json_encode($payload);
-           
+            
             $res = $this->basicApiCall($url, $payload, $headers, 'POST');
             
             if (!empty($res) && isset($res['status']) && ($res['status'] == true)) {
@@ -1569,7 +1569,7 @@ class OgDamsSimHostingController extends Controller
                         'status_code' => 0,
                         'extras' => null,
                     ];
-                }else{
+                } elseif ($res['code'] == 200){
                     $format = [
                         'status' => 'delivered',
                         'user_status' => 'delivered',
@@ -1580,8 +1580,18 @@ class OgDamsSimHostingController extends Controller
                         'status_code' => 1,
                         'extras' => null,
                     ];
+                } else {
+                    $format = [
+                        'status' => 'attention-required',
+                        'user_status' => 'completed',
+                        'api_response' => json_encode($res),
+                        'description' => 'Transaction completed',
+                        'message' => $res['data']['msg'] ?? null,
+                        'payload' => $payload,
+                        'status_code' => 2,
+                        'extras' => null,
+                    ];
                 }
-            
             } else {
                 $format = [
                     'status' => 'failed',
