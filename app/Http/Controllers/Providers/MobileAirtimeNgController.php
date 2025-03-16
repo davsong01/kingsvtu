@@ -32,7 +32,8 @@ class MobileAirtimeNgController extends Controller
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
         }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
             $network = 1;
-            $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&datasize={$datasize}&network={$network}&phone={$request['unique_element']}&user_ref={$request['request_id']}&jsn=json";
+            
+            $url = "mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['request_id']}";
         }
         
         try {
