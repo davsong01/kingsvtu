@@ -16,11 +16,6 @@ class MobileNigController extends Controller
 
         $headers = [
             'Content-Type: application/json',
-            "Authorization: Bearer " . $product->api->public_key
-        ];
-
-        $headers = [
-            'Content-Type: application/json',
             'Authorization: Bearer ' . $product->api->public_key
         ];
         
@@ -218,6 +213,49 @@ class MobileNigController extends Controller
 
         }
 
+        if ($product->category->slug == 'data'){
+            if (Str::contains($product->slug, ['mtn', 'mtn-awoof'])) {
+                $payload = [
+                    'service_id' => 'BCA',
+                    'requestType' => 'SME'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['9mobile', 'etisalat'])) {
+                $payload = [
+                    'service_id' => 'BCB',
+                    'requestType' => 'SME'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['9mobile-gifting', 'etisalat-gifting'])) {
+                $payload = [
+                    'service_id' => 'BCB',
+                    'requestType' => 'GIFTING'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['glo', 'globacom'])) {
+                $payload = [
+                    'service_id' => 'BCC',
+                    'requestType' => 'SME'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['airtel'])) {
+                $payload = [
+                    'service_id' => 'BCD',
+                    'requestType' => 'GIFTING'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['airtel-sme', 'globacom'])) {
+                $payload = [
+                    'service_id' => 'BCD',
+                    'requestType' => 'SME'
+                ];
+            }
+        }
         return $payload;
     }
     // public function fetchAndUpdateBalance($api)
