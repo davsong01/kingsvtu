@@ -12,17 +12,22 @@ class MobileNigController extends Controller
     public function getVariations($product)
     {
         $url = env('ENV') != 'local' ? $product->api->sandbox_base_url : $product->api->live_base_url;
-        $url = $url . "service-variations?serviceID=" . $product->slug;
+        $url = $url . "services/packages";
 
         $headers = [
-            'Content-Type' => 'application/json',
-            'Accept' =>  'application/json',
-            'api_key' => $product->api->api_key,
-            'public_key' => $product->api->public_key,
+            'Content-Type: application/json',
+            "Authorization: Bearer " . $product->api->public_key
         ];
 
-        $variations = $this->basicApiCall($url, [], $headers, 'GET');
-
+        if(Str::contains($product->slug, ['mtn','mtn-awoof'])){
+            $payload = [
+                'service_id' => 'BCA',
+                'requestType' => 'SME'
+            ];
+        }
+        
+        $variations = $this->basicApiCall($url, $payload, $headers, 'POST');
+        dd($variations);
         if (isset($variations['response_description']) && $variations['response_description'] == '000') {
 
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
@@ -140,7 +145,7 @@ class MobileNigController extends Controller
         ];
         
         if($product->category->slug == 'airtime'){
-            if (Str::contains($product->slug, ['mtn', 'glo', 'airtel', '9mobile'])) {
+            if (Str::contains($product->slug, ['mtn'])) {
                 $payload['service_id'] = "BAD";
                 $payload['service_type'] = "PREMIUM";
             }
