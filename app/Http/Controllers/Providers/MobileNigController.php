@@ -31,6 +31,41 @@ class MobileNigController extends Controller
             ];
         }
 
+        if (Str::contains($product->slug, ['9mobile', 'etisalat'])) {
+            $payload = [
+                'service_id' => 'BCB',
+                'requestType' => 'SME'
+            ];
+        }
+
+        if (Str::contains($product->slug, ['9mobile-gifting', 'etisalat-gifting'])) {
+            $payload = [
+                'service_id' => 'BCB',
+                'requestType' => 'GIFTING'
+            ];
+        }
+
+        if (Str::contains($product->slug, ['glo', 'globacom'])) {
+            $payload = [
+                'service_id' => 'BCC',
+                'requestType' => 'SME'
+            ];
+        }
+
+        if (Str::contains($product->slug, ['airtel'])) {
+            $payload = [
+                'service_id' => 'BCD',
+                'requestType' => 'GIFTING'
+            ];
+        }
+
+        if (Str::contains($product->slug, ['airtel-sme', 'globacom'])) {
+            $payload = [
+                'service_id' => 'BCD',
+                'requestType' => 'SME'
+            ];
+        }
+
         $variations = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
         
         if (isset($variations['message']) && $variations['statusCode'] == '200' && isset($variations['details'])) {
@@ -79,7 +114,7 @@ class MobileNigController extends Controller
             $payload = $this->getPostData($request, $api, $variation, $product);
             $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
 
-            if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201']) && $response['message'] == 'success') {
+            if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201','202']) && $response['message'] == 'success') {
                 // success
                 $format = [
                     'status' => 'success',
@@ -92,7 +127,7 @@ class MobileNigController extends Controller
                     // 'extras' => $response['purchased_code'] ?? null,
                     // 'extra_info' => !empty($extra_info) ? $extra_info : [],
                 ];
-            } elseif (isset($response['statusCode']) && in_array($response['statusCode'], ['202']) && $response['message'] == 'success') {
+            } elseif (isset($response['statusCode']) && $response['message'] == 'success') {
                 // fail
                 $format = [
                     'status' => 'attention-required',
