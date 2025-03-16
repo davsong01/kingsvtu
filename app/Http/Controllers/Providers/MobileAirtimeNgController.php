@@ -225,5 +225,4 @@ class MobileAirtimeNgController extends Controller
 
         return $format;
     }
-
 }

@@ -122,7 +122,7 @@ class Controller extends BaseController
     public function generateRequestId()
     {
         date_default_timezone_set("Africa/Lagos");
-        $trx = date("YmdHi") . rand(1000000, 9999999);
+        $trx = date("YmdHi") . rand(100, 999);
         return $trx;
     }
 

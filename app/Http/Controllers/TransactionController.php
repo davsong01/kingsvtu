@@ -276,6 +276,7 @@ class TransactionController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
+            dd($th->getMessage(), $th->getLine(), $th->getFile());  
             \Log::info($th->getMessage());
             DB::rollBack();
             $wallet = new WalletController();
@@ -1196,6 +1197,7 @@ class TransactionController extends Controller
         $requestId = $controller->generateRequestId();
         $tid = 'KVTU-' . $requestId. 'A-'. $type;
         $reason = $type == 'debit' ? 'ADMIN-DEBIT' : 'ADMIN-CREDIT';
+
         try {
             //code...
             $data['type'] = $type;
@@ -1235,7 +1237,6 @@ class TransactionController extends Controller
             $sign = getSettings()->currency;
             return back()->with('message', "Customer wallet has been {$type}ed with {$sign}" . number_format($amount));
         } catch (\Exception $e) {
-
             return back()->with('error', 'An error occured' . $e->getMessage() . $e->getLine() . $e->getFile());
         }
     }
