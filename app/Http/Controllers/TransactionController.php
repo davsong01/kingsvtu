@@ -275,8 +275,7 @@ class TransactionController extends Controller
             ]);
 
             DB::commit();
-        } catch (\Throwable $th) {
-            dd($th->getMessage(), $th->getLine(), $th->getFile());  
+        } catch (\Throwable $th) { 
             \Log::info($th->getMessage());
             DB::rollBack();
             $wallet = new WalletController();

@@ -19,37 +19,43 @@ class MobileNigController extends Controller
             "Authorization: Bearer " . $product->api->public_key
         ];
 
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $product->api->public_key
+        ];
+        
         if(Str::contains($product->slug, ['mtn','mtn-awoof'])){
             $payload = [
                 'service_id' => 'BCA',
                 'requestType' => 'SME'
             ];
         }
-        
-        $variations = $this->basicApiCall($url, $payload, $headers, 'POST');
-        dd($variations);
-        if (isset($variations['response_description']) && $variations['response_description'] == '000') {
 
-            $variations = $variations['content']['variations'] ?? $variations['content']['varations'];
+        $variations = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
+        
+        if (isset($variations['message']) && $variations['statusCode'] == '200' && isset($variations['details'])) {
+
+            $variations = $variations['details'];
             foreach ($variations as $variation) {
                 Variation::updateOrCreate([
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
                     'api_name' => $variation['name'],
-                    'slug' => $variation['variation_code'],
+                    'slug' => $variation['productCode'],
                 ], [
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
                     'api_name' => $variation['name'],
-                    'slug' => $variation['variation_code'],
+                    'slug' => $variation['productCode'],
                     'system_name' => $variation['name'],
-                    'fixed_price' => $variation['fixedPrice'],
-                    'api_price' => $variation['variation_amount'],
-                    'system_price' => $variation['variation_amount'],
+                    'fixed_price' => 'Yes',
+                    'api_price' => $variation['price'],
+                    'system_price' => $variation['price'],
                     'min' => $variation['minimum_amount'] ?? null,
-                    'max' => $variation['maximum_amount'] ?? null
+                    'max' => $variation['maximum_amount'] ?? null,
+                    'max' => $variation['status'] == 'Unavailable' ? 'inactive' : 'active',
                 ]);
             }
 
@@ -109,7 +115,9 @@ class MobileNigController extends Controller
                     'message' => $response['response_description'] ?? null,
                     'payload' => $payload,
                     'status_code' => 0,
-                    'extras' => $response['purchased_code'] ?? null
+                    'extras' => $response['purchased_code'] ?? null,
+                    'failure_reasoon' => $response['details']['status'] ?? null,
+
                 ];
             }
         } catch (\Throwable $th) {
@@ -121,6 +129,7 @@ class MobileNigController extends Controller
                 'api_response' => $response ?? null,
                 'payload' => $payload ?? null,
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
+                'failure_reasoon' => $response['details']['status'] ?? null,
             ];
         }
 
@@ -132,6 +141,8 @@ class MobileNigController extends Controller
         } catch (\Throwable $th) {
             //throw $th;
         }
+
+
         return $format;
     }
 
