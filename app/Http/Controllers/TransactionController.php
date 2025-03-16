@@ -235,7 +235,7 @@ class TransactionController extends Controller
                 $request['type'] = 'credit';
                 $request['reason'] = 'Product Purchase reversal';
                 $wallet->logWallet($request);
-                $failure_reason = $query['error'] ?? ($query['message'] ?? $query['failure_reason']);
+                $failure_reason = $query['error'] ?? ($query['message'] ?? ($query['failure_reason'] ?? 'unknown reason'));
 
                 // Update Customer Wallet
                 $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
