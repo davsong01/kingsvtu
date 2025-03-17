@@ -33,7 +33,8 @@ class MobileAirtimeNgController extends Controller
         }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
             $network = 1;
             
-            $url = "mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['request_id']}";
+            // $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['request_id']}";
+            $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&jsn=json&network={$network}&phone={$request['unique_element']}&datasize={$datasize}";
         }
         
         try {
