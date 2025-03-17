@@ -18,51 +18,10 @@ class MobileNigController extends Controller
             'Content-Type: application/json',
             'Authorization: Bearer ' . $product->api->public_key
         ];
-        
-        if(Str::contains($product->slug, ['mtn','mtn-awoof'])){
-            $payload = [
-                'service_id' => 'BCA',
-                'requestType' => 'SME'
-            ];
-        }
 
-        if (Str::contains($product->slug, ['9mobile', 'etisalat'])) {
-            $payload = [
-                'service_id' => 'BCB',
-                'requestType' => 'SME'
-            ];
-        }
-
-        if (Str::contains($product->slug, ['9mobile-gifting', 'etisalat-gifting'])) {
-            $payload = [
-                'service_id' => 'BCB',
-                'requestType' => 'GIFTING'
-            ];
-        }
-
-        if (Str::contains($product->slug, ['glo', 'globacom'])) {
-            $payload = [
-                'service_id' => 'BCC',
-                'requestType' => 'SME'
-            ];
-        }
-
-        if (Str::contains($product->slug, ['airtel'])) {
-            $payload = [
-                'service_id' => 'BCD',
-                'requestType' => 'GIFTING'
-            ];
-        }
-
-        if (Str::contains($product->slug, ['airtel-sme', 'globacom'])) {
-            $payload = [
-                'service_id' => 'BCD',
-                'requestType' => 'SME'
-            ];
-        }
-
+        $payload = $this->getPostData(request()->all(), $product);
         $variations = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
-        
+       
         if (isset($variations['message']) && $variations['statusCode'] == '200' && isset($variations['details'])) {
 
             $variations = $variations['details'];
@@ -106,9 +65,9 @@ class MobileNigController extends Controller
                 'Authorization: Bearer '.$api->secret_key
             ];
 
-            $payload = $this->getPostData($request, $api, $variation, $product);
+            $payload = $this->getPostData($request, $product);
             $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
-
+            
             if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201','202']) && $response['message'] == 'success') {
                 // success
                 $format = [
@@ -122,7 +81,7 @@ class MobileNigController extends Controller
                     // 'extras' => $response['purchased_code'] ?? null,
                     // 'extra_info' => !empty($extra_info) ? $extra_info : [],
                 ];
-            } elseif (isset($response['statusCode']) && $response['message'] == 'success') {
+            } elseif (isset($response['statusCode']) && $response['message'] == 'success' && !in_array($response['statusCode'], ['200', '201', '202'])) {
                 // fail
                 $format = [
                     'status' => 'attention-required',
@@ -146,7 +105,7 @@ class MobileNigController extends Controller
                     'payload' => $payload,
                     'status_code' => 0,
                     'extras' => $response['purchased_code'] ?? null,
-                    'failure_reasoon' => $response['details']['status'] ?? null,
+                    'failure_reasoon' => $response['details'] ?? null,
 
                 ];
             }
@@ -176,13 +135,13 @@ class MobileNigController extends Controller
         return $format;
     }
 
-    public function getPostData($request, $api, $variation, $product)
+    public function getPostData($request, $product)
     {
 
         $payload = [
-            'trans_id' => $request['request_id'],
-            'phoneNumber' => $request['unique_element'],
-            'amount' => $request['amount'],
+            'trans_id' => $request['request_id'] ?? null,
+            'phoneNumber' => $request['unique_element'] ?? null,
+            'amount' => $request['amount'] ?? null,
         ];
         
         if($product->category->slug == 'airtime'){
@@ -214,14 +173,22 @@ class MobileNigController extends Controller
         }
 
         if ($product->category->slug == 'data'){
-            if (Str::contains($product->slug, ['mtn', 'mtn-awoof'])) {
+            if (Str::contains($product->slug, ['mtn-data', 'mtn-awoof','mtn-sme'])) {
                 $payload = [
                     'service_id' => 'BCA',
                     'requestType' => 'SME'
                 ];
             }
 
-            if (Str::contains($product->slug, ['9mobile', 'etisalat'])) {
+            if (Str::contains($product->slug, ['mtn-corporate'])) {
+                $payload = [
+                    'service_id' => 'BCA',
+                    'requestType' => 'CORPORATE'
+                ];
+            }
+
+            
+            if (Str::contains($product->slug, ['9mobile-sme', 'etisalat-sme'])) {
                 $payload = [
                     'service_id' => 'BCB',
                     'requestType' => 'SME'
@@ -235,27 +202,33 @@ class MobileNigController extends Controller
                 ];
             }
 
-            if (Str::contains($product->slug, ['glo', 'globacom'])) {
+            if (Str::contains($product->slug, ['glo-sme', 'globacom-sme'])) {
                 $payload = [
                     'service_id' => 'BCC',
                     'requestType' => 'SME'
                 ];
             }
 
-            if (Str::contains($product->slug, ['airtel'])) {
+            if (Str::contains($product->slug, ['airtel-smme'])) {
+                $payload = [
+                    'service_id' => 'BCD',
+                    'requestType' => 'SME'
+                ];
+            }
+
+            if (Str::contains($product->slug, ['airtel-gifting'])) {
                 $payload = [
                     'service_id' => 'BCD',
                     'requestType' => 'GIFTING'
                 ];
             }
 
-            if (Str::contains($product->slug, ['airtel-sme', 'globacom'])) {
-                $payload = [
-                    'service_id' => 'BCD',
-                    'requestType' => 'SME'
-                ];
-            }
+            $payload['beneficiary'] = $request['unique_element'] ?? null;
+            $payload['code'] = $request['variation_name'] ?? null;
+            $payload['amount'] = $request['amount'] ?? nullp;
+
         }
+        // dd($payload,$product->slug);
         return $payload;
     }
     // public function fetchAndUpdateBalance($api)
@@ -314,7 +287,6 @@ class MobileNigController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             $format = [
                 'status' => 'attention-required',
                 'user_status' => 'success',

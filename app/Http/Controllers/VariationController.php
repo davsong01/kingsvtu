@@ -21,7 +21,7 @@ class VariationController extends Controller
             $variations = app("App\Http\Controllers\Providers\\" . $api->file_name)->getVariations($product);
             return back()->with('message', 'Variations pulled successfully');
         } catch (\Throwable $th) {
-            return back()->with('error', 'No Variations found: '.$th->getMessage());
+            return back()->with('error', 'No Variations found: '.$th->getMessage().' '.$th->getLine());
         }
 
     }
