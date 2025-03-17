@@ -225,7 +225,7 @@ class MobileNigController extends Controller
 
             $payload['beneficiary'] = $request['unique_element'] ?? null;
             $payload['code'] = $request['variation_name'] ?? null;
-            $payload['amount'] = $request['amount'] ?? nullp;
+            $payload['amount'] = $request['amount'] ?? null;
 
         }
         // dd($payload,$product->slug);
