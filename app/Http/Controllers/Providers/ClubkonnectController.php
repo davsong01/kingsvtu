@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Providers;
 
 use App\Models\WebSetting;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -79,17 +80,18 @@ class ClubkonnectController extends Controller
         $slug = $request['product_slug'];
         $slug = strtolower($slug);
 
-        if (in_array($slug, ['mtn-vtu', 'mtn-airtime','mtn', 'mtn-awufu', 'mtn-awuf', 'mtn-awoof','mtn-awoofu'])) {
+        
+        if (Str::contains($slug, 'mtn')) {
             $network = '01';
-        } elseif (in_array($slug, ['glo', 'glo-vtu','glo-airtime', '⁠glo-x5'])) {
+        } elseif (Str::contains($slug, 'glo')) {
             $network = '02';
-        } elseif (in_array($slug, ['airtel','airtel'])) {
+        } elseif (Str::contains($slug, 'airtel')) {
             $network = '04';
-        } elseif (in_array($slug, ['9mobile','etisalat', '⁠9mobile-vtu'])) {
+        } elseif (Str::contains($slug, '9mobile') || Str::contains($slug, 'etisalat')) {
             $network = '03';
         }
         
-        $url = $api->live_base_url . 'APIBuyAirTime.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&Amount=' . $request['amount'] . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['request_id'] . '&CallBackURL='.url('/').'/log-purchase-callback/'.$api->id;
+        $url = $api->live_base_url . 'APIBuyAirTime.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&Amount=' . $variation->datasize . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['request_id'] . '&CallBackURL='.url('/').'/log-purchase-callback/'.$api->id;
 
         $payload = $url;
 
