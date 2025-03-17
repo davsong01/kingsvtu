@@ -38,7 +38,7 @@ class MobileAirtimeNgController extends Controller
         }
         
         try {
-            if(env('ENT') != 'local'){
+            if(env('ENT') == 'local'){
                 $response = [
                     "code" => 100,
                     "message" => "Recharge successful",
