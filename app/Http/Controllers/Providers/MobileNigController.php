@@ -209,7 +209,7 @@ class MobileNigController extends Controller
                 ];
             }
 
-            if (Str::contains($product->slug, ['airtel-smme'])) {
+            if (Str::contains($product->slug, ['airtel-sme'])) {
                 $payload = [
                     'service_id' => 'BCD',
                     'requestType' => 'SME'
