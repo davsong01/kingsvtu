@@ -97,7 +97,7 @@ class ClubkonnectController extends Controller
             $url = $api->live_base_url . 'APIDatabundleV1.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&DataPlan=' . $variation->datasize . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['request_id'] . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
             //  https://www.nellobytesystems.com/APIDatabundleV1.asp?UserID=CK11&APIKey=123&MobileNetwork=01&DataPlan=1000&MobileNumber=08149659347&CallBackURL=http://www.your-websiite.com
         }
-
+        // dd($url);
         $payload = $url;
         
         $response = $this->basicApiCall($url, [], [], 'GET');
@@ -124,6 +124,7 @@ class ClubkonnectController extends Controller
                         'status' => 'success',
                         'api_response' => $response,
                         'description' => 'Purchase was successful',
+                        'message' => 'Purchase was successful',
                         'payload' => $payload,
                         'failure_reason' => NULL,
                         'status_code' => 1,
