@@ -21,12 +21,12 @@ class MobileNigController extends Controller
 
         $payload = $this->getPostData(request()->all(), $product);
         $variations = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
-       
+        // dd($variations);
         if (isset($variations['message']) && $variations['statusCode'] == '200' && isset($variations['details'])) {
-
-            $variations = $variations['details'];
-            foreach ($variations as $variation) {
-                Variation::updateOrCreate([
+            $variationsDetails = $variations['details'];
+            
+            foreach ($variationsDetails as $variation) {
+                $var = Variation::updateOrCreate([
                     'product_id' => $product['id'],
                     'category_id' => $product['category_id'],
                     'api_id' => $product['api']['id'],
@@ -44,7 +44,7 @@ class MobileNigController extends Controller
                     'system_price' => $variation['price'],
                     'min' => $variation['minimum_amount'] ?? null,
                     'max' => $variation['maximum_amount'] ?? null,
-                    'max' => $variation['status'] == 'Unavailable' ? 'inactive' : 'active',
+                    'status' => $variation['status'] == 'Unavailable' ? 'inactive' : 'active',
                 ]);
             }
 
@@ -66,8 +66,10 @@ class MobileNigController extends Controller
             ];
 
             $payload = $this->getPostData($request, $product);
-            $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
             
+            $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
+            // \Log::info($payload);
+            // \Log::info($response);
             if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201','202']) && $response['message'] == 'success') {
                 // success
                 $format = [
@@ -174,53 +176,53 @@ class MobileNigController extends Controller
 
         if ($product->category->slug == 'data'){
             if (Str::contains($product->slug, ['mtn-data', 'mtn-awoof','mtn-sme'])) {
-                $payload = [
-                    'service_id' => 'BCA',
-                    'requestType' => 'SME'
-                ];
+                $payload['service_id'] = 'BCA';
+                $payload['service_type'] = 'SME';
+                $payload['requestType'] = 'SME';
             }
 
             if (Str::contains($product->slug, ['mtn-corporate'])) {
-                $payload = [
-                    'service_id' => 'BCA',
-                    'requestType' => 'CORPORATE'
-                ];
+                $payload['service_id'] = 'BCA';
+                $payload['service_type'] = 'CORPORATE';
+                $payload['requestType'] = 'CORPORATE';
+            }
+
+            if (Str::contains($product->slug, ['mtn-gifting'])) {
+                $payload['service_id'] = 'BCA';
+                $payload['service_type'] = 'GIFTING';
+                $payload['requestType'] = 'GIFTING';
             }
 
             
             if (Str::contains($product->slug, ['9mobile-sme', 'etisalat-sme'])) {
-                $payload = [
-                    'service_id' => 'BCB',
-                    'requestType' => 'SME'
-                ];
+                $payload['service_id'] = 'BCB';
+                $payload['service_type'] = 'SME';
+                $payload['requestType'] = 'SME';
             }
 
             if (Str::contains($product->slug, ['9mobile-gifting', 'etisalat-gifting'])) {
-                $payload = [
-                    'service_id' => 'BCB',
-                    'requestType' => 'GIFTING'
-                ];
+                $payload['service_id'] = 'BCB';
+                $payload['service_type'] = 'GIFTING';
+                $payload['requestType'] = 'GIFTING';
             }
 
             if (Str::contains($product->slug, ['glo-sme', 'globacom-sme'])) {
-                $payload = [
-                    'service_id' => 'BCC',
-                    'requestType' => 'SME'
-                ];
+                $payload['service_id'] = 'BCC';
+                $payload['service_type'] = 'SME';
+                $payload['requestType'] = 'SME';
             }
 
             if (Str::contains($product->slug, ['airtel-sme'])) {
-                $payload = [
-                    'service_id' => 'BCD',
-                    'requestType' => 'SME'
-                ];
+                $payload['service_id'] = 'BCD';
+                $payload['service_type'] = 'SME';
+                $payload['requestType'] = 'SME';
             }
 
             if (Str::contains($product->slug, ['airtel-gifting'])) {
-                $payload = [
-                    'service_id' => 'BCD',
-                    'requestType' => 'GIFTING'
-                ];
+                $payload['service_id'] = 'BCD';
+                $payload['service_type'] = 'GIFTING';
+                $payload['requestType'] = 'GIFTING';
+                
             }
 
             $payload['beneficiary'] = $request['unique_element'] ?? null;
