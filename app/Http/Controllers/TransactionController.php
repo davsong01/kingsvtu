@@ -1315,9 +1315,9 @@ class TransactionController extends Controller
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
         
         if(!empty($query) && !empty($query['api_response'])){
-            $trans->update([
-                'api_response' => json_encode($query['api_response'])
-            ]);
+            // $trans->update([
+            //     'api_response' => json_encode($query['api_response'])
+            // ]);
         }
 
         return response()->json($query);
