@@ -173,7 +173,6 @@ class TransactionController extends Controller
             //code...
             $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
         } catch (\Throwable $th) {
-            // dd($th->getMessage(), $th->getFile() . ' Line: ' . $th->getLine());
             \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
             return back()->with('error', 'An error occured, please try again later');
         }
@@ -458,7 +457,6 @@ class TransactionController extends Controller
         if($resource->fixed_price == 'Yes'){
             $discounted_price = $discounted_price <= $resource->system_price ? $discounted_price : $resource->system_price;
         } 
-        // dd($resource->category->discount_type, $amount, $discount, $discounted_price);
         $discounted_price = $discounted_price <= 0 ? $resource->system_price : $discounted_price;
         
         if(!empty($getRate)){
@@ -904,7 +902,6 @@ class TransactionController extends Controller
     //     $debit = $transactionsD->where('wallets.type', 'debit')->sum('amount');
     //     $credit = $transactionsC->where('wallets.type', 'credit')->sum('amount');
 
-    //     // dd($transactions->take(10)->get());
     //     if($request->paginate == 'yes'){
     //         $transactions = $transactions->paginate(20);
     //     }else{
@@ -1083,7 +1080,6 @@ class TransactionController extends Controller
             $time = $request->to . ' 00:00:00';
             $transactions = $transactions->where('created_at', $time);
         }
-        // dd($request->all());
         $transactions = $transactions->paginate(20);
 
         return view('admin.transaction.wallet_funding', [
@@ -1308,7 +1304,7 @@ class TransactionController extends Controller
         }else{
             $api = $trans->api;
         }
-
+        
         $query = app("App\Http\Controllers\Providers\\" . $api->file_name)->requery($trans);
         
         if(!empty($query) && !empty($query['api_response'])){

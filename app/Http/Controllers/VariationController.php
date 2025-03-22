@@ -39,7 +39,6 @@ class VariationController extends Controller
             
             $variation->discount = $discount;
     
-            // dd(in_array('utme-no-mock', array_keys(specialVerifiableVariations())), specialVerifiableVariations());
             if (in_array($variation->category->unique_element, verifiableUniqueElements()) || in_array($variation->slug, array_keys(specialVerifiableVariations()))) {
                 $variation->verifiable = 'yes';
             } else {
@@ -110,7 +109,6 @@ class VariationController extends Controller
         // Create the variation
         if (isset($request->system_name)) {
             foreach ($request->system_name as $key => $variation) {
-                // dd($variation, $key, $request->all(), $request->slug[$key]);
                 $variation = Variation::updateOrCreate([
                     'product_id' => $product->id,
                     'category_id' => $product->category_id,
@@ -171,7 +169,6 @@ class VariationController extends Controller
             }
         }
 
-        // dd($variation);
         $variation->delete();
 
         return back()->with('message', 'Variation deleted successfully');

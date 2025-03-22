@@ -204,7 +204,6 @@
                                                                                     <input type="number" class="form-control tiny" id="system_price" name="system_price"  value="{{ $product->system_price }}">
                                                                                 </fieldset>
                                                                                 @foreach($customerlevel as $level)
-                                                                                {{-- {{dd($product->category->discount_type )}} --}}
                                                                                 <fieldset class="form-group">
                                                                                     <label for="name">{{ $level->name }} @if($product->category->discount_type == 'flat') Discounted Price ({!! getSettings()['currency']!!}) @else Discounted Percentage (%) @endif</label>
                                                                                     <input type="number" class="form-control tiny" id="productlevel" name="productlevel[{{ $level->id }}]" step=".01" value="{{ $product->customer_level_price($level->id) }}">

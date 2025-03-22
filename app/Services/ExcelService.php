@@ -17,7 +17,6 @@ class ExcelService {
             if ($path == "") {
                 return Excel::download(new SingleSheetExport($header, $data, $name), $filename);
             }
-            // dd(public_path().'/'.$path);
             return (new SingleSheetExport($header, $data, $name))->store($path, "excel_local");
         } else {
             $finaldata = [];
@@ -27,7 +26,6 @@ class ExcelService {
                 $sheet  = array( 0 => $header, 1 => $value);
                 $finaldata[] = $sheet;
             }
-            // dd($finaldata);
             if ($path == "") {
                 return Excel::download(new MultipleSheetExport($finaldata, $name), $filename);
             }
@@ -48,7 +46,6 @@ class ExcelService {
             }
             $row[]= $inData;
         }
-        // dd($row);
         return ["header" => $header, "row" => $row];
     }
 

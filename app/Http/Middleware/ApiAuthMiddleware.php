@@ -63,7 +63,6 @@ class ApiAuthMiddleware
         }
 
         $user = User::where("api_key", $request->header("api-key"))->first();
-        // dd($user);
         // Check level
         if($user->customer->level->make_api_level == 'no'){
             $json = [

@@ -717,7 +717,6 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
                 'extras' => $extras ?? null
             ];
-            // dd($format);
         } catch (\Throwable $th) {
             $format = [
                 'status' => 'attention-required',

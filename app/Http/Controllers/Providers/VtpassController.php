@@ -173,7 +173,6 @@ class VtpassController extends Controller
     {
         $api = $transaction->api;
         $external_reference_id = $transaction->external_reference_id;
-
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "requery";
@@ -190,7 +189,7 @@ class VtpassController extends Controller
             ];
 
             $response = $this->basicApiCall($url, $payload, $headers, 'POST');
-           
+            
             $successCodes = ['000'];
             $failCodes = ['016'];
             

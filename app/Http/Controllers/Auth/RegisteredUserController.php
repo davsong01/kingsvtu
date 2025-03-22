@@ -60,7 +60,6 @@ class RegisteredUserController extends Controller
             'privacy' => ['required'],
         ]);
 
-        // dd($request->all());
         $user = User::create([
             'firstname' => $request->first_name,
             'lastname' => $request->last_name,

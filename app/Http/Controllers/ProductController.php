@@ -227,7 +227,6 @@ class ProductController extends Controller
 
         $productLevel = $request->productlevel;
         // $productLevel = array_filter($request->productlevel);
-        // dd($productLevel);
         if (count($productLevel) > 0 && isset($product)) {
             foreach ($productLevel as $key => $price) {
                 Discount::updateOrCreate([

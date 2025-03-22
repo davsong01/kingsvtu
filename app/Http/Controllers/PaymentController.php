@@ -251,7 +251,7 @@ class PaymentController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($th->getMessage(), $th->getFile(), $th->getLine());
+            dump($th->getMessage(), $th->getFile(), $th->getLine());
         }
     }
 
@@ -305,7 +305,6 @@ class PaymentController extends Controller
                     'status' => 'attention-required',
                     'descr' => 'Wallet Funding of ' . getSettings()->currency . number_format($paid, 2) . ' failed. Transaction unverified',
                 ]);
-                // dd($th->getMessage(), $th->getLine(), $th->getFile());
                 return redirect(route('transaction.status', $transaction->transaction_id));
             }
         } else {

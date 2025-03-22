@@ -92,14 +92,15 @@
 
                                                                     {{ $transaction->created_at }}
                                                                     @if(!in_array($transaction->reason, ['LEVEL-UPGRADE','WALLET-FUNDING']))
-                                                                     <br>
-                                                                     <a href="{{ route('transaction.receipt.download', ['transaction_id' => $transaction->id])}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
+                                                                        <br>
+                                                                        <a href="{{ route('transaction.receipt.download', ['transaction_id' => $transaction->id])}}" target="_blank" class="btn btn-primary btn-sm" style="color:#fff;"><i class="fa fa-download"></i> Download Receipt</a> <br>
                                                                     @endif
                                                                 </div>
                                                                 <div class="col-md-3">
-                                                                   <strong>Request Id:</strong> <br>{{ $transaction->reference_id }} <br>
-                                                                   <strong>IP Address: </strong><br>{{ $transaction->ip_address }} <br>
-                                                                   @if(!empty($transaction->extras))
+                                                                    <strong>Request Id:</strong> <br>{{ $transaction->reference_id }} <br>
+                                                                    <strong>External Reference Id:</strong> <br>{{ $transaction->external_reference_id }} <br>
+                                                                    <strong>IP Address: </strong><br>{{ $transaction->ip_address }} <br>
+                                                                    @if(!empty($transaction->extras))
                                                                     <li class="d-flex mb-1">
                                                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                                                             <div class="me-2">
@@ -251,7 +252,6 @@
                                                                             </td>
                                                                             <td>{{ $transaction->unique_element }}
                                                                                 <?php
-                                                                                    // dd(verifiableUniqueElements(), $transaction->category->unique_element);
                                                                                     if (isset($transaction->variation) &&  in_array($transaction->category->unique_element, verifiableUniqueElements())
                                                                                     ) {
                                                                                         $element = $transaction->category->unique_element;

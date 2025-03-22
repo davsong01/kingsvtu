@@ -43,7 +43,6 @@ class SimServerHostingController extends Controller
             $payload = json_encode($payload);
             $res = $this->basicApiCall($url, $payload, [], 'POST');
             \Log::info(['simserverhosting' =>$res]);
-            // dd($res, $payload);
             if (!empty($res) && ($res['status'] == true)) {
                 $format = [
                     'status' => 'delivered',

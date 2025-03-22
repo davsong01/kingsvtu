@@ -400,6 +400,7 @@ class ApiResponseService
         if (empty($transaction)) {
             return $this->responseService->formatServiceResponse("failed", "Transaction with request_id: " . $request_id . " not found", [], null);
         }
+        
         $data = [
             'status' => $transaction->status,
             'request_id' => $transaction->reference_id,

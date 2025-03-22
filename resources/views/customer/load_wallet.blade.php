@@ -86,7 +86,6 @@
                                                                             <p>To fund your wallet, make payment into any of the accounts below. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.<br><br><strong style="color:red">IMPORTANT:</strong><br> Payments made into any of these account are automated. This means that once you transfer, your wallet is credited automatically. <br>
                                                                             P.S: Just like every other transfers, you could experience a slight delay in wallet funding. You only need to hold on patiently as your wallet would be credited once processed. You do not need to contact support after funding your wallet, It is automated. <br><small style="color:red"><b>NOTE: </b>A charge of <strong>{{ getPaymentGatewayReservedAccountCharge($gateway->id)['display_value'] }}</strong>is applicable to this method of wallet funding</small> <br>
                                                                             </p>    
-                                                                            {{-- {{dd(getSettings()->bank_transfer_note)}} --}}
                                                                             <small>{!! getSettings()->bank_transfer_note !!}</small>
                                                                             <div>
                                                                                 <h5>Wallet Funding Account Details</h5>

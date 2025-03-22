@@ -21,7 +21,6 @@ class MobileNigController extends Controller
 
         $payload = $this->getPostData(request()->all(), $product);
         $variations = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
-        // dd($variations);
         if (isset($variations['message']) && $variations['statusCode'] == '200' && isset($variations['details'])) {
             $variationsDetails = $variations['details'];
             
@@ -112,7 +111,6 @@ class MobileNigController extends Controller
                 ];
             }
         } catch (\Throwable $th) {
-            // dd('sds', $th->getMessage(), $th->getFile(), $th->getLine());
             $format = [
                 'status' => 'attention-required',
                 'response' => '',
@@ -230,7 +228,6 @@ class MobileNigController extends Controller
             $payload['amount'] = $request['amount'] ?? null;
 
         }
-        // dd($payload,$product->slug);
         return $payload;
     }
     // public function fetchAndUpdateBalance($api)

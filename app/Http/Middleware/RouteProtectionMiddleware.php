@@ -20,7 +20,6 @@ class RouteProtectionMiddleware
         $curRouteName = Route::currentRouteName();
         
         $routes = auth()->user()->admin->rolepermissions();
-        // dd($routes, $curRouteName);
         if (in_array($curRouteName, $routes) || in_array(1, auth()->user()->admin->roleIds())) {
             return $next($request);
         } else {

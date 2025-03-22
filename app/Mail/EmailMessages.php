@@ -28,7 +28,6 @@ class EmailMessages extends Mailable
      */
     public function envelope(): Envelope
     {
-        // dd(env('MAIL_FROM_ADDRESS'),$this->data);
         return new Envelope(
             from: new Address(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME')),
             // replyTo: [
