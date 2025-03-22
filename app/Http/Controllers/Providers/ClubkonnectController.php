@@ -77,7 +77,9 @@ class ClubkonnectController extends Controller
 
     function query($request, $api, $variation, $product)
     {
-        $slug = $request['product_slug'];
+        // $slug = $request['product_slug'];
+        $slug = $request['variation_slug'] ?? $request['product_slug'];
+        
         $slug = strtolower($slug);
         $datasize = $variation->datasize ?? null;
 
