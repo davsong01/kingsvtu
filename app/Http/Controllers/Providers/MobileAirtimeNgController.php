@@ -22,7 +22,7 @@ class MobileAirtimeNgController extends Controller
             $network = 20;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         }elseif (str_contains($slug, 'glo')) {
-            $network = 20;
+            $network = 6;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         } elseif (str_contains($slug, 'airtel')) {
             $network = 1;
@@ -32,11 +32,19 @@ class MobileAirtimeNgController extends Controller
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
             $network = 1;
-            
-            // $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
             $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&jsn=json&network={$network}&phone={$request['unique_element']}&datasize={$datasize}";
+        } elseif (str_contains($slug, 'airtel-cg') || $slug == 'airtel-cg') {
+            $network = 1;
+            $url = "https: //mobileairtimeng.com/httpapi/airtel_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+        } elseif (str_contains($slug, 'glo-cg') || $slug == 'glo-cg') {
+            $network = 6;
+            $url = "https: //mobileairtimeng.com/httpapi/glo_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+        } elseif (str_contains($slug, '9mobile-sme') || $slug == '9mobile-sme') {
+            $network = 2;
+            $url = "https: //mobileairtimeng.com/httpapi/nine_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
         }
-        
+
+
         try {
             if(env('ENT') == 'local'){
                 $response = [
