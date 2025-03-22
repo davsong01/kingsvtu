@@ -23,7 +23,6 @@
                                             <span
                                             class="text-success">Delivered</span>
                                     </div>
-                                   
                                 </div>
                             </div>
                         </div>
@@ -65,6 +64,17 @@
                             <form action="{{ route('admin.trans') }}" method="GET">
                                 {{-- @csrf --}}
                                 <div class="row">
+                                    <div class="col-md-3">
+                                        <fieldset class="form-group">
+                                            <label for="api_id">API Provider</label>
+                                            <select class="form-control" name="api_id" id="api_id">
+                                                <option value="">Select</option>
+                                                @foreach ($apis as $api)
+                                                    <option value="{{ $api->id }}" {{ \Request::get('api_id') == $api->id ? 'selected' : ''}}>{{ $api->name }}</option>  
+                                                @endforeach
+                                            </select>
+                                        </fieldset>
+                                    </div>
                                     <div class="col-md-3">
                                         <fieldset class="form-group">
                                             <label for="channel">Channel</label>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\API;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Product;
@@ -806,6 +807,11 @@ class TransactionController extends Controller
         $totalTransFailed = $transactionsF->where('status', 'failed')->sum('amount');
         $totalTransAttention = $transactionsA->where('status', 'attention-required')->sum('amount');
         $products = Product::all();
+        $apis = API::all();
+
+        if ($request->api_id) {
+            $transactions = $transactions->where('api_id', $request->api_id);
+        }
 
         if ($request->channel) {
             $transactions = $transactions->where('channel', $request->channel);
@@ -843,6 +849,7 @@ class TransactionController extends Controller
         return view('admin.transaction.index', [
             'transactions' => $transactions,
             'products' => $products,
+            'apis'=> $apis,
             'success' => $totalTransSuccess,
             'failed' => $totalTransFailed,
             'attention_required' => $totalTransAttention,
