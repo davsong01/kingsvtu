@@ -141,7 +141,7 @@ class MobileNigController extends Controller
     {
 
         $payload = [
-            'trans_id' => $request['request_id'] ?? null,
+            'trans_id' => $request['external_reference_id'] ?? null,
             'phoneNumber' => $request['unique_element'] ?? null,
             'amount' => $request['amount'] ?? null,
         ];

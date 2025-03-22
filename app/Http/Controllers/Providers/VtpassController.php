@@ -70,7 +70,7 @@ class VtpassController extends Controller
                 'subscription_type' => $request['subscription_type'],
                 'serviceID' => $request['product_slug'],
                 'variation_code' => $request['variation_name'],
-                'request_id' => $request['request_id'],
+                'request_id' => $request['external_reference_id'],
                 'type' => $request['type'] ?? null,
                 'billersCode' => $request['unique_element'],
                 'phone' => $request['phone'],
@@ -172,7 +172,7 @@ class VtpassController extends Controller
     public function requery($transaction)
     {
         $api = $transaction->api;
-        $request_id = $transaction->reference_id;
+        $external_reference_id = $transaction->external_reference_id;
 
         try {
             $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
@@ -185,7 +185,7 @@ class VtpassController extends Controller
             ];
 
             $payload = [
-                'request_id' => $request_id,
+                'request_id' => $external_reference_id,
                 'url' => $url
             ];
 

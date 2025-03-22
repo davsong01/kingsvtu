@@ -79,7 +79,7 @@ class ClubkonnectController extends Controller
     {
         $slug = $request['product_slug'];
         $slug = strtolower($slug);
-        $datasize = $variation->datasize;
+        $datasize = $variation->datasize ?? null;
 
         if (Str::contains($slug, 'mtn')) {
             $network = '01';
@@ -92,12 +92,12 @@ class ClubkonnectController extends Controller
         }
         
         if($product->category->slug == 'airtime'){
-            $url = $api->live_base_url . 'APIBuyAirTime.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&Amount=' . $request['amount'] . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['request_id'] . '&CallBackURL='.url('/').'/log-purchase-callback/'.$api->id;
+            $url = $api->live_base_url . 'APIBuyAirTime.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&Amount=' . $request['amount'] . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['external_reference_id'] . '&CallBackURL='.url('/').'/log-purchase-callback/'.$api->id;
         }elseif($product->category->slug == 'data'){
-            $url = $api->live_base_url . 'APIDatabundleV1.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&DataPlan=' . $datasize . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['request_id'] . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
+            $url = $api->live_base_url . 'APIDatabundleV1.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&DataPlan=' . $datasize . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['external_reference_id'] . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
             //  https://www.nellobytesystems.com/APIDatabundleV1.asp?UserID=CK11&APIKey=123&MobileNetwork=01&DataPlan=1000&MobileNumber=08149659347&CallBackURL=http://www.your-websiite.com
         }
-        // dd($url);
+        
         $payload = $url;
         
         $response = $this->basicApiCall($url, [], [], 'GET');

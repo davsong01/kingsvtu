@@ -135,6 +135,7 @@ class TransactionController extends Controller
 
         // Log Wallet
         $request_id = $this->generateRequestId();
+        $request['external_reference_id'] = $this->generateExternalReferenceId($product->api_id);
         $request['type'] = 'debit';
         $request['customer_id'] = auth()->user()->customer->id;
         $request['transaction_id'] = 'KVTU-' . $request_id;
@@ -160,7 +161,7 @@ class TransactionController extends Controller
         
         // Log basic transaction
         $transaction = $this->logTransaction($request->all());
-
+        
         // Log wallet
         $wal = $wallet->logWallet($request->all());
 
@@ -172,6 +173,7 @@ class TransactionController extends Controller
             //code...
             $transaction = $this->processTransaction($request->all(), $transaction, $product, $variation ?? null);
         } catch (\Throwable $th) {
+            // dd($th->getMessage(), $th->getFile() . ' Line: ' . $th->getLine());
             \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
             return back()->with('error', 'An error occured, please try again later');
         }
@@ -500,6 +502,7 @@ class TransactionController extends Controller
         $pre = [
             'status' => $data['status'] ?? 'initiated',
             'reference_id' => $data['request_id'],
+            'external_reference_id' => $data['external_reference_id'] ?? $this->generateExternalReferenceId(),
             'transaction_id' => $data['transaction_id'],
             'payment_method' => $data['payment_method'],
             'customer_id' => $data['customer_id'],

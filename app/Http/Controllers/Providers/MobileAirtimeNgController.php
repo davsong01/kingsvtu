@@ -13,27 +13,27 @@ class MobileAirtimeNgController extends Controller
         // Post data
         $slug = $request['variation_slug'] ?? $request['product_slug'];
         $slug = strtolower($slug);
-        $datasize = $variation->datasize;
+        $datasize = $variation->datasize ?? null;
         
         if (str_contains($slug, 'mtn-vtu') || str_contains($slug, 'mtn-airtime') || $slug == 'mtn') {
             $network = 15;
-            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         } elseif (str_contains($slug, 'mtn-awufu')) {
             $network = 20;
-            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         }elseif (str_contains($slug, 'glo')) {
             $network = 20;
-            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         } elseif (str_contains($slug, 'airtel')) {
             $network = 1;
-            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         } elseif (str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) {
             $network = 2;
-            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['request_id']}&jsn=json";
+            $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
         }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
             $network = 1;
             
-            // $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['request_id']}";
+            // $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
             $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&jsn=json&network={$network}&phone={$request['unique_element']}&datasize={$datasize}";
         }
         
@@ -147,9 +147,9 @@ class MobileAirtimeNgController extends Controller
     function requery($transaction)
     {
         $api = $transaction->api;
-        $request_id = $transaction->reference_id;
+        $external_reference_id = $transaction->external_reference_id;
 
-        $url = "https://mobileairtimeng.com/httpapi/status?userid={$api->public_key}&pass={$api->api_key}&transid={$request_id}&jsn=json";
+        $url = "https://mobileairtimeng.com/httpapi/status?userid={$api->public_key}&pass={$api->api_key}&transid={$external_reference_id}&jsn=json";
 
         $response = $this->basicApiCall($url, [], [], 'GET');   
         

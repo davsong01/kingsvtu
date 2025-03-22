@@ -169,7 +169,8 @@ class DashboardController extends Controller
         }
 
         // Log Wallet
-        $request_id = $this->generateRequestId();
+        $request['reference_id'] = $this->generateRequestId();
+        $request_id = $this->generateExternalReferenceId();
         $request['type'] = 'debit';
         $request['customer_id'] = auth()->user()->customer->id;
         $request['transaction_id'] = 'KVTUPGRD-' . $request_id;

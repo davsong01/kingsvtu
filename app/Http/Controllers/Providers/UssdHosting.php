@@ -331,22 +331,22 @@ class UssdHosting extends Controller
                 "ussd" => $step1,
                 "servercode" => $request['servercode'],
                 "token" => $api->api_key,
-                'refid' => $request['request_id'],
+                'refid' => $request['external_reference_id'],
                 "multistep" => $others ?? null,
             );
 
             $payload = http_build_query($payload);
             $res = $this->basicApiCall($url, $payload, [], 'POST');
-            
+
             // if (env('ENT') == 'local') {
             //     $res = [
             //         "success" => true,
             //         "comment" => "ADDITIONAL_COMMENT",
-            //         "refid" => $request['request_id'],
+            //         "refid" => $request['external_reference_id'],
             //         "log_id" => "123344"
             //     ];
             // }
-            
+
             if (isset($res['success']) && ($res['success'] == "true" || $res['success'] == true)) {
                 $format = [
                     'status' => 'delivered',
@@ -396,10 +396,10 @@ class UssdHosting extends Controller
         return $newString;
     }
 
-    function requery($api, $request_id)
+    function requery($api, $external_reference_id)
     {
 
-        $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
+        $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $external_reference_id;
         try {
 
             if (env('APP_ENV') != 'local') {

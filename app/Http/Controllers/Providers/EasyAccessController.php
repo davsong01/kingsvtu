@@ -639,7 +639,7 @@ class EasyAccessController extends Controller
                 'network' => $request['network'] ?? $ntwk,
                 'mobileno' => $request['unique_element'] ?? '',
                 'dataplan' => $request['variation_name'],
-                'client_reference' => $request['request_id'],
+                'client_reference' => $request['external_reference_id'],
                 'no_of_pins' => $request['quantity'] ?? '',
                 'amount' => $request['amount'] ?? null,
                 'airtime_type' => $airtime_type ?? null,
@@ -815,7 +815,7 @@ class EasyAccessController extends Controller
     function requery($transaction)
     {
         $api = $transaction->api;
-        $request_id = $transaction->reference_id;
+        $request_id = $transaction->external_reference_id;
 
         $url = $api->live_base_url . "status/?token=" . $api->api_key . "&refid=" . $request_id;
         try {

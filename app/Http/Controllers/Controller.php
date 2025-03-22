@@ -124,6 +124,15 @@ class Controller extends BaseController
     {
         date_default_timezone_set("Africa/Lagos");
         $trx = date("YmdHi") . rand(100, 999);
+        
+        return $trx;
+    }
+
+    public function generateExternalReferenceId($api=null)
+    {
+        date_default_timezone_set("Africa/Lagos");
+        $trx = date("YmdHi") . rand(100, 999);
+
         return $trx;
     }
 

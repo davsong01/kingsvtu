@@ -97,13 +97,13 @@ class SimServerHostingController extends Controller
     function requery($transaction)
     {
         $api = $transaction->api;
-        $request_id = $transaction->reference_id;
+        $external_reference_id = $transaction->external_reference_id;
         $url = $api->live_base_url;
         
         $payload = array(
             "process" => "check_status",
             "api_key" => $api->api_key,
-            "order_id" => $transaction->reference_id
+            "order_id" => $transaction->external_reference_id
         );
 
         $payload = json_encode($payload);

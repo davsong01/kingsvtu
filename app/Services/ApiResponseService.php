@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Services;
+
+use App\Http\Controllers\Controller;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Product;
@@ -335,10 +337,12 @@ class ApiResponseService
         $request['subscription_type'] = $variation->bouquet ?? 'change';
 
         $request['request_id'] = $request->request_id;
+        $controller = new Controller();
+        $request['external_reference_id'] = $controller->generateExternalReferenceId();
         $request['transaction_id'] = 'KVTU-' .  $request['request_id'];
         $request['unique_element'] = $request->billersCode;
         $request['channel'] = 'api';
-
+        
         // Process Transaction
         try {
             // Log basic transaction
