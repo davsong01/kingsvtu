@@ -18,32 +18,47 @@ class MobileAirtimeNgController extends Controller
         if (str_contains($slug, 'mtn-vtu') || str_contains($slug, 'mtn-airtime') || $slug == 'mtn') {
             $network = 15;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
-        } elseif (str_contains($slug, 'mtn-awufu')) {
+        } 
+        
+        if (str_contains($slug, 'mtn-awufu')) {
             $network = 20;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
-        }elseif (str_contains($slug, 'glo')) {
+        }
+        
+        if (str_contains($slug, 'glo')) {
             $network = 6;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
-        } elseif (str_contains($slug, 'airtel')) {
+        } 
+        
+        if (str_contains($slug, 'airtel')) {
             $network = 1;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
-        } elseif (str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) {
+        } 
+        
+        if (str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) {
             $network = 2;
             $url = "https://mobileairtimeng.com/httpapi/?userid={$api->public_key}&pass={$api->api_key}&network={$network}&phone={$request['unique_element']}&amt={$request['amount']}&user_ref={$request['external_reference_id']}&jsn=json";
-        }elseif (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
+        }
+        
+        if (str_contains($slug, 'mtn-sme') || $slug == 'mtn-sme') {
             $network = 1;
             $url = "https://mobileairtimeng.com/httpapi/datashare?userid={$api->public_key}&pass={$api->api_key}&jsn=json&network={$network}&phone={$request['unique_element']}&datasize={$datasize}";
-        } elseif (str_contains($slug, 'airtel-cg') || $slug == 'airtel-cg') {
+        } 
+        
+        if (str_contains($slug, 'airtel-cg') || $slug == 'airtel-cg') {
             $network = 1;
-            $url = "https: //mobileairtimeng.com/httpapi/airtel_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
-        } elseif (str_contains($slug, 'glo-cg') || $slug == 'glo-cg') {
+            $url = "https://mobileairtimeng.com/httpapi/airtel_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+        } 
+        
+        if (str_contains($slug, 'glo-cg') || $slug == 'glo-cg') {
             $network = 6;
-            $url = "https: //mobileairtimeng.com/httpapi/glo_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
-        } elseif (str_contains($slug, '9mobile-sme') || $slug == '9mobile-sme') {
+            $url = "https://mobileairtimeng.com/httpapi/glo_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+        } 
+        
+        if (str_contains($slug, '9mobile-sme') || $slug == '9mobile-sme') {
             $network = 2;
-            $url = "https: //mobileairtimeng.com/httpapi/nine_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+            $url = "https://mobileairtimeng.com/httpapi/nine_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
         }
-
 
         try {
             if(env('ENT') == 'local'){
@@ -56,7 +71,8 @@ class MobileAirtimeNgController extends Controller
             }else{
                 $response = $this->basicApiCall($url, [], [], 'GET');
             }
-
+            $response = $this->basicApiCall($url, [], [], 'GET');
+           
             \Log::info(['url' => $url, 'response' => $response]);
 
             if (empty($response) || $response['code'] != 100) {

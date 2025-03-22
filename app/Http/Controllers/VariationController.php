@@ -93,7 +93,7 @@ class VariationController extends Controller
                 'min' => $request->min[$variation] ?? null,
                 'max' => $request->max[$variation] ?? null,
                 'ussd_string' => $request->ussd_string[$variation] ?? null,
-                'multistep' => $request->multistep[$variation] ?? null,
+                'multistep' => $request->multistep[$variation] ?? "no",
                 'status' => $request->status[$variation],
             ];
 
