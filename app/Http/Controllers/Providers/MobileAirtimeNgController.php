@@ -71,10 +71,7 @@ class MobileAirtimeNgController extends Controller
             }else{
                 $response = $this->basicApiCall($url, [], [], 'GET');
             }
-            $response = $this->basicApiCall($url, [], [], 'GET');
-           
-            \Log::info(['url' => $url, 'response' => $response]);
-
+            
             if (empty($response) || $response['code'] != 100) {
                 $format = [
                     'status' => 'failed',
