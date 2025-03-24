@@ -67,7 +67,7 @@ class MobileNigController extends Controller
 
             $payload = $this->getPostData($request, $product);
             
-            if($product->slug == 'data' && !empty($variation->api_price)){
+            if($product->category->slug == 'data' && !empty($variation->api_price)){
                 $payload['amount'] = $variation->api_price;
             }
 
