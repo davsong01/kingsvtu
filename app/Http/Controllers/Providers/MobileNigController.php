@@ -67,8 +67,9 @@ class MobileNigController extends Controller
             $payload = $this->getPostData($request, $product);
             
             $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
-            // \Log::info($payload);
-            // \Log::info($response);
+            \Log::info('MobileNigController');
+            \Log::info(['payload' => $payload]);
+            \Log::info(['response' => $response]);
             if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201','202']) && $response['message'] == 'success') {
                 // success
                 $format = [
@@ -210,7 +211,7 @@ class MobileNigController extends Controller
                 $payload['requestType'] = 'SME';
             }
 
-            if (Str::contains($product->slug, ['airtel-sme'])) {
+            if (Str::contains($product->slug, ['airtel-sme']) || Str::contains($product->slug, ['airtel'])) {
                 $payload['service_id'] = 'BCD';
                 $payload['service_type'] = 'SME';
                 $payload['requestType'] = 'SME';
@@ -228,6 +229,7 @@ class MobileNigController extends Controller
             $payload['amount'] = $request['amount'] ?? null;
 
         }
+
         return $payload;
     }
     // public function fetchAndUpdateBalance($api)
