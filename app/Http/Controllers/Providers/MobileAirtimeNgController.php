@@ -52,12 +52,12 @@ class MobileAirtimeNgController extends Controller
         
         if (str_contains($slug, 'glo-cg') || $slug == 'glo-cg') {
             $network = 6;
-            $url = "https://mobileairtimeng.com/httpapi/glo_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+            $url = "https://mobileairtimeng.com/httpapi/glo_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
         } 
         
         if (str_contains($slug, '9mobile-sme') || $slug == '9mobile-sme') {
             $network = 2;
-            $url = "https://mobileairtimeng.com/httpapi/nine_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize=$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
+            $url = "https://mobileairtimeng.com/httpapi/nine_data_share?userid={$api->public_key}&pass={$api->api_key}&phone={$request['unique_element']}&datasize={$datasize}&jsn=json&user_ref={$request['external_reference_id']}";
         }
 
         try {
