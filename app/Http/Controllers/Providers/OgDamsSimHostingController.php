@@ -1625,7 +1625,7 @@ class OgDamsSimHostingController extends Controller
     {
         try {
             $url = $api->live_base_url;
-            $url = $url . "get/balances.php";
+            $url = "https://simhosting.ogdams.ng/api/v1/get/balances";
 
             $headers = [
                 'Content-Type: application/json',
