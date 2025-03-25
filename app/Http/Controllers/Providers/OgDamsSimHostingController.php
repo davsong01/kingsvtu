@@ -1631,7 +1631,29 @@ class OgDamsSimHostingController extends Controller
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $api->api_key,
             ];
-            $response = $this->basicApiCall($url, [], $headers, 'GET');
+
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://simhosting.ogdams.ng/api/v1/get/balances',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer {$api->api_key}",
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            $response = json_decode($response, true);
             
             if (isset($response['code']) && $response['code'] == 200 && $response['status'] == true) {
                 $balance = '<br>';
