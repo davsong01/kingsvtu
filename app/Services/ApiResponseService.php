@@ -217,9 +217,6 @@ class ApiResponseService
         //     $res['message'] = $product->display_name . ' - ' . $variation->system_name . ' is unavailable at the momement, Please try again later';
         //     return $this->responseService->formatServiceResponse("failed", $res['message'], [], null);
         // }
-        
-        $category = $product->category_id;
-        
         if (empty($product)) {
             return $this->responseService->formatServiceResponse("error", '', ['Invalid product slug!, kindly try again!'], null);
         }

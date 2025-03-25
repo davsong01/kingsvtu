@@ -1631,7 +1631,6 @@ class OgDamsSimHostingController extends Controller
                 'Content-Type: application/json',
                 'Authorization: Bearer ' . $api->api_key,
             ];
-
             $response = $this->basicApiCall($url, [], $headers, 'GET');
             
             if (isset($response['code']) && $response['code'] == 200 && $response['status'] == true) {
