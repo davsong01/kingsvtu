@@ -42,9 +42,7 @@
                             <div class="card">
                                 <div class="card-header">
                                     <h4 class="card-title">All Customer Levels</h4> <br>
-                                    <a href="{{ route('customerlevel.create') }}"><button id="addRow"
-                                            class="btn btn-primary mb-2 d-flex align-items-center"><i
-                                                class="bx bx-plus"></i>&nbsp; Add Customer Level</button></a>
+                                    <a href="{{ route('customerlevel.create') }}"><button id="addRow" class="btn btn-primary mb-2 d-flex align-items-center"><i class="bx bx-plus"></i>&nbsp; Add Customer Level</button></a>
                                     @include('layouts.alerts')
                                 </div>
                                 <div class="card-content">
@@ -65,9 +63,9 @@
                                                 <tbody>
                                                     @foreach ($levels as $level)
                                                         <tr>
-                                                            <td>{{ $level->name }}
+                                                            <td>{{ $level->name }} <br> @if($level->status == 1)<span class="badge badge-success">Active</span> @else <span class="badge badge-danger">Inactive</span> @endif
                                                                 @if($level->make_api_level == 'yes')
-                                                                <button class="btn btn-primary">API</button>
+                                                                <button class="btn btn-primary btn-sm">API</button>
                                                                 @endif
                                                             </td>
                                                             <td>{{ $level->order }}</td>

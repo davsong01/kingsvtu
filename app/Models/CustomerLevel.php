@@ -32,4 +32,9 @@ class CustomerLevel extends Model
     public function transaction(){
         return $this->hasOne(TransactionLog::class, 'upgrade_level');
     }
+
+    public function scopeIsActive($query)
+    {
+        return $query->where('status', 1);
+    }
 }

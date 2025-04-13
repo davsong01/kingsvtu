@@ -119,6 +119,18 @@
                                                     </fieldset>
                                                 </div>
                                                 <div class="col-md-12">
+                                                    <fieldset class="form-group">
+                                                        <label for="status">Status</label>
+                                                        <select class="form-control" name="status" id="status" required>
+                                                            <option value="">Select</option>
+                                                            <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Active
+                                                            </option>
+                                                            <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive
+                                                            </option>
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+                                                <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Submit</button>
                                                 </div>
                                             </div>

@@ -23,7 +23,7 @@ class ProductController extends Controller
     {
         $categories = Category::where('status', 'active')->get();
         $apis = API::where('status', 'active')->get();
-        $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
+        $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
         return view('admin.product.create', compact('categories', 'apis', 'customerlevel'));
     }
@@ -131,7 +131,7 @@ class ProductController extends Controller
         $variations = Variation::where('product_id', $product->id)->where('api_id', $product->api_id)->get();
         
         $apis = API::where('status', 'active')->get();
-        $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
+        $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
         return view('admin.product.edit', compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }

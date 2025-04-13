@@ -36,6 +36,7 @@ class CustomerLevelController extends Controller
             'order' => 'required|unique:customer_levels,order',
             'upgrade_amount' => 'required',
             'extra_benefit' => 'nullable',
+            'status' => 'required',
         ]);
 
         CustomerLevel::updateOrCreate([
@@ -44,6 +45,7 @@ class CustomerLevelController extends Controller
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
             'extra_benefit' => $request->extra_benefit,
+            'status' => $request->status,
         ]);
 
         return redirect(route('customerlevel.index'))->with('message', 'Created successfully');
@@ -76,6 +78,7 @@ class CustomerLevelController extends Controller
             'upgrade_amount' => 'required',
             'make_api_level' => 'required',
             'extra_benefit' => 'required',
+            'status' => 'required',
         ]);
 
         $customerlevel->update([
@@ -84,6 +87,8 @@ class CustomerLevelController extends Controller
             'order' => $request->order,
             'upgrade_amount' => $request->upgrade_amount,
             'extra_benefit' => $request->extra_benefit,
+            'status' => $request->status,
+
         ]);
 
         return redirect(route('customerlevel.index'))->with('message', 'Updated successfully');

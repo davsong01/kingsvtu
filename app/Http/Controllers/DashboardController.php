@@ -142,7 +142,7 @@ class DashboardController extends Controller
 
     public function showUpgradeForm()
     {
-        $levels = CustomerLevel::orderBy('order', 'ASC')->get();
+        $levels = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
         $benefits = CustomerLevelBenefit::all();
         return view('customer.upgrade_level', compact('levels', 'benefits'));
     }

@@ -45,7 +45,7 @@ class BillerLogController extends Controller
      */
     public function edit(BillerLog $billerlog)
     {
-        // $customerlevel = CustomerLevel::orderBy('order', 'ASC')->get();
+        // $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
         // return view('admin.product.edit', compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }

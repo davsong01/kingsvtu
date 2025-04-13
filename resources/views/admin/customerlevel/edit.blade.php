@@ -57,7 +57,7 @@
                                                             <option value="">Select</option>
                                                             <option value="yes" {{ $customerlevel->make_api_level == 'yes' ? 'selected' : '' }}>Yes
                                                             </option>
-                                                            <option value="no" {{ $customerlevel->make_api_level == 'make_api_level' ? 'selected' : '' }}>No
+                                                            <option value="no" {{ $customerlevel->make_api_level == 'no' ? 'selected' : '' }}>No
                                                             </option>
                                                         </select>
                                                     </fieldset>
@@ -120,6 +120,20 @@
                                                         <input name="extra_benefit" type="hidden" id="extra_benefit" />
                                                     </fieldset>
                                                 </div>
+
+                                                <div class="col-md-12">
+                                                    <fieldset class="form-group">
+                                                        <label for="status">Status</label>
+                                                        <select class="form-control" name="status" id="status" required>
+                                                            <option value="">Select</option>
+                                                            <option value="1" {{ $customerlevel->status == 1 ? 'selected' : '' }}>Active
+                                                            </option>
+                                                            <option value="0" {{ $customerlevel->status == 0 ? 'selected' : '' }}>Inactive
+                                                            </option>
+                                                        </select>
+                                                    </fieldset>
+                                                </div>
+
                                                 <div class="col-md-12">
                                                 <button class="btn btn-primary" type="submit">Update</button>
                                                 </div>
