@@ -82,11 +82,32 @@
                                 </div>
                             </form>
                             <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <form id="actionForm" onsubmit="return confirm('You are about to change customer level!');" method="POST" action="{{ route('change-customer-level') }}" class="mb-3">
+                                        @csrf
+                                        <div class="form-row align-items-center">
+                                            <div class="col-auto">
+                                                <select id="action-select" class="form-control" name="action" required>
+                                                    <option value="" disabled selected>Change Customer Level</option>
+                                                    @foreach($customer_levels as $level)
+                                                    <option value="{{ $level->id }}" {{ old('action') == $level->id ? 'selected' : ''}}>{{ $level->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-auto">
+                                                <button type="submit" class="btn btn-secondary" id="submit-action">Apply</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table text-nowrap">
+                                <table class="table text-nowrap">
                                 <thead>
                                     <tr>
+                                        <th><input type="checkbox" id="select-all"></th>
                                         <th>Details</th>
                                         <th>Username</th>
                                         <th>Status</th>
@@ -101,6 +122,9 @@
                                 <tbody>
                                     @foreach ($customers as $customer)
                                         <tr>
+                                            <td>
+                                                <input type="checkbox" class="customer-checkbox" name="customer_ids[]" value="{{ $customer->id }}">
+                                            </td>
                                             <td>
                                                 <P>
                                                     Name:<a target="_blank" href="{{ request()->route()->getPrefix() }}/customer/edit/{{ $customer->id }}">{{ $customer->firstname . ' ' . $customer->lastname }}</a><br>
@@ -145,4 +169,33 @@
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/pdfmake.min.js') }}"></script>
     <script src="{{ asset('app-assets/vendors/js/tables/datatable/vfs_fonts.js') }}"></script>
     <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
+
+    <script>
+    $('#select-all').on('change', function () {
+        $('.customer-checkbox').prop('checked', this.checked);
+    });
+
+    $('#submit-action').on('click', function (e) {
+        if ($('#action-select').val() === null || $('#action-select').val() === '') {
+            e.preventDefault();
+            alert('Please select an action.');
+        } else {
+            const selectedCustomerIds = $('.customer-checkbox:checked').map(function() {
+                return $(this).val();
+            }).get();
+            
+            if (selectedCustomerIds.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one customer.');
+            } else {
+                // Append selected customer IDs to the form as hidden input
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'customer_ids',
+                    value: selectedCustomerIds
+                }).appendTo('#actionForm');
+            }
+        }
+    });
+    </script>
 @endsection

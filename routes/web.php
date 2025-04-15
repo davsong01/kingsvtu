@@ -164,6 +164,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('customers-verify/{customer}', [CustomerController::class, 'verifyCustomer'])->name('customer.verify');
     Route::get('customer-delete/{customer}', [CustomerController::class, 'deleteCustomer'])->name('customer.delete');
     Route::post('verify-actions', [CustomerController::class, 'verifyMultiActions'])->name('verify-users-actions');
+    Route::post('change-customer-level', [CustomerController::class, 'changeCustomerLevelMass'])->name('change-customer-level');
 
     
     Route::resource('customerlevel', CustomerLevelController::class);

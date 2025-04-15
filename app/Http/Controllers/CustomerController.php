@@ -150,6 +150,22 @@ class CustomerController extends Controller
         return back()->with('message', 'Operation Successful');
     }
 
+    public function changeCustomerLevelMass(Request $request)
+    {
+        set_time_limit(3600);
+        $customer_ids = $request->customer_ids;
+        
+        if (!empty($customer_ids)) {
+            $customer_ids = explode(',', $customer_ids);
+            
+            foreach ($customer_ids as $id) {
+                Customer::where('id', $id)->update(['customer_level' => $request->action]);
+            }
+        }
+
+        return back()->with('message', 'Operation Successful');
+    }
+
     public function addReservedAccounts(Request $request, Customer $customer)
     {
         $data = [
