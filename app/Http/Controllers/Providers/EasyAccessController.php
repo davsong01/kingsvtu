@@ -653,6 +653,7 @@ class EasyAccessController extends Controller
             }
 
             $result = $response;
+
             if (empty ($response)) {
                 $user_status = 'failed';
                 $status = 'failed';
@@ -718,11 +719,13 @@ class EasyAccessController extends Controller
                 'extras' => $extras ?? null
             ];
         } catch (\Throwable $th) {
+            \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
+
             $format = [
                 'status' => 'attention-required',
                 'response' => '',
                 'description' => 'Transaction completed',
-                'api_response' => $api_response ?? $response,
+                'api_response' => $api_response ?? ($response ?? null),
                 'payload' => $payload,
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
@@ -733,6 +736,7 @@ class EasyAccessController extends Controller
             $this->balance($api);
             $this->sendWarningEmail($api);
         } catch (\Throwable $th) {
+            \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
             //throw $th;
         }
     
@@ -793,11 +797,13 @@ class EasyAccessController extends Controller
                 'status_code' => $status_code,
             ];
         } catch (\Throwable $th) {
+            \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
             $format = [
                 'status' => 'failed',
                 'status_code' => 0,
                 'balance' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
+
         }
 
         if (isset ($no_format)) {
@@ -891,6 +897,8 @@ class EasyAccessController extends Controller
             ];
 
         } catch (\Exception $th) {
+            \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
+
             return $format = [
                 'status' => 'attention-required',
                 'response' => '',
