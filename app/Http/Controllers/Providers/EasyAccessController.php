@@ -581,10 +581,10 @@ class EasyAccessController extends Controller
     public function query($request, $api, $variation, $product)
     {
         // Post data
-        $slug = $request['variation_slug'] ?? $request['product_slug'];
+        $slug = $request['product_slug'] ?? $request['variation_slug'];
         $slug = strtolower($slug);
         $base_url = "https://easyaccess.com.ng/api/";
-
+        
         if (in_array($slug, ['waec-registration', 'waec'])) {
             $url =  $base_url."waec_v2.php";
         } elseif (in_array($slug, ['neco-registration', 'neco'])) {
@@ -720,7 +720,7 @@ class EasyAccessController extends Controller
             ];
         } catch (\Throwable $th) {
             \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
-
+            
             $format = [
                 'status' => 'attention-required',
                 'response' => '',
