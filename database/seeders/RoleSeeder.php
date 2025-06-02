@@ -46,7 +46,8 @@ class RoleSeeder extends Seeder
             'Payment Gateway Settings',
             'General Settings',
             'Level Benefits',
-            'Shop Creation Requests'
+            'Shop Creation Requests',
+            'Utilities',
         ];
 
         $permissions = [

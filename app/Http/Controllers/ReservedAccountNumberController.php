@@ -80,4 +80,18 @@ class ReservedAccountNumberController extends Controller
     {
         //
     }
+
+    public function getTransactionsByReservedAccountReference(ReservedAccount $account)
+    {
+        if ($account->paymentgateway_id == 1) {
+            $delete = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->getTransactionsByReservedAccountReference($account->account_reference);
+        }
+
+        if ($delete['status'] == 'success') {
+            return back()->with('message', 'Reserved Account Deleted successfully');
+        } else {
+            return back()->with('error', $delete['data']);
+        }
+    }
+    
 }

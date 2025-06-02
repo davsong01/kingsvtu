@@ -467,7 +467,7 @@ class DashboardController extends Controller
         } else {
             $refs = $refs->groupBy('referred_customer_id')->get();
         }
-       
+        
         return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
     }
 
@@ -571,4 +571,10 @@ __here;
             return back()->with('error', "Transaction could not be completed, try again! " . $th->getMessage());
         }
     }
+
+    public function utility(){
+        return view('admin.customers.single-customer');
+    }
 }
+
+

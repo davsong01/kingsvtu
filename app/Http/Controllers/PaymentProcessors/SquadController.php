@@ -93,13 +93,13 @@ class SquadController extends Controller
         return $real;
     }
 
-    public function createReservedAccount(array $data, int $admin_id = null)
+    public function createReservedAccount(array $data, $admin_id = null)
     {
         $url = $this->api->base_url . 'virtual-account';
         // Get customer and kyc data
         $customer = Customer::with('multiplekycdata')->where('id', $data['customer_id'])->first();
+        
         $kycData = $customer->multiplekycdata->toArray();
-
         $kycData = extractKeyValuesFromMultiDimensionalArray('key', 'value', $kycData);
         $gender = "1";
         if (isset($kycData['GENDER'])) {
@@ -109,20 +109,23 @@ class SquadController extends Controller
                 $gender = "2";
             }
         }
-        
+    
         $payload = [
-            "customer_identifier" =>  'KGSVTU-'.$data['customer_id'],
-            "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? NULL),
-            "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? NULL),
-            "mobile_num" => $data["customerPhone"] ?? $kycData['PHONE_NUMBER'],
-            "email" => $data["customerEmail"],
+            "customer_identifier" =>  'KGSVTU-'.$customer->id,
+            "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
+            "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? $customer->user->lastname),
+            "mobile_num" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
+            "email" => $data["customerEmail"] ?? $customer->user->email,
             "bvn" => $kycData['BVN'] ?? ($customer->kycdata->BVN ?? ''), 
             "dob" => $kycData['DATE_OF_BIRTH'] ?? '19/09/1980',
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
         ];
+
+
         $response = $this->makeCall($url, $payload);
         
+
         if (
             isset($response) && $response['success'] == true &&
             $response['message'] == 'Success'

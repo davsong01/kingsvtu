@@ -228,8 +228,6 @@ class MonnifyController extends Controller
         }
     }
 
-
-
     public function redirectToGateway(Request $request, $transaction)
     {
         $token = $this->login();
@@ -286,5 +284,29 @@ class MonnifyController extends Controller
 
             return $data;
         }
+    }
+
+    public function getTransactionsByReservedAccountReference(string $account_reference, array $credentials = [])
+    {
+        $token = $this->login();
+
+        $ch = curl_init();
+        $url = $this->api->base_url . "'v1/bank-transfer/reserved-accounts/transactions?accountReference={$account_reference}&page=0&size=10";
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $token
+        ));
+        $response = curl_exec($ch);
+        
+        curl_close($ch);
+        return $response;
     }
 }

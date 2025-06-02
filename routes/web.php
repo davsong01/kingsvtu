@@ -214,4 +214,9 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('/dashboard-widgets/{type}', [DashboardController::class, 'dashboardWidgets']);
 });
 
+
+Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->group(function () {
+    Route::get('/utilities', [DashboardController::class, 'utility']);
+});
+
 require __DIR__ . '/auth.php';
