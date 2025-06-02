@@ -120,8 +120,9 @@ class SquadController extends Controller
             "dob" => $kycData['DATE_OF_BIRTH'] ?? '19/09/1980',
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
-        ];
+            "beneficiary_account" => "0477196810"
 
+        ];
 
         $response = $this->makeCall($url, $payload);
         
