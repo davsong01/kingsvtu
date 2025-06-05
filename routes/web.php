@@ -42,6 +42,7 @@ use App\Http\Controllers\PaymentProcessors\SquadController;
 |
 */
 
+
 Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallback'])->name('log.payment.response');
 Route::post('log-purchase-callback/{provider_id}', [PaymentController::class, 'dumpPurchaseCallback'])->name('log.purchase.callback');
 Route::get('cron/analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');

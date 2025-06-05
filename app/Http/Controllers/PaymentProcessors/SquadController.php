@@ -121,12 +121,10 @@ class SquadController extends Controller
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
             "beneficiary_account" => "0477196810"
-
         ];
 
         $response = $this->makeCall($url, $payload);
         
-
         if (
             isset($response) && $response['success'] == true &&
             $response['message'] == 'Success'
@@ -174,9 +172,84 @@ class SquadController extends Controller
         return $res;
     }
 
+    public function createBusinessReservedAccount(array $data, $admin_id = null)
+    {
+        $url = $this->api->base_url . 'virtual-account/business';
+        // Get customer and kyc data
+        $customer = Customer::with('multiplekycdata')->where('id', $data['customer_id'])->first();
+
+        $kycData = $customer->multiplekycdata->toArray();
+        $kycData = extractKeyValuesFromMultiDimensionalArray('key', 'value', $kycData);
+        $gender = "1";
+        if (isset($kycData['GENDER'])) {
+            if ($kycData['GENDER'] == 'male') {
+                $gender = "1";
+            } else {
+                $gender = "2";
+            }
+        }
+
+        $payload = [
+            "customer_identifier" =>  'KGSVTUB-' . $customer->id,
+            "business_name" => 'BUYVTU WORLD',
+            "mobile_num" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
+            "email" => $data["customerEmail"] ?? $customer->user->email,
+            "bvn" => $kycData['BVN'] ?? ($customer->kycdata->BVN ?? ''),
+            "beneficiary_account" => "0477196810"
+        ];
+
+        $response = $this->makeCall($url, $payload);
+
+        if (
+            isset($response) && $response['success'] == true &&
+            $response['message'] == 'Success'
+        ) {
+            if (isset($response['data'])) {
+                $dataX = $response['data'];
+
+                ReservedAccountNumber::updateOrCreate([
+                    'customer_id' => $data["customer_id"] ?? null,
+                    'account_reference' => $dataX['customer_identifier'],
+                    'account_number' => $dataX['virtual_account_number'] ?? null,
+                ], [
+                    'customer_id' => $data["customer_id"] ?? null,
+                    'admin_id' => $admin_id ?? null,
+                    'account_reference' => $dataX['customer_identifier'],
+                    'account_number' => $dataX['virtual_account_number'] ?? null,
+                    'account_name' => $dataX['first_name'],
+                    'bank_name' => 'GT Bank',
+                    'bank_code' => $dataX['bank_code'],
+
+                    'paymentgateway_id' => $this->api->id,
+                    'status' => 'active',
+                    'purpose' => 'WALLET-FUNDING',
+                    'bvn' =>  $kycData['BVN'],
+                    'response' => json_encode($response),
+                ]);
+
+                $res = [
+                    'status' => 'success',
+                    'data' => $response['data'] ?? '',
+                ];
+            } else {
+                $res = [
+                    'status' => 'failed',
+                    'data' => $response['message'] ?? 'No Accounts set by Provider',
+                ];
+            }
+        } else {
+            $res = [
+                'status' => 'failed',
+                'data' => $response['message'] ?? 'no-response',
+            ];
+        }
+
+        return $res;
+    }
+
     public function getCallbackLogs(Request $request){
         // get it
-        $provider = PaymentGateway::where('id', getSettings()->payment_gateway)->first();
+        $provider = PaymentGateway::where('id', 2)->first();
         
         $this->api = $provider;
         $url = $this->api->base_url . 'virtual-account/webhook/logs';
@@ -267,12 +340,27 @@ class SquadController extends Controller
         }
 
         $response = curl_exec($curl);
-        \Log::info(['Generating accounts for squad' => $response, 'url' => $url, 'payload' => $payload]);
+        \Log::info($url);
+        \Log::info(json_encode($payload));
+        \Log::info($response);
 
         curl_close($curl);
+            dd($response);
         return json_decode($response, true);
     }
 
+
+    // Tests
+    /**
+     * Create Virtual Account (Individual)POST: https://sandbox-api-d.squadco.com/virtual-account
+     * Create a Virtual Account (Business) POST: https://sandbox-api-d.squadco.com/virtual-account/business
+     * POST: https://sandbox-api-d.squadco.com/virtual-account/simulate/payment Objective: Verify that you can simulate payments to the initiated accounts.
+     * Query Customers transaction GET: https://sandbox-api-d.squadco.com/virtual- account/customer/transactions/{{customer_identifier}}
+     * Query Merchants transaction GET: https://sandbox-api-d.squadco.com/virtual-account/merchant/transactions
+     * Retrieve VA details GET: https://sandbox-api-d.squadco.com/virtual- account/customer/{{virtual_account_number}}
+     * Retrieve VA details using the customer identifier
+     * GET: https://sandbox-api-d.squadco.com/virtual-account/{{customer_identifier}}
+     */
     public function dummyWebhookError(){
         return [
                 "status" => 200,

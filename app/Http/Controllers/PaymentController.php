@@ -90,6 +90,7 @@ class PaymentController extends Controller
             $paid_on = Carbon::parse($request['transaction_date']);
         }
 
+        \Log::info(['Webhook' => $request->all()]);
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
         if (!$check) {
             ReservedAccountCallback::create([
@@ -229,7 +230,6 @@ class PaymentController extends Controller
                         'status' => 'delivered',
                         'descr' => 'Wallet Funding Via Account: ' . $call->account_number . ' of ' . getSettings()->currency . number_format($amount, 2) . ' was successful',
                     ]);
-
 
                     $request['type'] = 'credit';
                     $request['amount'] = $amount;
