@@ -648,23 +648,45 @@ use App\Models\BlackList;
                 </div>
                 <form action="{{route('create.reserved.account', $user->customer->id)}}" method="POST">
                     @csrf
+
+                    @php
+                        $providerBankMap = [
+                            'squad' => [
+                                '058' => 'Guaranty Trust Bank',
+                            ],
+                            'monnify' => [
+                                '50515' => 'Moniepoint',
+                                '035' => 'Wema Bank',
+                            ],
+                        ];
+
+                        $providerSlugMap = $providers->pluck('slug', 'id'); 
+                    @endphp
+
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <fieldset class="form-group">
+                                    <label for="provider" style="display: block">Provider</label>
+                                    <select class="form-control js-example-basic-single" name="provider" id="provider" required>
+                                        <option value="">Select Provider</option>
+                                        @foreach ($providers as $provider)
+                                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </fieldset>
+                            </div>
+                        
+                            <div class="col-md-12">
+                                <fieldset class="form-group">
                                     <label for="bank" style="display: block">Bank(s)</label>
-                                    
                                     <select class="form-control js-example-basic-single" name="bank[]" id="bank" required multiple>
                                         <option value="">Select</option>
-                                        @if(getSettings()->gateway->slug == 'monnify')
-                                        <option value="50515" {{ old('bank') == '50515' ? 'selected' : ''}}>Moniepoint</option>
-                                        <option value="035" {{ old('bank') == '035' ? 'selected' : ''}}>Wema Bank</option>
-                                        @endif
-                                        <option value="058" {{ old('bank') == '058' ? 'selected' : ''}}>Guaranty Trust Bank</option> 
                                     </select>
                                 </fieldset>
                             </div>
                         </div>
+                        
                         <input type="hidden" name="bvn" value="{{ kycStatus('BVN', $user->customer->id)['value']  }}">
                         <input type="hidden" name="customer_id" value="{{ $user->customer->id }}">
                     </div>
@@ -819,6 +841,29 @@ use App\Models\BlackList;
                 });
             }
         }
+
+        const providerBankMap = @json($providerBankMap);
+        const providerSlugMap = @json($providerSlugMap);
+
+        $(document).ready(function () {
+            $('#provider').on('change', function () {
+                const providerId = $(this).val();
+                const slug = providerSlugMap[providerId];
+                const banks = providerBankMap[slug] || {};
+
+                const $bankSelect = $('#bank');
+                $bankSelect.empty();
+
+                if (Object.keys(banks).length === 0) {
+                    $bankSelect.append('<option value="">No banks available</option>');
+                } else {
+                    $.each(banks, function (code, name) {
+                        $bankSelect.append(`<option value="${code}">${name}</option>`);
+                    });
+                }
+            });
+        });
+
     </script>
 
 @endsection

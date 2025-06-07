@@ -8,6 +8,7 @@ use App\Models\KycData;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
+use App\Models\PaymentGateway;
 use App\Models\ReferralEarning;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -177,11 +178,12 @@ class CustomerController extends Controller
             'preferredBanks' => $request->bank,
             'customerFirstName' => $customer->user->firstname,
             'customerLastName' => $customer->user->lastname,
-            'getAllAvailableBanks' => false
+            'getAllAvailableBanks' => false,
+            'provider' => $request->provider
         ];
-
+        
         $admin_id = auth()->user()->admin->id;
-        $reserved = createReservedAccount($data, $admin_id);
+        $reserved = createReservedAccount($data, $admin_id, $request->provider);
 
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
@@ -247,7 +249,7 @@ class CustomerController extends Controller
         $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
         $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->orderBy('created_at', 'desc')->get();
-
+        $providers = PaymentGateway::orderBy('status')->get();
         $customerLevels = CustomerLevel::orderBy('order','ASC')->get();
 
         return view(
@@ -257,7 +259,8 @@ class CustomerController extends Controller
                 'downlines' => $downlines,
                 'accounts' => $reservedAccount,
                 'balances' => $balances,
-                'customerLevels' => $customerLevels
+                'customerLevels' => $customerLevels,
+                'providers' => $providers
             ]
         );
     }

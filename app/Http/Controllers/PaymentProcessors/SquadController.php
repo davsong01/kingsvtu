@@ -345,7 +345,7 @@ class SquadController extends Controller
         \Log::info($response);
 
         curl_close($curl);
-            dd($response);
+        
         return json_decode($response, true);
     }
 
