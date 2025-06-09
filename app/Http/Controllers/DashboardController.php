@@ -14,6 +14,7 @@ use App\Models\PaymentGateway;
 use App\Models\TransactionLog;
 use Illuminate\Support\Carbon;
 use App\Models\ReferralEarning;
+use App\Models\ReservedAccountNumber;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\TransactionPinResetToken;
@@ -68,7 +69,15 @@ class DashboardController extends Controller
             
             return view('admin.dashboard', compact('customer', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
         } else {
-            
+            $currentPaymentGateway = getSettings()->payment_gateway;
+            $account_count = ReservedAccountNumber::where('customer_id', auth()->user()->customer->id)->where('paymentgateway_id', $currentPaymentGateway)->count();
+            if($account_count < 1){
+                $data = [
+                    'customer_id' => auth()->user()->customer->id,
+                ];
+                
+                $reserved = createReservedAccount($data, null, $currentPaymentGateway);
+            }
             return view('customer.dashboard', compact('customer'));
         }
     }

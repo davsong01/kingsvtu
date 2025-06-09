@@ -110,7 +110,7 @@ class SquadController extends Controller
                 $gender = "2";
             }
         }
-    
+        
         $payload = [
             "customer_identifier" =>  'KGSVTU-'.$customer->id,
             "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
@@ -123,12 +123,12 @@ class SquadController extends Controller
             "gender" => $gender,
             "beneficiary_account" => "0477196810"
         ];
-
+        
         if (!empty($payload['dob'])) {
             $dob = trim($payload['dob']);
             $date = null;
 
-            foreach (['Y-m-d', 'd-m-Y', 'd/m/Y'] as $format) {
+            foreach (['Y/m/d', 'd/m/Y', 'd/m/Y'] as $format) {
                 try {
                     $date = Carbon::createFromFormat($format, $dob);
                     break;

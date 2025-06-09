@@ -97,6 +97,7 @@ if (!function_exists("createReservedAccount")) {
         
         $paymentGateway = $provider ->slug;
         $reserved = null;
+        
         if (!empty($paymentGateway)) {
             if ($paymentGateway == 'monnify') {
                 $monnify = new MonnifyController($provider);
