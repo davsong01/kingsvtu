@@ -21,7 +21,7 @@ class Customer extends Model
 
     public function kycdata()
     {
-        return $this->belongsTo(KycData::class, 'customer_id');
+        return $this->hasOneTo(KycData::class, 'customer_id');
     }
 
     public function reserved_accounts()

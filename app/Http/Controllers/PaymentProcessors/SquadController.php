@@ -7,6 +7,7 @@ use App\Models\KycData;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
+use Illuminate\Support\Carbon;
 use App\Scopes\MerchantIdScope;
 use App\Http\Controllers\Controller;
 use App\Models\ReservedAccountNumber;
@@ -116,13 +117,32 @@ class SquadController extends Controller
             "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? $customer->user->lastname),
             "mobile_num" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
             "email" => $data["customerEmail"] ?? $customer->user->email,
-            "bvn" => $kycData['BVN'] ?? ($customer->kycdata->BVN ?? ''), 
-            "dob" => $kycData['DATE_OF_BIRTH'] ?? '19/09/1980',
+            "bvn" => $kycData['BVN'] ?? ($customer->$kycData['BVN'] ?? ''), 
+            "dob" => $kycData['DOB'] ?? null,
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
             "beneficiary_account" => "0477196810"
         ];
 
+        if (!empty($payload['dob'])) {
+            $dob = trim($payload['dob']);
+            $date = null;
+
+            foreach (['Y-m-d', 'd-m-Y', 'd/m/Y'] as $format) {
+                try {
+                    $date = Carbon::createFromFormat($format, $dob);
+                    break;
+                } catch (\Exception $e) {
+                    dd($e->getMessage());
+                    continue;
+                }
+            }
+
+            $payload['dob'] = $date ? $date->format('m/d/Y') : null;
+
+        }
+
+        // Format the date to DD/MM/YYYY
         $response = $this->makeCall($url, $payload);
         
         if (
@@ -284,7 +304,7 @@ class SquadController extends Controller
     public function makeCall($url, $payload, $method = 'POST')
     {
         $curl = curl_init();
-
+        
         if ($method == 'POST') {
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
