@@ -133,7 +133,6 @@ class SquadController extends Controller
                     $date = Carbon::createFromFormat($format, $dob);
                     break;
                 } catch (\Exception $e) {
-                    dd($e->getMessage());
                     continue;
                 }
             }
@@ -142,7 +141,6 @@ class SquadController extends Controller
 
         }
 
-        // Format the date to DD/MM/YYYY
         $response = $this->makeCall($url, $payload);
         
         if (
