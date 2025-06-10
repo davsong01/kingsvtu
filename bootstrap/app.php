@@ -52,5 +52,4 @@ $app->singleton(
 |
 */
 
-// $app->usePublicPath('/home/kingntxc/portal.kingsvtu.ng');
 return $app;

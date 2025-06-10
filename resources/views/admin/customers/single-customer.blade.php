@@ -429,14 +429,15 @@ use App\Models\BlackList;
                                                                 @endif
                                                             </fieldset>
                                                         </div>
+                                                        {{-- {{dd(kycStatus('IDCARD', $user->customer->id)['value'], kycStatus('STATE', $user->customer->id))}} --}}
                                                         <div class="col-md-6">
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('IDCARD', $user->customer->id)['status'] == 'verified')
-                                                                <label for="IDCARD">ID Card</label><span class="verified"><i class="fa fa-check"></i> Verifiedd</span> <br>
-                                                                <img style="width: 60px;cursor:zoom-in;" src="{{isset(kycStatus('IDCARD', $user->customer->id)['value'])}}" onclick="zoomImg(this)">
+                                                                <label for="IDCARD">ID Card</label><span class="verified"><i class="fa fa-check"></i> verified</span> <br>
+                                                                <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value']) }}" onclick="zoomImg(this)">
                                                                 @else
                                                                 <label for="IDCARD">ID Card</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                <input type="file" name="IDCARD"  class="form-control" value="{{ kycStatus('IDCARD', $user->customer->id)['value'] }}" required>
+                                                                <input type="file" name="IDCARD"  class="form-control" value="{{ asset(kycStatus('IDCARD', $user->customer->id)['value']) }}" required>
                                                                 @endif
                                                             </fieldset>
                                                         </div>

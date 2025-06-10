@@ -88,11 +88,11 @@ class Controller extends BaseController
             $location = $year . '/' . $month . '/' . $day;
         }
 
-        if (env('ENT') == 'local') {
-            $path = "/Applications/MAMP/htdocs/kingsvtu/public";
-        } else {
-            $path = '/home/kingntxc/portal.kingsvtu.ng';
-        }
+        $path = ENV('IMAGE_UPLOAD_PATH');
+        // if (env('ENT') == 'local') {
+        // } else {
+        //     $path = '/home/kingntxc/portal.kingsvtu.ng';
+        // }
 
         // 
         if (!is_dir($path . '/' . $location)) {
