@@ -128,7 +128,7 @@ class SquadController extends Controller
             $dob = trim($payload['dob']);
             $date = null;
 
-            foreach (['Y/m/d', 'd/m/Y', 'd/m/Y'] as $format) {
+            foreach (['Y-m-d', 'd-m-Y', 'd/m/Y', 'Y/m/d'] as $format) {
                 try {
                     $date = Carbon::createFromFormat($format, $dob);
                     break;
@@ -138,9 +138,8 @@ class SquadController extends Controller
             }
 
             $payload['dob'] = $date ? $date->format('m/d/Y') : null;
-
         }
-
+        
         $response = $this->makeCall($url, $payload);
         
         if (
