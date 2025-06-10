@@ -393,12 +393,20 @@ class DashboardController extends Controller
         return view('customer.edit_kyc_details', compact('kyc', 'kycStatuses', 'oldlgas'));
     }
 
+    public function updateSpecialKycInfo()
+    {
+        $kycData    = session('special_kyc_data', []);
+        $kycmessage = $kycData['kycmessage'] ?? null;
+        $fields     = $kycData['fields']  ?? [];
+        
+        return view('customer.edit_special_kyc_details', compact('kycmessage', 'fields'));
+    }
+
     public function apiSettings(){
         return view('customer.api_settings');
     }
 
-    public function processUpdateKycInfo(Request $request)
-    {
+    public function processUpdateKycInfo(Request $request){
         $input = $this->validate($request, [
             "FIRST_NAME" => "nullable",
             "MIDDLE_NAME" => "nullable",
@@ -429,6 +437,17 @@ class DashboardController extends Controller
 
     }
     
+    public function processUpdateSpecialKycInfo(Request $request){
+        $inputs = $request->except(['_token']);
+        
+        foreach ($inputs as $key => $value) {
+            $status = kycSpecialKeys($key)['approval_type'] == 'automatic' ? 'verified' : 'unverified';
+            $this->updateKycData($key, $value, auth()->user()->customer->id, $status);
+        }
+
+        return redirect(route('dashboard'))->with('message', 'Thank you for your fine cooperation');
+    }
+
     public function updateKycData($key, $value, $customer_id, $status = null)
     {
         if (!empty($status)) {

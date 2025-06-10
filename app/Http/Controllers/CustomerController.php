@@ -360,6 +360,7 @@ class CustomerController extends Controller
             "STATE" => "nullable",
             "LGA" => "nullable",
             "DOB" => "nullable",
+            "GENDER" => "nullable",
         ]);
 
         $user = $customer->user;
@@ -371,6 +372,7 @@ class CustomerController extends Controller
         }
 
         $items = 0;
+        
         foreach ($input as $key => $value) {
             if (!empty($value)) {
                 app('App\Http\Controllers\DashboardController')->updateKycData($key, $value, $customer->id);

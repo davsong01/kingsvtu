@@ -1297,7 +1297,6 @@ if (!function_exists("multipleKycStatuses")) {
     function multipleKycStatuses($keys, $customer_id)
     {
         $data = KycData::select('key','value','status')->where(['customer_id' => $customer_id])->whereIn('key', $keys)->get();
-
         return $data;
     }
 }
@@ -1329,17 +1328,54 @@ if (!function_exists("announcements")) {
             }
         }
     }
+}
 
-    if (!function_exists("hasAccess")) {
-        function hasAccess($route)
-        {
-            $routes = auth()->user()->admin->rolepermissions();
-            
-            if (in_array($route, $routes)|| in_array(1, auth()->user()->admin->roleIds())) {
-                return true;
-            }else{
-                return false;
-            }
+if (!function_exists("hasAccess")) {
+    function hasAccess($route)
+    {
+        $routes = auth()->user()->admin->rolepermissions();
+
+        if (in_array($route, $routes) || in_array(1, auth()->user()->admin->roleIds())) {
+            return true;
+        } else {
+            return false;
         }
+    }
+}
+
+if (!function_exists("kycSpecialKeys")) {
+    function kycSpecialKeys($needle=null){
+        $keys = [
+            [
+                'key' => 'GENDER',
+                'label' => 'Gender',
+                'input_type' => 'select',
+                'options' => [
+                    'male' => 'Male',
+                    'female' => 'Female',
+                ],
+                'approval_type' => 'automatic',
+            ],
+            // [
+            //     'key' => 'DOB',
+            //     'label' => 'Date of Birth',
+            //     'input_type' => 'date',
+            //     'approval_type' => 'automatic',
+            // ],
+
+            // [
+            //     'key' => 'FIRST_NAME',
+            //     'label' => 'First Name',
+            //     'input_type' => 'text',
+            //     'approval_type' => 'automatic',
+
+            // ],
+        ];
+
+        if ($needle) {
+            return collect($keys)->firstWhere('key', strtoupper($needle));
+        }
+
+        return $keys;
     }
 }

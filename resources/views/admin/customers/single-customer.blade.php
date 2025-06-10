@@ -421,7 +421,11 @@ use App\Models\BlackList;
                                                                 <input type="text" disabled class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}">
                                                                 @else
                                                                 <label for="IDCARDTYPE">ID Card Type</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                <input type="file" name="IDCARDTYPE"  class="form-control" value="{{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] }}" required>
+                                                                <select id="IDCARDTYPE" name="IDCARDTYPE" class="form-control">
+                                                                    <option value="Driver's Licence" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == "Driver's Licence" ? 'selected' : '' }}>Driver's Licence</option>
+                                                                    <option value="Voter's Card" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == "Voter's Card" ? 'selected' : '' }}>Voter's Card</option>
+                                                                </select>
+                                                                
                                                                 @endif
                                                             </fieldset>
                                                         </div>
@@ -444,6 +448,20 @@ use App\Models\BlackList;
                                                                 @else
                                                                 <label for="bvn">BVN</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="text" name="BVN"  class="form-control" value="{{kycStatus('BVN', $user->customer->id)['value'] }}" required>
+                                                                @endif
+                                                            </fieldset>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <fieldset class="form-group">
+                                                                @if(kycStatus('GENDER', $user->customer->id)['status'] == 'verified')
+                                                                <label for="gender">GENDER</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
+                                                                <input type="text" name="GENDER"  class="form-control" value="{{ ucfirst(kycStatus('GENDER', $user->customer->id)['value']) }}" required>
+                                                                @else
+                                                                <label for="gender">GENDER</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                                <select name="GENDER" id="GENDER" class="form-control">
+                                                                    <option value="male" {{ kycStatus('GENDER', $user->customer->id)['value'] == 'male' ? 'selected' : ''}}>Male</option>
+                                                                    <option value="female" {{ kycStatus('GENDER', $user->customer->id)['value'] == 'female' ? 'selected' : ''}}>Female</option>
+                                                                </select>
                                                                 @endif
                                                             </fieldset>
                                                         </div>

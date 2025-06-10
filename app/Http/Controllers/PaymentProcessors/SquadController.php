@@ -159,7 +159,7 @@ class SquadController extends Controller
                     'admin_id' => $admin_id ?? null,
                     'account_reference' => $dataX['customer_identifier'],
                     'account_number' => $dataX['virtual_account_number'] ?? null,
-                    'account_name' => $dataX['first_name'],
+                    'account_name' => 'SQKINGS'. ' '. $dataX['first_name'] . ' '. $dataX['last_name'],
                     'bank_name' => 'GT Bank',
                     'bank_code' => $dataX['bank_code'],
 

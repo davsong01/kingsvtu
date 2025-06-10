@@ -74,10 +74,10 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     Route::get('confirm_reset_pin', [DashboardController::class, 'resetPin2']);
     Route::post('reset_pin_final', [DashboardController::class, 'finalProcessPin'])->name('final.pin.reset');
     // Route::post('change-pin', [HomeController::class, 'processResetPin'])->name('pin.process.reset');
-    Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
     Route::get('customer-get-variations/{product}', [VariationController::class, 'getCustomerVariations'])->name('get.customer.variations');
-
+    
     Route::middleware(['kyc'])->group(function () {
+        Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
         Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
         Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
         Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
@@ -103,14 +103,17 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     Route::get('get-lga-by-statename/{state}/{value?}', [KycDataController::class, 'getLgaByStateName'])->name('kyc-get-lga-by-state');
     Route::post('customer-get-discount', [TransactionController::class, 'getCustomerDiscount'])->name('get.customer.discount');
 
+    Route::get('customer-special-update-kyc-info', [DashboardController::class, 'updateSpecialKycInfo'])->name('update.kyc.special');
+    
     // Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/get-keys', [ProfileController::class, 'generateKeys'])->name('profile.keys');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('get-keys', [ProfileController::class, 'generateKeys'])->name('profile.keys');
+    Route::post('submit-special-kyc', [DashboardController::class, 'processUpdateSpecialKycInfo'])->name('submit.special.kyc');
 });
 
 // Admin
