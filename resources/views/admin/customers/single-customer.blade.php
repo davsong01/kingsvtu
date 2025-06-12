@@ -677,6 +677,9 @@ use App\Models\BlackList;
                                 '50515' => 'Moniepoint',
                                 '035' => 'Wema Bank',
                             ],
+                            'paymentpoint' => [
+                                '20946' => 'Palmpay',
+                            ],
                         ];
 
                         $providerSlugMap = $providers->pluck('slug', 'id'); 

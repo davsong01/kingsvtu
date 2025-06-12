@@ -400,7 +400,7 @@ class CustomerController extends Controller
         $customer->update([
             "kyc_status" => 'verified',
         ]);
-
+        
         KycData::where('customer_id', $customer->id)->update([
             'status' => 'verified',
         ]);
@@ -422,7 +422,7 @@ class CustomerController extends Controller
 
         logEmails($customer->user->email, $subject, $body);
         $reserved = createReservedAccount($data);
-        
+
         // $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'KYC Approved succesfully and reserved accounts created');

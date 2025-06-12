@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\PaymentProcessors\SquadController;
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
+use App\Http\Controllers\PaymentProcessors\PaymentPointController;
 
 if (!function_exists("mask")) {
     function mask($word, $a = 2, $b = 9, $c = 9, $d = 10)
@@ -106,6 +107,11 @@ if (!function_exists("createReservedAccount")) {
 
             if ($paymentGateway == 'squad') {
                 $squad = new SquadController($provider);
+                $reserved = $squad->createReservedAccount($data, $admin_id);
+            }
+
+            if ($paymentGateway == 'paymentpoint') {
+                $squad = new PaymentPointController($provider);
                 $reserved = $squad->createReservedAccount($data, $admin_id);
             }
         }
