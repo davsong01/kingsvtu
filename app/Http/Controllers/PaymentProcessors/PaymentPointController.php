@@ -114,9 +114,10 @@ class PaymentPointController extends Controller
         
         $payload = [
             "email" => $data["customerEmail"] ?? $customer->user->email,
-            "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
+            "name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
             "bankCode" =>  $data['preferredBanks'],
             "businessId" =>  $this->api->contract_id,
+            "phoneNumber" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
         ];
 
         $response = $this->makeCall($url, $payload);
