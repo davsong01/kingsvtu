@@ -11,6 +11,7 @@ use App\Models\ReservedAccountNumber;
 use App\Models\ReservedAccountCallback;
 use App\Http\Controllers\PaymentProcessors\SquadController;
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
+use App\Http\Controllers\PaymentProcessors\PaymentPointController;
 
 class PaymentController extends Controller
 {
@@ -90,8 +91,17 @@ class PaymentController extends Controller
             $paid_on = Carbon::parse($request['transaction_date']);
         }
 
+        if ($provider == 3) {
+            $account_number = $request['receiver']['account_number'];
+            $session_id = $request['transaction_id'];
+            $transaction_reference = $request['transaction_id'];
+            $payment_method = $request['channel'] ?? 'ACCOUNT_TRANSFER';
+            $paid_on = Carbon::parse($request['timestamp']);
+        }
+
         \Log::info(['Webhook' => $request->all()]);
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
+        
         if (!$check) {
             ReservedAccountCallback::create([
                 'raw' => json_encode($request->all()),
@@ -184,6 +194,22 @@ class PaymentController extends Controller
                         
                         $original_amount = $analyze['data']['principal_amount'];
                         $transaction_id = $analyze['data']['transactionReference'] ?? $call->transaction_reference;
+                    } else {
+                        ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
+                    }
+                }
+
+                if ($call->provider_id == 3) {
+                    $paymentpoint = new PaymentPointController($provider);
+                    $analyze = $paymentpoint->verifyTransaction($call->transaction_reference);
+
+                    ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
+
+                    if (isset($analyze) && $analyze['status'] == 'success') {
+                        $payment_method = $provider->name . '(BANK_TRANSFER)';
+
+                        $original_amount = $analyze['data']['provider_response']['transaction_final_amount'];
+                        $transaction_id = $analyze['data']['provider_response']['reference'];
                     } else {
                         ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
                     }

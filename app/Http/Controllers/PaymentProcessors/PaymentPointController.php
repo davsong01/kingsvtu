@@ -25,74 +25,83 @@ class PaymentPointController extends Controller
         }
     }
 
-    // public function verifyTransaction($reference)
-    // {
-    //     $url = $this->api->base_url . 'virtual-account/merchant/transactions/all?transactionReference=' . $reference;
+    public function verifyTransaction($reference)
+    {
+        $url = 'https://api.paygateplus.ng/v2/transact/query';
+        
+        $payload = [
+            "request_ref" => $reference,
+            "request_type" => "disburse",
+            "auth" => [
+                "secure" => null,
+                "auth_provider" => "Fidelity"
+            ],
+            "transaction" => [
+                "transaction_ref" => $reference
+            ]
+        ];
 
-    //     if (env('ENT') == 'local') {
-    //         $response = [
-    //             "status" => 200,
-    //             "success" => true,
-    //             "message" => "Success",
-    //             "data" => [
-    //                 "count" => 15,
-    //                 "rows" => [
-    //                     [
-    //                         "transaction_reference" => $reference,
-    //                         "virtual_account_number" => "6725149329",
-    //                         "principal_amount" => "50.00",
-    //                         "settled_amount" => "50.00",
-    //                         "fee_charged" => "0.00",
-    //                         "transaction_date" => "2022-10-07T00:00:00.000Z",
-    //                         "transaction_indicator" => "C",
-    //                         "remarks" => "Transfer FROM Sample | [CCC1234334] TO Sample Name",
-    //                         "currency" => "NGN",
-    //                         "alerted_merchant" => false,
-    //                         "merchant_settlement_date" => "2022-10-07T12:04:11.635Z",
-    //                         "frozen_transaction" => null,
-    //                         "customer" => [
-    //                             "customer_identifier" => "5UMKKK3R"
-    //                         ]
-    //                     ],
-    //                     [
-    //                         "transaction_reference" => $reference,
-    //                         "virtual_account_number" => "6725149329",
-    //                         "principal_amount" => "50.00",
-    //                         "settled_amount" => "50.00",
-    //                         "fee_charged" => "0.00",
-    //                         "transaction_date" => "2022-10-07T00:00:00.000Z",
-    //                         "transaction_indicator" => "C",
-    //                         "remarks" => "Transfer FROM Sample | [CCC1234334] TO Sample Name",
-    //                         "currency" => "NGN",
-    //                         "alerted_merchant" => false,
-    //                         "merchant_settlement_date" => "2022-10-07T12:04:11.635Z",
-    //                         "frozen_transaction" => null,
-    //                         "customer" => [
-    //                             "customer_identifier" => "5UMKKK3R"
-    //                         ]
-    //                     ],
-    //                 ],
-    //                 "query" => []
-    //             ]
-    //         ];
-    //     } else {
-    //         $response = $this->makeCall($url, [], 'GET');
-    //     }
-
-    //     if (isset($response['success']) && isset($response['message']) && $response['success'] == true && $response['message'] == 'Success') {
-    //         $real = [
-    //             'status' => 'success',
-    //             'data' => $response['data']['rows'][0],
-    //         ];
-    //     } else {
-    //         $real = [
-    //             'status' => 'failed',
-    //             'data' => $response['message'] ?? 'Something went wrong',
-    //         ];
-    //     }
-
-    //     return $real;
-    // }
+        if (env('ENT') == 'local') {
+            $response = '{
+                "status": "Successful",
+                "message": "Transaction processed successfully",
+                "data": {
+                    "provider_response_code": "00",
+                    "provider": "Fidelity",
+                    "errors": null,
+                    "error": null,
+                    "provider_response": {
+                    "destination_institution_code": "076",
+                    "beneficiary_account_name": "JAMES BLUE",
+                    "beneficiary_account_number": "6698059290",
+                    "beneficiary_kyc_level": "",
+                    "originator_account_name": "",
+                    "originator_account_number": "1100009909",
+                    "originator_kyc_level": "",
+                    "narration": "A random transaction",
+                    "transaction_final_amount": 1000,
+                    "reference": "C3DA541CA20740659031949CD3441EBE",
+                    "payment_id": "382FTTP2005901LD"
+                    },
+                    "client_info": {
+                    "name": null,
+                    "id": null,
+                    "bank_cbn_code": null,
+                    "bank_name": null,
+                    "console_url": null,
+                    "js_background_image": null,
+                    "css_url": null,
+                    "logo_url": null,
+                    "footer_text": null,
+                    "show_options_icon": false,
+                    "paginate": false,
+                    "paginate_count": 0,
+                    "options": null,
+                    "merchant": null,
+                    "colors": null,
+                    "meta": null
+                    }
+                }
+                }';
+            $response = json_decode($response, true);
+        } else {
+            $response = $this->makeCall($url, $payload, 'GET');
+        }
+        
+        if (isset($response['status']) && $response['status'] == 'Successful') {
+            $real = [
+                'status' => 'success',
+                'data' => $response['data'],
+            ];
+        } else {
+            $real = [
+                'status' => 'failed',
+                'data' => $response['message'] ?? 'Something went wrong',
+            ];
+        }
+        
+        return $real;
+    }
 
     public function createReservedAccount(array $data, $admin_id = null)
     {
@@ -190,40 +199,6 @@ class PaymentPointController extends Controller
     }
 
 
-    // public function getCallbackLogs(Request $request){
-    //     // get it
-    //     $provider = PaymentGateway::where('id', 3)->first();
-        
-    //     $this->api = $provider;
-    //     $url = $this->api->base_url . 'virtual-account/webhook/logs';
-    //     $response = $this->makeCall($url, [], 'GET');
-        
-    //     if(env('ENT') == 'local'){
-    //         $response = $this->dummyWebhookError();
-    //     }
-        
-    //     if (isset($response['status']) && isset($response['message']) && $response['success'] == true && $response['message'] == 'Success') {
-    //         if(isset($response['data']['count']) && $response['data']['count'] > 0){
-    
-    //             foreach($response['data']['rows'] as $row){
-    //                 if(isset($row['payload'])){
-    //                     $data = $row['payload'];
-    //                     $reqs = new Request($data);
-    //                     $new = new PaymentController($this->api);
-    //                     $res = $new->dumpCallback($reqs, $this->api->id, 'yes');
-
-    //                     if(isset($res['message'])){
-    //                         $url = $this->api->base_url . 'virtual-account/webhook/logs/'. $data['transaction_reference'];
-    //                         $response2 = $this->makeCall($url, [], 'DELETE');
-    //                     }
-    //                 }
-    //             }
-    //         }   
-    //     }
-
-    //     return back()->with('message', 'Log pulled successfully');
-    // }
-
     public function makeCall($url, $payload, $method = 'POST')
     {
         $curl = curl_init();
@@ -297,40 +272,32 @@ class PaymentPointController extends Controller
     }
 
 
-    public function dummyWebhookError(){
-        return [
-                "status" => 200,
-                "success" => true,
-                "message" => "Success",
-                "data" => [
-                    "count" => 2,
-                    "rows" => [
-                        [
-                            "id" => "229f9f3d-53e4-450e-a9e9-164a8b882a60",
-                            "payload" => [
-                                "hash" => "659c24ba0b6c3ac324b587f2f079c8ee876c56609ff11b7106cd868f84674a5c37fcb088373859f8d900713f03c47d819de79623cde67e70bbca945fd20f3cb3",
-                                "meta" => [
-                                    "freeze_transaction_ref" => null,
-                                    "reason_for_frozen_transaction" => null
-                                ],
-                                "channel" => "virtual-account",
-                                "remarks" => "Transfer FROM OKOYE, CHIZOBA ANTHONY | [CCtyttytC] TO CHIZOBA ANTHONY OKOYE",
-                                "currency" => "NGN",
-                                "fee_charged" => "0.05",
-                                "sender_name" => "OKOYE, CHIZOBA ANTHONY",
-                                "encrypted_body" => "DiPEa8Z4Cbfiqulhs3Q8lVJXGjMIFzbWwI2g7utVGbhXihbtK3H2xsA/+ZnjOpFA0AU8vAN5LUTEH6elfrK58ub2wydaRk0ngvQXWUFz3iB19qWBcdGQRnppKAT/AB5xyy1iQZvEHP7zq3Y7na5zcx9ttkU1mZIeAIoisM9k+ghVLxkTeql4UvfFcLyDdGzMd/BC4YgJFyrZxifhfhKi073od7xJnz4Hhz08UBE/FAwNYMWkwWD9izlbcaaJtfh1VIN6t9rl1gotlb5qmNq/UytgoSvuN5uaEXxegdB3VWvmsDMHqoYwDs4oEuv0lp8zUUG3cZ9zPQ6xH3shGQjVOWErkuIfCk62fRzkwxya4Gu/x2KHMSQjutbvD4vNDjVGfuCIoHuZEXPThWrq1jpTy7cNMLc8ZZ8IowJnfwWHL+O6fuepxXxfrJHlswMCI35ZHSvef1AEXgbUlx2O7yzytceCogpUkY+QJ1yLddl1FeE1u2JKOM+casP3pfiT+t3Mv55aSCVQO7hUy46gd6H/bIHaSIp2K3CcjfdflZ/bxCZaZoe/sRqfVdVIzpSpTc0Lq5sOXM2gijOdeg+zex/CgnMIKGJdzUT9YUJtaaVrMmhk0EcM0rHRrqs0iM7xaSTdZ7K8hnzl0RPJhDXIhu5a/Y2NxS3ZTC2lYRVZd6I3lerpoMQG69VfmqvaVgW2k03f",
-                                "settled_amount" => "49.95",
-                                "principal_amount" => "50.00",
-                                "transaction_date" => "2023-09-01T00:00:00.000Z",
-                                "customer_identifier" => "CCtyttytC",
-                                "transaction_indicator" => "C",
-                                "transaction_reference" => "REF20230901162737156459_1",
-                                "virtual_account_number" => "0760640237"
-                            ],
-                            "transaction_ref" => "REF20230901162737156459_1"
-                        ]
-                    ]
-                ],
-            ];            
+    public function dummyWebhookResponse(){
+        return '{
+            "notification_status": "payment_successful",
+            "transaction_id": "xxx",
+            "amount_paid": 100,
+            "settlement_amount": 99.5,
+            "settlement_fee": 0.5,
+            "transaction_status": "success",
+            "sender": {
+                "name": "AGH ONLINE ACADEMY TUTORS LIMITED",
+                "account_number": "****4290",
+                "bank": "HYDROGEN"
+            },
+            "receiver": {
+                "name": "ALBARKADATASUB-Abd(Paymentpoint)",
+                "account_number": "6679854996",
+                "bank": "PalmPay"
+            },
+            "customer": {
+                "name": "Abdulismail",
+                "email": "albarkadatasub@gmail.com",
+                "phone": null,
+                "customer_id": "xxx"
+            },
+            "description": "Your payment has been successfully processed.",
+            "timestamp": "2024-11-22T13:00:04.256092Z"
+            }';            
     }
 }
