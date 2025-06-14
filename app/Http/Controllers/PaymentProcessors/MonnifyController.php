@@ -106,7 +106,7 @@ class MonnifyController extends Controller
         }
     }
 
-    public function createReservedAccount(array $data, int $admin_id = null)
+    public function createReservedAccount(array $data, $admin_id = null)
     {
         $token = $this->login();
 
