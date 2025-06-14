@@ -91,12 +91,12 @@ if (!function_exists("createReservedAccount")) {
     function createReservedAccount($data = null, $admin_id = null, $provider_id = null)
     {
         if(!empty($provider_id)){
-            $provider = PaymentGateway::where('id', $provider_id)->first();
+            $provider = PaymentGateway::where('id', $provider_id)->get();
         }else{
-            $provider = PaymentGateway::where('id', getSettings()->payment_gateway)->first();
+            $provider = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
         }
         
-        $paymentGateway = $provider ->slug;
+        $paymentGateway = $provider->slug;
         $reserved = null;
         
         if (!empty($paymentGateway)) {

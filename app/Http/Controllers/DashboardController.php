@@ -158,7 +158,7 @@ class DashboardController extends Controller
 
     public function showLoadWalletPge()
     {
-        $gateway = PaymentGateway::where('id', getSettings()->payment_gateway)->first();
+        $gateway = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->first();
         return view('customer.load_wallet', compact('gateway'));
     }
 
