@@ -103,6 +103,25 @@ class PaymentPointController extends Controller
         return $real;
     }
 
+    public function verifySignature($request){
+        $secretKey = $this->api->secret_key;
+        $inputData = file_get_contents('php://input');
+        $signatureHeader = $_SERVER['HTTP_PAYMENTPOINT_SIGNATURE'];
+
+        $calculatedSignature = hash_hmac('sha256', $inputData, $secretKey);
+        \Log::info($calculatedSignature);
+        \Log::info($inputData);
+        \Log::info($signatureHeader);
+        \Log::info($secretKey);
+        \Log::info($secretKey);
+        \Log::info($request);
+        
+        if (!hash_equals($calculatedSignature, $signatureHeader)) {
+            return false;
+        }
+
+        return true;
+    }
     public function createReservedAccount(array $data, $admin_id = null)
     {
         $url = $this->api->base_url . 'createVirtualAccount';
@@ -301,4 +320,6 @@ class PaymentPointController extends Controller
             "timestamp": "2024-11-22T13:00:04.256092Z"
             }';            
     }
+
+
 }

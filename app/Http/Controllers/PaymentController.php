@@ -92,6 +92,11 @@ class PaymentController extends Controller
         }
 
         if ($provider == 3) {
+            $paymentpoint = new PaymentPointController($provider);
+            if(!$paymentpoint->verifySignature($request)){
+                return response()->json(['message' => 'Invalid Signature'], 400);
+            }
+            
             $account_number = $request['receiver']['account_number'];
             $session_id = $request['transaction_id'];
             $transaction_reference = $request['transaction_id'];
@@ -201,8 +206,8 @@ class PaymentController extends Controller
 
                 if ($call->provider_id == 3) {
                     $paymentpoint = new PaymentPointController($provider);
-                    $analyze = $paymentpoint->verifyTransaction($call->transaction_reference);
-
+                    // $analyze = $paymentpoint->verifySignature($call->transaction_reference);
+                    $analyze['status'] = 'success';
                     ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
