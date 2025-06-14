@@ -15,6 +15,7 @@ use App\Http\Controllers\WalletController;
 use App\Http\Controllers\PaymentProcessors\SquadController;
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
 use App\Http\Controllers\PaymentProcessors\PaymentPointController;
+use App\Models\ReservedAccountNumber;
 
 if (!function_exists("mask")) {
     function mask($word, $a = 2, $b = 9, $c = 9, $d = 10)
@@ -87,38 +88,87 @@ if (!function_exists("getPaymentGatewayReservedAccountCharge")) {
     }
 }
 
+// if (!function_exists("createReservedAccount")) {
+//     function createReservedAccount($data = null, $admin_id = null, $provider_id = null)
+//     {
+//         if(!empty($provider_id)){
+//             $provider = PaymentGateway::where('id', $provider_id)->get();
+//         }else{
+//             $provider = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
+//         }
+
+//         $paymentGateway = $provider->slug;
+//         $reserved = null;
+
+//         if (!empty($paymentGateway)) {
+//             if ($paymentGateway == 'monnify') {
+//                 $monnify = new MonnifyController($provider);
+//                 $reserved = $monnify->createReservedAccount($data, $admin_id);
+//             }
+
+//             if ($paymentGateway == 'squad') {
+//                 $squad = new SquadController($provider);
+//                 $reserved = $squad->createReservedAccount($data, $admin_id);
+//             }
+
+//             if ($paymentGateway == 'paymentpoint') {
+//                 $squad = new PaymentPointController($provider);
+//                 $reserved = $squad->createReservedAccount($data, $admin_id);
+//             }
+//         }
+
+//         return $reserved;
+//     }
+// }
 if (!function_exists("createReservedAccount")) {
     function createReservedAccount($data = null, $admin_id = null, $provider_id = null)
     {
-        if(!empty($provider_id)){
-            $provider = PaymentGateway::where('id', $provider_id)->get();
-        }else{
-            $provider = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
+        $providers = collect();
+        
+        if (!empty($provider_id)) {
+            $providers = PaymentGateway::whereIn('id', $provider_id)->get();
+        } else {
+            $gatewayIds = getSettings()->payment_gateway ?? [];
+            $providers = PaymentGateway::whereIn('id', (array) $gatewayIds)->get();
         }
         
-        $paymentGateway = $provider->slug;
-        $reserved = null;
-        
-        if (!empty($paymentGateway)) {
-            if ($paymentGateway == 'monnify') {
-                $monnify = new MonnifyController($provider);
-                $reserved = $monnify->createReservedAccount($data, $admin_id);
+        foreach ($providers as $provider) {
+            $paymentGateway = $provider->slug;
+            $reserved = null;
+
+            if(ReservedAccountNumber::where('paymentgateway_id', $provider->id)
+                ->where('status', 'active')
+                    ->where('customer_id', $data['customer_id'])
+                        ->exists()){
+                continue;
             }
 
-            if ($paymentGateway == 'squad') {
-                $squad = new SquadController($provider);
-                $reserved = $squad->createReservedAccount($data, $admin_id);
+            switch ($paymentGateway) {
+                case 'monnify':
+                    $monnify = new MonnifyController($provider);
+                    $reserved = $monnify->createReservedAccount($data, $admin_id);
+                    break;
+
+                case 'squad':
+                    $squad = new SquadController($provider);
+                    $reserved = $squad->createReservedAccount($data, $admin_id);
+                    break;
+
+                case 'paymentpoint':
+                    $pp = new PaymentPointController($provider);
+                    $reserved = $pp->createReservedAccount($data, $admin_id);
+                    break;
             }
 
-            if ($paymentGateway == 'paymentpoint') {
-                $squad = new PaymentPointController($provider);
-                $reserved = $squad->createReservedAccount($data, $admin_id);
+            if (!empty($reserved)) {
+                return $reserved; // stop at first successful attempt
             }
         }
 
-        return $reserved;
+        return null; // return null if all fail
     }
 }
+
 
 if (!function_exists("sendEmails")) {
     function sendEmails($email_to, $subject, $body)

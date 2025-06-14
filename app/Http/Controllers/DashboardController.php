@@ -76,7 +76,10 @@ class DashboardController extends Controller
                     'customer_id' => auth()->user()->customer->id,
                 ];
                 
-                $reserved = createReservedAccount($data, null, $currentPaymentGateway);
+                foreach($currentPaymentGateway as $gateway){
+                    $data['paymentgateway_id'] = $gateway;
+                    $reserved = createReservedAccount($data, null, $currentPaymentGateway);
+                }
             }
             return view('customer.dashboard', compact('customer'));
         }
@@ -158,7 +161,7 @@ class DashboardController extends Controller
 
     public function showLoadWalletPge()
     {
-        $gateway = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->first();
+        $gateway = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
         return view('customer.load_wallet', compact('gateway'));
     }
 
