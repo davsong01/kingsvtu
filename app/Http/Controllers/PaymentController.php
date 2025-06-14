@@ -92,11 +92,12 @@ class PaymentController extends Controller
         }
 
         if ($provider == 3) {
-            $paymentpoint = new PaymentPointController($provider);
+            $gateway = PaymentGateway::where('id', $provider)->first();
+            $paymentpoint = new PaymentPointController($gateway);
             if(!$paymentpoint->verifySignature($request)){
                 return response()->json(['message' => 'Invalid Signature'], 400);
             }
-            
+
             $account_number = $request['receiver']['account_number'];
             $session_id = $request['transaction_id'];
             $transaction_reference = $request['transaction_id'];
