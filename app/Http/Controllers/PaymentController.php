@@ -94,7 +94,7 @@ class PaymentController extends Controller
         if ($provider == 3) {
             $gateway = PaymentGateway::where('id', $provider)->first();
             $paymentpoint = new PaymentPointController($gateway);
-            if(!$paymentpoint->verifySignature($request)){
+            if (!$paymentpoint->verifySignature($request)) {
                 return response()->json(['message' => 'Invalid Signature'], 400);
             }
 
@@ -107,7 +107,7 @@ class PaymentController extends Controller
 
         \Log::info(['Webhook' => $request->all()]);
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
-        
+
         if (!$check) {
             ReservedAccountCallback::create([
                 'raw' => json_encode($request->all()),
@@ -123,7 +123,7 @@ class PaymentController extends Controller
             } else {
                 return response()->json(['message' => 'success'], 200);
             }
-        }else{
+        } else {
             if ($internal == 'yes') {
                 return ['error' => 'Likely duplicate'];
             } else {
@@ -148,14 +148,14 @@ class PaymentController extends Controller
             $tlk = 'PICKED-' . time();
             $ids = array_column($calls, 'id');
             ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
-            
+
             $calls = ReservedAccountCallback::where(['status' => $tlk])->get();
 
             foreach ($calls as $call) {
                 $decodeCall = json_decode($call->raw, true);
                 $account = ReservedAccountNumber::with('customer')->where('account_number', $call->account_number)->first();
                 $provider = PaymentGateway::where('id', $call->provider_id)->first();
-                
+
                 if (!$account) {
                     ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-account']);
                     continue;
@@ -172,7 +172,7 @@ class PaymentController extends Controller
 
                         continue;
                     }
-                    
+
                     $monnify = new MonnifyController($provider);
                     $analyze = $monnify->verifyTransaction($call->transaction_reference);
 
@@ -180,7 +180,7 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                        
+
                         $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
 
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
@@ -197,7 +197,7 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(BANK_TRANSFER)';
-                        
+
                         $original_amount = $analyze['data']['principal_amount'];
                         $transaction_id = $analyze['data']['transactionReference'] ?? $call->transaction_reference;
                     } else {
@@ -209,13 +209,12 @@ class PaymentController extends Controller
                     $paymentpoint = new PaymentPointController($provider);
                     // $analyze = $paymentpoint->verifySignature($call->transaction_reference);
                     $analyze['status'] = 'success';
-                    ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(BANK_TRANSFER)';
-
-                        $original_amount = $analyze['data']['provider_response']['transaction_final_amount'];
-                        $transaction_id = $analyze['data']['provider_response']['reference'];
+                        $analyzeData = json_decode($call->raw);
+                        $original_amount = $analyzeData->amount_paid;
+                        $transaction_id = $analyzeData->transaction_id;
                     } else {
                         ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
                     }
@@ -229,7 +228,7 @@ class PaymentController extends Controller
 
                     $provider_charge_setting = getPaymentGatewayReservedAccountCharge($provider->id) ?? 0;
                     $provider_charge = calculatePaymentGatewayReservedAccountCharge($provider_charge_setting, $original_amount) ?? 0;
-                    
+
                     $amount = $original_amount - $provider_charge;
 
                     $request['type'] = 'credit';
@@ -256,7 +255,7 @@ class PaymentController extends Controller
                     $request['api_id'] = $provider->id;
 
                     $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
-                    
+
                     $transaction->update([
                         'balance_after' => $balance + $amount,
                         'status' => 'delivered',
@@ -377,11 +376,12 @@ class PaymentController extends Controller
         return back()->with('message', 'Operation Successful');
     }
 
-    public function dumpPurchaseCallback(Request $request, $provider_id){
+    public function dumpPurchaseCallback(Request $request, $provider_id)
+    {
         \Log::info([
             'Purchase Callback' => [
-                    'provider_id' => $provider_id,
-                    'data' => $request->all(),
+                'provider_id' => $provider_id,
+                'data' => $request->all(),
             ],
         ]);
     }

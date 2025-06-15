@@ -109,12 +109,12 @@ class PaymentPointController extends Controller
         $signatureHeader = $_SERVER['HTTP_PAYMENTPOINT_SIGNATURE'];
 
         $calculatedSignature = hash_hmac('sha256', $inputData, $secretKey);
-        \Log::info($calculatedSignature);
-        \Log::info($inputData);
-        \Log::info($signatureHeader);
-        \Log::info($secretKey);
-        \Log::info($secretKey);
-        \Log::info($request);
+        // \Log::info($calculatedSignature);
+        // \Log::info($inputData);
+        // \Log::info($signatureHeader);
+        // \Log::info($secretKey);
+        // \Log::info($secretKey);
+        // \Log::info($request);
         
         if (!hash_equals($calculatedSignature, $signatureHeader)) {
             return false;
@@ -282,9 +282,9 @@ class PaymentPointController extends Controller
 
         $response = curl_exec($curl);
         
-        \Log::info($url);
-        \Log::info(json_encode($payload));
-        \Log::info($response);
+        // \Log::info($url);
+        // \Log::info(json_encode($payload));
+        // \Log::info($response);
 
         curl_close($curl);
         

@@ -94,6 +94,7 @@
                                                                                     <table class="table table-striped">
                                                                                         <thead>
                                                                                             <tr>
+                                                                                                <th style="color:#495463;">Processor</th>
                                                                                                 <th style="color:#495463;">Account Name</th>
                                                                                                 <th style="color:#495463;">Bank Name</th>
                                                                                                 <th style="color:#495463;">Account Number</th>
@@ -104,6 +105,7 @@
                                                                                             @foreach(auth()->user()->customer->reserved_accounts as $account)
                                                                                             {{-- @if($account->paymentgateway_id == $gateway->id) --}}
                                                                                             <tr>
+                                                                                                <td style="color:#173D52;">{{$account->gateway->name }}</td>
                                                                                                 <td style="color:#173D52;">{{$account->account_name}}</td>
                                                                                                 <td style="color:#173D52;">{{$account->bank_name}}</td>
                                                                                                 <td style="color:#173D52;">{{$account->account_number}}</td>
