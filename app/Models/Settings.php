@@ -10,7 +10,7 @@ class Settings extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    protected $casts = ['captcha_settings' => 'array'];
+    protected $casts = ['captcha_settings' => 'array', 'payment_gateway' => 'array'];
 
     public function gateway(){
         return $this->belongsTo(PaymentGateway::class, 'payment_gateway');

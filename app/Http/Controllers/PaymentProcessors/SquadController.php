@@ -117,7 +117,7 @@ class SquadController extends Controller
             "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? $customer->user->lastname),
             "mobile_num" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
             "email" => $data["customerEmail"] ?? $customer->user->email,
-            "bvn" => $kycData['BVN'] ?? ($customer->$kycData['BVN'] ?? ''), 
+            "bvn" => $kycData['BVN'] ?? null, 
             "dob" => $kycData['DOB'] ?? null,
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,

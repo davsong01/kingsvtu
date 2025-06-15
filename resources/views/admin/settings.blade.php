@@ -3,6 +3,8 @@ use App\Models\PaymentGateway;
 ?>
 @extends('layouts.app')
 @section('page-css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @endsection
 @section('content')
 <!-- Content wrapper -->
@@ -121,7 +123,7 @@ use App\Models\PaymentGateway;
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
                                                                             <label for="type">Bank Transfer Note</label>
-                                                                            <div id="toolbar-container">
+                                                                            <div id="toolbar-bank_transfer_note">
                                                                                 <span class="ql-formats">
                                                                                     <select class="ql-font"></select>
                                                                                     <select class="ql-size"></select>
@@ -166,24 +168,28 @@ use App\Models\PaymentGateway;
                                                                                     <button class="ql-clean"></button>
                                                                                 </span>
                                                                             </div>
-                                                                            <div class="editor" style="min-height: 240px">
+                                                                            <div id="editor-bank_transfer_note" class="editor" data-target="bank_transfer_note" style="min-height: 240px">
                                                                                 {!! old('bank_transfer_note') ?? $settings->bank_transfer_note !!}
                                                                             </div>
                                                                             <input name="bank_transfer_note" type="hidden" id="bank_transfer_note" />
                                                                         </fieldset>
-                                                                        {{-- <fieldset class="form-group" style="display:{{ $settings->referral_system_status == 'active' ? 'block' : 'none'}}" id="referral_percentage_div">
-                                                                            <label for="referral_percentage">Referral Percentage(%)</label>
-                                                                            <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $settings->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">
-                                                                        </fieldset> --}}
+                                                                      
                                                                     </div>
 
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
                                                                             <label for="">Payment Gateway</label>
-                                                                            <select name="payment_gateway" class="form-control" id="payment_gateway" required>
+                                                                            <select name="payment_gateway[]" class="form-control js-example-basic-single" id="payment_gateway" required multiple>
                                                                                 <option value="">Select</option>
+                                                                                @php
+                                                                                    $selectedGateways = is_array(getSettings()->payment_gateway)
+                                                                                        ? getSettings()->payment_gateway
+                                                                                        : json_decode(getSettings()->payment_gateway, true) ?? [];
+                                                                                @endphp
                                                                                 @foreach($payment_gateways as $gateway)
-                                                                                <option value="{{ $gateway->id }}" {{ $gateway->id == getSettings()->payment_gateway ? 'selected' : ''}}>{{$gateway->name}}</option>
+                                                                                    <option value="{{ $gateway->id }}" {{ in_array($gateway->id, $selectedGateways) ? 'selected' : '' }}>
+                                                                                        {{ $gateway->name }}
+                                                                                    </option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </fieldset>
@@ -260,9 +266,61 @@ use App\Models\PaymentGateway;
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
                                                                             <label for="google_dashboard_ad_code">Google Dashboard Ad Code</label>
-                                                                            <textarea class="form-control" id="google_dashboard_ad_code" rows="5" name="google_dashboard_ad_code" value="{{ $settings->google_dashboard_ad_code ?? old('google_dashboard_ad_code') }}" placeholder="Google dashboard ad code">{{ $settings->google_dashboard_ad_code ?? old('google_dashboard_ad_code') }}</textarea>
+                                                                            <textarea style="height: 140px !important" class="form-control" id="google_dashboard_ad_code" name="google_dashboard_ad_code" value="{{ $settings->google_dashboard_ad_code ?? old('google_dashboard_ad_code') }}" placeholder="Google dashboard ad code">{{ $settings->google_dashboard_ad_code ?? old('google_dashboard_ad_code') }}</textarea>
                                                                         </fieldset>
-                                                                        
+
+                                                                        <fieldset class="form-group">
+                                                                            <label for="wallet_funding_note">Wallet Funding Note</label>
+                                                                            <div id="toolbar-wallet_funding_note">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-font"></select>
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-color"></select>
+                                                                                    <select class="ql-background"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-script" value="sub"></button>
+                                                                                    <button class="ql-script" value="super"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-header" value="1"></button>
+                                                                                    <button class="ql-header" value="2"></button>
+                                                                                    <button class="ql-blockquote"></button>
+                                                                                    <button class="ql-code-block"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered"></button>
+                                                                                    <button class="ql-list" value="bullet"></button>
+                                                                                    <button class="ql-indent" value="-1"></button>
+                                                                                    <button class="ql-indent" value="+1"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-direction" value="rtl"></button>
+                                                                                    <select class="ql-align"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-link"></button>
+                                                                                    <button class="ql-image"></button>
+                                                                                    <button class="ql-video"></button>
+                                                                                    <button class="ql-formula"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean"></button>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div id="editor-wallet_funding_note" class="editor" data-target="wallet_funding_note" style="min-height: 240px">
+                                                                                {!! old('wallet_funding_note') ?? $settings->wallet_funding_note !!}
+                                                                            </div>
+                                                                            <input name="wallet_funding_note" type="hidden" id="wallet_funding_note" />
+                                                                        </fieldset>
                                                                     </div>
                                                                     <div class="col-md-12">
                                                                         <button class="btn btn-primary" type="submit">Update</button>
@@ -277,7 +335,6 @@ use App\Models\PaymentGateway;
                                     </section>
                                     <!-- Nav Filled Ends -->
                                 </div>
-                               
                             </div>
                         </div>
                     </div>
@@ -287,11 +344,42 @@ use App\Models\PaymentGateway;
     </div>
 @endsection
 @section('page-script')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.js"></script>
 <script>
+   document.querySelectorAll('.editor').forEach(function (editorElement) {
+    const target = editorElement.getAttribute('data-target');
+    const quill = new Quill('#editor-' + target, {
+        theme: 'snow',
+        placeholder: 'Enter note...',
+        modules: {
+            syntax: true,
+            toolbar: '#toolbar-' + target
+        }
+    });
+
+    const hiddenInput = document.getElementById(target);
+
+    // Only set the hidden input if it's empty (likely first load)
+    if (hiddenInput && hiddenInput.value.trim() === '') {
+        hiddenInput.value = quill.root.innerHTML;
+    }
+
+    // Sync Quill content to hidden input on change
+    quill.on('text-change', function () {
+        hiddenInput.value = quill.root.innerHTML;
+    });
+});
+
+
+</script>
+
+<script>
+    $('.js-example-basic-single').select2();
     $('#referral_system_status').on('change', function (e) {
         var referral_system_status = $('#referral_system_status').val();
        
@@ -309,15 +397,15 @@ use App\Models\PaymentGateway;
             });
         }
     });
-    let quill = new Quill('.editor', {
-        theme: 'snow',
-        toolbar: true,
-        placeholder: 'Enter bank transfer note...',
-        modules: {
-            syntax: true,
-            toolbar: '#toolbar-container',
-        },
-    });
+    // let quill = new Quill('.editor', {
+    //     theme: 'snow',
+    //     toolbar: true,
+    //     placeholder: 'Enter bank transfer note...',
+    //     modules: {
+    //         syntax: true,
+    //         toolbar: '#toolbar-container',
+    //     },
+    // });
 
     $('form').on('submit', () => {
         var myEditor = document.querySelector('.editor')

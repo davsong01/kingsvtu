@@ -183,7 +183,7 @@ class CustomerController extends Controller
         ];
         
         $admin_id = auth()->user()->admin->id;
-        $reserved = createReservedAccount($data, $admin_id, $request->provider);
+        $reserved = createReservedAccount($data, $admin_id, [$request->provider]);
 
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return back()->with('message', 'Reserved Account(s) crearted successfully');
