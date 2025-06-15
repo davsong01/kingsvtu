@@ -61,8 +61,11 @@
                                                                 @if(getSettings()->allow_fund_with_card == 'yes')
                                                                 <div class="tab-pane {{ getSettings()->allow_fund_with_card == 'yes' ? 'active' : ''}}" id="product-details" role="tabpanel" aria-labelledby="home-tab-fill">
                                                                     <p>Credit your wallet now, and spend from it later. No Need to enter card details everytime you want to make a Payment. Make Faster Payments. 
-                                                                
-                                                                    <br>  <small style="color:red"><b>NOTE: </b>A charge of <strong>{{number_format($gateway->charge, 1)}}% @if(getSettings()->card_funding_extra_charge > 0)+ {!!getSettings()->currency !!}{{getSettings()->card_funding_extra_charge}} @endif </strong>is applicable to this method of wallet funding</small>
+                                                                    @foreach($gateway as $gate)
+                                                                        @if($gate->slug == 'monnify')
+                                                                            <br>  <small style="color:red"><b>NOTE: </b>A charge of <strong>{{number_format($gate->charge, 1)}}% @if(getSettings()->card_funding_extra_charge > 0)+ {!!getSettings()->currency !!}{{getSettings()->card_funding_extra_charge}} @endif </strong>is applicable to this method of wallet funding</small>
+                                                                        @endif
+                                                                    @endforeach
                                                                     </p>
                                                                     <form action="{{ route('process-customer-load-wallet') }}" method="POST" id="wallet_load">
                                                                         @csrf
@@ -83,9 +86,7 @@
                                                                 @if(getSettings()->allow_fund_with_reserved_account == 'yes')
                                                                     <div class="tab-pane {{ getSettings()->allow_fund_with_card  !== 'yes' ? 'active' : ''}}" id="variations" role="tabpanel" aria-labelledby="profile-tab-fill">
                                                                         @if(auth()->user()->customer->reserved_accounts->count() > 0)
-                                                                            <p>To fund your wallet, make payment into any of the accounts below. Your Wallet will be credited automatically. Account number is dedicated to crediting your wallet.<br><br><strong style="color:red">IMPORTANT:</strong><br> Payments made into any of these account are automated. This means that once you transfer, your wallet is credited automatically. <br>
-                                                                            P.S: Just like every other transfers, you could experience a slight delay in wallet funding. You only need to hold on patiently as your wallet would be credited once processed. You do not need to contact support after funding your wallet, It is automated. <br><small style="color:red"><b>NOTE: </b>A charge of <strong>{{ getPaymentGatewayReservedAccountCharge($gateway->id)['display_value'] }}</strong>is applicable to this method of wallet funding</small> <br>
-                                                                            </p>    
+                                                                            {!! getSettings()->wallet_funding_note !!} <br>
                                                                             <small>{!! getSettings()->bank_transfer_note !!}</small>
                                                                             <div>
                                                                                 <h5>Wallet Funding Account Details</h5>
@@ -93,20 +94,23 @@
                                                                                     <table class="table table-striped">
                                                                                         <thead>
                                                                                             <tr>
+                                                                                                <th style="color:#495463;">Processor</th>
                                                                                                 <th style="color:#495463;">Account Name</th>
                                                                                                 <th style="color:#495463;">Bank Name</th>
                                                                                                 <th style="color:#495463;">Account Number</th>
                                                                                             </tr>
                                                                                         </thead>
+                                                                                        {{-- {{dd(auth()->user()->customer->reserved_accounts, $gateway )}} --}}
                                                                                         <tbody>
                                                                                             @foreach(auth()->user()->customer->reserved_accounts as $account)
-                                                                                            @if($account->paymentgateway_id == $gateway->id)
+                                                                                            {{-- @if($account->paymentgateway_id == $gateway->id) --}}
                                                                                             <tr>
+                                                                                                <td style="color:#173D52;">{{$account->gateway->name }}</td>
                                                                                                 <td style="color:#173D52;">{{$account->account_name}}</td>
                                                                                                 <td style="color:#173D52;">{{$account->bank_name}}</td>
                                                                                                 <td style="color:#173D52;">{{$account->account_number}}</td>
                                                                                             </tr>
-                                                                                            @endif
+                                                                                            {{-- @endif --}}
                                                                                             @endforeach                                                       
                                                                                         </tbody>
                                                                                     </table>
