@@ -65,24 +65,30 @@
                                                         <label for="public_key">Public key</label>
                                                         <input type="text" class="form-control" id="public_key" name="public_key" value="{{ $paymentgateway->public_key ?? old('public_key') }}" placeholder="Enter Public Key">
                                                     </fieldset>
-                                                   
-                                                </div>
-                                                <div class="col-md-6">
-                                                     <fieldset class="form-group">
-                                                        <label for="contract_id">Contract ID</label>
-                                                        <input type="text" class="form-control" id="contract_id" name="contract_id" value="{{ $paymentgateway->contract_id ?? old('contract_id') }}" placeholder="Enter Contract Id">
-                                                    </fieldset>
-                                                    <fieldset class="form-group">
-                                                        <label for="merchant_email">Merchant Email</label>
-                                                        <input type="text" class="form-control" id="merchant_email" name="merchant_email" value="{{ $paymentgateway->merchant_email ?? old('merchant_email') }}" placeholder="Enter Merchant email">
-                                                    </fieldset>
+                                                    
                                                     <fieldset class="form-group">
                                                         <label for="base_url">Base URL</label>
                                                         <input type="text" class="form-control" id="base_url" name="base_url" value="{{ $paymentgateway->base_url ?? old('base_url') }}" placeholder="Enter base URL" required>
                                                     </fieldset>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <fieldset class="form-group">
+                                                        <label for="merchant_email">Merchant Email</label>
+                                                        <input type="text" class="form-control" id="merchant_email" name="merchant_email" value="{{ $paymentgateway->merchant_email ?? old('merchant_email') }}" placeholder="Enter Merchant email">
+                                                    </fieldset>
+                                                     <fieldset class="form-group">
+                                                        <label for="contract_id">Contract ID</label>
+                                                        <input type="text" class="form-control" id="contract_id" name="contract_id" value="{{ $paymentgateway->contract_id ?? old('contract_id') }}" placeholder="Enter Contract Id">
+                                                    </fieldset>
+                                                   
                                                     <fieldset class="form-group">
                                                         <label for="charge">Gateway Charge for card funding <span style="color:red">(%)</span></label>
                                                         <input type="number" class="form-control" id="charge" name="charge" step=".10" value="{{ $paymentgateway->charge ?? old('charge') }}" placeholder="Enter gatway charge in percentage" required>
+                                                    </fieldset>
+
+                                                    <fieldset class="form-group">
+                                                        <label for="charge_cap">Gateway Charge CAP for card funding</label>
+                                                        <input type="number" class="form-control" id="charge_cap" name="charge_cap" step=".10" value="{{ $paymentgateway->charge_cap ?? old('charge_cap') }}" placeholder="Enter gatway charge cap">
                                                     </fieldset>
                                                     <fieldset class="form-group">
                                                         <label for="reserved_account_payment_charge_type">Gateway Reserved Account Payment Charge Type</label>
@@ -92,9 +98,13 @@
                                                             <option value="percentage" {{ $paymentgateway->reserved_account_payment_charge_type == 'percentage' ? 'selected' : ''}}>Percentage</option>
                                                         </select>
                                                     </fieldset>
-                                                     <fieldset class="form-group">
+                                                    <fieldset class="form-group">
                                                         <label for="reserved_account_payment_charge">Gateway Reserved Account Payment Charge <span style="color:red">({{ getPaymentGatewayReservedAccountCharge($paymentgateway->id)['type'] }}) </span></label>
-                                                        <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter flat reserved account payment charge" required>
+                                                        <input type="number" class="form-control" id="reserved_account_payment_charge" name="reserved_account_payment_charge" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge ?? old('reserved_account_payment_charge') }}" placeholder="Enter reserved account payment charge" required>
+                                                    </fieldset>
+                                                    <fieldset class="form-group">
+                                                        <label for="reserved_account_payment_charge_cap">Gateway Reserved Account Payment Charge Cap</label>
+                                                        <input type="number" class="form-control" id="reserved_account_payment_charge_cap" name="reserved_account_payment_charge_cap" step=".10" value="{{ $paymentgateway->reserved_account_payment_charge_cap ?? old('reserved_account_payment_charge_cap') }}" placeholder="Enter reserved account payment charge cap">
                                                     </fieldset>
                                                     
                                                     {{-- <fieldset class="form-group">

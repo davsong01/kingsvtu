@@ -229,7 +229,7 @@ class PaymentController extends Controller
 
                     $provider_charge_setting = getPaymentGatewayReservedAccountCharge($provider->id) ?? 0;
                     $provider_charge = calculatePaymentGatewayReservedAccountCharge($provider_charge_setting, $original_amount) ?? 0;
-                    
+                    // dd($provider_charge, $provider_charge_setting, $original_amount);
                     $amount = $original_amount - $provider_charge;
 
                     $request['type'] = 'credit';

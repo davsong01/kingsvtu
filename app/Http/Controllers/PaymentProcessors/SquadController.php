@@ -99,7 +99,7 @@ class SquadController extends Controller
         $url = $this->api->base_url . 'virtual-account';
         // Get customer and kyc data
         $customer = Customer::with('multiplekycdata')->where('id', $data['customer_id'])->first();
-        
+
         $kycData = $customer->multiplekycdata->toArray();
         $kycData = extractKeyValuesFromMultiDimensionalArray('key', 'value', $kycData);
         $gender = "1";
@@ -110,38 +110,41 @@ class SquadController extends Controller
                 $gender = "2";
             }
         }
-        
+
         $payload = [
-            "customer_identifier" =>  'KGSVTU-'.$customer->id,
+            "customer_identifier" =>  'KGSVTU-' . $customer->id,
             "first_name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
             "last_name" => $data["customerLastName"] ?? ($kycData['LAST_NAME'] ?? $customer->user->lastname),
             "mobile_num" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
             "email" => $data["customerEmail"] ?? $customer->user->email,
-            "bvn" => $kycData['BVN'] ?? null, 
+            "bvn" => $kycData['BVN'] ?? null,
             "dob" => $kycData['DOB'] ?? null,
             "address" => $kycData['DATE_OF_BIRTH'] ?? 'Lagos',
             "gender" => $gender,
             "beneficiary_account" => "0477196810"
         ];
-        
+
         if (!empty($payload['dob'])) {
+            // $dob = trim($payload['dob']);
+            // $date = null;
+
+            // foreach (['Y-m-d', 'd-m-Y', 'd/m/Y', 'Y/m/d'] as $format) {
+            //     try {
+            //         $date = Carbon::createFromFormat($format, $dob);
+            //         break;
+            //     } catch (\Exception $e) {
+            //         continue;
+            //     }
+            // }
+
+            // $payload['dob'] = $date ? $date->format('m/d/Y') : null;
             $dob = trim($payload['dob']);
-            $date = null;
-
-            foreach (['Y-m-d', 'd-m-Y', 'd/m/Y', 'Y/m/d'] as $format) {
-                try {
-                    $date = Carbon::createFromFormat($format, $dob);
-                    break;
-                } catch (\Exception $e) {
-                    continue;
-                }
-            }
-
+            $date = Carbon::parse($dob, null)->isValid() ? Carbon::parse($dob) : null;
             $payload['dob'] = $date ? $date->format('m/d/Y') : null;
         }
-        
+
         $response = $this->makeCall($url, $payload);
-        
+
         if (
             isset($response) && $response['success'] == true &&
             $response['message'] == 'Success'
@@ -158,7 +161,7 @@ class SquadController extends Controller
                     'admin_id' => $admin_id ?? null,
                     'account_reference' => $dataX['customer_identifier'],
                     'account_number' => $dataX['virtual_account_number'] ?? null,
-                    'account_name' => 'SQKINGS'. ' '. $dataX['first_name'] . ' '. $dataX['last_name'],
+                    'account_name' => 'SQKINGS' . ' ' . $dataX['first_name'] . ' ' . $dataX['last_name'],
                     'bank_name' => 'GT Bank',
                     'bank_code' => $dataX['bank_code'],
 
@@ -185,7 +188,7 @@ class SquadController extends Controller
                 'data' => $response['message'] ?? 'no-response',
             ];
         }
-        
+
         return $res;
     }
 
@@ -264,35 +267,36 @@ class SquadController extends Controller
         return $res;
     }
 
-    public function getCallbackLogs(Request $request){
+    public function getCallbackLogs(Request $request)
+    {
         // get it
         $provider = PaymentGateway::where('id', 2)->first();
-        
+
         $this->api = $provider;
         $url = $this->api->base_url . 'virtual-account/webhook/logs';
         $response = $this->makeCall($url, [], 'GET');
-        
-        if(env('ENT') == 'local'){
+
+        if (env('ENT') == 'local') {
             $response = $this->dummyWebhookError();
         }
-        
+
         if (isset($response['status']) && isset($response['message']) && $response['success'] == true && $response['message'] == 'Success') {
-            if(isset($response['data']['count']) && $response['data']['count'] > 0){
-    
-                foreach($response['data']['rows'] as $row){
-                    if(isset($row['payload'])){
+            if (isset($response['data']['count']) && $response['data']['count'] > 0) {
+
+                foreach ($response['data']['rows'] as $row) {
+                    if (isset($row['payload'])) {
                         $data = $row['payload'];
                         $reqs = new Request($data);
                         $new = new PaymentController($this->api);
                         $res = $new->dumpCallback($reqs, $this->api->id, 'yes');
 
-                        if(isset($res['message'])){
-                            $url = $this->api->base_url . 'virtual-account/webhook/logs/'. $data['transaction_reference'];
+                        if (isset($res['message'])) {
+                            $url = $this->api->base_url . 'virtual-account/webhook/logs/' . $data['transaction_reference'];
                             $response2 = $this->makeCall($url, [], 'DELETE');
                         }
                     }
                 }
-            }   
+            }
         }
 
         return back()->with('message', 'Log pulled successfully');
@@ -301,7 +305,7 @@ class SquadController extends Controller
     public function makeCall($url, $payload, $method = 'POST')
     {
         $curl = curl_init();
-        
+
         if ($method == 'POST') {
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $url,
@@ -353,7 +357,6 @@ class SquadController extends Controller
                     "Authorization: Bearer " . $this->api->secret_key . ""
                 ),
             ));
-
         }
 
         $response = curl_exec($curl);
@@ -362,7 +365,7 @@ class SquadController extends Controller
         \Log::info($response);
 
         curl_close($curl);
-        
+
         return json_decode($response, true);
     }
 
@@ -378,40 +381,41 @@ class SquadController extends Controller
      * Retrieve VA details using the customer identifier
      * GET: https://sandbox-api-d.squadco.com/virtual-account/{{customer_identifier}}
      */
-    public function dummyWebhookError(){
+    public function dummyWebhookError()
+    {
         return [
-                "status" => 200,
-                "success" => true,
-                "message" => "Success",
-                "data" => [
-                    "count" => 2,
-                    "rows" => [
-                        [
-                            "id" => "229f9f3d-53e4-450e-a9e9-164a8b882a60",
-                            "payload" => [
-                                "hash" => "659c24ba0b6c3ac324b587f2f079c8ee876c56609ff11b7106cd868f84674a5c37fcb088373859f8d900713f03c47d819de79623cde67e70bbca945fd20f3cb3",
-                                "meta" => [
-                                    "freeze_transaction_ref" => null,
-                                    "reason_for_frozen_transaction" => null
-                                ],
-                                "channel" => "virtual-account",
-                                "remarks" => "Transfer FROM OKOYE, CHIZOBA ANTHONY | [CCtyttytC] TO CHIZOBA ANTHONY OKOYE",
-                                "currency" => "NGN",
-                                "fee_charged" => "0.05",
-                                "sender_name" => "OKOYE, CHIZOBA ANTHONY",
-                                "encrypted_body" => "DiPEa8Z4Cbfiqulhs3Q8lVJXGjMIFzbWwI2g7utVGbhXihbtK3H2xsA/+ZnjOpFA0AU8vAN5LUTEH6elfrK58ub2wydaRk0ngvQXWUFz3iB19qWBcdGQRnppKAT/AB5xyy1iQZvEHP7zq3Y7na5zcx9ttkU1mZIeAIoisM9k+ghVLxkTeql4UvfFcLyDdGzMd/BC4YgJFyrZxifhfhKi073od7xJnz4Hhz08UBE/FAwNYMWkwWD9izlbcaaJtfh1VIN6t9rl1gotlb5qmNq/UytgoSvuN5uaEXxegdB3VWvmsDMHqoYwDs4oEuv0lp8zUUG3cZ9zPQ6xH3shGQjVOWErkuIfCk62fRzkwxya4Gu/x2KHMSQjutbvD4vNDjVGfuCIoHuZEXPThWrq1jpTy7cNMLc8ZZ8IowJnfwWHL+O6fuepxXxfrJHlswMCI35ZHSvef1AEXgbUlx2O7yzytceCogpUkY+QJ1yLddl1FeE1u2JKOM+casP3pfiT+t3Mv55aSCVQO7hUy46gd6H/bIHaSIp2K3CcjfdflZ/bxCZaZoe/sRqfVdVIzpSpTc0Lq5sOXM2gijOdeg+zex/CgnMIKGJdzUT9YUJtaaVrMmhk0EcM0rHRrqs0iM7xaSTdZ7K8hnzl0RPJhDXIhu5a/Y2NxS3ZTC2lYRVZd6I3lerpoMQG69VfmqvaVgW2k03f",
-                                "settled_amount" => "49.95",
-                                "principal_amount" => "50.00",
-                                "transaction_date" => "2023-09-01T00:00:00.000Z",
-                                "customer_identifier" => "CCtyttytC",
-                                "transaction_indicator" => "C",
-                                "transaction_reference" => "REF20230901162737156459_1",
-                                "virtual_account_number" => "0760640237"
+            "status" => 200,
+            "success" => true,
+            "message" => "Success",
+            "data" => [
+                "count" => 2,
+                "rows" => [
+                    [
+                        "id" => "229f9f3d-53e4-450e-a9e9-164a8b882a60",
+                        "payload" => [
+                            "hash" => "659c24ba0b6c3ac324b587f2f079c8ee876c56609ff11b7106cd868f84674a5c37fcb088373859f8d900713f03c47d819de79623cde67e70bbca945fd20f3cb3",
+                            "meta" => [
+                                "freeze_transaction_ref" => null,
+                                "reason_for_frozen_transaction" => null
                             ],
-                            "transaction_ref" => "REF20230901162737156459_1"
-                        ]
+                            "channel" => "virtual-account",
+                            "remarks" => "Transfer FROM OKOYE, CHIZOBA ANTHONY | [CCtyttytC] TO CHIZOBA ANTHONY OKOYE",
+                            "currency" => "NGN",
+                            "fee_charged" => "0.05",
+                            "sender_name" => "OKOYE, CHIZOBA ANTHONY",
+                            "encrypted_body" => "DiPEa8Z4Cbfiqulhs3Q8lVJXGjMIFzbWwI2g7utVGbhXihbtK3H2xsA/+ZnjOpFA0AU8vAN5LUTEH6elfrK58ub2wydaRk0ngvQXWUFz3iB19qWBcdGQRnppKAT/AB5xyy1iQZvEHP7zq3Y7na5zcx9ttkU1mZIeAIoisM9k+ghVLxkTeql4UvfFcLyDdGzMd/BC4YgJFyrZxifhfhKi073od7xJnz4Hhz08UBE/FAwNYMWkwWD9izlbcaaJtfh1VIN6t9rl1gotlb5qmNq/UytgoSvuN5uaEXxegdB3VWvmsDMHqoYwDs4oEuv0lp8zUUG3cZ9zPQ6xH3shGQjVOWErkuIfCk62fRzkwxya4Gu/x2KHMSQjutbvD4vNDjVGfuCIoHuZEXPThWrq1jpTy7cNMLc8ZZ8IowJnfwWHL+O6fuepxXxfrJHlswMCI35ZHSvef1AEXgbUlx2O7yzytceCogpUkY+QJ1yLddl1FeE1u2JKOM+casP3pfiT+t3Mv55aSCVQO7hUy46gd6H/bIHaSIp2K3CcjfdflZ/bxCZaZoe/sRqfVdVIzpSpTc0Lq5sOXM2gijOdeg+zex/CgnMIKGJdzUT9YUJtaaVrMmhk0EcM0rHRrqs0iM7xaSTdZ7K8hnzl0RPJhDXIhu5a/Y2NxS3ZTC2lYRVZd6I3lerpoMQG69VfmqvaVgW2k03f",
+                            "settled_amount" => "49.95",
+                            "principal_amount" => "50.00",
+                            "transaction_date" => "2023-09-01T00:00:00.000Z",
+                            "customer_identifier" => "CCtyttytC",
+                            "transaction_indicator" => "C",
+                            "transaction_reference" => "REF20230901162737156459_1",
+                            "virtual_account_number" => "0760640237"
+                        ],
+                        "transaction_ref" => "REF20230901162737156459_1"
                     ]
-                ],
-            ];            
+                ]
+            ],
+        ];
     }
 }

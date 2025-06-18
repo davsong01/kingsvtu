@@ -63,7 +63,9 @@ class PaymentGatewayController extends Controller
             "base_url" => "nullable",
             "status" => "nullable",
             "charge" => "required",
-            "reserved_account_payment_charge" => "nullable"
+            "charge_cap" => "nullable",
+            "reserved_account_payment_charge" => "nullable",
+            "reserved_account_payment_charge_cap" => "nullable"
         ]);
 
         $paymentgateway->update([
@@ -79,7 +81,9 @@ class PaymentGatewayController extends Controller
             "base_url" => $request->base_url,
             "status" => $request->status,
             "charge" => $request->charge,
+            "charge_cap" => $request->charge_cap,
             "reserved_account_payment_charge" => $request->reserved_account_payment_charge,
+            "reserved_account_payment_charge_cap" => $request->reserved_account_payment_charge_cap,
         ]);
 
         return back()->with('message', 'Updated successfully');

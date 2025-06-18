@@ -56,11 +56,14 @@ if (!function_exists("extractKeyValuesFromMultiDimensionalArray")) {
 if (!function_exists("calculatePaymentGatewayReservedAccountCharge")) {
     function calculatePaymentGatewayReservedAccountCharge($data, $amount)
     {
-        if ($data['type'] == 'flat') {
-            $charge = $data['value'];
-        } else {
-            $charge =  $data['value'] / 100 * $amount;
+        $charge = $data['type'] === 'flat'
+            ? $data['value']
+            : ($data['value'] / 100) * $amount;
+
+        if (isset($data['cap']) && is_numeric($data['cap'])) {
+            return $charge > $data['cap'] ? $data['cap'] : $charge;
         }
+
         return $charge;
     }
 }
@@ -83,7 +86,8 @@ if (!function_exists("getPaymentGatewayReservedAccountCharge")) {
         return [
             'type' => $type,
             'value' => $charge,
-            'display_value' => $display_value
+            'display_value' => $display_value,
+            'cap' => $gateway->reserved_account_payment_charge_cap,
         ];
     }
 }
