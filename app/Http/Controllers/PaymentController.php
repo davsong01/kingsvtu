@@ -282,7 +282,7 @@ class PaymentController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            dump($th->getMessage(), $th->getFile(), $th->getLine());
+            \Log::info(json_encode($th->getMessage(), $th->getFile(), $th->getLine()));
         }
     }
 
