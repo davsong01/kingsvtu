@@ -105,7 +105,6 @@ class PaymentController extends Controller
             $paid_on = Carbon::parse($request['timestamp']);
         }
 
-        \Log::info(['Webhook' => $request->all()]);
         $check = ReservedAccountCallback::where(['session_id' => $session_id, 'transaction_reference' => $transaction_reference])->first();
         
         if (!$check) {

@@ -360,9 +360,6 @@ class SquadController extends Controller
         }
 
         $response = curl_exec($curl);
-        \Log::info($url);
-        \Log::info(json_encode($payload));
-        \Log::info($response);
 
         curl_close($curl);
 

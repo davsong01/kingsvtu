@@ -719,7 +719,6 @@ class EasyAccessController extends Controller
                 'extras' => $extras ?? null
             ];
         } catch (\Throwable $th) {
-            \Log::info($th->getMessage() . ' Line' . $th->getLine() . ' File:' . $th->getFile());
             
             $format = [
                 'status' => 'attention-required',

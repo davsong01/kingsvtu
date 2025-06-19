@@ -43,7 +43,6 @@ class Controller extends BaseController
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $response = curl_exec($ch);
-        // \Log::info(['response' => $response, 'request' => $payload, 'url' => $url]);
         
         return json_decode($response, true);
     }
@@ -260,7 +259,6 @@ class Controller extends BaseController
         // Check how many have been sent within the hour
         $sentWithinTheHour = EmailLog::where('status', 'sent')->whereBetween('sent_at', [$oneHourAgo, now()])->count();
       
-        // \Log::info('Emails sending start at: ' .now());
         if ($sentWithinTheHour >= $hourlyRate) {
             \Log::info(now() . ' : Hourly email rate exceeded on server. ' . $sentWithinTheHour . ' emails already sent this hour');
             echo ('Hourly email rate exceeded on server. ' . $sentWithinTheHour . ' emails already sent this hour');
