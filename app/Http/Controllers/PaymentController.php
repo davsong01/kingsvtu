@@ -147,14 +147,14 @@ class PaymentController extends Controller
             $tlk = 'PICKED-' . time();
             $ids = array_column($calls, 'id');
             ReservedAccountCallback::whereIn('id', $ids)->update(['status' => $tlk]);
-            
+
             $calls = ReservedAccountCallback::where(['status' => $tlk])->get();
 
             foreach ($calls as $call) {
                 $decodeCall = json_decode($call->raw, true);
                 $account = ReservedAccountNumber::with('customer')->where('account_number', $call->account_number)->first();
                 $provider = PaymentGateway::where('id', $call->provider_id)->first();
-                
+
                 if (!$account) {
                     ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-account']);
                     continue;
@@ -171,7 +171,7 @@ class PaymentController extends Controller
 
                         continue;
                     }
-                    
+
                     $monnify = new MonnifyController($provider);
                     $analyze = $monnify->verifyTransaction($call->transaction_reference);
 
@@ -179,7 +179,7 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(' . $decodeCall['eventData']['paymentMethod'] . ')';
-                        
+
                         $original_amount = $analyze['data']['amountPaid'] ?? $decodeCall['eventData']['amountPaid'];
 
                         $transaction_id = $analyze['data']['transactionReference'] ?? $decodeCall['eventData']['transactionReference'];
@@ -196,7 +196,7 @@ class PaymentController extends Controller
 
                     if (isset($analyze) && $analyze['status'] == 'success') {
                         $payment_method = $provider->name . '(BANK_TRANSFER)';
-                        
+
                         $original_amount = $analyze['data']['principal_amount'];
                         $transaction_id = $analyze['data']['transactionReference'] ?? $call->transaction_reference;
                     } else {
@@ -206,17 +206,19 @@ class PaymentController extends Controller
 
                 if ($call->provider_id == 3) {
                     $paymentpoint = new PaymentPointController($provider);
-                    // $analyze = $paymentpoint->verifySignature($call->transaction_reference);
-                    $analyze['status'] = 'success';
-                    ReservedAccountCallback::where('id', $call->id)->update(['raw_requery' => json_encode($analyze['data'])]);
 
-                    if (isset($analyze) && $analyze['status'] == 'success') {
-                        $payment_method = $provider->name . '(BANK_TRANSFER)';
+                    $analyze = [
+                        'status' => 'success',
+                        'data'   => json_decode($call->raw, true),
+                    ];
 
-                        $original_amount = $analyze['data']['provider_response']['transaction_final_amount'];
-                        $transaction_id = $analyze['data']['provider_response']['reference'];
+                    if ($analyze['status'] === 'success') {
+                        $payment_method    = $provider->name . ' (BANK_TRANSFER)';
+                        $original_amount   = $analyze['data']['amount_paid'] ?? 0;
+                        $transaction_id    = $analyze['data']['transaction_id'] ?? null;
                     } else {
-                        ReservedAccountCallback::whereIn('id', $ids)->update(['status' => 'no-payment']);
+                        ReservedAccountCallback::whereIn('id', $ids)
+                            ->update(['status' => 'no-payment']);
                     }
                 }
 
@@ -255,7 +257,7 @@ class PaymentController extends Controller
                     $request['api_id'] = $provider->id;
 
                     $transaction =  app('App\Http\Controllers\TransactionController')->logTransaction($request);
-                    
+
                     $transaction->update([
                         'balance_after' => $balance + $amount,
                         'status' => 'delivered',
@@ -282,7 +284,7 @@ class PaymentController extends Controller
             }
         } catch (\Throwable $th) {
             DB::rollBack();
-            \Log::info(json_encode($th->getMessage(), $th->getFile(), $th->getLine()));
+            \Log::info($th->getMessage() . $th->getFile() . $th->getLine());
         }
     }
 
