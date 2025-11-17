@@ -88,12 +88,7 @@ class Controller extends BaseController
         }
 
         $path = ENV('IMAGE_UPLOAD_PATH');
-        // if (env('ENT') == 'local') {
-        // } else {
-        //     $path = '/home/kingntxc/portal.kingsvtu.ng';
-        // }
 
-        // 
         if (!is_dir($path . '/' . $location)) {
             mkdir($path . '/' . $location, 0777, true);
         }

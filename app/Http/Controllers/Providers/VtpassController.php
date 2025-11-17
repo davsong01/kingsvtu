@@ -10,7 +10,8 @@ class VtpassController extends Controller
 {
     public function getVariations($product)
     {
-        $url = env('ENV') != 'local' ? $product->api->sandbox_base_url : $product->api->live_base_url;
+        $url = env('ENV') == 'local' ?  $product->api->sandbox_base_url :  $product->api->live_base_url;
+
         $url = $url . "service-variations?serviceID=" . $product->slug;
 
         $headers = [
@@ -19,9 +20,8 @@ class VtpassController extends Controller
             'api_key' => $product->api->api_key,
             'public_key' => $product->api->public_key,
         ];
-
         $variations = $this->basicApiCall($url, [], $headers, 'GET');
-
+        
         if (isset($variations['response_description']) && $variations['response_description'] == '000') {
 
             $variations = $variations['content']['variations'] ?? $variations['content']['varations'];

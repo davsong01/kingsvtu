@@ -66,12 +66,12 @@ class VariationController extends Controller
                 foreach ($level as $k => $price) {
                     Discount::updateOrCreate([
                         'customer_level' => $key,
-                        'product_id' => $request->product_id,
+                        'product_id' => $request->product_id ?? $request->product,
                         'variation_id' => $k,
                     ], [
                         'status' => 'active',
                         'customer_level' => $key,
-                        'product_id' => $request->product_id,
+                        'product_id' => $request->product_id ?? $request->product,
                         'variation_id' => $k,
                         'price' => $price ?? 0
                     ]);

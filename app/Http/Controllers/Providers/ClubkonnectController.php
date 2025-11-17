@@ -839,6 +839,7 @@ class ClubkonnectController extends Controller
             $url = $api->live_base_url. "APIWalletBalance.asp?UserID=".$api->secret_key."&APIKey=".$api->api_key;
 
             $response = $this->basicApiCall($url, [], [], 'GET');
+            
             // if (env('ENT') == 'local') {
             //     $response = [
             //         'date' => '20th-Aug-2024',
@@ -890,7 +891,7 @@ class ClubkonnectController extends Controller
     {
         $api = $transaction->api;
         $decoded_response = !empty($transaction->api_response) ? json_decode($transaction->api_response) : $transaction->api_response;
-
+        
         if(empty($decoded_response->orderid)){
             $format = [
                 'status' => 'failed',
@@ -903,10 +904,9 @@ class ClubkonnectController extends Controller
             ];
             
             return $format;
-
         }
 
-        $request_id = $decoded_response->orderid;
+        $request_id = $decoded_response->orderid ?? null;
 
         $url = $api->live_base_url . 'APIQuery.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&OrderID=' . $request_id;
         
