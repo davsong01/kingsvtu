@@ -384,7 +384,7 @@ class CustomerController extends Controller
             $firstname = $input['FIRST_NAME'] ?? null;
             $lastname = $input['LAST_NAME'] ?? null;
             $middlename = $input['MIDDLE_NAME'] ?? null;
-
+            
             $user->update([
                 "firstname" => $firstname ?? $user->firstname,
                 "middlename" => $middlename ?? $user->middlename,

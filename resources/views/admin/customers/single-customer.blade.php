@@ -347,10 +347,10 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('PHONE_NUMBER', $user->customer->id)['status'] == 'verified')
                                                                 <label for="PHONE_NUMBER">Phone Number</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
-                                                                <input type="text" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] }}">
+                                                                <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] ??  $user->customer->id }}">
                                                                 @else
-                                                                <label for="lastname">Phone Number</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
-                                                                <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $user->phone }}">
+                                                                <label for="PHONE_NUMBER">Phone Number</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                                <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ kycStatus('PHONE_NUMBER', $user->customer->id)['value'] ?? $user->phone }}">
                                                                 @endif
                                                             </fieldset>
                                                         </div>
@@ -409,7 +409,7 @@ use App\Models\BlackList;
                                                                 <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
                                                                 <input type="date" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}">
                                                                 @else
-                                                                <label for="lastname">Date of Birth (As associated with BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
+                                                                <label for="DOB">Date of Birth (As associated with BVN)</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="date" name="DOB" class="form-control" value="{{ kycStatus('DOB', $user->customer->id)['value'] }}" required>
                                                                 @endif
                                                             </fieldset>
@@ -434,11 +434,11 @@ use App\Models\BlackList;
                                                             <fieldset class="form-group">
                                                                 @if(kycStatus('IDCARD', $user->customer->id)['status'] == 'verified')
                                                                 <label for="IDCARD">ID Card</label><span class="verified"><i class="fa fa-check"></i> verified</span> <br>
-                                                                <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value']) }}" onclick="zoomImg(this)">
                                                                 @else
                                                                 <label for="IDCARD">ID Card</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <input type="file" name="IDCARD"  class="form-control" value="{{ asset(kycStatus('IDCARD', $user->customer->id)['value']) }}" required>
                                                                 @endif
+                                                                <img style="width: 60px;cursor:zoom-in;" src="{{asset(kycStatus('IDCARD', $user->customer->id)['value'] ?? '') }}" onclick="zoomImg(this)">
                                                             </fieldset>
                                                         </div>
                                                         <div class="col-md-6">
