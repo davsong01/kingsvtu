@@ -379,16 +379,16 @@ class CustomerController extends Controller
                 $items += 1;
             }
         }
-
+        
         if ($items == count($input)) {
-            $firstname = $input['FIRST_NAME'];
-            $lastname = $input['LAST_NAME'];
-            $middlename = $input['MIDDLE_NAME'];
+            $firstname = $input['FIRST_NAME'] ?? null;
+            $lastname = $input['LAST_NAME'] ?? null;
+            $middlename = $input['MIDDLE_NAME'] ?? null;
 
             $user->update([
-                "firstname" => $firstname,
-                "middlename" => $middlename,
-                "lastname" => $lastname,
+                "firstname" => $firstname ?? $user->firstname,
+                "middlename" => $middlename ?? $user->middlename,
+                "lastname" => $lastname ?? $user->lastname,
             ]);
         }
 
