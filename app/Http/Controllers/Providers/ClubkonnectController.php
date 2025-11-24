@@ -753,14 +753,27 @@ class ClubkonnectController extends Controller
         } elseif (Str::contains($slug, '9mobile') || Str::contains($slug, 'etisalat')) {
             $network = '03';
         }
-        
-        if($product->category->slug == 'airtime'){
-            $url = $api->live_base_url . 'APIBuyAirTime.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&Amount=' . $request['amount'] . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['external_reference_id'] . '&CallBackURL='.url('/').'/log-purchase-callback/'.$api->id;
-        }elseif($product->category->slug == 'data'){
-            $url = $api->live_base_url . 'APIDatabundleV1.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&MobileNetwork=' . $network . '&DataPlan=' . $datasize . '&MobileNumber=' . $request['unique_element'] . '&OrderID=' . $request['external_reference_id'] . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
-            //  https://www.nellobytesystems.com/APIDatabundleV1.asp?UserID=CK11&APIKey=123&MobileNetwork=01&DataPlan=1000&MobileNumber=08149659347&CallBackURL=http://www.your-websiite.com
+
+        if ($product->category->slug == 'airtime') {
+            $url = $api->live_base_url . 'APIAirtimeV1.asp?UserID=' . $api->secret_key
+                . '&APIKey=' . $api->api_key
+                . '&MobileNetwork=' . $network
+                . '&Amount=' . $request['amount']
+                . '&MobileNumber=' . $request['unique_element']
+                . '&OrderID=' . $request['external_reference_id']
+                . '&RequestID=' . $request['external_reference_id']
+                . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
+        } elseif ($product->category->slug == 'data') {
+            $url = $api->live_base_url . 'APIDatabundleV1.asp?UserID=' . $api->secret_key
+                . '&APIKey=' . $api->api_key
+                . '&MobileNetwork=' . $network
+                . '&DataPlan=' . $datasize
+                . '&MobileNumber=' . $request['unique_element']
+                . '&OrderID=' . $request['external_reference_id']
+                . '&RequestID=' . $request['external_reference_id']
+                . '&CallBackURL=' . url('/') . '/log-purchase-callback/' . $api->id;
         }
-        
+
         $payload = $url;
         
         $response = $this->basicApiCall($url, [], [], 'GET');
@@ -908,7 +921,7 @@ class ClubkonnectController extends Controller
 
         $request_id = $decoded_response->orderid ?? null;
 
-        $url = $api->live_base_url . 'APIQuery.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&OrderID=' . $request_id;
+        $url = $api->live_base_url . 'APIQueryV1.asp?UserID=' . $api->secret_key . '&APIKey=' . $api->api_key . '&OrderID=' . $request_id;
         
         $curl = curl_init();
 

@@ -321,7 +321,7 @@ class MobileNigController extends Controller
             ];
             
             $response = $this->basicApiCall($url, [], $headers, 'GET');
-
+            dd($url, $response, $headers);
             if (isset($response['message']) && $response['message'] == "success" && !empty($response['details'])) {
                 $balance = '#' . number_format($response['details']['balance'], 2);
             
