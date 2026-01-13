@@ -73,9 +73,15 @@ class MobileNigController extends Controller
 
             $response = $this->basicApiCall($url, json_encode($payload), $headers, 'POST');
 
-            // \Log::info('MobileNigController');
-            // \Log::info(['payload' => $payload, 'url' => $url]);
-            // \Log::info(['response' => $response]);
+            \Log::info(
+                json_encode([
+                    'endpoint' => $url,
+                    'headers' => $headers,
+                    'payload' => $payload,
+                    'response' => $response, 
+                ])
+            );
+            
             // if($product->slug == 'data'){
             // }
             if (isset($response['statusCode']) && in_array($response['statusCode'], ['200', '201','202']) && $response['message'] == 'success') {
