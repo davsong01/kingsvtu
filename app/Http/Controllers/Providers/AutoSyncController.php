@@ -405,7 +405,7 @@ class AutoSyncController extends Controller
 
             $payloadJson = json_encode($payload);
 
-            $res = env('ENT') === 'live'
+            $res = env('ENT') === 'local'
                 ? $this->dummySuccess()
                 : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
 
