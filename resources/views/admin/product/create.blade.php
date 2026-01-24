@@ -146,7 +146,7 @@
                                                                                     </select>
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">
-                                                                                    <label for="servercode">Server Code/Server Token</label>
+                                                                                    <label for="servercode">Server Code/Server Token/Product CODE</label>
                                                                                     <input type="text" class="form-control" name="servercode" placeholder="Enter servercode" id="servercode" value="{{ old('servercode')}}">
                                                                                 </fieldset>
                                                                                 <fieldset class="form-group">

@@ -2,12 +2,13 @@
 /node_modules
 /public/build
 /public/hot
+/public/logs
 /public/storage
 /storage/*.key
 /vendor
-/public
+# /public*
+# /public
 .env
-composer.lock
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -19,4 +20,3 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/storage/*

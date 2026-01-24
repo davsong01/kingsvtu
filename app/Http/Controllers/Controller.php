@@ -86,7 +86,8 @@ class Controller extends BaseController
         } else {
             $location = $year . '/' . $month . '/' . $day;
         }
-
+        $location = 'uploads/'.$location;
+        
         $path = ENV('IMAGE_UPLOAD_PATH');
 
         if (!is_dir($path . '/' . $location)) {

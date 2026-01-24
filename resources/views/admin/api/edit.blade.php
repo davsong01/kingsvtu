@@ -87,7 +87,7 @@
                                                         <input type="text" class="form-control" name="api_key" value="{{ $api->api_key }}" placeholder="Enter api key" id="api_key">
                                                     </fieldset>
                                                     <fieldset class="form-group">
-                                                        <label for="secret_key">Secret/Device Key</label>
+                                                        <label for="secret_key">Secret/Device Key/Transaction PIN</label>
                                                         <input type="text" class="form-control" name="secret_key" value="{{ $api->secret_key }}" placeholder="Enter secret key" id="secret_key">
                                                     </fieldset>
                                                     <fieldset class="form-group">
@@ -96,8 +96,7 @@
                                                     </fieldset>
                                                 </div>
                                                 <div class="col-md-12">
-                                                <button class="btn btn-primary" type="submit">Update</button>
-    
+                                                    <button class="btn btn-primary" type="submit">Update</button>
                                                 </div>
                                             </div>
                                         </form>

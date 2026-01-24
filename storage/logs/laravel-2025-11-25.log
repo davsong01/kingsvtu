@@ -1,0 +1,1 @@
+[2025-11-25 10:54:53] local.INFO: {"endpoint":"https:\/\/enterprise.mobilenig.com\/api\/v2\/services\/","headers":["Content-Type: application\/json","Authorization: Bearer sk_live_10WMsJlAAdrGtHDIcRXjGmAvW36hVkvfCW2KxXkrbkE="],"payload":{"trans_id":"202511251054356","phoneNumber":"08080232323","amount":"50","service_id":"BAB","service_type":"PREMIUM"},"response":null}  
