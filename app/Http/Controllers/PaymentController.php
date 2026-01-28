@@ -380,13 +380,6 @@ class PaymentController extends Controller
     }
 
     public function dumpPurchaseCallback(Request $request, $provider_id){
-        \Log::info([
-            'Purchase Callback' => [
-                    'provider_id' => $provider_id,
-                    'data' => $request->all(),
-            ],
-        ]);
-
-        return app(WebhookService::class)->analyzeWebhookResponse($request, $provider_id);
+        return app(WebhookService::class)->logWebhookResponse($request, $provider_id);
     }
 }

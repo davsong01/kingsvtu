@@ -280,11 +280,9 @@ class AutoSyncController extends Controller
 
             $payloadJson = json_encode($payload);
 
-            $res = env('ENT') === 'live'
+            $res = env('ENT') === 'local'
                 ? $this->dummySuccess()
                 : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
-
-            // \Log::info($res);
 
             $status = $res['data']['transaction']['status'] ?? 'attention-required';
             return $this->formatResponse($status, $res, $payloadJson);
@@ -424,6 +422,30 @@ class AutoSyncController extends Controller
         }
 
         return $format;
+    }
+
+    public function verifyWebhookSignature(Request $request)
+    {
+        $reference = $request->input('transaction.reference');
+        
+        if (!$reference || !$request->has('hash')) {
+            return ['status' => false, 'message' => 'Missing reference or hash'];
+        }
+
+        $hash = hash('sha256', sprintf('%s:%s', '1234', $reference));
+        
+        if (!hash_equals($request->input('hash'), $hash)) {
+            return ['status' => false, 'message' => 'Invalid signature'];
+        }
+
+        return [
+            'status' => true,
+            'reference' => $reference
+        ];
+    }
+
+    public function analyzeWebhookResponse(){
+
     }
 
     public function dummySuccess(){
