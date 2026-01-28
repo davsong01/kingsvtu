@@ -12,6 +12,7 @@ use App\Models\ReservedAccountCallback;
 use App\Http\Controllers\PaymentProcessors\SquadController;
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
 use App\Http\Controllers\PaymentProcessors\PaymentPointController;
+use App\Services\WebhookService;
 
 class PaymentController extends Controller
 {
@@ -385,5 +386,7 @@ class PaymentController extends Controller
                     'data' => $request->all(),
             ],
         ]);
+
+        return app(WebhookService::class)->analyzeWebhookResponse($request, $provider_id);
     }
 }

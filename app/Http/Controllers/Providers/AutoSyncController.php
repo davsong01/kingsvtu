@@ -218,131 +218,6 @@ class AutoSyncController extends Controller
         }
     }
 
-    // function query($request, $api, $variation, $product)
-    // {
-        
-    //     $slug = $request['product_slug'];
-    //     $slug = strtolower($slug);
-        
-    //     if (str_contains($slug, 'mtn') && str_contains($product->category->slug, 'airtime')) {
-    //         $product_code = 'mtn';
-    //     }
-
-    //     if (str_contains($slug, 'airtel') && str_contains($product->category->slug, 'airtime')) {
-    //         $product_code = 'airtel';
-    //     }
-
-    //     if ((str_contains($slug, '9mobile') || str_contains($slug, 'etisalat')) && str_contains($product->category->slug, 'airtime')) {
-    //         $product_code = '9mobile';
-    //     }
-
-    //     if (str_contains($slug, 'glo') && str_contains($product->category->slug, 'airtime')) {
-    //         $product_code = 'glo';
-    //     }
-
-    //     try {
-    //         if (str_contains($product->category->slug, 'data')){
-    //             $url = $api->live_base_url . 'data';
-    //             $payload = [
-    //                 "request_ref" => $this->generateRequestId(),
-    //                 "phone" => $request['unique_element'],
-    //                 "product_id" => $product->servercode ?? $product_code,
-    //                 "variation_code" => $variation->api_code ?? $variation->slug,
-    //                 "webhook_url" => route('log.purchase.callback', $product->api_id),
-    //                 "ported_no" => false,
-    //                 "pin" => $product->api->secret_key 
-    //             ];
-    //         }
-            
-    //         if (str_contains($product->category->slug, 'airtime')) {
-    //             $url = $api->live_base_url . 'airtime';
-    //             $payload = [
-    //                 "request_ref" => $this->generateRequestId(),
-    //                 "phone" => $request['unique_element'],
-    //                 "product_id" => $product->servercode, // Product ID
-    //                 "amount" => $request['amount'],
-    //                 "is_mtn_awuf" => false,
-    //                 "webhook_url" => route('log.purchase.callback', $product->api_id),
-    //                 "ported_no" => false,
-    //                 "pin" => $product->api->secret_key 
-    //             ];
-    //         }
-
-    //         if ($product->has_variations == 'yes') {
-    //             $variation = $variation;
-    //         } else {
-    //             $variation = $product;
-    //         }
-
-    //         // Login
-    //         $headers = [
-    //             'Content-Type: application/json',
-    //             'Authorization: Bearer ' . $api->api_key,
-    //         ];
-            
-    //         $payload = json_encode($payload);
-    //         $res = $this->basicApiCall($url, $payload, $headers, 'POST');
-            
-    //         if(env('ENT') == 'local'){
-    //             $res = $this->dummySuccess();
-    //         }
-
-    //         $res = json_decode($res, true);
-            
-    //         $status = $res['data']['transaction']['status'] ?? 'attention-required';
-
-    //         if ($status == 'successful') {
-    //             $format = [
-    //                 'status' => 'delivered',
-    //                 'user_status' => 'delivered',
-    //                 'api_response' => json_encode($res),
-    //                 'description' => 'Transaction successful',
-    //                 'message' => $res['data']['msg'] ?? null,
-    //                 'payload' => $payload,
-    //                 'status_code' => 1,
-    //                 'extras' => null,
-    //             ];
-    //         } elseif($status == 'pending') {
-    //             $format = [
-    //                 'status' => 'attention-required',
-    //                 'user_status' => 'completed',
-    //                 'api_response' => isset($res) ? json_encode($res) : '',
-    //                 'description' => 'Transaction completed',
-    //                 'message' => $res['message'] ?? null,
-    //                 'payload' => $payload ?? '',
-    //                 'status_code' => 2,
-    //                 'failure_reason' => $res['message'] ?? 'Unknown Reason',
-    //                 'extras' => null,
-    //             ];
-    //         } elseif($status == 'failed'){
-    //             $format = [
-    //                 'status' => 'failed',
-    //                 'user_status' => 'failed',
-    //                 'api_response' => isset($res) ? json_encode($res) : '',
-    //                 'description' => 'Transaction completed',
-    //                 'message' => $res['message'] ?? null,
-    //                 'payload' => $payload,
-    //                 'status_code' => 0,
-    //                 'failure_reason' => $res['message'] ?? 'Unknown Reason',
-    //                 'extras' => null,
-    //             ];
-    //         }
-            
-    //         return $format;
-    //     } catch (\Throwable $th) {
-    //         return [
-    //             'status' => 'attention-required',
-    //             'user_status' => 'completed',
-    //             'api_response' => isset($res) ? json_encode($res) : '',
-    //             'description' => 'Transaction completed',
-    //             'message' => $res['message'] ?? null,
-    //             'payload' => $payload ?? '',
-    //             'status_code' => 2,
-    //             'failure_reason' => $th->getMessage().' Line: '.$th->getLine(). ' File: '.$th->getFile(),
-    //             'extras' => null,
-    //         ];
-    //     }
-    // }
     function query($request, $api, $variation, $product)
     {
         try {
@@ -405,10 +280,12 @@ class AutoSyncController extends Controller
 
             $payloadJson = json_encode($payload);
 
-            $res = env('ENT') === 'local'
+            $res = env('ENT') === 'live'
                 ? $this->dummySuccess()
                 : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
 
+            \Log::info($res);
+            
             $status = $res['data']['transaction']['status'] ?? 'attention-required';
             return $this->formatResponse($status, $res, $payloadJson);
 
