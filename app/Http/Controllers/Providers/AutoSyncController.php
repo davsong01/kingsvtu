@@ -284,8 +284,8 @@ class AutoSyncController extends Controller
                 ? $this->dummySuccess()
                 : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
 
-            \Log::info($res);
-            
+            // \Log::info($res);
+
             $status = $res['data']['transaction']['status'] ?? 'attention-required';
             return $this->formatResponse($status, $res, $payloadJson);
 
