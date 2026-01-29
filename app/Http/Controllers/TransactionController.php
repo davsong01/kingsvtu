@@ -900,7 +900,7 @@ class TransactionController extends Controller
     //         }
     //     }
     // }
-    public function referralReward(User $downline, float $amount, string $transactionId, float $referralPercentage): void
+    public function referralReward(User $downline, float $amount, string $transactionId, $referralPercentage = null): void
     {
         if (empty($referralPercentage) || $referralPercentage <= 0) {
             return;
