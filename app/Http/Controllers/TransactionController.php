@@ -20,6 +20,7 @@ use App\Services\ExcelService;
 use App\Models\ReferralEarning;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\ReservedAccountCallback;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
