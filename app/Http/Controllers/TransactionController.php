@@ -229,13 +229,15 @@ class TransactionController extends Controller
             DB::beginTransaction();
             
             if (isset($query) && $query['status_code'] == 1) { // Success
-            
-                $this->referralReward(
-                    $user,
-                    $total_amount,
-                    $transactionId,
-                    $product->referral_percentage
-                );
+                try {
+                    $this->referralReward(
+                        $user,
+                        $total_amount,
+                        $transactionId,
+                        $product->referral_percentage
+                    );
+                    //code...
+                } catch (\Throwable $th) {}
 
                 $user_status   = 'success';
                 $balance_after = $balance_before - $total_amount;
@@ -900,7 +902,7 @@ class TransactionController extends Controller
     //         }
     //     }
     // }
-    public function referralReward(User $downline, float $amount, string $transactionId, $referralPercentage = null): void
+    public function referralReward($downline, $amount, string $transactionId, $referralPercentage = null): void
     {
         if (empty($referralPercentage) || $referralPercentage <= 0) {
             return;
