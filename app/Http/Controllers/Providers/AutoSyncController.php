@@ -245,6 +245,7 @@ class AutoSyncController extends Controller
             }
 
             $requestRef = $request['external_reference_id'];
+            $productCode =  $product->servercode ?? $product_code;
 
             if (str_contains($categorySlug, 'data')) {
                 $url = $api->live_base_url . 'data';
@@ -252,7 +253,7 @@ class AutoSyncController extends Controller
                 $payload = [
                     "request_ref"   => $requestRef,
                     "phone"         => $request['unique_element'],
-                    "product_id"    => $product->servercode ?? $product_code,
+                    "product_id"    => $productCode,
                     "variation_code"=> $variation->api_code ?? $variation->slug,
                     "webhook_url"   => route('log.provider.callback', $product->api_id),
                     "ported_no"     => false,
@@ -264,7 +265,7 @@ class AutoSyncController extends Controller
                 $payload = [
                     "request_ref" => $requestRef,
                     "phone"       => $request['unique_element'],
-                    "product_id"  => $product->servercode,
+                    "product_id"  => $productCode,
                     "amount"      => $request['amount'],
                     "is_mtn_awuf" => false,
                     "webhook_url" => route('log.provider.callback', $product->api_id),
