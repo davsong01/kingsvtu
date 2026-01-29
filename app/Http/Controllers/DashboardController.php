@@ -220,7 +220,7 @@ class DashboardController extends Controller
                 ]);
 
                 $user = auth()->user();
-                app('App\Http\Controllers\TransactionController')->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request_id, 50);
+                app('App\Http\Controllers\TransactionController')->referralReward($user, $request['total_amount'], $request_id, 50);
 
             }
 

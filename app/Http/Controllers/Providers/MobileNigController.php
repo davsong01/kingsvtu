@@ -11,7 +11,7 @@ class MobileNigController extends Controller
 {
     public function getVariations($product)
     {
-        $url = env('ENV') != 'local' ? $product->api->sandbox_base_url : $product->api->live_base_url;
+        $url = env('ENT') == 'local' ? $product->api->sandbox_base_url : $product->api->live_base_url;
         $url = $url . "services/packages";
 
         $headers = [
@@ -58,7 +58,7 @@ class MobileNigController extends Controller
     {
         // Post data
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "services/";
             $headers = [
                 'Content-Type: application/json',
@@ -264,7 +264,7 @@ class MobileNigController extends Controller
         $api = $transaction->api;
 
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "services/query?trans_id=". $transaction->reference_id;
             
             $headers = [
@@ -318,7 +318,7 @@ class MobileNigController extends Controller
     public function balance($api, $no_format = null)
     {
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "control/balance";
             
             $headers = [
@@ -327,7 +327,7 @@ class MobileNigController extends Controller
             ];
             
             $response = $this->basicApiCall($url, [], $headers, 'GET');
-            dd($url, $response, $headers);
+            
             if (isset($response['message']) && $response['message'] == "success" && !empty($response['details'])) {
                 $balance = '#' . number_format($response['details']['balance'], 2);
             

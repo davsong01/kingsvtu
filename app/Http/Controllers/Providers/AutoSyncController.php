@@ -323,13 +323,13 @@ class AutoSyncController extends Controller
                 'status_code' => 1,
             ]),
 
-            'completed' => array_merge($base, [
-                'status' => 'delivered',
-                'user_status' => 'delivered',
-                'description' => 'Transaction successful',
-                'message' => $res['data']['msg'] ?? null,
-                'status_code' => 1,
-            ]),
+            // 'completed' => array_merge($base, [
+            //     'status' => 'delivered',
+            //     'user_status' => 'delivered',
+            //     'description' => 'Transaction successful',
+            //     'message' => $res['data']['msg'] ?? null,
+            //     'status_code' => 1,
+            // ]),
 
             'pending' => array_merge($base, [
                 'status' => 'attention-required',

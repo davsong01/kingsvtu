@@ -10,7 +10,7 @@ class VtpassController extends Controller
 {
     public function getVariations($product)
     {
-        $url = env('ENV') == 'local' ?  $product->api->sandbox_base_url :  $product->api->live_base_url;
+        $url = env('ENT') == 'local' ?  $product->api->sandbox_base_url :  $product->api->live_base_url;
 
         $url = $url . "service-variations?serviceID=" . $product->slug;
 
@@ -57,7 +57,7 @@ class VtpassController extends Controller
     {
         // Post data
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "pay";
 
             $headers = [
@@ -144,7 +144,7 @@ class VtpassController extends Controller
                 'message' => $th->getMessage() . '. File: ' . $th->getFile() . '. Line:' . $th->getLine(),
             ];
         }
-
+        
         try {
             //code...
             $this->balance($api);
@@ -174,7 +174,7 @@ class VtpassController extends Controller
         $api = $transaction->api;
         $external_reference_id = $transaction->external_reference_id;
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "requery";
 
             $headers = [
@@ -245,7 +245,7 @@ class VtpassController extends Controller
     public function balance($api, $no_format = null)
     {
         try {
-            $url = env('ENV') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
+            $url = env('ENT') == 'local' ? $api->sandbox_base_url : $api->live_base_url;
             $url = $url . "balance";
 
             $headers = [
@@ -299,8 +299,8 @@ class VtpassController extends Controller
     {
         // Post data
         try {
-            $url = env('ENV') == 'local' ? $data['api']->sandbox_base_url : $data['api']->live_base_url;
-
+            $url = env('ENT') == 'local' ? $data['api']->sandbox_base_url : $data['api']->live_base_url;
+            
             $url = $url . "merchant-verify";
 
             $headers = [

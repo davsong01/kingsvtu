@@ -2,10 +2,11 @@
 namespace App\Services;
 
 use App\Models\API;
-use App\Models\ProviderWebhook;
 use App\Models\TransactionLog;
+use App\Models\ProviderWebhook;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\TransactionController;
 
 define('LIMIT', 50000);
 
@@ -24,18 +25,18 @@ class WebhookService {
         
         foreach ($webhooks as $webhook) {
             // Check for pending/attention-required transaction logs for this reference
-            $transactionExists = TransactionLog::where('external_reference_id', $webhook->reference)
-                ->whereIn('status', ['attention-required','pending'])
-                ->exists();
+            $transaction = TransactionLog::where('external_reference_id', $webhook->reference)->first();
             
-            if ($transactionExists) {
+            if (in_array($transaction->status, ['attention-required','pending'])) {
                 $file_name = $webhook->provider->file_name;
                 $class = "App\\Http\\Controllers\\Providers\\" . $file_name;
                 
                 if (class_exists($class) && method_exists($class, 'analyzeWebhookResponse')) {
                     $analyze = app($class)->analyzeWebhookResponse($webhook);
                     
-                    if (!empty($analyze['status']) && $analyze['status'] == 'delivered') {
+                    if (!empty($analyze['status']) && in_array($analyze['status_code'], [1,0]) && isset($transaction)) {
+                        app(TransactionController::class)->handleTransactionProcessing($transaction, $analyze);
+                        
                         $webhook->update([
                             'status' => 'resolved'
                         ]);

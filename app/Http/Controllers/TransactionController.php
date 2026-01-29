@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\BillerLog;
 use App\Models\BlackList;
@@ -125,7 +126,6 @@ class TransactionController extends Controller
         $request['total_amount'] = $discountedAmount * $request['quantity'];
         $request['discount'] = $disCountApplied * $request['quantity'];
 
-
         // Get Wallet Balance
         $wallet = new WalletController();
         $balance = $wallet->getWalletBalance(auth()->user());
@@ -168,7 +168,7 @@ class TransactionController extends Controller
 
         // Update Customer Wallet
         $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], $request['type']);
-
+    
         // Process Transaction
         try {
             //code...
@@ -200,104 +200,227 @@ class TransactionController extends Controller
 
     public function processTransaction($request, $transaction, $product, $variation)
     {
-        $failure_reason = '';
         $api = $variation->api ?? $product->api;
-        // Get Api
         $file_name = $api->file_name;
+
         $request['servercode'] = $variation->product->servercode ?? $product->servercode;
-        
-        $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
+
+        $query = app("App\Http\Controllers\Providers\\" . $file_name)
+                    ->query($request, $api, $variation, $product);
+
+        return $this->handleTransactionProcessing($transaction, $query);
+    }
+
+    public function handleTransactionProcessing($transaction, $query, $request = null)
+    {
+        $failure_reason = '';
+        $balance_before = $transaction->balance_before;
+        $total_amount = $request['total_amount'] ?? $transaction->total_amount;
+        $amount = $request['amount'] ?? $transaction->amount;
+        $paymentMethod = $request['payment_method'] ?? $transaction->payment_method ?? null; //wallet
+        $transactionId = $transaction->transaction_id ?? null;
+        $product = $transaction->product;
+        $customerId = $transaction->customer_id;
+        $customer = Customer::with('user')->where('id', $transaction->customer_id)->first();
+        $user = $customer->user;
         
         try {
-            //code...
             DB::beginTransaction();
-            if (isset ($query) && $query['status_code'] == 1) { // Success
-                $user = auth()->user();
-                $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
-                $res = [
-                    'status' => $query['status'],
-                    'message' => 'Transaction Successful!',
-                ];
-
-                $user_status = 'success';
-                $balance_after = $request['balance_before'] - $request['total_amount'];
-            }else if (isset($query) && $query['status_code'] == 2) { // Pending
-                $user = auth()->user();
-                // $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
-                $res = [
-                    'status' => $query['status'],
-                    'message' => 'Transaction Pending!',
-                ];
-
-                $user_status = 'success';
-                $balance_after = $request['balance_before'] - $request['total_amount'];
-            }else if (isset($query) && $query['status_code'] == 0) { // Failed or attention-required
-                // Log wallet
-                $wallet = new WalletController();
-                $request['type'] = 'credit';
-                $request['reason'] = 'Product Purchase reversal';
-                $wallet->logWallet($request);
-                $failure_reason = $query['error'] ?? ($query['message'] ?? ($query['failure_reason'] ?? 'unknown reason'));
-
-                // Update Customer Wallet
-                $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
-                $balance_after = $request['balance_before'];
-                $user_status = 'failed';
-            } else {
-                $user_status = 'failed';
-                $res = [
-                    'status' => $query['status'],
-                    'message' => 'Transaction Successful!',
-                ];
-
-                $balance_after = $request['balance_before'] - $request['total_amount'];
-            }
-
-            $extra_info = [];
-            $customer_details = BillerLog::where('service_id', $transaction->product->slug)->where('billers_code', $transaction->unique_element)->first();
-            if(!empty($customer_details)){
-                $customer_details = json_decode($customer_details->refined_data, true);
-            }else{
-                $customer_details = [];
-            }
             
-            $info = $query['extra_info'] ?? [];
-            $extra_info = array_merge($info, $customer_details);
-            // Update Transaction
+            if (isset($query) && $query['status_code'] == 1) { // Success
+            
+                $this->referralReward(
+                    $user,
+                    $total_amount,
+                    $transactionId,
+                    $product->referral_percentage
+                );
+
+                $user_status   = 'success';
+                $balance_after = $balance_before - $total_amount;
+
+            } elseif (isset($query) && $query['status_code'] == 2) { // Pending/attention-required
+                $user_status   = 'success';
+                $balance_after = $balance_before - $total_amount;
+
+            } elseif (isset($query) && $query['status_code'] == 0) { // Failed
+                $wallet = new WalletController();
+
+                $walletData['type']   = 'credit';
+                $walletData['reason'] = 'Product Purchase reversal';
+                $walletData['customer_id'] = $customerId;
+                $walletData['amount'] = $amount;
+                $walletData['payment_method'] = $paymentMethod;
+                $walletData['transaction_id'] = $transaction->transaction_id;
+
+                $wallet->logWallet($walletData);
+                $wallet->updateCustomerWallet($user, $total_amount, 'credit');
+                
+                $failure_reason = $query['error'] 
+                    ?? $query['message'] 
+                    ?? $query['failure_reason'] 
+                    ?? 'unknown reason';
+
+                $user_status   = 'failed';
+                $balance_after = $balance_before;
+            } else {
+                // $user_status   = 'failed';
+                // $balance_after = $balance_before - $total_amount;
+            }
+
+            $customer_details = BillerLog::where('service_id', $transaction->product->slug)
+                ->where('billers_code', $transaction->unique_element)
+                ->first();
+
+            $customer_details = $customer_details
+                ? json_decode($customer_details->refined_data, true)
+                : [];
+
+            $extra_info = array_merge($query['extra_info'] ?? [], $customer_details);
+           
             $transaction->update([
                 'balance_after' => $balance_after,
                 'request_data' => $query['payload'],
                 'api_response' => $query['api_response'] ?? null,
-                'failure_reason' => $query['failure_reason'] ?? ($failure_reason ?? 'Unknown Reason'),
+                'failure_reason' => $query['failure_reason'] ?? $failure_reason ?? 'Unknown Reason',
                 'extras' => $query['extras'] ?? null,
                 'status' => $query['status'] ?? 'attention-required',
                 'descr' => $query['description'],
                 'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
-                'user_status' => $user_status ?? null
+                'user_status' => $user_status
             ]);
-
+            
             DB::commit();
-        } catch (\Throwable $th) { 
-            \Log::info($th->getMessage());
-            DB::rollBack();
-            $wallet = new WalletController();
-            $request['type'] = 'credit';
-            $wallet->logWallet($request);
-            $failure_reason = $query['error'] ?? ($query['message'] ?? null);
+            
+        } catch (\Throwable $th) {
 
-            // Update Customer Wallet
-            $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
-            $balance_after = $request['balance_before'];
+            DB::rollBack();
+            \Log::error($th->getMessage());
+
+            $wallet = new WalletController();
+            
+            $walletData['type']   = 'credit';
+            $walletData['reason'] = 'Product Purchase reversal';
+            $walletData['customer_id'] = auth()->user()->id;
+            $walletData['amount'] = $amount;
+            $walletData['payment_method'] = $paymentMethod;
+            $walletData['transaction_id'] = $transaction->transaction_id;
+
+            $wallet->logWallet($walletData);
+            $wallet->updateCustomerWallet(auth()->user(), $total_amount, 'credit');
 
             $transaction->update([
-                'balance_after' => $balance_after,
-                'failure_reason' => $th->getMessage().' Line: '.$th->getLine(). ' File: '.$th->getFile(),
+                'balance_after' => $balance_before,
+                'failure_reason' => $th->getMessage() .
+                    ' Line: ' . $th->getLine() .
+                    ' File: ' . $th->getFile(),
             ]);
-            // \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
         }
-        
+
         return $transaction;
     }
+
+    // public function processTransaction($request, $transaction, $product, $variation)
+    // {
+    //     $failure_reason = '';
+    //     $api = $variation->api ?? $product->api;
+    //     // Get Api
+    //     $file_name = $api->file_name;
+    //     $request['servercode'] = $variation->product->servercode ?? $product->servercode;
+        
+    //     $query = app("App\Http\Controllers\Providers\\" . $file_name)->query($request, $variation->api ?? $product->api, $variation, $product);
+        
+    //     try {
+    //         //code...
+    //         DB::beginTransaction();
+
+    //         if (isset ($query) && $query['status_code'] == 1) { // Success
+    //             $user = auth()->user();
+    //             $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
+    //             $res = [
+    //                 'status' => $query['status'],
+    //                 'message' => 'Transaction Successful!',
+    //             ];
+
+    //             $user_status = 'success';
+    //             $balance_after = $request['balance_before'] - $request['total_amount'];
+    //         }else if (isset($query) && $query['status_code'] == 2) { // Pending
+    //             $user = auth()->user();
+    //             // $this->referralReward($user->referral, $request['total_amount'], $user->customer->id, $request['transaction_id'], $product->referral_percentage);
+    //             $res = [
+    //                 'status' => $query['status'],
+    //                 'message' => 'Transaction Pending!',
+    //             ];
+
+    //             $user_status = 'success';
+    //             $balance_after = $request['balance_before'] - $request['total_amount'];
+    //         }else if (isset($query) && $query['status_code'] == 0) { // Failed or attention-required
+    //             // Log wallet
+    //             $wallet = new WalletController();
+    //             $request['type'] = 'credit';
+    //             $request['reason'] = 'Product Purchase reversal';
+    //             $wallet->logWallet($request);
+    //             $failure_reason = $query['error'] ?? ($query['message'] ?? ($query['failure_reason'] ?? 'unknown reason'));
+
+    //             // Update Customer Wallet
+    //             $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
+    //             $balance_after = $request['balance_before'];
+    //             $user_status = 'failed';
+    //         } else {
+    //             $user_status = 'failed';
+    //             $res = [
+    //                 'status' => $query['status'],
+    //                 'message' => 'Transaction Successful!',
+    //             ];
+
+    //             $balance_after = $request['balance_before'] - $request['total_amount'];
+    //         }
+
+    //         $extra_info = [];
+    //         $customer_details = BillerLog::where('service_id', $transaction->product->slug)->where('billers_code', $transaction->unique_element)->first();
+    //         if(!empty($customer_details)){
+    //             $customer_details = json_decode($customer_details->refined_data, true);
+    //         }else{
+    //             $customer_details = [];
+    //         }
+            
+    //         $info = $query['extra_info'] ?? [];
+    //         $extra_info = array_merge($info, $customer_details);
+    //         // Update Transaction
+    //         $transaction->update([
+    //             'balance_after' => $balance_after,
+    //             'request_data' => $query['payload'],
+    //             'api_response' => $query['api_response'] ?? null,
+    //             'failure_reason' => $query['failure_reason'] ?? ($failure_reason ?? 'Unknown Reason'),
+    //             'extras' => $query['extras'] ?? null,
+    //             'status' => $query['status'] ?? 'attention-required',
+    //             'descr' => $query['description'],
+    //             'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
+    //             'user_status' => $user_status ?? null
+    //         ]);
+
+    //         DB::commit();
+    //     } catch (\Throwable $th) { 
+    //         \Log::info($th->getMessage());
+    //         DB::rollBack();
+    //         $wallet = new WalletController();
+    //         $request['type'] = 'credit';
+    //         $wallet->logWallet($request);
+    //         $failure_reason = $query['error'] ?? ($query['message'] ?? null);
+
+    //         // Update Customer Wallet
+    //         $wallet->updateCustomerWallet(auth()->user(), $request['total_amount'], 'credit');
+    //         $balance_after = $request['balance_before'];
+
+    //         $transaction->update([
+    //             'balance_after' => $balance_after,
+    //             'failure_reason' => $th->getMessage().' Line: '.$th->getLine(). ' File: '.$th->getFile(),
+    //         ]);
+    //         // \Log::error(['Transaction Error' => 'Message: ' . $th->getMessage() . ' File: ' . $th->getFile() . ' Line: ' . $th->getLine()]);
+    //     }
+        
+    //     return $transaction;
+    // }
 
     public function verify(Request $request, $admin = null)
     {
@@ -716,62 +839,128 @@ class TransactionController extends Controller
         return view('customer.reports', compact('products', 'categories'));
     }
 
-    function referralReward($ref, $amount, $customer_id, $transaction_id, $referral_percentage)
-    {
-        if ($ref) {
-            if(!empty($referral_percentage)){
-                $sett = getSettings();
-                $percentage = $referral_percentage;
-                $user = User::where('username', $ref)->first();
-                $curUser = auth()->user();
+    // function referralReward($user, $amount, $transaction_id, $referral_percentage)
+    // {
+    //     $customer_id = $user->customer_id;
+    //     $upline = User::where('username', $user->referral)->where('type','customer')->first();
+    //     $customer = $upline->customer;
 
-                if ($user) {
-                    if ($sett->referral_system_status == 'active') {
-                        $cut = $percentage;
-                        $cal = ($cut / 100) * $amount;
-    
-                        $customer = $user->customer;
-                        $current = $customer->referal_wallet;
-    
-                        $sum = $current + $cal;
-                        $this->logEarnings(
-                            'credit',
-                            $customer->id,
-                            $customer_id,
-                            $cal,
-                            $current,
-                            $sum,
-                            $transaction_id,
-                        );
-                        $customer->referal_wallet = $sum;
-                        $customer->save();
-                        $host = env('APP_URL');
-                        $rewardMail = <<<__here
-                            Dear $user->firstname $user->lastname,
-    
-                            Congratulations! We are excited to inform you that you have earned a commission from a transaction made by your referred friend. Your support and engagement in our referral program are truly appreciated.
-    
-                            Here are the details of the transaction:
-    
-                            Referred Friend's Name: $curUser->firstname
-    
-                            Commission Earned: $cal
-    
-                            Total Commission Earned: $cal
-    
-                            Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
-    
-                            Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.
-    
-                            Thank you once again for being a valued member of our community. We look forward to your continued success in our referral program!
-                            __here;
-    
-                        logEmails($user->email, 'Referral Commission', $rewardMail);
-                    }
-                }
-            }
+    //     if ($upline) {
+    //         if(!empty($referral_percentage)){
+    //             $sett = getSettings();
+    //             $percentage = $referral_percentage;
+
+    //             if ($sett->referral_system_status == 'active') {
+    //                 $cut = $percentage;
+    //                 $cal = ($cut / 100) * $amount;
+
+    //                 $current = $customer->referal_wallet;
+
+    //                 $sum = $current + $cal;
+    //                 $this->logEarnings(
+    //                     'credit',
+    //                     $customer->id,
+    //                     $customer_id,
+    //                     $cal,
+    //                     $current,
+    //                     $sum,
+    //                     $transaction_id,
+    //                 );
+    //                 $customer->referal_wallet = $sum;
+    //                 $customer->save();
+    //                 $host = env('APP_URL');
+    //                 $rewardMail = <<<__here
+    //                     Dear $user->firstname $user->lastname,
+
+    //                     Congratulations! We are excited to inform you that you have earned a commission from a transaction made by your referred friend. Your support and engagement in our referral program are truly appreciated.
+
+    //                     Here are the details of the transaction:
+
+    //                     Referred Friend's Name: $curUser->firstname
+
+    //                     Commission Earned: $cal
+
+    //                     Total Commission Earned: $cal
+
+    //                     Transaction Details: <a href="$host/downlines/$curUser->id">click here</a>
+
+    //                     Your dedication to spreading the word about our services is making a real impact, and we are grateful for your continued support. As a token of our appreciation, we have credited your wallet with the earned commission.
+
+    //                     Thank you once again for being a valued member of our community. We look forward to your continued success in our referral program!
+    //                     __here;
+
+    //                 logEmails($user->email, 'Referral Commission', $rewardMail);
+    //             }
+    //         }
+    //     }
+    // }
+    public function referralReward(User $downline, float $amount, string $transactionId, float $referralPercentage): void
+    {
+        if (empty($referralPercentage) || $referralPercentage <= 0) {
+            return;
+        }
+
+        $settings = getSettings();
+        if ($settings->referral_system_status !== 'active') {
+            return;
+        }
+
+        $upline = User::where('username', $downline->referral)
+            ->where('type', 'customer')
+            ->with('customer')
+            ->first();
+        
+        if (!$upline || !$upline->customer) {
+            return;
+        }
+
+        $customer = $upline->customer;
+
+        $commission = ($referralPercentage / 100) * $amount;
+        $currentBalance = $customer->referal_wallet;
+        $newBalance = $currentBalance + $commission;
+
+        try {
+            $this->logEarnings(
+                'credit',
+                $customer->id,
+                $downline->customer->id,
+                $commission,
+                $currentBalance,
+                $newBalance,
+                $transactionId
+            );
+
+            $customer->update([
+                'referal_wallet' => $newBalance
+            ]);
+
+            $host = config('app.url');
+
+            $rewardMail = <<<HTML
+                Dear {$upline->firstname} {$upline->lastname},
+
+                Congratulations! You have earned a referral commission from your downline.
+
+                Referred User: {$downline->firstname} {$downline->lastname}  
+                Commission Earned: {$commission}  
+                New Wallet Balance: {$newBalance}
+
+                View Transaction: <a href="{$host}/downlines/{$downline->id}">Click here</a>
+
+                Thank you for being a valued member of our referral program.
+                HTML;
+
+            logEmails($upline->email, 'Referral Commission', $rewardMail);
+        } catch (\Throwable $e) {
+            // dd($e->getMessage());
+            Log::error('Referral reward failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $downline->id
+            ]);
         }
     }
+
 
     public function logEarnings($type, $customer, $referred, $amount, $before, $after, $transaction_id)
     {
