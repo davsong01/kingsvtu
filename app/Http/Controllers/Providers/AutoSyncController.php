@@ -243,8 +243,8 @@ class AutoSyncController extends Controller
                     }
                 }
             }
-
-            $requestRef = $request['external_reference_id'];
+           
+            $requestRef = $request['request_id'];
             $productCode =  $product->servercode ?? $product_code;
 
             if (str_contains($categorySlug, 'data')) {
@@ -281,10 +281,11 @@ class AutoSyncController extends Controller
 
             $payloadJson = json_encode($payload);
 
-            $res = env('ENT') === 'local'
-                ? $this->dummySuccess()
-                : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
-
+            // $res = env('ENT') == 'local'
+            //     ? json_decode($this->dummySuccess(), true)
+            //     : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
+            
+            $res = $this->basicApiCall($url, $payloadJson, $headers, 'POST');
             return $this->formatResponse($res, $payloadJson);
 
         } catch (\Throwable $th) {
@@ -302,6 +303,38 @@ class AutoSyncController extends Controller
         }
     }
 
+    public function requery($transaction)
+    {
+        $api = $transaction->api;
+        $external_reference_id = $transaction->external_reference_id;
+        try {
+            $url =  $url = $api->live_base_url ."transaction/{$external_reference_id}";
+            
+            $headers = [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $api->api_key,
+            ];
+
+            $res = $this->basicApiCall($url, [], $headers, 'GET');
+            
+            return $this->formatResponse($res);
+           
+        } catch (\Throwable $th) {
+            return [
+                'status' => 'attention-required',
+                'user_status' => 'completed',
+                'api_response' => isset($res) ? json_encode($res) : '',
+                'description' => 'Transaction completed',
+                'message' => $res['message'] ?? null,
+                'status_code' => 2,
+                'failure_reason' => $th->getMessage().' Line: '.$th->getLine().' File: '.$th->getFile(),
+                'extras' => null,
+            ];
+        }
+        
+        return $format;
+    }
+
     private function formatResponse($res, $payload=null)
     {
         $transaction = $res['data']['transaction'] ?? $res['transaction'];
@@ -309,11 +342,11 @@ class AutoSyncController extends Controller
         $status = strtolower($transaction['status'] ?? 'attention-required');
         
         $base = [
-            'api_response' => json_encode($res),
+            'api_response' => $res,
             'payload' => $payload,
             'extras' => null,
         ];
-
+        
         return match ($status) {
             'successful' => array_merge($base, [
                 'status' => 'delivered',
@@ -321,6 +354,7 @@ class AutoSyncController extends Controller
                 'description' => 'Transaction successful',
                 'message' => $res['data']['msg'] ?? null,
                 'status_code' => 1,
+                'external_reference_id' => $res['data']['transaction']['reference'] ?? null,
             ]),
 
             // 'completed' => array_merge($base, [
@@ -338,6 +372,7 @@ class AutoSyncController extends Controller
                 'message' => $res['message'] ?? null,
                 'failure_reason' => $res['message'] ?? 'Pending',
                 'status_code' => 2,
+                'external_reference_id' => $res['data']['transaction']['reference'] ?? null,
             ]),
 
             'failed' => array_merge($base, [
@@ -347,6 +382,7 @@ class AutoSyncController extends Controller
                 'message' => $res['message'] ?? null,
                 'failure_reason' => $res['message'] ?? 'Unknown Reason',
                 'status_code' => 0,
+                'external_reference_id' => $res['data']['transaction']['reference'] ?? null,
             ]),
 
             default => array_merge($base, [
@@ -355,6 +391,7 @@ class AutoSyncController extends Controller
                 'description' => 'Transaction requires attention',
                 'message' => $res['message'] ?? null,
                 'status_code' => 2,
+                'external_reference_id' => $res['data']['transaction']['reference'] ?? null,
             ]),
         };
     }

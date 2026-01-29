@@ -199,19 +199,17 @@
                                                                     <div>
                                                                         <code style="margin:10px 0">
                                                                             {!! $transaction->api_response!!} 
-                                                                            @if(!empty($transaction->failure_reason))
-                                                                            <br> <br>
-                                                                            <div style="color:black">
-                                                                                <span><strong><u>Failure Reason</u></strong></span> <br>
-                                                                                {!! $transaction->failure_reason!!}
-                                                                                
-                                                                            </div>
-                                                                            @endif
                                                                         </code>
                                                                        
                                                                     </div>
 
-                                                                    
+                                                                    @if(!empty($transaction->failure_reason))
+                                                                    <div>
+                                                                        <span style="color:red"><strong><u>Failure Reason</u></strong></span> <br>
+                                                                        {!! $transaction->failure_reason!!}
+                                                                        
+                                                                    </div>
+                                                                    @endif
                                                                 </div>
                                                                 @endif
                                                             </div>

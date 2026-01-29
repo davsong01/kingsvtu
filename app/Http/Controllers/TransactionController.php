@@ -277,8 +277,7 @@ class TransactionController extends Controller
                 : [];
 
             $extra_info = array_merge($query['extra_info'] ?? [], $customer_details);
-           
-            $transaction->update([
+            $update = [
                 'balance_after' => $balance_after,
                 'request_data' => $query['payload'],
                 'api_response' => $query['api_response'] ?? null,
@@ -288,7 +287,13 @@ class TransactionController extends Controller
                 'descr' => $query['description'],
                 'extra_info' => !empty($extra_info) ? json_encode($extra_info) : null,
                 'user_status' => $user_status
-            ]);
+            ];
+
+            if(isset($query['external_reference_id'])){
+                $update['external_reference_id'] = $query['external_reference_id'];
+            }
+
+            $transaction->update($update);
             
             DB::commit();
             
@@ -1508,7 +1513,7 @@ class TransactionController extends Controller
             //     'api_response' => json_encode($query['api_response'])
             // ]);
         }
-
+        
         return response()->json($query);
     }
 
