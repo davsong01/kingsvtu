@@ -244,7 +244,7 @@ class AutoSyncController extends Controller
                 }
             }
 
-            $requestRef = $this->generateRequestId();
+            $requestRef = $request['external_reference_id'];
 
             if (str_contains($categorySlug, 'data')) {
                 $url = $api->live_base_url . 'data';
@@ -254,7 +254,7 @@ class AutoSyncController extends Controller
                     "phone"         => $request['unique_element'],
                     "product_id"    => $product->servercode ?? $product_code,
                     "variation_code"=> $variation->api_code ?? $variation->slug,
-                    "webhook_url"   => route('log.purchase.callback', $product->api_id),
+                    "webhook_url"   => route('log.provider.callback', $product->api_id),
                     "ported_no"     => false,
                     "pin"           => $product->api->secret_key
                 ];
@@ -267,7 +267,7 @@ class AutoSyncController extends Controller
                     "product_id"  => $product->servercode,
                     "amount"      => $request['amount'],
                     "is_mtn_awuf" => false,
-                    "webhook_url" => route('log.purchase.callback', $product->api_id),
+                    "webhook_url" => route('log.provider.callback', $product->api_id),
                     "ported_no"   => false,
                     "pin"         => $product->api->secret_key
                 ];
@@ -284,8 +284,7 @@ class AutoSyncController extends Controller
                 ? $this->dummySuccess()
                 : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
 
-            $status = $res['data']['transaction']['status'] ?? 'attention-required';
-            return $this->formatResponse($status, $res, $payloadJson);
+            return $this->formatResponse($res, $payloadJson);
 
         } catch (\Throwable $th) {
             return [
@@ -302,8 +301,12 @@ class AutoSyncController extends Controller
         }
     }
 
-    private function formatResponse($status, $res, $payload)
+    private function formatResponse($res, $payload=null)
     {
+        $transaction = $res['data']['transaction'] ?? $res['transaction'];
+        
+        $status = strtolower($transaction['status'] ?? 'attention-required');
+        
         $base = [
             'api_response' => json_encode($res),
             'payload' => $payload,
@@ -312,6 +315,14 @@ class AutoSyncController extends Controller
 
         return match ($status) {
             'successful' => array_merge($base, [
+                'status' => 'delivered',
+                'user_status' => 'delivered',
+                'description' => 'Transaction successful',
+                'message' => $res['data']['msg'] ?? null,
+                'status_code' => 1,
+            ]),
+
+            'completed' => array_merge($base, [
                 'status' => 'delivered',
                 'user_status' => 'delivered',
                 'description' => 'Transaction successful',
@@ -444,8 +455,9 @@ class AutoSyncController extends Controller
         ];
     }
 
-    public function analyzeWebhookResponse(){
-
+    public function analyzeWebhookResponse($webhook){
+        $data = json_decode($webhook->request_payload, true);
+        return $this->formatResponse($data);
     }
 
     public function dummySuccess(){

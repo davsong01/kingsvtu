@@ -11,28 +11,44 @@ define('LIMIT', 50000);
 
 class WebhookService {
 
-    public function analyzeWebhookResponse($pick){
-        $webhooks = ProviderWebhook::with('provider')->where('status', 'pending')->tabke($pick)->get();
-        if($webhooks){
-            foreach($webhooks as $webhook){
-                if(TransactionLog::where('reference_id')->whereIn('status',['attention-required','pending'])->first()){
-                    $file_name = $webhook->provider->file_name;
-                    $analyze = app("App\Http\Controllers\Providers\\" . $file_name)->analyzeWebhookResponse($webhook);
-    
-                    if($analyze['status']){
+    public function analyzeWebhookResponse($pick)
+    {
+        $webhooks = ProviderWebhook::with('provider')
+            ->where('status', 'pending')
+            ->take($pick)
+            ->get();
+
+        if ($webhooks->isEmpty()) {
+            return 'No pending webhook';
+        }
+        
+        foreach ($webhooks as $webhook) {
+            // Check for pending/attention-required transaction logs for this reference
+            $transactionExists = TransactionLog::where('external_reference_id', $webhook->reference)
+                ->whereIn('status', ['attention-required','pending'])
+                ->exists();
+            
+            if ($transactionExists) {
+                $file_name = $webhook->provider->file_name;
+                $class = "App\\Http\\Controllers\\Providers\\" . $file_name;
+                
+                if (class_exists($class) && method_exists($class, 'analyzeWebhookResponse')) {
+                    $analyze = app($class)->analyzeWebhookResponse($webhook);
+                    
+                    if (!empty($analyze['status']) && $analyze['status'] == 'delivered') {
                         $webhook->update([
                             'status' => 'resolved'
                         ]);
                     }
-                }else{
-                    $webhook->update([
-                        'status' => 'analyzed'
-                    ]);
-                    continue;
                 }
+            } else {
+                $webhook->update([
+                    'status' => 'analyzed'
+                ]);
             }
         }
     }
+
 
     public function logWebhookResponse($request, $provider_id)
     {
