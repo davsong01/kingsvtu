@@ -838,8 +838,8 @@ class EasyAccessController extends Controller
                 $user_status = 'delivered';
                 $status = 'success';
                 $api_response = $response;
-                $description = $response['message'];
-                $message = $response['message'];
+                $description = $response['message'] ?? '';
+                $message = $response['message']  ?? '';
                 $payload = $url;
                 $status_code = 1;
                 $extras = null;
@@ -847,8 +847,8 @@ class EasyAccessController extends Controller
                 $user_status = 'failed';
                 $status = 'failed';
                 $api_response = $response;
-                $description = $response['message'];
-                $message = $response['message'];
+                $description = $response['message'] ?? '';
+                $message = $response['message'] ?? '';
                 $payload = $url;
                 $status_code = 0;
             }
