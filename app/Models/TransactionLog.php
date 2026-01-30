@@ -57,6 +57,11 @@ class TransactionLog extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function user()
+    {
+        return $this->customer->user();
+    }
+
     public function getTypeAttribute()
     {
         return $this->wallet->type ?? 'new';

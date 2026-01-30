@@ -113,20 +113,26 @@
                                     <tbody>
                                         @foreach ($transactions as $transaction)
                                             <tr>
-                                               
+                                                
                                                 <td>{{ $transaction->customer->user->name }} <br>
-                                                    <a href="{{ route('customers.edit', $transaction->customer)}}">{{ $transaction->customer->user->email  }}</a> <br>
+                                                    <a href="{{ route('customers.edit', $transaction->customer->user)}}">{{ $transaction->customer->user->email  }}</a> <br>
                                                     {{ $transaction->customer_phone }} <br>
                                                     
                                                 </td>
                                                  <td>{{ $transaction->referredCustomer->user->name }} <br>
-                                                    <a href="{{ route('customers.edit', $transaction->referredCustomer)}}">{{ $transaction->referredCustomer->user->email  }}</a> <br>
+                                                    <a href="{{ route('customers.edit', $transaction->referredCustomer->user)}}">{{ $transaction->referredCustomer->user->email  }}</a> <br>
                                                     {{ $transaction->customer_phone }} <br>
                                                     
                                                 </td>
                                                  <td>
                                                     <small>
-                                                    <span style="color:crimson"><strong>TransactionID: </strong> {{ $transaction->transaction_id }}</span> <br>
+                                                    <span style="color:crimson"><strong>TransactionID: </strong> 
+                                                        @if($transaction->transaction)
+                                                        <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->transaction->id) }}">{{ $transaction->transaction_id }}</a> 
+                                                        @else
+                                                        {{ $transaction->transaction_id }}
+                                                        @endif
+                                                    </span> <br>
                                                     </small><small>
                                                     <strong>Amount: </strong><span style="color:{{$transaction->type == 'credit' ? 'green':''}}">{{ $transaction->type == 'credit' ? '+':'-' }}{!! getSettings()->currency. number_format($transaction->amount, 2) !!} </span><br>
                                                     <strong>Initial Balance: </strong>{!! getSettings()->currency. number_format($transaction->balance_before, 2) !!} <br>
@@ -146,11 +152,13 @@
                                                     </strong>
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->id) }}">
+                                                    @if($transaction->transaction)
+                                                    <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('admin.single.transaction.view', $transaction->transaction->id) }}">
                                                         <i class="fa fa-eye"></i>
                                                         <span class="align-middle ml-25">View</span>
                                                     </a>
-
+                                                   
+                                                    @endif
                                                 </td>
                                             </tr>
                                             {{-- @dump($transaction) --}}

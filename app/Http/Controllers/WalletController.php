@@ -21,7 +21,7 @@ class WalletController extends Controller
     {
         $wallet = Wallet::create([
             'customer_id' => $data['customer_id'] ?? auth()->user()->customer->id,
-            'amount' => $data['amount'],
+            'amount' => $data['total_amount'] ?? $data['amount'],
             'type' => $data['type'],
             'transaction_id' => $data['transaction_id'] ?? null,
             'reason' => $data['reason'] ?? null,

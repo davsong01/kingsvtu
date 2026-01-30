@@ -124,11 +124,11 @@
                                                 <td>{{$count ++}}</td>
                                                 <td>
                                                     {{ $transaction->customer->user->name }} <br>
-                                                    <a href="">{{ $transaction->customer->user->email }}</a> <br>
+                                                    <a href="{{ route('customers.edit', $transaction->customer->user)}}">{{ $transaction->customer->user->email }}</a> <br>
                                                     {{ $transaction->customer->user->phone }}
                                                 </td>
                                                 <td>
-                                                    <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->id) }}">{{ $transaction->transaction_id }}</a> <br>
+                                                    <a target="_blank" href="{{ route('admin.single.transaction.view', $transaction->transaction_log->id) }}">{{ $transaction->transaction_id }}</a> <br>
                                                     <span><strong>Reason: </strong> {{ $transaction->reason }} <br>
                                                     <span><strong>Payment Method: </strong> {{ $transaction->transaction_log->payment_method }}
                                                     @if($transaction->admin) <br>

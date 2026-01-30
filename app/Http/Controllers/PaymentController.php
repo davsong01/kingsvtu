@@ -276,7 +276,7 @@ class PaymentController extends Controller
                     $wallet->updateCustomerWallet($user, $amount, $request['type']);
                     ReservedAccountCallback::where('id', $call->id)->update(['transaction_id' => $transaction_id]);
 
-                    $this->sendTransactionEmail($transaction, $user);
+                    $this->sendTransactionEmail($transaction);
                 }
 
                 //
@@ -329,7 +329,7 @@ class PaymentController extends Controller
 
                 DB::commit();
 
-                $this->sendTransactionEmail($transaction, auth()->user());
+                $this->sendTransactionEmail($transaction);
 
                 return redirect(route('transaction.status', $transaction->transaction_id));
             } catch (\Throwable $th) {

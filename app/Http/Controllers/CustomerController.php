@@ -235,7 +235,7 @@ class CustomerController extends Controller
             return redirect(404);
         }
 
-        $user = User::findOrFail($id);
+        $user = User::with('customer')->findOrFail($id);
         $customer = $user->customer->id;
         $downlines = ReferralEarning::where('customer_id', $customer)
             ->latest()

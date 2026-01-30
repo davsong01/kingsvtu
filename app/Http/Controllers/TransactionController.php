@@ -180,7 +180,7 @@ class TransactionController extends Controller
         }
 
         // Log Transaction Email
-        $this->sendTransactionEmail($transaction, auth()->user());
+        $this->sendTransactionEmail($transaction);
         return redirect(route('transaction.status', $transaction->transaction_id));
     }
 
@@ -252,7 +252,7 @@ class TransactionController extends Controller
                 $walletData['type']   = 'credit';
                 $walletData['reason'] = 'Product Purchase reversal';
                 $walletData['customer_id'] = $customerId;
-                $walletData['amount'] = $amount;
+                $walletData['amount'] = $total_amount;
                 $walletData['payment_method'] = $paymentMethod;
                 $walletData['transaction_id'] = $transaction->transaction_id;
 
@@ -1054,73 +1054,6 @@ class TransactionController extends Controller
         ]);
     }
 
-    // public function walletTransView(Request $request)
-    // {
-    //     $transactions = Wallet::with('transaction_log:id,transaction_id,payment_method')
-    //     ->leftJoin('admins', 'admins.id', '=', 'wallets.admin_id')
-    //     ->leftJoin('users', 'admins.user_id', '=', 'users.id')
-    //     ->orderBy('wallets.created_at', 'DESC')
-    //     ->select(
-    //         'wallets.*',
-    //         'users.firstname',
-    //         'users.lastname'
-    //     );
-
-    //     if ($request->email) {
-    //         $user = User::where('email', $request->email)->first();
-    //         if (!empty ($user)) {
-    //             $customer = $user->customer;
-    //             $id = $customer->id;
-    //             $transactions = $transactions->where('customer_id', $id);
-    //         }
-    //     }
-
-    //     if ($request->transaction_id) {
-    //         $transactions = $transactions->where('transaction_id', $request->transaction_id);
-    //     }
-
-    //     if ($request->type) {
-    //         $transactions = $transactions->where('wallets.type', $request->type);
-    //     }
-
-    //     if ($request->from) {
-    //         $from = $request->from . ' 00:00:00';
-    //     }else{
-    //         $from = Carbon::now()->startOfDay();
-    //     }
-
-    //     $transactions = $transactions->where('wallets.created_at', '>=', $from);
-
-    //     if ($request->to) {
-    //         $to = $request->to . ' 23:59:59';
-    //         $transactions = $transactions->where('wallets.created_at', '<=', $to);
-    //     } else {
-    //         $to = Carbon::now();
-    //     }
-
-    //     $transactions = $transactions->where('wallets.created_at', '<=', $to);
-
-    //     $transactionsD = clone $transactions;
-    //     $transactionsC = clone $transactions;
-
-    //     $debit = $transactionsD->where('wallets.type', 'debit')->sum('amount');
-    //     $credit = $transactionsC->where('wallets.type', 'credit')->sum('amount');
-
-    //     if($request->paginate == 'yes'){
-    //         $transactions = $transactions->paginate(20);
-    //     }else{
-    //         $transactions = $transactions->get();
-    //     }
-    //     $count = 1;
-    //     return view('admin.transaction.wallet_log', [
-    //         'transactions' => $transactions,
-    //         'debit' => $debit,
-    //         'credit' => $credit,
-    //         'count' => $count,
-    //         'query' => $request->query(),
-    //     ]);
-    // }
-
     public function walletTransView(Request $request)
     {
         // Initial query
@@ -1298,7 +1231,7 @@ class TransactionController extends Controller
 
     public function walletEarningView(Request $request)
     {
-        $transactions = ReferralEarning::latest();
+        $transactions = ReferralEarning::with('transaction')->latest();
 
         $transactionsS = clone $transactions;
         $transactionsF = clone $transactions;
