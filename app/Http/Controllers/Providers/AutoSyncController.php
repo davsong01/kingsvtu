@@ -92,7 +92,7 @@ class AutoSyncController extends Controller
                 '9mobile-data' => '9mobile',
                 default => null,
             };
-               
+
             $apiProduct = $products->where('code', $codeToSearch)->first();
             $variations = $apiProduct['variations'] ?? [];
             if(empty($variations)) return false;
@@ -129,7 +129,7 @@ class AutoSyncController extends Controller
         
     }
 
-    function query($request, $api, $variation, $product)
+    public function query($request, $api, $variation, $product)
     {
         try {
 
@@ -195,7 +195,6 @@ class AutoSyncController extends Controller
             // $res = env('ENT') == 'local'
             //     ? json_decode($this->dummySuccess(), true)
             //     : $this->basicApiCall($url, $payloadJson, $headers, 'POST');
-            
             $res = $this->basicApiCall($url, $payloadJson, $headers, 'POST');
             return $this->formatResponse($res, $payloadJson);
 
