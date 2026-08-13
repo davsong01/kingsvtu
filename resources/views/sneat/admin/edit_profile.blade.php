@@ -65,12 +65,28 @@
                                     <div class="col-md-12">
                                         <label class="profile-label" for="email">Email Address</label>
                                         <input type="email" class="form-control form-control-{{ formControlSize() }}" id="email" value="{{ $user->email }}" disabled>
-                                        <div class="profile-note mt-2">Email address is locked for admin accounts.</div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <hr class="my-2">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="profile-label" for="current_password">Current Password</label>
+                                        <input autocomplete="current-password" type="password" class="form-control form-control-{{ formControlSize() }}" id="current_password" name="current_password" placeholder="Enter current password">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="profile-label" for="new_password">New Password</label>
+                                        <input autocomplete="new-password" type="password" class="form-control form-control-{{ formControlSize() }}" id="new_password" name="new_password" placeholder="Enter new password">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="profile-label" for="new_password_confirmation">Confirm New Password</label>
+                                        <input autocomplete="new-password" type="password" class="form-control form-control-{{ formControlSize() }}" id="new_password_confirmation" name="new_password_confirmation" placeholder="Confirm new password">
                                     </div>
                                 </div>
 
                                 <div class="profile-footer">
-                                    <button class="btn btn-success btn-lg" type="submit">Update Profile</button>
+                                    <button class="btn btn-admin-submit" type="submit">Update Profile</button>
                                 </div>
                             </form>
                         </div>

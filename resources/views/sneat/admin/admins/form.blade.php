@@ -4,7 +4,7 @@
     $isEdit = !empty($admin?->id);
     $pageTitle = $pageTitle ?? ($isEdit ? 'Edit Admin' : 'Add Admin');
     $formAction = $isEdit ? route('updateAdmin') : route('adminSave');
-    $selectedRoles = collect(old($isEdit ? 'roles' : 'permissions', $permissions ?? []))->map(fn ($id) => (int) $id)->all();
+    $selectedRoles = collect(old('roles', $permissions ?? []))->map(fn ($id) => (int) $id)->all();
 @endphp
 
 @section('title', $pageTitle)

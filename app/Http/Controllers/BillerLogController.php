@@ -13,7 +13,7 @@ class BillerLogController extends Controller
     public function index()
     {
         $billers = BillerLog::orderBy('created_at', 'DESC')->get();
-        return view('admin.biller_log.index', compact('billers'));
+        return view(themeView('admin', 'biller_log.index'), compact('billers'));
     }
 
     /**

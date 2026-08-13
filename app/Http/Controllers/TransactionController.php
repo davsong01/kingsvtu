@@ -1043,7 +1043,7 @@ class TransactionController extends Controller
         
         $transactions = $transactions->paginate(paginationRecords());
 
-        return view('admin.transaction.index', [
+        return view(themeView('admin', 'transaction.index'), [
             'transactions' => $transactions,
             'products' => $products,
             'apis'=> $apis,
@@ -1167,7 +1167,7 @@ class TransactionController extends Controller
 
         $count = 1;
         
-        return view('admin.transaction.wallet_log', [
+        return view(themeView('admin', 'transaction.wallet_log'), [
             'transactions' => $transactions,
             'debit' => $debit,
             'credit' => $credit,
@@ -1219,7 +1219,7 @@ class TransactionController extends Controller
         }
         $transactions = $transactions->paginate(paginationRecords());
 
-        return view('admin.transaction.wallet_funding', [
+        return view(themeView('admin', 'transaction.wallet_funding'), [
             'providers' => $providers,
             'transactions' => $transactions,
             'success' => $totalTransSuccess,
@@ -1276,7 +1276,7 @@ class TransactionController extends Controller
 
         $transactions = $transactions->paginate(paginationRecords());
 
-        return view('admin.transaction.earning_log', [
+        return view(themeView('admin', 'transaction.earning_log'), [
             'transactions' => $transactions,
             'success' => $totalTransSuccess,
             'failed' => $totalTransFailed,
@@ -1291,12 +1291,12 @@ class TransactionController extends Controller
 
     function debitCustomerPage()
     {
-        return view('admin.transaction.debit_customer');
+        return view(themeView('admin', 'transaction.debit_customer'));
     }
 
     function creditCustomerPage()
     {
-        return view('admin.transaction.credit_customer');
+        return view(themeView('admin', 'transaction.credit_customer'));
     }
 
     function processCreditDebit(Request $request)

@@ -21,8 +21,8 @@ class AdminController extends Controller
         $admins = Admin::with('user')->orderBy('created_at', 'DESC')->get();
         $summary = [
             'totalAdmins' => $admins->count(),
-            'activeAdmins' => $admins->where('user.status', 'active')->count(),
-            'suspendedAdmins' => $admins->where('user.status', 'inactive')->count(),
+            'activeAdmins' => $admins->filter(fn ($admin) => data_get($admin, 'user.status') === 'active')->count(),
+            'suspendedAdmins' => $admins->filter(fn ($admin) => data_get($admin, 'user.status') === 'inactive')->count(),
             'withRoles' => $admins->filter(fn ($admin) => !empty($admin->permissions))->count(),
         ];
 
@@ -66,7 +66,7 @@ class AdminController extends Controller
                 'password' => $password,
                 'status' => $request->status,
                 'type' => 'admin',
-                'username' => Str::slug($request->firstname . '-' . $request->lastname),
+                'username' => Str::slug($request->first_name . '-' . $request->last_name),
             ]);
 
             $admins = Admin::create([
@@ -133,7 +133,7 @@ class AdminController extends Controller
 
     function verifyBiller () {
         $products = Category::join('products', 'category_id', '=', 'categories.id')->whereIn('unique_element', verifiableUniqueElements())->get('products.*');
-        return view('admin.admin.verify-biller', ['products' => $products, 'api' => API::where('id', 1)->get()]);
+        return view(themeView('admin', 'verify-biller'), ['products' => $products, 'api' => API::where('id', 1)->get()]);
     }
 
     function verifyPost (Request $request) {

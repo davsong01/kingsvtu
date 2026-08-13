@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TransactionLog;
 use App\Models\ReservedAccount;
+use App\Models\PaymentGateway;
 use App\Models\ReservedAccountNumber;
 
 class ReservedAccountNumberController extends Controller
@@ -14,8 +15,27 @@ class ReservedAccountNumberController extends Controller
      */
     public function index()
     {
-        $numbers = ReservedAccountNumber::with('transactions')->orderBy('customer_id')->get();
-        return view('admin.customers.reserved_account_numbers', compact('numbers'));
+        $gateways = PaymentGateway::orderBy('name')->get();
+        $numbers = ReservedAccountNumber::with(['transactions', 'customer.user', 'gateway'])
+            ->when(request('customer_name'), function ($query, $customerName) {
+                $query->whereHas('customer.user', function ($userQuery) use ($customerName) {
+                    $userQuery->where(function ($nameQuery) use ($customerName) {
+                        $nameQuery->where('firstname', 'like', '%' . $customerName . '%')
+                            ->orWhere('lastname', 'like', '%' . $customerName . '%')
+                            ->orWhereRaw("CONCAT(firstname, ' ', lastname) LIKE ?", ['%' . $customerName . '%'])
+                            ->orWhere('email', 'like', '%' . $customerName . '%');
+                    });
+                });
+            })
+            ->when(request('payment_gateway'), function ($query, $paymentGateway) {
+                $query->where('paymentgateway_id', $paymentGateway);
+            })
+            ->when(request('account_number'), function ($query, $accountNumber) {
+                $query->where('account_number', 'like', '%' . $accountNumber . '%');
+            })
+            ->orderBy('customer_id')
+            ->get();
+        return view(themeView('admin', 'customers.reserved_account_numbers'), compact('numbers', 'gateways'));
     }
 
     public function delete(ReservedAccountNumber $account)
@@ -58,7 +78,7 @@ class ReservedAccountNumberController extends Controller
     {
         $transactions = TransactionLog::where('account_number', $account->account_number)->orderBy('created_at', 'DESC')->get();
         
-        return view('admin.customers.reserved_account_number_transactions', compact('transactions','account'));
+        return view(themeView('admin', 'customers.reserved_account_number_transactions'), compact('transactions','account'));
     }
 
     /**

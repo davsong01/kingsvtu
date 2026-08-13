@@ -30,17 +30,24 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->validated();
 
-        if(!empty($request->new_transaction_pin)){
-            $request['transaction_pin'] = base64_encode(base64_encode(base64_encode($request->new_transaction_pin)));
-        }
+        $request->validate([
+            'current_password' => ['nullable', 'required_with:new_password', 'current_password'],
+            'new_password' => ['nullable', 'required_with:current_password', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $payload = Arr::only($request->validated(), ['firstname', 'middlename', 'lastname', 'phone']);
 
         if (!empty($request->new_password)) {
-            $request['password'] = Hash::make($request->new_password);
+            $payload['password'] = Hash::make($request->new_password);
         }
-        
-        auth()->user()->update(Arr::except($request->all(), ['_token','new_password','new_transaction_pin']));
+
+        if (!empty($request->new_transaction_pin)) {
+            $payload['transaction_pin'] = base64_encode(base64_encode(base64_encode($request->new_transaction_pin)));
+        }
+
+        auth()->user()->update($payload);
         // if ($request->user()->isDirty('email')) {
         //     $request->user()->email_verified_at = null;
         // }

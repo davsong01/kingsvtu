@@ -46,7 +46,6 @@
                 <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <div>
                         <h3>Role list</h3>
-                        <p>Review role groups and open the editor when the access model changes.</p>
                     </div>
                     <span class="gateway-badge gateway-badge--active">{{ $roles->count() }} records</span>
                 </div>
@@ -57,7 +56,6 @@
                                 <tr>
                                     <th>S/N</th>
                                     <th>Name</th>
-                                    <th>Permissions</th>
                                     <th>Status</th>
                                     <th class="text-end">Action</th>
                                 </tr>
@@ -71,11 +69,7 @@
                                     @endphp
                                     <tr>
                                         <td>{{ $serialNumber }}</td>
-                                        <td>
-                                            <div class="gateway-name">{{ $role->name }}</div>
-                                            <div class="gateway-helper">{{ $permissionCount }} assigned permissions</div>
-                                        </td>
-                                        <td>{{ $permissionCount }}</td>
+                                        <td>{{ $role->name }} <br> <small>{{ $permissionCount }} permissions </small></td>
                                         <td><span class="gateway-badge {{ $statusClass }}">{{ ucfirst($role->status) }}</span></td>
                                         <td class="text-end">
                                             <a href="{{ route('role.edit', $role->id) }}" class="gateway-action">View / Edit</a>
