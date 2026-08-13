@@ -13,12 +13,12 @@ class CategoryController extends Controller
     {
         $categories = Category::withCount('products')->orderby('order', 'ASC')->get();
 
-        return view('admin.category.index', compact('categories'));
+        return view(themeView('admin', 'category.index'), compact('categories'));
     }
 
     public function create()
     {
-        return view('admin.category.create');
+        return view(themeView('admin', 'category.form'), ['category' => null]);
     }
 
     public function store(Request $request)
@@ -58,7 +58,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        return view('admin.category.edit', compact('category'));
+        return view(themeView('admin', 'category.form'), compact('category'));
     }
 
     public function update(Request $request, Category $category)

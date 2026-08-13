@@ -19,7 +19,7 @@ class ProductController extends Controller
             ->orderBy('created_at', 'DESC')
             ->get();
 
-        return view('admin.product.index', compact('products'));
+        return view(themeView('admin', 'product.index'), compact('products'));
     }
 
 
@@ -29,7 +29,13 @@ class ProductController extends Controller
         $apis = API::where('status', 'active')->get();
         $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
-        return view('admin.product.create', compact('categories', 'apis', 'customerlevel'));
+        return view(themeView('admin', 'product.form'), [
+            'product' => null,
+            'categories' => $categories,
+            'apis' => $apis,
+            'customerlevel' => $customerlevel,
+            'variations' => collect(),
+        ]);
     }
 
     public function store(Request $request)
@@ -137,7 +143,7 @@ class ProductController extends Controller
         $apis = API::where('status', 'active')->get();
         $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
-        return view('admin.product.edit', compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
+        return view(themeView('admin', 'product.form'), compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }
 
     public function update(Product $product, Request $request)
