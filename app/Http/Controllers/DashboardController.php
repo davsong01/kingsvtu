@@ -67,7 +67,7 @@ class DashboardController extends Controller
             $customers = User::where('type', 'customer')->count();
             $apis = API::get();
             
-            return view('admin.dashboard', compact('customer', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
+            return view(themeView('admin', 'dashboard'), compact('customer', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
         } else {
             $currentPaymentGateway = getSettings()->payment_gateway;
             $account_count = ReservedAccountNumber::where('customer_id', auth()->user()->customer->id)->where('paymentgateway_id', $currentPaymentGateway)->count();
@@ -81,7 +81,7 @@ class DashboardController extends Controller
                     $reserved = createReservedAccount($data, null, $currentPaymentGateway);
                 }
             }
-            return view('customer.dashboard', compact('customer'));
+            return view(themeView('customer', 'dashboard'), compact('customer'));
         }
     }
 
@@ -607,5 +607,4 @@ __here;
         return view('admin.customers.single-customer');
     }
 }
-
 

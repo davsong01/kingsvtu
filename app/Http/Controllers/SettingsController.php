@@ -51,6 +51,8 @@ class SettingsController extends Controller
                 'logo' => '',
                 'favicon' => '',
                 'currency' => '&#8358;',
+                'admin_layout' => 'modern',
+                'customer_layout' => 'modern',
                 'official_email' => '',
                 'whatsapp_number' => '',
                 'google_ad_code' => '',
@@ -88,6 +90,10 @@ class SettingsController extends Controller
         $data = $request->except(['_token', 'logo', 'favicon', 'ip', 'captcha_settings_status', 'captcha_settings_provider', 'RECAPTCHA_SITE_KEY', 'RECAPTCHA_SECRET_KEY']);
 
         $data['captcha_settings'] = $captcha_settings;
+        $adminLayout = $request->input('admin_layout', $settings->admin_layout ?? 'modern');
+        $customerLayout = $request->input('customer_layout', $settings->customer_layout ?? 'modern');
+        $data['admin_layout'] = in_array($adminLayout, ['legacy', 'modern'], true) ? $adminLayout : 'modern';
+        $data['customer_layout'] = in_array($customerLayout, ['legacy', 'modern'], true) ? $customerLayout : 'modern';
 
         if (!empty($request->logo)) {
             $data['logo'] = $this->uploadFile($request->logo, 'site');

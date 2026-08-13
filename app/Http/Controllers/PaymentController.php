@@ -387,6 +387,4 @@ class PaymentController extends Controller
         return app(WebhookService::class)->analyzeWebhookResponse($pick);
     }
 
-    
-
 }
