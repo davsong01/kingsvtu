@@ -12,13 +12,27 @@ class EmailLogController extends Controller
      */
     public function index(Request $request)
     {
-        $mails = EmailLog::where('status', 'sent')->orderBy('created_at')->orderBy('status')->paginate(paginationRecords());
-        return view('admin.emails.index', ['emails' => $mails]);
+        $emails = EmailLog::where('status', 'sent')->orderByDesc('created_at')->paginate(paginationRecords());
+
+        return view(themeView('admin', 'emails.index'), [
+            'emails' => $emails,
+            'mode' => 'sent',
+            'totalEmails' => EmailLog::count(),
+            'sentCount' => EmailLog::where('status', 'sent')->count(),
+            'pendingCount' => EmailLog::where('status', 'pending')->count(),
+        ]);
     }
 
     public function pending () {
-        $mails = EmailLog::where('status', 'pending')->orderBy('created_at')->paginate(paginationRecords());
-        return view('admin.emails.index', ['emails' => $mails]);
+        $emails = EmailLog::where('status', 'pending')->orderByDesc('created_at')->paginate(paginationRecords());
+
+        return view(themeView('admin', 'emails.index'), [
+            'emails' => $emails,
+            'mode' => 'pending',
+            'totalEmails' => EmailLog::count(),
+            'sentCount' => EmailLog::where('status', 'sent')->count(),
+            'pendingCount' => EmailLog::where('status', 'pending')->count(),
+        ]);
     }
 
     public function resend(Request $request, EmailLog $id)

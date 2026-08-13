@@ -45,6 +45,7 @@
                         <table class="table gateway-table align-middle" id="product-table">
                             <thead>
                                 <tr>
+                                    <th>S/N</th>
                                     <th>Name</th>
                                     <th>Category</th>
                                     <th>API</th>
@@ -58,11 +59,21 @@
                             </thead>
                             <tbody>
                                 @forelse($products as $product)
+                                    @php
+                                        $productImage = !empty($product->image)
+                                            ? (str_starts_with($product->image, 'http') ? $product->image : asset($product->image))
+                                            : asset('site/upgrade.jpg');
+                                    @endphp
                                     <tr>
+                                        <td class="fw-semibold text-secondary">{{ $loop->iteration }}</td>
                                         <td>
                                             <div class="d-flex align-items-center gap-3">
-                                                <div class="admin-summary-card__icon admin-summary-card__icon--blue" style="width: 2.6rem; height: 2.6rem; border-radius: .85rem;">
-                                                    <i class="bx bx-package"></i>
+                                                <div class="flex-shrink-0">
+                                                    <img
+                                                        src="{{ $productImage }}"
+                                                        alt="{{ $product->name }}"
+                                                        class="product-table-thumb rounded-3 border"
+                                                    >
                                                 </div>
                                                 <div>
                                                     <div class="fw-semibold">{{ $product->name }}</div>
@@ -90,10 +101,10 @@
                                         @if(hasAccess('product.edit'))
                                             <td class="text-end">
                                                 <div class="d-inline-flex flex-wrap justify-content-end gap-2">
-                                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('product.edit', $product->id) }}">View / Edit</a>
+                                                    <a class="btn btn-sm btn-outline-primary" href="{{ route('product.edit', $product->id) }}">Edit</a>
                                                     <a class="btn btn-sm btn-outline-secondary" onclick="return confirm('{{ $product->name }} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}">Duplicate</a>
                                                     @if($product->has_variations === 'yes')
-                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.edit', $product->id) }}?tab=variations">Edit variations</a>
+                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.edit', $product->id) }}?tab=variations">Variations</a>
                                                     @endif
                                                 </div>
                                             </td>
@@ -101,7 +112,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="{{ hasAccess('product.edit') ? 7 : 6 }}">
+                                        <td colspan="{{ hasAccess('product.edit') ? 8 : 7 }}">
                                             <div class="alert alert-light border mb-0">No products found.</div>
                                         </td>
                                     </tr>

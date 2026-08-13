@@ -15,7 +15,6 @@
         $selectedAllowQuantity = old('allow_quantity', data_get($product, 'allow_quantity', ''));
         $selectedAllowSubscription = old('allow_subscription_type', data_get($product, 'allow_subscription_type', ''));
         $selectedMultistep = old('multistep', data_get($product, 'multistep', ''));
-        $tab = request('tab', 'details');
         $imageUrl = $isEdit && !empty($product->image) ? asset($product->image) : null;
         $currentCategoryName = data_get($product, 'category.name', 'Not set');
         $currentApiName = data_get($product, 'api.name', 'Not set');
@@ -30,18 +29,30 @@
                     <p>Keep product metadata, pricing, and variation management in one modern control surface.</p>
                 </div>
                 <div class="admin-page-badges">
-                    <div class="admin-page-badge">
+                    <a
+                        href="{{ !empty($product->category_id) ? route('category.edit', $product->category_id) : '#' }}"
+                        class="admin-page-badge admin-page-badge--link"
+                        @if(empty($product->category_id)) aria-disabled="true" tabindex="-1" @endif
+                    >
                         <span>Category</span>
                         <strong>{{ $currentCategoryName }}</strong>
-                    </div>
-                    <div class="admin-page-badge">
+                    </a>
+                    <a
+                        href="{{ !empty($product->api_id) ? route('api.edit', $product->api_id) : '#' }}"
+                        class="admin-page-badge admin-page-badge--link"
+                        @if(empty($product->api_id)) aria-disabled="true" tabindex="-1" @endif
+                    >
                         <span>API</span>
                         <strong>{{ $currentApiName }}</strong>
-                    </div>
-                    <div class="admin-page-badge">
+                    </a>
+                    <a
+                        href="{{ $isEdit ? route('product.edit', $product->id) . '?tab=variations' : '#' }}"
+                        class="admin-page-badge admin-page-badge--link"
+                        @if(!$isEdit) aria-disabled="true" tabindex="-1" @endif
+                    >
                         <span>Variations</span>
                         <strong>{{ $isEdit ? number_format($variations->count()) : '0' }}</strong>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -54,10 +65,9 @@
                 @endif
                 <input type="hidden" name="route" value="page1">
 
-                @if($tab !== 'variations')
-                    <div class="row g-4">
+                <div class="row g-4">
                         <div class="col-xl-7">
-                            <div class="modern-admin-card card h-100">
+                            <div class="modern-admin-card card h-10">
                                 <div class="card-header">
                                     <h3>Product details</h3>
                                     <p>Identity, visibility, and display setup for the service.</p>
@@ -179,15 +189,15 @@
                                             <label class="modern-admin-label" for="description">Description</label>
                                             <textarea class="form-control form-control-{{ formControlSize() }}" id="description" name="description" rows="4" placeholder="Product description">{{ old('description', $product->description ?? '') }}</textarea>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <label class="modern-admin-label" for="seo_title">SEO Title</label>
                                             <input type="text" class="form-control form-control-{{ formControlSize() }}" id="seo_title" name="seo_title" value="{{ old('seo_title', $product->seo_title ?? '') }}" placeholder="SEO title">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <label class="modern-admin-label" for="seo_keywords">SEO Keywords</label>
                                             <input type="text" class="form-control form-control-{{ formControlSize() }}" id="seo_keywords" name="seo_keywords" value="{{ old('seo_keywords', $product->seo_keywords ?? '') }}" placeholder="SEO keywords">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-12">
                                             <label class="modern-admin-label" for="seo_description">SEO Description</label>
                                             <textarea class="form-control form-control-{{ formControlSize() }}" id="seo_description" name="seo_description" rows="3" placeholder="SEO description">{{ old('seo_description', $product->seo_description ?? '') }}</textarea>
                                         </div>
@@ -234,7 +244,7 @@
                                             </div>
                                             <div class="row g-3">
                                                 @foreach($customerlevel as $level)
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-12">
                                                         <label class="modern-admin-label" for="productlevel_{{ $level->id }}">
                                                             {{ $level->name }}
                                                             @if(data_get($product, 'category.discount_type') === 'flat')
@@ -258,166 +268,10 @@
                             </div>
                         </div>
                     </div>
-                @endif
-
-                @if($isEdit && $selectedHasVariations === 'yes')
-                        <div class="modern-admin-card card mt-4">
-                            <div class="card-header d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                                <div>
-                                    <h3>Variation management</h3>
-                                    <p>Pull, add, or refine variation rules for this product.</p>
-                                </div>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#primary">Add variations</button>
-                                    @if($variations->count() < 1)
-                                        <a href="{{ route('variations.pull', $product->id) }}" class="btn btn-sm btn-outline-success">Pull variations</a>
-                                    @else
-                                        <a href="{{ route('variations.pull', $product->id) }}" class="btn btn-sm btn-outline-success">Re-pull variations</a>
-                                    @endif
-                                </div>
-                            </div>
-                        <div class="card-body">
-                            @include('admin.product.add_variations_form')
-
-                            @if($variations->count() > 0)
-                                <form action="{{ route('variations.update', $product->id) }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="product-variation-stack">
-                                        @foreach($variations as $variation)
-                                            <div class="product-variation-card card">
-                                                <div class="card-header d-flex flex-column flex-md-row align-items-md-start justify-content-between gap-2">
-                                                    <div>
-                                                        <h3>{{ $variation->system_name }}</h3>
-                                                        <p>Slug: {{ $variation->slug }} | API name: {{ $variation->api_name }}</p>
-                                                    </div>
-                                                    <div class="product-variation-card__actions">
-                                                        <span class="gateway-badge {{ $variation->status === 'active' ? 'gateway-badge--active' : 'gateway-badge--inactive' }}">
-                                                            {{ ucfirst($variation->status ?? 'inactive') }}
-                                                        </span>
-                                                        @if($variation->transaction->count() < 1)
-                                                            <a class="btn btn-outline-danger btn-sm product-variation-delete" onclick="return confirm('You are about to delete a variation')" href="{{ route('variation.delete', $variation->id) }}">Delete</a>
-                                                        @endif
-                                                    </div>
-                                                </div>
-
-                                                <div class="card-body">
-                                                    <input type="hidden" name="variation_id[{{ $variation->id }}]" value="{{ $variation->id }}">
-                                                    <div class="row g-3">
-                                                        <div class="col-12 col-lg-4">
-                                                            <div class="product-variation-panel">
-                                                                <div class="product-variation-panel__title">Variation details</div>
-                                                                <div class="row g-2">
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="api_name_{{ $variation->id }}">API name</label>
-                                                                        <input type="text" id="api_name_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="api_name[{{ $variation->id }}]" value="{{ $variation->api_name }}" placeholder="API name">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="system_name_{{ $variation->id }}">System name</label>
-                                                                        <input type="text" id="system_name_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="system_name[{{ $variation->id }}]" value="{{ $variation->system_name }}" placeholder="System name">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="slug_{{ $variation->id }}">Slug</label>
-                                                                        <input type="text" id="slug_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="slug[{{ $variation->id }}]" value="{{ $variation->slug }}" placeholder="Slug">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="status_{{ $variation->id }}">Status</label>
-                                                                        <select id="status_{{ $variation->id }}" class="form-select form-select-{{ formControlSize() }}" name="status[{{ $variation->id }}]">
-                                                                            <option value="active" @selected($variation->status === 'active')>Active</option>
-                                                                            <option value="inactive" @selected($variation->status === 'inactive')>Inactive</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-12 col-lg-4">
-                                                            <div class="product-variation-panel">
-                                                                <div class="product-variation-panel__title">Pricing</div>
-                                                                <div class="row g-2">
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="api_price_{{ $variation->id }}">API price</label>
-                                                                        <input type="number" id="api_price_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" step="0.01" name="api_price[{{ $variation->id }}]" value="{{ $variation->api_price }}" placeholder="API price">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="system_price_{{ $variation->id }}">System price</label>
-                                                                        <input type="number" id="system_price_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" step="0.01" name="system_price[{{ $variation->id }}]" value="{{ $variation->system_price }}" placeholder="System price">
-                                                                    </div>
-                                                                    @foreach($customerlevel as $level)
-                                                                        <div class="col-12">
-                                                                            <label class="modern-admin-label" for="level_{{ $level->id }}_{{ $variation->id }}">{{ $level->name }}</label>
-                                                                            <input type="number" id="level_{{ $level->id }}_{{ $variation->id }}" step="0.01" class="form-control form-control-{{ formControlSize() }}" name="level[{{ $level->id }}][{{ $variation->id }}]" value="{{ $variation->customer_level_price($level->id) }}" placeholder="{{ $level->name }}">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-12 col-lg-4">
-                                                            <div class="product-variation-panel">
-                                                                <div class="product-variation-panel__title">Amounts and extras</div>
-                                                                <div class="row g-2">
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="min_{{ $variation->id }}">Minimum</label>
-                                                                        <input type="number" id="min_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="min[{{ $variation->id }}]" value="{{ $variation->min }}" placeholder="Min">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="max_{{ $variation->id }}">Maximum</label>
-                                                                        <input type="number" id="max_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="max[{{ $variation->id }}]" value="{{ $variation->max }}" placeholder="Max">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="datasize_{{ $variation->id }}">Datasize</label>
-                                                                        <input type="number" id="datasize_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="datasize[{{ $variation->id }}]" value="{{ $variation->datasize }}" placeholder="Datasize">
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="fixed_price_{{ $variation->id }}">Fixed price</label>
-                                                                        <select id="fixed_price_{{ $variation->id }}" class="form-select form-select-{{ formControlSize() }}" name="fixed_price[{{ $variation->id }}]">
-                                                                            <option value="Yes" @selected($variation->fixed_price === 'Yes')>Yes</option>
-                                                                            <option value="No" @selected($variation->fixed_price === 'No')>No</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="multistep_{{ $variation->id }}">Multistep</label>
-                                                                        <select id="multistep_{{ $variation->id }}" class="form-select form-select-{{ formControlSize() }}" name="multistep[{{ $variation->id }}]">
-                                                                            <option value="yes" @selected($variation->multistep === 'yes')>Yes</option>
-                                                                            <option value="no" @selected($variation->multistep === 'no')>No</option>
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="col-12">
-                                                                        <label class="modern-admin-label" for="ussd_string_{{ $variation->id }}">USSD string</label>
-                                                                        <input type="text" id="ussd_string_{{ $variation->id }}" class="form-control form-control-{{ formControlSize() }}" name="ussd_string[{{ $variation->id }}]" value="{{ $variation->ussd_string }}" placeholder="USSD string">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-
-                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    <div class="modern-admin-footer mt-4">
-                                        <button class="btn btn-admin-submit" type="submit">Update variations</button>
-                                    </div>
-                                </form>
-                            @endif
-                        </div>
-                    </div>
-                @endif
             </form>
         </div>
     </div>
 @endsection
 
 @section('page-script')
-    <script>
-        $('#api').on('change', function () {
-            const currentId = '{{ data_get($product, "api.id", "") }}';
-            const hasVariations = '{{ $selectedHasVariations }}';
-
-            if ($(this).val() !== currentId && hasVariations === 'yes') {
-                // Variation copy controls can be added later if needed.
-            }
-        });
-    </script>
 @endsection
