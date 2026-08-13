@@ -14,7 +14,13 @@ class RoleController extends Controller
     function index(Request $request)
     {
         $roles = Role::orderBy('created_at','DESC')->get();
-        return view('admin.role.index', ['roles' => $roles]);
+        $summary = [
+            'totalRoles' => $roles->count(),
+            'activeRoles' => $roles->where('status', 'active')->count(),
+            'inactiveRoles' => $roles->where('status', 'inactive')->count(),
+        ];
+
+        return view(themeView('admin', 'roles.index'), compact('roles', 'summary'));
     }
 
     /**
@@ -25,7 +31,13 @@ class RoleController extends Controller
         $menus = RolePermission::where('status', 'active')->where('type', 'menu')->get();
         $permissions = RolePermission::where('status','active')->where('type','link')->get();
 
-        return view('admin.role.create', compact('menus', 'permissions'));
+        return view(themeView('admin', 'roles.form'), [
+            'menus' => $menus,
+            'permissions' => $permissions,
+            'role' => null,
+            'rolePermissions' => [],
+            'pageTitle' => 'Add Role',
+        ]);
     }
 
     /**
@@ -70,7 +82,7 @@ class RoleController extends Controller
         $permissions = RolePermission::where('status', 'active')->where('type', 'link')->orderBy('name','ASC')->get();
         $rolePermissions = explode(",",$role->permissions);
     
-        return view('admin.role.edit', compact('menus', 'permissions', 'rolePermissions','role'));
+        return view(themeView('admin', 'roles.form'), compact('menus', 'permissions', 'rolePermissions', 'role'));
     }
 
     /**

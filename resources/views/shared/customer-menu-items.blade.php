@@ -7,34 +7,7 @@
 
 @if($variant === 'sneat')
     @foreach($sections as $section)
-        <li class="menu-header small">
-            <span class="menu-header-text">{{ $section['label'] }}</span>
-        </li>
-
-        @foreach($section['items'] as $item)
-            @php
-                $isActive = menuItemIsActive($item['active_paths'] ?? []);
-                $isLogout = ($item['type'] ?? null) === 'logout';
-                $target = $item['target'] ?? null;
-            @endphp
-            <li class="menu-item {{ $isActive ? 'active' : '' }}">
-                <a
-                    href="{{ $item['href'] }}"
-                    class="menu-link"
-                    @if($target) target="{{ $target }}" @endif
-                    @if($isLogout) onclick="event.preventDefault(); document.getElementById('logout-form').submit();" @endif
-                >
-                    <i class="{{ menuIconClass($item['modern_icon_key'] ?? $item['icon_key'] ?? 'circle', 'sneat') }}"></i>
-                    <div data-i18n="{{ $item['label'] }}">{{ $item['label'] }}</div>
-                </a>
-            </li>
-
-            @if($isLogout)
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            @endif
-        @endforeach
+        @include('shared.sneat-menu-items', ['items' => $section['items']])
     @endforeach
 @else
     @if(!empty($stats))

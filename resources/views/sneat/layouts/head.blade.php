@@ -3,6 +3,9 @@
   $settings = getSettings();
   $appName = config('app.name');
   $favicon = $settings->favicon ?? 'modern-assets/img/favicon/favicon.ico';
+  $faviconPath = public_path($favicon);
+  $faviconVersion = file_exists($faviconPath) ? filemtime($faviconPath) : null;
+  $faviconUrl = asset($favicon) . ($faviconVersion ? '?v=' . $faviconVersion : '');
   $seoDescription = $settings->seo_description ?? $appName;
   $seoTitle = $settings->seo_title ?? 'Dashboard';
   $seoKeywords = $settings->seo_keywords ?? $appName;
@@ -25,15 +28,15 @@
   <meta name="author" content="{{ $appName }}" />
   <meta name="theme-color" content="{{ $themeColor }}" />
   <meta name="msapplication-TileColor" content="{{ $themeColor }}" />
-  <meta name="msapplication-TileImage" content="{{ asset($favicon) }}" />
+  <meta name="msapplication-TileImage" content="{{ $faviconUrl }}" />
   <meta property="og:title" content="@yield('title', config('app.name'))" />
   <meta property="og:description" content="{{ $seoDescription }}" />
   <meta property="og:site_name" content="{{ $appName }}" />
   <title>@yield('title', $appName . ' - ' . $seoTitle)</title>
 
-  <link rel="apple-touch-icon" href="{{ asset($favicon) }}" />
-  <link rel="shortcut icon" type="image/x-icon" href="{{ asset($favicon) }}" />
-  <link rel="icon" type="image/x-icon" href="{{ asset($favicon) }}" />
+  <link rel="apple-touch-icon" href="{{ $faviconUrl }}" />
+  <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconUrl }}" />
+  <link rel="icon" type="image/x-icon" href="{{ $faviconUrl }}" />
 
   <link rel="stylesheet" href="{{ asset('modern-assets/vendor/fonts/iconify-icons.css') }}" />
   <link rel="stylesheet" href="{{ asset('modern-assets/vendor/css/core.css') }}" />
@@ -44,6 +47,7 @@
   <link rel="stylesheet" href="{{ asset('css/customer-mobile-nav.css') }}" />
 
   @yield('page-css')
+  <link rel="stylesheet" href="{{ asset('modern-assets/css/admin.css') }}" />
 
   <script src="{{ asset('modern-assets/vendor/js/helpers.js') }}"></script>
   <script src="{{ asset('modern-assets/js/config.js') }}"></script>

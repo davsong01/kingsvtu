@@ -714,7 +714,7 @@ class TransactionController extends Controller
             $transactions = $transactions->whereBetween('created_at', [$from, $to]);
         }
 
-        $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(20);
+        $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(paginationRecords());
 
         $products = Product::where('status', 'active')->get();
         return view('customer.mytransactions', compact('transactions', 'products'));
@@ -1041,7 +1041,7 @@ class TransactionController extends Controller
             $transactions = $transactions->whereBetween('created_at', [$from, $to]);
         }
         
-        $transactions = $transactions->paginate(20);
+        $transactions = $transactions->paginate(paginationRecords());
 
         return view('admin.transaction.index', [
             'transactions' => $transactions,
@@ -1160,7 +1160,7 @@ class TransactionController extends Controller
 
         // Paginate or retrieve results
         if ($request->paginate === 'yes') {
-            $transactions = $transactions->paginate(20);
+            $transactions = $transactions->paginate(paginationRecords());
         } else {
             $transactions = $transactions->get();
         }
@@ -1217,7 +1217,7 @@ class TransactionController extends Controller
             $time = $request->to . ' 00:00:00';
             $transactions = $transactions->where('created_at', $time);
         }
-        $transactions = $transactions->paginate(20);
+        $transactions = $transactions->paginate(paginationRecords());
 
         return view('admin.transaction.wallet_funding', [
             'providers' => $providers,
@@ -1274,7 +1274,7 @@ class TransactionController extends Controller
             $transactions = $transactions->where('created_at', $time);
         }
 
-        $transactions = $transactions->paginate(20);
+        $transactions = $transactions->paginate(paginationRecords());
 
         return view('admin.transaction.earning_log', [
             'transactions' => $transactions,

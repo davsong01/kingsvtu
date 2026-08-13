@@ -9,10 +9,38 @@ use Illuminate\Http\Request;
 class KycDataController extends Controller
 {
 
-    public function adminKycIndex()
+    public function adminKycIndex(Request $request)
     {
-        $customers = Customer::with('user')->get();
-        return view('admin.customers.kyc_data', compact('customers'));
+        $allCustomers = Customer::with('user')->get();
+
+        $query = Customer::with('user')->orderByDesc('id');
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('kyc_status', $request->status);
+        }
+
+        if ($search = trim((string) $request->query('q', ''))) {
+            $query->whereHas('user', function ($userQuery) use ($search) {
+                $userQuery->where('firstname', 'like', '%' . $search . '%')
+                    ->orWhere('lastname', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        $customers = $query->paginate(paginationRecords())->withQueryString();
+        $totalCustomers = $allCustomers->count();
+        $verifiedCount = $allCustomers->where('kyc_status', 'verified')->count();
+        $awaitingCount = $allCustomers->where('kyc_status', 'awaiting-approval')->count();
+        $unverifiedCount = $allCustomers->whereIn('kyc_status', ['unverified', 'pending'])->count();
+
+        return view(themeView('admin', 'kyc_data'), compact(
+            'customers',
+            'totalCustomers',
+            'verifiedCount',
+            'awaitingCount',
+            'unverifiedCount'
+        ));
     }
 
     public function verifyBVN($bvn)

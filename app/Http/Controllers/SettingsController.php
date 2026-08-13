@@ -69,7 +69,7 @@ class SettingsController extends Controller
 
         $payment_gateways = PaymentGateway::all();
 
-        return view('admin.settings', compact('settings', 'currencies', 'payment_gateways'));
+        return view(themeView('admin', 'settings'), compact('settings', 'currencies', 'payment_gateways'));
     }
 
     /**

@@ -18,14 +18,26 @@ class AdminController extends Controller
 {
 
     function index (Request $request) {
-        $admins = Admin::with('user')->paginate(10);
-        return view('admin.admin.index', ['admins' => $admins]);
+        $admins = Admin::with('user')->orderBy('created_at', 'DESC')->get();
+        $summary = [
+            'totalAdmins' => $admins->count(),
+            'activeAdmins' => $admins->where('user.status', 'active')->count(),
+            'suspendedAdmins' => $admins->where('user.status', 'inactive')->count(),
+            'withRoles' => $admins->filter(fn ($admin) => !empty($admin->permissions))->count(),
+        ];
+
+        return view(themeView('admin', 'admins.index'), compact('admins', 'summary'));
     }
 
     function create () {
         $roles = Role::where('status', 'active')->orderBy('created_at','DESC')->get();
 
-        return view('admin.admin.create', compact('roles'));
+        return view(themeView('admin', 'admins.form'), [
+            'roles' => $roles,
+            'admin' => null,
+            'permissions' => [],
+            'pageTitle' => 'Add Admin',
+        ]);
     }
 
     function store (Request $request) {
@@ -34,7 +46,7 @@ class AdminController extends Controller
             'last_name' => 'required',
             'password' => 'nullable',
             'phone' => 'nullable',
-            'permissions' => 'required',
+            'roles' => 'required',
             'email' => 'required|unique:users',
             'status' => 'nullable',
         ]);
@@ -59,7 +71,7 @@ class AdminController extends Controller
 
             $admins = Admin::create([
                 'user_id' => $user->id,
-                'permissions' => join(',', $request->permissions),
+                'permissions' => join(',', $request->roles),
             ]);
         });
 
@@ -72,7 +84,12 @@ class AdminController extends Controller
         $roles = Role::where('status','active')->get();
         $permissions = explode(",",$admin->admin->permissions);
         
-        return view('admin.admin.edit', ['admin' => $admin, 'roles' => $roles, 'permissions' => $permissions]);
+        return view(themeView('admin', 'admins.form'), [
+            'admin' => $admin,
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'pageTitle' => 'Edit Admin',
+        ]);
     }
 
     function update (Request $request) {

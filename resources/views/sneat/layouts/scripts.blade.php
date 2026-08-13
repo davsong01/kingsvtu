@@ -18,40 +18,46 @@
   window.templateName = document.documentElement.getAttribute('data-template') || "vertical-menu-template-bordered";
 
   document.addEventListener("DOMContentLoaded", function () {
-    var toggle = document.getElementById("nav-semi-dark-toggle");
-    var menu = document.getElementById("layout-menu");
-    var storageKey = "2cash-semi-dark-menu";
+    var themeToggle = document.getElementById("sneat-theme-toggle");
+    var themeIcon = document.getElementById("sneat-theme-toggle-icon");
+    var storageKey = "kingsvtu-theme-mode";
+    var root = document.documentElement;
 
-    if (!toggle || !menu) {
-      return;
-    }
+    var setIcon = function (theme) {
+      if (!themeToggle || !themeIcon) {
+        return;
+      }
 
-    var applyState = function (enabled) {
-      if (enabled) {
-        menu.setAttribute("data-bs-theme", "dark");
-        document.documentElement.setAttribute("data-semidark-menu", "true");
+      if (theme === "dark") {
+        themeIcon.className = "icon-base bx bx-sun icon-md";
       } else {
-        menu.removeAttribute("data-bs-theme");
-        document.documentElement.removeAttribute("data-semidark-menu");
+        themeIcon.className = "icon-base bx bx-moon icon-md";
       }
     };
 
+    var applyTheme = function (theme) {
+      root.setAttribute("data-bs-theme", theme);
+      setIcon(theme);
+    };
+
     try {
-      applyState(localStorage.getItem(storageKey) === "true");
+      applyTheme(localStorage.getItem(storageKey) === "dark" ? "dark" : "light");
     } catch (error) {
-      applyState(false);
+      applyTheme("light");
     }
 
-    toggle.addEventListener("click", function () {
-      var isEnabled = menu.getAttribute("data-bs-theme") === "dark";
-      var nextState = !isEnabled;
+    if (themeToggle) {
+      themeToggle.addEventListener("click", function () {
+        var currentTheme = root.getAttribute("data-bs-theme") === "dark" ? "dark" : "light";
+        var nextTheme = currentTheme === "dark" ? "light" : "dark";
 
-      applyState(nextState);
+        applyTheme(nextTheme);
 
-      try {
-        localStorage.setItem(storageKey, String(nextState));
-      } catch (error) {}
-    });
+        try {
+          localStorage.setItem(storageKey, nextTheme);
+        } catch (error) {}
+      });
+    }
 
     var scrollTopBtn = document.getElementById("sneat-scroll-top");
     if (scrollTopBtn) {

@@ -12,12 +12,12 @@ class EmailLogController extends Controller
      */
     public function index(Request $request)
     {
-        $mails = EmailLog::where('status', 'sent')->orderBy('created_at')->orderBy('status')->paginate(50);
+        $mails = EmailLog::where('status', 'sent')->orderBy('created_at')->orderBy('status')->paginate(paginationRecords());
         return view('admin.emails.index', ['emails' => $mails]);
     }
 
     public function pending () {
-        $mails = EmailLog::where('status', 'pending')->orderBy('created_at')->paginate(50);
+        $mails = EmailLog::where('status', 'pending')->orderBy('created_at')->paginate(paginationRecords());
         return view('admin.emails.index', ['emails' => $mails]);
     }
 

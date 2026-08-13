@@ -367,7 +367,7 @@ class PaymentController extends Controller
 
     public function callBackAnalysis()
     {
-        $calls = ReservedAccountCallback::with('gateway')->orderBy('status', 'DESC')->paginate();
+        $calls = ReservedAccountCallback::with('gateway')->orderBy('status', 'DESC')->paginate(paginationRecords());
         return view('admin.transaction.raw_callbacks', compact('calls'));
     }
 

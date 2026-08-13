@@ -20,14 +20,18 @@ class ReservedAccountNumberController extends Controller
 
     public function delete(ReservedAccountNumber $account)
     {
+        $tab = request()->query('tab', 'reserved');
+
         if ($account->paymentgateway_id == 1) {
             $delete = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->deleteReservedAccount($account->account_reference);
         }
 
         if ($delete['status'] == 'success') {
-            return back()->with('message', 'Reserved Account Deleted successfully');
+            return redirect()->to(route('customers.edit', $account->customer_id) . '?tab=' . $tab)
+                ->with('message', 'Reserved Account Deleted successfully');
         } else {
-            return back()->with('error', $delete['data']);
+            return redirect()->to(route('customers.edit', $account->customer_id) . '?tab=' . $tab)
+                ->with('error', $delete['data']);
         }
     }
 
