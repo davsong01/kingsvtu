@@ -34,7 +34,8 @@ class ReservedAccountNumberController extends Controller
                 $query->where('account_number', 'like', '%' . $accountNumber . '%');
             })
             ->orderBy('customer_id')
-            ->get();
+            ->paginate(paginationRecords())
+            ->withQueryString();
         return view(themeView('admin', 'customers.reserved_account_numbers'), compact('numbers', 'gateways'));
     }
 
