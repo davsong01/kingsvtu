@@ -8,13 +8,19 @@
     $currency = $settings->currency ?? '₦';
     $statusMap = $kycStatuses->keyBy('key');
     $finalKycStatus = getFinalKycStatus($user->customer->id);
+    $profileDefaults = [
+        'FIRST_NAME' => $user->firstname ?? '',
+        'MIDDLE_NAME' => $user->middlename ?? '',
+        'LAST_NAME' => $user->lastname ?? '',
+        'PHONE_NUMBER' => $user->phone ?? '',
+    ];
 
     $statusFor = function (string $key, string $default = 'pending') use ($statusMap) {
         return strtolower((string) data_get($statusMap->get($key), 'status', $default));
     };
 
-    $valueFor = function (string $key, string $default = '') use ($statusMap) {
-        return data_get($statusMap->get($key), 'value', $default);
+    $valueFor = function (string $key, string $default = '') use ($statusMap, $profileDefaults) {
+        return data_get($statusMap->get($key), 'value', $default !== '' ? $default : ($profileDefaults[$key] ?? ''));
     };
 
     $fieldBadgeTone = function (string $status) {
@@ -52,7 +58,7 @@
                 <div class="gateway-summary">
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">KYC status</span>
-                        <span class="gateway-summary__value">{{ ucfirst(str_replace('-', ' ', $finalKycStatus ?: 'pending')) }}</span>
+                        <span class="gateway-summary__value">{{ formatKycStatusLabel($finalKycStatus ?: 'pending') }}</span>
                     </div>
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">Email</span>
@@ -102,7 +108,7 @@
                                                 name="{{ $field['key'] }}"
                                                 id="{{ $field['key'] }}"
                                                 class="form-control form-control-{{ formControlSize() }}"
-                                                value="{{ old($field['key'], $fieldValue) }}"
+                                                value="{{ old($field['key'], $fieldValue ?: ($profileDefaults[$field['key']] ?? '')) }}"
                                                 @disabled($isVerified)
                                             >
                                         </div>

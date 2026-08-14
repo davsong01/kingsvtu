@@ -115,7 +115,7 @@
                                         </td>
                                         <td>
                                             <span class="gateway-badge {{ $badgeClass }}">
-                                                {{ ucfirst(str_replace('-', ' ', $kycStatus)) }}
+                                                {{ formatKycStatusLabel($kycStatus) }}
                                             </span>
                                         </td>
                                         <td class="text-end">

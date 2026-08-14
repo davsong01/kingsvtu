@@ -71,7 +71,7 @@
                     </div>
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">KYC</span>
-                        <span class="gateway-summary__value">{{ ucfirst($kycStatusValue) }}</span>
+                        <span class="gateway-summary__value">{{ formatKycStatusLabel($kycStatusValue) }}</span>
                     </div>
                 </div>
             </div>
@@ -303,7 +303,7 @@
                                     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
                                         <div>
                                             <div class="gateway-helper text-uppercase fw-semibold">General KYC status</div>
-                                            <h4 class="mb-1">{{ ucfirst($kycStatusValue) }}</h4>
+                                            <h4 class="mb-1">{{ formatKycStatusLabel($kycStatusValue) }}</h4>
                                             <p class="mb-0">Review the captured identity fields before approving or declining the record.</p>
                                         </div>
                                         <div class="d-flex flex-wrap gap-2">

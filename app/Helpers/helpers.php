@@ -1864,6 +1864,22 @@ if (!function_exists("getFinalKycStatus")) {
     }
 }
 
+if (!function_exists("formatKycStatusLabel")) {
+    function formatKycStatusLabel($status)
+    {
+        $status = strtolower(trim((string) $status));
+
+        return match ($status) {
+            'verified' => 'Verified',
+            'approved' => 'Approved',
+            'awaiting-approval', 'pending-review' => 'Awaiting Approval',
+            'pending' => 'Pending',
+            'declined', 'rejected' => 'Declined',
+            default => $status !== '' ? ucwords(str_replace(['-', '_'], ' ', $status)) : 'Pending',
+        };
+    }
+}
+
 if (!function_exists("starMiddle")) {
     function starMiddle($word, $a = 2, $b = 9, $c = 9, $d = 10)
     {

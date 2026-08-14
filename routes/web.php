@@ -61,7 +61,7 @@ Route::get('generate-api-keys', function(){
     }
 });
 
-Route::middleware(['auth', 'verified','ipcheck'])->group(function () {
+Route::middleware(['auth', 'verified','ipcheck', 'kyc'])->group(function () {
     Route::get('/create-transaction-pin', [DashboardController::class, 'createTransactionPin'])->name('customer.create.pin');
     Route::post('/create-transaction-pin', [DashboardController::class, 'processCreateTransactionPin'])->name('customer.process.create.pin');
 });

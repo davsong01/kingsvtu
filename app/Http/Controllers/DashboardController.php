@@ -403,6 +403,11 @@ class DashboardController extends Controller
         $kycData    = session('special_kyc_data', []);
         $kycmessage = $kycData['kycmessage'] ?? null;
         $fields     = $kycData['fields']  ?? [];
+
+        if (empty($kycmessage) || empty($fields)) {
+            return redirect(route('update.kyc.details'))
+                ->with('error', 'Please complete the standard KYC form. Additional KYC fields are only shown when required.');
+        }
         
         return view(themeView('customer', 'edit_special_kyc_details'), compact('kycmessage', 'fields'));
     }
@@ -450,7 +455,9 @@ class DashboardController extends Controller
             $this->updateKycData($key, $value, auth()->user()->customer->id, $status);
         }
 
-        return redirect(route('update.kyc.special'))->with('message', 'Details saved successfully. You can now notify admin to review your KYC.');
+        session()->forget('special_kyc_data');
+
+        return redirect(route('dashboard'))->with('message', 'Details saved successfully. You can now notify admin to review your KYC.');
     }
 
     public function notifyAdminOnKyc(Request $request)

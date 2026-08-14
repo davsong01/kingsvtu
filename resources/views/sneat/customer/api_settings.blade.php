@@ -29,7 +29,7 @@
                     </div>
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">KYC</span>
-                        <span class="gateway-summary__value">{{ ucfirst(str_replace('-', ' ', $kycStatus)) }}</span>
+                        <span class="gateway-summary__value">{{ formatKycStatusLabel($kycStatus) }}</span>
                     </div>
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">Wallet</span>

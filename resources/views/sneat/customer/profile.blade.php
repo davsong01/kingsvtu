@@ -11,7 +11,7 @@
         $walletBalance = $currency . number_format(walletBalance($user), 2);
         $referralBalance = $currency . number_format(referralBalance($user), 2);
         $kycStatus = getFinalKycStatus($user->customer->id) ?? 'pending';
-        $kycLabel = str($kycStatus)->replace('-', ' ')->title();
+        $kycLabel = formatKycStatusLabel($kycStatus);
         $kycBadge = in_array($kycStatus, ['verified', 'approved'], true) ? 'success' : ($kycStatus === 'declined' ? 'danger' : 'warning');
         $customerLevel = $user->customer?->level?->name ?? 'Not assigned';
     @endphp

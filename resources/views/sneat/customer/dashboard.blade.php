@@ -11,7 +11,7 @@
         $referralBalance = $user->type === 'customer' ? $currency . number_format(referralBalance($user), 2) : $currency . '0.00';
         $levelName = $user->customer?->level?->name ?? 'Not assigned';
         $kycStatus = getFinalKycStatus($user->customer->id) ?? 'pending';
-        $kycLabel = str($kycStatus)->replace('-', ' ')->title();
+        $kycLabel = formatKycStatusLabel($kycStatus);
         $kycBadge = in_array($kycStatus, ['verified', 'approved'], true) ? 'success' : ($kycStatus === 'declined' ? 'danger' : 'warning');
         $services = getCategories();
         $serviceCount = $services->count();
