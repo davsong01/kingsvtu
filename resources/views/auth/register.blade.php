@@ -1,13 +1,13 @@
 @extends('layouts.auth')
 
 @section('auth-title', 'Create account')
-@section('auth-subtitle', 'Join KingsVTU and start using the platform.')
+@section('auth-subtitle', 'Register your account and continue to KYC after logging in.')
 
 @section('body')
     <div class="auth-form">
         @include('layouts.alerts')
 
-        <form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('register') }}" method="POST" autocomplete="on">
             @csrf
             <div class="row g-3">
                 <div class="col-sm-6">
@@ -43,7 +43,7 @@
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label for="referral">Referral username</label>
-                        <input type="text" class="form-control" id="referral" name="referral" value="{{ request()->referral }}" placeholder="Referral username">
+                        <input type="text" class="form-control" id="referral" name="referral" value="{{ old('referral', request()->referral) }}" placeholder="Referral username">
                     </div>
                 </div>
                 <div class="col-12">
@@ -57,14 +57,15 @@
                 </div>
             </div>
 
-            <div class="form-check mt-3">
-                <input type="checkbox" class="form-check-input" id="privacy" name="privacy" required>
-                <label class="form-check-label" for="privacy">
-                    I agree to the <a target="_blank" href="https://kingsvtu.ng/privacy-policy">privacy policy</a>.
+            <x-captcha group-class="mt-3" />
+
+            <div class="mt-1 p-3 rounded-4 border bg-body-tertiary d-flex align-items-start gap-3">
+                <input type="checkbox" class="form-check-input mt-1" id="privacy" name="privacy" required>
+                <label class="form-check-label mb-0" for="privacy">
+                    <span class="d-block fw-semibold text-body">I agree to the privacy policy</span>
+                    <small class="text-secondary">I understand how my information is used and stored on KingsVTU.</small>
                 </label>
             </div>
-
-            <x-captcha group-class="mt-3" />
 
             <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
         </form>

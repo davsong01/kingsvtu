@@ -261,6 +261,73 @@ body.auth-page {
   margin-top: .3rem;
 }
 
+.auth-captcha-field {
+  display: grid;
+  gap: .6rem;
+}
+
+.auth-captcha-field__label {
+  color: #394658;
+  font-size: .86rem;
+  font-weight: 600;
+}
+
+.auth-captcha-field__question-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8.5rem;
+  gap: .75rem;
+  align-items: stretch;
+}
+
+.auth-captcha-field__question {
+  min-height: 3.45rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(15, 23, 42, .12);
+  background: #f8fafc;
+  color: #344054;
+  font-size: .98rem;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+}
+
+.auth-captcha-field__question-mark {
+  width: 1.7rem;
+  height: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(31, 168, 104, .12);
+  color: var(--auth-accent, #1fa868);
+  font-size: .95rem;
+  font-weight: 800;
+  flex: 0 0 auto;
+}
+
+.auth-captcha-field__answer .auth-captcha-field__input {
+  min-height: 3.45rem;
+  border-radius: 1rem;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: .02em;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+}
+
+.auth-captcha-field__answer .auth-captcha-field__input::placeholder {
+  color: #9aa4b2;
+  font-weight: 500;
+}
+
+.auth-captcha-field__answer .auth-captcha-field__input:focus {
+  border-color: color-mix(in srgb, var(--auth-accent, #1fa868) 55%, #fff);
+  box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--auth-accent, #1fa868) 12%, transparent);
+}
+
 .auth-page-shell .btn,
 .auth-page-shell .form-control,
 .auth-page-shell .form-select {
@@ -288,5 +355,42 @@ body.auth-page {
 
   .auth-page-shell__header p {
     font-size: .96rem;
+  }
+
+  .auth-captcha-field__question-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .auth-captcha-field {
+    gap: .45rem;
+  }
+
+  .auth-captcha-field__label {
+    font-size: .82rem;
+  }
+
+  .auth-captcha-field__question-row {
+    gap: .5rem;
+  }
+
+  .auth-captcha-field__question {
+    min-height: 3rem;
+    padding-inline: .85rem;
+    font-size: .92rem;
+    border-radius: .9rem;
+  }
+
+  .auth-captcha-field__question-mark {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: .82rem;
+  }
+
+  .auth-captcha-field__answer .auth-captcha-field__input {
+    min-height: 3rem;
+    border-radius: .9rem;
+    font-size: .95rem;
   }
 }

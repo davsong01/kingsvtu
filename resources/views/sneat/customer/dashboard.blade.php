@@ -10,7 +10,7 @@
         $balance = $user->type === 'customer' ? $currency . number_format(walletBalance($user), 2) : $currency . '0.00';
         $referralBalance = $user->type === 'customer' ? $currency . number_format(referralBalance($user), 2) : $currency . '0.00';
         $levelName = $user->customer?->level?->name ?? 'Not assigned';
-        $kycStatus = $user->kyc_status ?? 'pending';
+        $kycStatus = getFinalKycStatus($user->customer->id) ?? 'pending';
         $kycLabel = str($kycStatus)->replace('-', ' ')->title();
         $kycBadge = in_array($kycStatus, ['verified', 'approved'], true) ? 'success' : ($kycStatus === 'declined' ? 'danger' : 'warning');
         $services = getCategories();
@@ -40,7 +40,7 @@
         @include('sneat.layouts.alerts')
         @include('shared.kyc-rejection-alert')
 
-        @if($settings->google_dashboard_ad_enabled ?? true)
+        @if(($settings->allow_google_dashboard_ad ?? 'no') === 'yes')
             {!! $settings->google_dashboard_ad_code !!}
         @endif
 
@@ -130,6 +130,35 @@
             </div>
         </div>
 
+        @if(($settings->customer_of_the_month_status ?? 'yes') === 'yes')
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 p-lg-5">
+                <div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-4">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="dashboard-action-icon bg-label-warning flex-shrink-0">
+                            <i class="bx bx-trophy fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted small fw-semibold text-uppercase mb-2">Customer of the Month</div>
+                                <h3 class="mb-2">{{ now()->format('F Y') }}</h3>
+                                @if(!empty($customer))
+                                    <div class="h4 fw-bold mb-1">{{ data_get($customer, 'customer.user.username', data_get($customer, 'customer.user.firstname', 'N/A')) }}</div>
+                                    <div class="text-muted">{{ data_get($customer, 'customer.user.email', '') }}</div>
+                                    <div class="text-muted mt-2">{{ getSettings()->currency ?? '₦' }}{{ number_format((float) data_get($customer, 'total_amount', 0), 2) }} spent</div>
+                                @else
+                                    <div class="h4 fw-bold mb-1">No customer of the month yet</div>
+                                    <div class="text-muted">You can be the customer of this month, start transacting!</div>
+                                    <div class="text-muted mt-2">Keep using KingsVTU to build your activity and show up here.</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h5 class="mb-0">Quick Actions</h5>
         </div>
@@ -208,36 +237,6 @@
                     </div>
                 </div>
 
-                @if(!empty($customer))
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <h5 class="mb-0">Customer of the Month</h5>
-                                <span class="badge bg-label-warning">Live</span>
-                            </div>
-                            <div class="mb-3">
-                                <div class="text-muted small mb-2">{{ now()->format('F Y') }}</div>
-                                <div class="h4 fw-bold mb-1">{{ data_get($customer, 'customer.user.username', data_get($customer, 'customer.user.firstname', 'N/A')) }}</div>
-                                <div class="text-muted">{{ data_get($customer, 'customer.user.email', '') }}</div>
-                                <div class="text-muted mt-2">{{ getSettings()->currency ?? '₦' }}{{ number_format((float) data_get($customer, 'total_amount', 0), 2) }} spent</div>
-                            </div>
-                            <div class="d-flex justify-content-between gap-3">
-                                <div>
-                                    <div class="text-muted small">Total Users</div>
-                                    <div class="h5 fw-bold mb-0">{{ number_format(data_get($customer, 'count', 0)) }}</div>
-                                </div>
-                                <div>
-                                    <div class="text-muted small">Total Revenue</div>
-                                    <div class="h5 fw-bold mb-0">{{ getSettings()->currency ?? '₦' }}{{ number_format((float) data_get($customer, 'total_amount', 0), 2) }}</div>
-                                </div>
-                                <div>
-                                    <div class="text-muted small">Wallets Balance</div>
-                                    <div class="h5 fw-bold mb-0">{{ getSettings()->currency ?? '₦' }}{{ number_format((float) data_get($customer, 'wallet_balance', 0), 2) }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
     </div>

@@ -153,9 +153,29 @@
 }
 
 .customer-services-modal .modal-content {
+  display: flex;
+  flex-direction: column;
   border-radius: 1.5rem;
   background: linear-gradient(180deg, rgba(255, 255, 255, .99), rgba(245, 248, 252, .98));
   box-shadow: 0 1.5rem 3.5rem rgba(15, 23, 42, .18);
+}
+
+.customer-services-modal .modal-dialog {
+  width: min(36rem, calc(100vw - 1rem));
+  height: calc(100vh - 1.25rem);
+  margin: .625rem auto;
+}
+
+.customer-services-modal .modal-content {
+  min-height: 100%;
+  max-height: 100%;
+}
+
+.customer-services-modal .modal-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .customer-services-modal .modal-header,
@@ -219,13 +239,17 @@
 }
 
 .customer-services-modal__services {
-  padding-top: .5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding-top: .25rem;
 }
 
 .customer-services-modal__service-list {
+  flex: 1 1 auto;
   display: grid;
   gap: .55rem;
-  max-height: 34vh;
+  max-height: none;
   overflow: auto;
   padding-right: .15rem;
 }
@@ -266,6 +290,12 @@
 }
 
 @media (max-width: 575.98px) {
+  .customer-services-modal .modal-dialog {
+    width: calc(100vw - 1rem);
+    height: calc(100vh - 1rem);
+    margin: .5rem auto;
+  }
+
   .customer-services-modal__grid {
     grid-template-columns: 1fr;
   }

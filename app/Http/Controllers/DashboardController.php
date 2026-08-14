@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\TransactionPinResetToken;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\KycReviewRequestedNotification;
 
 class DashboardController extends Controller
 {
@@ -156,13 +157,13 @@ class DashboardController extends Controller
     {
         $levels = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
         $benefits = CustomerLevelBenefit::all();
-        return view('customer.upgrade_level', compact('levels', 'benefits'));
+        return view(themeView('customer', 'upgrade_level'), compact('levels', 'benefits'));
     }
 
     public function showLoadWalletPge()
     {
         $gateway = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
-        return view('customer.load_wallet', compact('gateway'));
+        return view(themeView('customer', 'load_wallet'), compact('gateway'));
     }
 
     public function upgradeAccount(Request $request)
@@ -391,9 +392,10 @@ class DashboardController extends Controller
         
         $old_state = $kycStatuses->WHERE('key', 'STATE')->first();
         $old_state = !empty($old_state->value) ? $old_state->value : null;
+        $lgas = getLgas($old_state);
         $oldlgas = getLgas($old_state);
         
-        return view('customer.edit_kyc_details', compact('kyc', 'kycStatuses', 'oldlgas'));
+        return view(themeView('customer', 'edit_kyc_details'), compact('kyc', 'kycStatuses', 'oldlgas', 'lgas'));
     }
 
     public function updateSpecialKycInfo()
@@ -402,11 +404,11 @@ class DashboardController extends Controller
         $kycmessage = $kycData['kycmessage'] ?? null;
         $fields     = $kycData['fields']  ?? [];
         
-        return view('customer.edit_special_kyc_details', compact('kycmessage', 'fields'));
+        return view(themeView('customer', 'edit_special_kyc_details'), compact('kycmessage', 'fields'));
     }
 
     public function apiSettings(){
-        return view('customer.api_settings');
+        return view(themeView('customer', 'api_settings'));
     }
 
     public function processUpdateKycInfo(Request $request){
@@ -448,7 +450,24 @@ class DashboardController extends Controller
             $this->updateKycData($key, $value, auth()->user()->customer->id, $status);
         }
 
-        return redirect(route('dashboard'))->with('message', 'Thank you for your fine cooperation');
+        return redirect(route('update.kyc.special'))->with('message', 'Details saved successfully. You can now notify admin to review your KYC.');
+    }
+
+    public function notifyAdminOnKyc(Request $request)
+    {
+        $customer = auth()->user()->customer;
+
+        if (!$customer) {
+            return back()->with('error', 'Customer profile not found.');
+        }
+
+        $admins = User::where('type', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new KycReviewRequestedNotification($customer->load('user', 'level')));
+        }
+
+        return back()->with('message', 'Admin notified successfully.');
     }
 
     public function updateKycData($key, $value, $customer_id, $status = null)
@@ -492,26 +511,30 @@ class DashboardController extends Controller
 
     public function downlines($id = null)
     {
-        $refs = ReferralEarning::where('customer_id', auth()->user()->customer->id)->where('type', 'credit')->orderBy('created_at','DESC');
+        $refs = ReferralEarning::with(['referredCustomer.user', 'transaction'])
+            ->where('customer_id', auth()->user()->customer->id)
+            ->where('type', 'credit')
+            ->orderBy('created_at', 'DESC');
         if ($id) {
             $refs = $refs->where('referred_customer_id', $id)->get();
         } else {
             $refs = $refs->groupBy('referred_customer_id')->get();
         }
         
-        return view('customer.downlines', ['refs' => $refs, 'check' => $id]);
+        return view(themeView('customer', 'downlines'), ['refs' => $refs, 'check' => $id]);
     }
 
-    public function allDownlines(){
+    public function allDownlines()
+    {
         $refs = User::where('referral', auth()->user()->username)->orderBy('created_at','DESC')->get();
-        
-        return view('customer.referals', ['refs' => $refs]);
+
+        return view(themeView('customer', 'referals'), ['refs' => $refs]);
 
     }
 
     function downlinesWithdrawal()
     {
-        return view('customer.withdraw_earning');
+        return view(themeView('customer', 'withdraw_earning'));
     }
 
     function processWithdrawal(Request $request)

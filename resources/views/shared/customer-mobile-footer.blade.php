@@ -30,10 +30,13 @@
         </nav>
 
         <div class="modal fade customer-services-modal" id="customer-services-modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-fullscreen-sm-down">
                 <div class="modal-content border-0 shadow-lg">
                     <div class="modal-header border-0 pb-0">
-                        
+                        <div>
+                            <div class="customer-services-modal__eyebrow">Quick links</div>
+                            <h5 class="modal-title mb-0">Buy services</h5>
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body pt-3">

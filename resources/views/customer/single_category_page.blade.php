@@ -15,6 +15,40 @@
         text-transform: capitalize;
         text-decoration: underline;
     }
+
+    .purchase-amount-presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+        margin-top: .75rem;
+    }
+
+    .purchase-amount-presets__item {
+        min-height: 2.5rem;
+        padding: .55rem .95rem;
+        border: 1px solid rgba(67, 89, 113, .12);
+        border-radius: 999px;
+        background: #fff;
+        color: #233044;
+        font-size: .92rem;
+        font-weight: 700;
+        line-height: 1;
+        transition: border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .purchase-amount-presets__item:hover,
+    .purchase-amount-presets__item:focus-visible {
+        transform: translateY(-1px);
+        border-color: #3864dc;
+        color: #3864dc;
+    }
+
+    .purchase-amount-presets__item.is-active {
+        border-color: #3864dc;
+        background: rgba(56, 100, 220, .1);
+        color: #3864dc;
+        box-shadow: 0 .45rem .9rem rgba(56, 100, 220, .12);
+    }
 </style>
 @endsection
 
@@ -125,10 +159,11 @@
                                                                                 <i class="bx bx-user"></i>
                                                                             </div>
                                                                         </fieldset> --}}
-                                                                        <div class="col-md-6" id="amount-div" style="display:none">
+                                                                        <div class="col-12" id="amount-div" style="display:none">
                                                                             <fieldset class="form-group">
                                                                                 <label for="amount" class="">Amount {!! getSettings()['currency'] !!}</label>
                                                                                 <input class="form-control" id="amount" name="amount" placeholder="Enter Amount" required="" type="number" required>
+                                                                                <div class="purchase-amount-presets" id="amount-presets" style="display:none"></div>
                                                                             </fieldset>
                                                                             <small><span id="discount" style="display:none;color: red;"></span></small> <br>
                                                                         </div>
@@ -278,6 +313,65 @@
         document.forms["initialize"].submit();
     }
 
+    function formatAmountLabel(amount) {
+        return "{!! getSettings()['currency'] !!}" + Number(amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    function buildAmountPresets(min, max) {
+        const minAmount = Number(min || 0);
+        const maxAmount = Number(max || 0);
+
+        if (!minAmount || !maxAmount || maxAmount < minAmount) {
+            return [];
+        }
+
+        const candidates = [minAmount, 50, 100, 200, 500, 1000, 2000, maxAmount]
+            .map(function (value) { return Number(value); })
+            .filter(function (value, index, array) { return Number.isFinite(value) && array.indexOf(value) === index; })
+            .filter(function (value) { return value >= minAmount && value <= maxAmount; })
+            .sort(function (a, b) { return a - b; });
+
+        return candidates.length > 6 ? candidates.slice(0, 6) : candidates;
+    }
+
+    function renderAmountPresets(min, max) {
+        const presets = buildAmountPresets(min, max);
+        const $container = $('#amount-presets');
+
+        $container.empty();
+
+        if (!presets.length) {
+            $container.hide();
+            return;
+        }
+
+        presets.forEach(function (amount) {
+            const $button = $('<button>', {
+                type: 'button',
+                class: 'purchase-amount-presets__item',
+                text: formatAmountLabel(amount),
+                'data-amount': amount,
+            });
+
+            $button.on('click', function () {
+                $('#amount').val(amount).trigger('input').trigger('keyup');
+                $container.find('.purchase-amount-presets__item').removeClass('is-active');
+                $button.addClass('is-active');
+            });
+
+            $container.append($button);
+        });
+
+        $container.show();
+    }
+
+    $('#amount').on('input', function () {
+        const currentAmount = Number($(this).val());
+        $('#amount-presets .purchase-amount-presets__item').each(function () {
+            $(this).toggleClass('is-active', Number($(this).data('amount')) === currentAmount);
+        });
+    });
+
     $("#amount").keyup(function(){        
         var has_variation = $('#product').find(':selected').data('has_variation');
         var product_id = $('#product').val();
@@ -359,6 +453,7 @@
                 $('#variation-div').show();
                 $('#variation').show();
                 $('#amount-div').hide();
+                $('#amount-presets').hide().empty();
 
                 $("#amount").prop('readonly', false);
                 $("#amount").val('');
@@ -404,12 +499,14 @@
                     $("#amount").attr({
                         "readonly": "true",
                     });
+                    $('#amount-presets').hide().empty();
                 }else{
                     $("#amount").prop('readonly', false);
                     $("#amount").attr({
                         "max": max,
                         "min": min,
                     });
+                    renderAmountPresets(min, max);
                 }
             }
 
@@ -483,6 +580,7 @@
                 $("#amount").attr({
                     "readonly": "true",
                 });
+                $('#amount-presets').hide().empty();
 
             } else {
                 $("#amount").prop('readonly', false);
@@ -490,6 +588,7 @@
                     "max": selected[0].max,
                     "min": selected[0].min,
                 });
+                renderAmountPresets(selected[0].min, selected[0].max);
             }
         });
 

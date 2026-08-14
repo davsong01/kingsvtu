@@ -23,6 +23,7 @@ use App\Http\Controllers\VariationController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\CustomerAnnouncementController;
 use App\Http\Controllers\CustomerLevelController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\RolePermissionController;
@@ -81,12 +82,15 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     Route::middleware(['kyc'])->group(function () {
         Route::get('customer/{slug}', [TransactionController::class, 'showProductsPage'])->name('open.transaction.page');
         Route::post('customer-initialize-transaction', [TransactionController::class, 'initializeTransaction'])->name('initialize.transaction');
-        Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
-        Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
-        Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
-        Route::get('customer-transaction-report', [TransactionController::class, 'showTransactionReportPage'])->name('customer.transaction.report');
-        Route::get('customer-load-wallet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
-        Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
+    Route::get('customer-transactions', [TransactionController::class, 'customerTransactionHistory'])->name('customer.transaction.history');
+    Route::post('customer-verify', [TransactionController::class, 'verify'])->name('verify.unique.element');
+    Route::get('customer-transaction_status/{transaction_id}', [TransactionController::class, 'transactionStatus'])->name('transaction.status');
+    Route::get('customer-transaction-report', [TransactionController::class, 'showTransactionReportPage'])->name('customer.transaction.report');
+    Route::get('/notifications', [CustomerAnnouncementController::class, 'index'])->name('customer.notifications.index');
+    Route::post('/notifications/read-all', [CustomerAnnouncementController::class, 'markAllAsRead'])->name('customer.notifications.read-all');
+    Route::post('/notifications/{notification}/read', [CustomerAnnouncementController::class, 'markAsRead'])->name('customer.notifications.read');
+    Route::get('customer-load-wallet', [DashboardController::class, 'showLoadWalletPge'])->name('customer.load.wallet');
+    Route::get('customer-level-upgrade', [DashboardController::class, 'showUpgradeForm'])->name('customer.level.upgrade');
         Route::post('process-customer-load-wallet', [PaymentController::class, 'redirectToUrl'])->name('process-customer-load-wallet');
         Route::post('level-upgrade', [DashboardController::class, 'upgradeAccount'])->name('customer.level.upgrade.process');
         Route::get('download-transaction-receipt/{transaction_id}', [TransactionController::class, 'transactionReceipt'])->name('transaction.receipt.download');
@@ -106,6 +110,7 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     Route::post('customer-get-discount', [TransactionController::class, 'getCustomerDiscount'])->name('get.customer.discount');
 
     Route::get('customer-special-update-kyc-info', [DashboardController::class, 'updateSpecialKycInfo'])->name('update.kyc.special');
+    Route::post('customer-notify-admin-kyc', [DashboardController::class, 'notifyAdminOnKyc'])->name('customer.notify.admin.kyc');
     
     // Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 });

@@ -30,9 +30,9 @@ class KycDataController extends Controller
 
         $customers = $query->paginate(paginationRecords())->withQueryString();
         $totalCustomers = $allCustomers->count();
-        $verifiedCount = $allCustomers->where('kyc_status', 'verified')->count();
-        $awaitingCount = $allCustomers->where('kyc_status', 'awaiting-approval')->count();
-        $unverifiedCount = $allCustomers->whereIn('kyc_status', ['unverified', 'pending'])->count();
+        $verifiedCount = $allCustomers->filter(fn ($customer) => getFinalKycStatus($customer->id) === 'verified')->count();
+        $awaitingCount = $allCustomers->filter(fn ($customer) => getFinalKycStatus($customer->id) === 'awaiting-approval')->count();
+        $unverifiedCount = $allCustomers->filter(fn ($customer) => in_array(getFinalKycStatus($customer->id), ['unverified', 'pending'], true))->count();
 
         return view(themeView('admin', 'kyc_data'), compact(
             'customers',

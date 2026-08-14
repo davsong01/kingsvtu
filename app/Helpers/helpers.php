@@ -615,9 +615,10 @@ if (!function_exists("customerMenuData")) {
         if ($leaf = $makeLeaf('KYC Info', 'update.kyc.details', 'badge-check', [], ['update.kyc.details'])) {
             $selfService[] = $leaf;
         }
-        if ($leaf = $makeLeaf('API Settings', 'api.settings', 'settings', [], ['api.settings'])) {
-            if (($user->customer?->api_access ?? null) === 'active') {
-                $selfService[] = $leaf;
+        $apiChildren = [];
+        if (($user->customer?->api_access ?? null) === 'active') {
+            if ($leaf = $makeLeaf('API Settings', 'api.settings', 'settings', [], ['api.settings'])) {
+                $apiChildren[] = $leaf;
             }
         }
         if (!empty($settings->support_link)) {
@@ -643,8 +644,9 @@ if (!function_exists("customerMenuData")) {
                 'target' => '_blank',
                 'active_paths' => ['customer.shop.create'],
             ];
-
-            $selfService[] = [
+        }
+        if (!empty($settings->api_documentation_link) && ($user->customer?->api_access ?? null) === 'active') {
+            $apiChildren[] = [
                 'label' => 'API Documentation',
                 'href' => $settings->api_documentation_link,
                 'icon_key' => 'book-open',
@@ -652,6 +654,9 @@ if (!function_exists("customerMenuData")) {
                 'target' => '_blank',
                 'active_paths' => [],
             ];
+        }
+        if (!empty($apiChildren)) {
+            $selfService[] = $makeToggle('API', 'code', $apiChildren);
         }
 
         if (!empty($selfService)) {

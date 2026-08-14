@@ -11,8 +11,6 @@
         $customerTransactions = (int) data_get($customer, 'count', 0);
     @endphp
 
-    
-
     <div id="analytics" class="row g-3 mt-1">
         @php
             $statCards = [
@@ -44,7 +42,7 @@
     </div>
 
     <div class="row g-3 mt-1">
-        <div class="col-xl-6 col-lg-12">
+        <div class="col-12">
             <div class="admin-feature-card h-100">
                 <div class="d-flex align-items-start justify-content-between gap-3 mb-4">
                     <div class="d-flex align-items-center gap-3">
@@ -56,6 +54,7 @@
                             <h3 class="h5 fw-semibold mb-0">{{ $customer_month_label }}</h3>
                         </div>
                     </div>
+                    <span class="badge bg-label-warning">Featured</span>
                 </div>
 
                 @if(!empty($customer))
@@ -90,38 +89,31 @@
                         </div>
                     </div>
                 @else
-                    <div class="alert alert-light border mb-0">No customer activity available yet.</div>
+                    <div class="admin-feature-card__panel">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-lg-8">
+                                <div class="h4 fw-semibold mb-2">No customer of the month yet</div>
+                                <div class="text-secondary mb-0">This section will update automatically once a top-performing customer is available.</div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="admin-feature-card__meta-grid">
+                                    <div class="admin-feature-card__meta">
+                                        <div class="admin-feature-card__meta-value">{{ number_format($customers) }}</div>
+                                        <div class="admin-feature-card__meta-label">Total Users</div>
+                                    </div>
+                                    <div class="admin-feature-card__meta">
+                                        <div class="admin-feature-card__meta-value">{{ $currency }}{{ number_format($all_transactions_total, 1) }}</div>
+                                        <div class="admin-feature-card__meta-label">Total Revenue</div>
+                                    </div>
+                                    <div class="admin-feature-card__meta">
+                                        <div class="admin-feature-card__meta-value">{{ $currency }}{{ number_format($total_wallet_balance, 1) }}</div>
+                                        <div class="admin-feature-card__meta-label">Wallets Balance</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endif
-            </div>
-        </div>
-
-        <div class="col-xl-2 col-lg-4 col-md-6">
-            <div class="admin-summary-card h-100">
-                <div class="admin-summary-card__icon admin-summary-card__icon--blue">
-                    <i class="bx bx-user"></i>
-                </div>
-                <div class="admin-summary-card__value">{{ number_format($customers) }}</div>
-                <div class="admin-summary-card__label">Total Users</div>
-            </div>
-        </div>
-
-        <div class="col-xl-2 col-lg-4 col-md-6">
-            <div class="admin-summary-card h-100">
-                <div class="admin-summary-card__icon admin-summary-card__icon--green">
-                    <i class="bx bx-trending-up"></i>
-                </div>
-                <div class="admin-summary-card__value">{{ $currency }}{{ number_format($all_transactions_total, 1) }}</div>
-                <div class="admin-summary-card__label">Total Revenue</div>
-            </div>
-        </div>
-
-        <div class="col-xl-2 col-lg-4 col-md-6">
-            <div class="admin-summary-card h-100">
-                <div class="admin-summary-card__icon admin-summary-card__icon--amber">
-                    <i class="bx bx-wallet"></i>
-                </div>
-                <div class="admin-summary-card__value">{{ $currency }}{{ number_format($total_wallet_balance, 1) }}</div>
-                <div class="admin-summary-card__label">Wallets Balance</div>
             </div>
         </div>
     </div>

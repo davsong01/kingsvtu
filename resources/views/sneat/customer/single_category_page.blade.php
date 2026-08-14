@@ -110,9 +110,10 @@
                                 <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
                             </div>
 
-                            <div class="col-md-6" id="amount-div" style="display:none">
+                            <div class="col-12" id="amount-div" style="display:none">
                                 <label for="amount" class="form-label">Amount ({{ $currency }})</label>
                                 <input class="form-control" id="amount" name="amount" placeholder="Enter amount" type="number" required>
+                                <div class="purchase-amount-presets mt-3" id="amount-presets" style="display:none"></div>
                                 <small class="text-danger" id="discount" style="display:none"></small>
                             </div>
 
@@ -125,9 +126,8 @@
 
                             @if (auth()->user()->transaction_pin)
                                 <div class="col-md-6">
-                                    <label for="transaction_pin" class="form-label">Transaction PIN</label>
                                     <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
-                                        <span></span>
+                                        <label for="transaction_pin" class="form-label mb-0">Transaction PIN</label>
                                         <a class="small text-primary text-decoration-none" href="{{ route('customer.reset.pin') }}">Reset Transaction Pin</a>
                                     </div>
                                     <input type="password" class="form-control" id="transaction_pin" name="transaction_pin" required>
@@ -275,6 +275,68 @@
             document.forms["initialize"].submit();
         }
 
+        function formatAmountLabel(amount) {
+            return "{{ $currency }}" + Number(amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        }
+
+        function buildAmountPresets(min, max) {
+            const minAmount = Number(min || 0);
+            const maxAmount = Number(max || 0);
+            if (!minAmount || !maxAmount || maxAmount < minAmount) {
+                return [];
+            }
+
+            const candidates = [minAmount, 50, 100, 200, 500, 1000, 2000, maxAmount]
+                .map(function (value) { return Number(value); })
+                .filter(function (value, index, array) { return Number.isFinite(value) && array.indexOf(value) === index; })
+                .filter(function (value) { return value >= minAmount && value <= maxAmount; })
+                .sort(function (a, b) { return a - b; });
+
+            if (candidates.length <= 4) {
+                return candidates;
+            }
+
+            return candidates.slice(0, 6);
+        }
+
+        function renderAmountPresets(min, max) {
+            const presets = buildAmountPresets(min, max);
+            const $container = $('#amount-presets');
+
+            $container.empty();
+
+            if (!presets.length) {
+                $container.hide();
+                return;
+            }
+
+            presets.forEach(function (amount) {
+                const $button = $('<button>', {
+                    type: 'button',
+                    class: 'purchase-amount-presets__item',
+                    text: formatAmountLabel(amount),
+                    'data-amount': amount,
+                });
+
+                $button.on('click', function () {
+                    $('#amount').val(amount).trigger('input').trigger('keyup');
+                    $container.find('.purchase-amount-presets__item').removeClass('is-active');
+                    $button.addClass('is-active');
+                });
+
+                $container.append($button);
+            });
+
+            $container.show();
+        }
+
+        $('#amount').on('input', function () {
+            const currentAmount = Number($(this).val());
+            $('#amount-presets .purchase-amount-presets__item').each(function () {
+                $(this).toggleClass('is-active', Number($(this).data('amount')) === currentAmount);
+            });
+        });
+
         $("#amount").keyup(function () {
             var has_variation = $('#product').find(':selected').data('has_variation');
             var product_id = $('#product').val();
@@ -349,6 +411,7 @@
                 if (has_variation == 'yes') {
                     $('#variation-div').show();
                     $('#amount-div').hide();
+                    $('#amount-presets').hide().empty();
                     $("#amount").prop('readonly', false).val('');
                     $('#variation').find('option').not(':first').remove();
                     variations = [];
@@ -382,8 +445,10 @@
 
                     if (fixed_price == 'yes') {
                         $("#amount").attr({ "max": "", "min": "" }).val(system_price).attr({ "readonly": "true" });
+                        $('#amount-presets').hide().empty();
                     } else {
                         $("#amount").prop('readonly', false).attr({ "max": max, "min": min });
+                        renderAmountPresets(min, max);
                     }
                 }
 
@@ -439,8 +504,10 @@
 
                 if (selected[0] && selected[0].fixedPrice == 'Yes') {
                     $("#amount").attr({ "max": "", "min": "" }).val(selected[0].variation_amount).attr({ "readonly": "true" });
+                    $('#amount-presets').hide().empty();
                 } else if (selected[0]) {
                     $("#amount").prop('readonly', false).attr({ "max": selected[0].max, "min": selected[0].min });
+                    renderAmountPresets(selected[0].min, selected[0].max);
                 }
             });
 

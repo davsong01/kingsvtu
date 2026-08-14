@@ -91,10 +91,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($customers as $customer)
-                                    @php
-                                        $serialNumber = $customers->firstItem() + $loop->index;
-                                        $kycStatus = strtolower((string) ($customer->kyc_status ?? 'unverified'));
+                                    @forelse($customers as $customer)
+                                        @php
+                                            $serialNumber = $customers->firstItem() + $loop->index;
+                                        $kycStatus = strtolower((string) (getFinalKycStatus($customer->id) ?? 'unverified'));
                                         $badgeClass = match ($kycStatus) {
                                             'verified' => 'gateway-badge--active',
                                             'awaiting-approval' => 'gateway-badge--warning',

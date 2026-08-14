@@ -8,6 +8,40 @@
         font-size: 10px;
         float: right;
     }
+
+    .purchase-amount-presets {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .6rem;
+        margin-top: .75rem;
+    }
+
+    .purchase-amount-presets__item {
+        min-height: 2.5rem;
+        padding: .55rem .95rem;
+        border: 1px solid rgba(67, 89, 113, .12);
+        border-radius: 999px;
+        background: #fff;
+        color: #233044;
+        font-size: .92rem;
+        font-weight: 700;
+        line-height: 1;
+        transition: border-color .2s ease, background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .purchase-amount-presets__item:hover,
+    .purchase-amount-presets__item:focus-visible {
+        transform: translateY(-1px);
+        border-color: #3864dc;
+        color: #3864dc;
+    }
+
+    .purchase-amount-presets__item.is-active {
+        border-color: #3864dc;
+        background: rgba(56, 100, 220, .1);
+        color: #3864dc;
+        box-shadow: 0 .45rem .9rem rgba(56, 100, 220, .12);
+    }
 </style>
 @endsection
 @section('content')
@@ -74,6 +108,7 @@
                                                                                 <fieldset class="form-group">
                                                                                     <label for="amount">Enter Amount</label>
                                                                                     <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter amount" value="{{ old('amount')}}" required>
+                                                                                    <div class="purchase-amount-presets" id="wallet-amount-presets"></div>
                                                                                 </fieldset>
                                                                             </div>
                                                                             <div class="col-md-12">
@@ -153,6 +188,41 @@
 <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
 <script type="text/javascript" src="https://sdk.monnify.com/plugin/monnify.js"></script>
 <script>
+    (function () {
+        const presets = [50, 100, 200, 500, 1000, 2000];
+        const currency = @json(getSettings()->currency ?? '₦');
+        const $container = $('#wallet-amount-presets');
+        const $amount = $('#amount');
+
+        if (!$container.length || !$amount.length) {
+            return;
+        }
+
+        presets.forEach(function (amount) {
+            const $button = $('<button>', {
+                type: 'button',
+                class: 'purchase-amount-presets__item',
+                text: currency + Number(amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
+                'data-amount': amount,
+            });
+
+            $button.on('click', function () {
+                $amount.val(amount).trigger('input');
+                $container.find('.purchase-amount-presets__item').removeClass('is-active');
+                $button.addClass('is-active');
+            });
+
+            $container.append($button);
+        });
+
+        $amount.on('input', function () {
+            const currentAmount = Number($(this).val());
+            $container.find('.purchase-amount-presets__item').each(function () {
+                $(this).toggleClass('is-active', Number($(this).data('amount')) === currentAmount);
+            });
+        });
+    })();
+
     function loadWallet(){
         $.LoadingOverlay("show");
         document.forms["wallet_load"].submit();
