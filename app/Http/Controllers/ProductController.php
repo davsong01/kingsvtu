@@ -61,6 +61,7 @@ class ProductController extends Controller
             'ussd_string' => 'nullable',
             'multistep' => 'nullable',
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -103,6 +104,7 @@ class ProductController extends Controller
                 'ussd_string' => $request->ussd_string,
                 'multistep' => $request->multistep ?? 'no',
                 'referral_percentage' => $request->referral_percentage,
+                'show_in_menu' => $request->boolean('show_in_menu'),
             ]
         );
 
@@ -173,6 +175,7 @@ class ProductController extends Controller
             'multistep' => 'nullable',
             "allow_subscription_type" => "nullable",
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -233,6 +236,7 @@ class ProductController extends Controller
             'ussd_string' => $request->ussd_string,
             'multistep' => $request->multistep,
             'referral_percentage' => $request->referral_percentage,
+            'show_in_menu' => $request->boolean('show_in_menu'),
         ]);
 
         $productLevel = $request->productlevel;

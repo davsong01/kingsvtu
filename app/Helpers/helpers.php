@@ -4,6 +4,7 @@ use App\Models\KycData;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\EmailLog;
+use App\Models\Product;
 use App\Models\Settings;
 use App\Mail\EmailMessages;
 use Illuminate\Support\Arr;
@@ -568,6 +569,15 @@ if (!function_exists("customerMenuData")) {
         $levelName = $user->customer?->level?->name ?? 'N/A';
         $sections = [];
 
+        $featuredProducts = Product::with('category')
+            ->where('status', 'active')
+            ->where('show_in_menu', true)
+            ->whereHas('category', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->orderBy('display_name')
+            ->get();
+
         $paymentItems = [];
         foreach (getCategories() as $category) {
             $paymentItems[] = [
@@ -577,6 +587,25 @@ if (!function_exists("customerMenuData")) {
                 'icon_key' => 'grid-alt',
                 'modern_icon_key' => modernServiceIconKey($category),
                 'active_paths' => ['customer/' . $category->slug],
+            ];
+        }
+
+        foreach ($featuredProducts as $product) {
+            if (empty($product->category?->slug)) {
+                continue;
+            }
+
+            $paymentItems[] = [
+                'label' => $product->display_name,
+                'href' => route('open.transaction.page', [
+                    'slug' => $product->category->slug,
+                    'product' => $product->id,
+                ]),
+                'icon_html' => $product->category->icon ?: null,
+                'icon_key' => 'package',
+                'modern_icon_key' => modernServiceIconKey($product->category),
+                'product_id' => $product->id,
+                'active_paths' => ['customer/' . $product->category->slug],
             ];
         }
 

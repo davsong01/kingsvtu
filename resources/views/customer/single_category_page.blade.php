@@ -1,5 +1,6 @@
 <?php
     $verifiable = verifiableUniqueElements();
+    $selectedProductId = old('product', data_get($selectedProduct, 'id'));
 ?>
 @extends('layouts.app')
 @section('title', $category->seo_title)
@@ -97,7 +98,7 @@
                                                                                 <select class="form-control js-example-basic-single" name="product" id="product" required>
                                                                                     <option value="">Select</option>
                                                                                     @foreach ($category->products as $item)
-                                                                                        <option value="{{ $item->id  }}" data-allow_subscription_type="{{ $item->allow_subscription_type }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" {{ old('product') == $item->id ? 'selected' : ''}} {{ old('product') == $item->id ? 'selected' : ''}}>{{ $item->display_name }}</option>
+                                                                                        <option value="{{ $item->id  }}" data-allow_subscription_type="{{ $item->allow_subscription_type }}" data-allow_quantity="{{ $item->allow_quantity }}" data-min="{{ $item->min}}" data-max="{{$item->max}}" data-system_price="{{ $item->system_price }}" data-fixed_price="{{ $item->fixed_price}}" data-has_variation="{{$item->has_variations}}" data-image="{{ asset($item->image) }}" data-name="{{ $item->name }}" data-quantity_graduation="{{ $item->quantity_graduation }}" data-description="{{ $item->description }}" @selected($selectedProductId == $item->id)>{{ $item->display_name }}</option>
                                                                                     @endforeach
                                                                                 </select>
                                                                             </fieldset>
@@ -230,6 +231,8 @@
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
 <script>
+    var selectedProductId = @json($selectedProductId);
+
     function closeModal(){
         $('#verify-modal').modal('hide');
     }
@@ -611,6 +614,10 @@
         }
 
         $('.select2').select2();
+
+        if (selectedProductId) {
+            $('#product').val(String(selectedProductId)).trigger('change');
+        }
 
         
     });

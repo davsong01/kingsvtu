@@ -139,6 +139,14 @@
                                                                                         <option value="no" {{ $product->allow_subscription_type == 'no' ? 'selected' : ''}}>No</option>
                                                                                     </select>
                                                                                 </fieldset>
+                                                                                <div class="form-group">
+                                                                                    <input type="hidden" name="show_in_menu" value="0">
+                                                                                    <div class="form-check mt-2">
+                                                                                        <input class="form-check-input" type="checkbox" name="show_in_menu" id="show_in_menu" value="1" {{ old('show_in_menu', $product->show_in_menu) ? 'checked' : '' }}>
+                                                                                        <label class="form-check-label" for="show_in_menu">Show in customer menu</label>
+                                                                                    </div>
+                                                                                    <small class="text-muted d-block mt-1">When enabled, this service appears directly in the customer menu after categories.</small>
+                                                                                </div>
                                                                                 <fieldset class="form-group" id="referral_percentage">
                                                                                     <label for="referral_percentage">Referral Percentage(%)</label>
                                                                                     <input type="number" class="form-control" id="referral_percentage" step="0.01" name="referral_percentage" value="{{ $product->referral_percentage ?? old('referral_percentage') }}" placeholder="Enter percentage for referral earnings">

@@ -2,6 +2,7 @@
     $verifiable = verifiableUniqueElements();
     $settings = getSettings();
     $currency = $settings->currency ?? '₦';
+    $selectedProductId = old('product', data_get($selectedProduct, 'id'));
     $uniqueLabel = match ($category->slug) {
         'electricity' => 'Meter Number',
         'tv' => 'IUC Number',
@@ -61,6 +62,7 @@
                                     <option value="">Select a service</option>
                                     @foreach ($category->products as $item)
                                         <option value="{{ $item->id }}"
+                                            @selected($selectedProductId == $item->id)
                                             data-allow_subscription_type="{{ $item->allow_subscription_type }}"
                                             data-allow_quantity="{{ $item->allow_quantity }}"
                                             data-min="{{ $item->min }}"
@@ -197,6 +199,8 @@
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
     <script>
+        const selectedProductId = @json($selectedProductId);
+
         function closeModal() {
             const modal = document.getElementById('verify-modal');
             if (modal) {
@@ -510,6 +514,10 @@
                     renderAmountPresets(selected[0].min, selected[0].max);
                 }
             });
+
+            if (selectedProductId) {
+                $('#product').val(String(selectedProductId)).trigger('change').trigger('change.select2');
+            }
 
             function hideAllUniqueElement() {
                 $("#verify-link").hide();

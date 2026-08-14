@@ -29,13 +29,19 @@
                 @continue
             @endif
             @php
-                $isActive = menuItemIsActive($item['active_paths'] ?? []);
+                $currentProductId = request()->integer('product');
+                $itemProductId = (int) ($item['product_id'] ?? 0);
+                $isShortcut = $itemProductId > 0;
+                $isActive = $itemProductId > 0
+                    ? false
+                    : menuItemIsActive($item['active_paths'] ?? []);
                 $isLogout = ($item['type'] ?? null) === 'logout';
                 $target = $item['target'] ?? null;
             @endphp
-            <li class="{{ $isActive ? 'active' : '' }} svg">
+            <li class="{{ $isActive ? 'active' : '' }} svg {{ $isShortcut ? 'menu-shortcut-item' : '' }}">
                 <a
                     href="{{ $item['href'] }}"
+                    @if($isShortcut) style="opacity:.78;" @endif
                     @if($target) target="{{ $target }}" @endif
                     @if($isLogout) onclick="event.preventDefault(); document.getElementById('logout-form').submit();" @endif
                 >
@@ -45,6 +51,9 @@
                         <i class="{{ menuIconClass($item['icon_key'] ?? 'circle', 'legacy') }}"></i>
                     @endif
                     <span class="menu-title"> &nbsp;{{ $item['label'] }}</span>
+                    {{-- @if($isShortcut)
+                        <small class="text-muted" style="margin-left:.4rem;font-size:.65rem;letter-spacing:.04em;text-transform:uppercase;">shortcut</small>
+                    @endif --}}
                 </a>
                 @if($isLogout)
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

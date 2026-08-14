@@ -33,14 +33,22 @@ class TransactionController extends Controller
 {
     public function showProductsPage($slug)
     {
+        $selectedProductId = request()->integer('product');
+
         $category = Category::with([
             'products' => function ($query) {
-                return $query->where('status', 'active')->get();
+                return $query->where('status', 'active');
             }
         ])->where('status', 'active')->where('slug', $slug)->first();
             
         if (!empty($category) && $category->status == 'active') {
-            return view(themeView('customer', 'single_category_page'), compact('category'));
+            $selectedProduct = null;
+
+            if (!empty($selectedProductId)) {
+                $selectedProduct = $category->products->firstWhere('id', $selectedProductId);
+            }
+
+            return view(themeView('customer', 'single_category_page'), compact('category', 'selectedProduct'));
         }
 
         return back();
