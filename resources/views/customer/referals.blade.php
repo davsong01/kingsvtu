@@ -59,7 +59,7 @@
                                                 <tbody>
                                                     @foreach ($refs as $ref)
                                                         <tr>
-                                                            <td>{{ $ref->customer->user->username }}</td>
+                                                            <td>{{ $ref->customer?->user?->username ?? 'N/A'}}</td>
                                                             <td>{{ $ref->created_at->toDateTimeString() }}</td>
                                                             
                                                         </tr>

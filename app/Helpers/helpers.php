@@ -694,6 +694,14 @@ if (!function_exists('customerMobileNavItems')) {
                 'active_paths' => ['dashboard'],
             ],
             [
+                'label' => 'Buy',
+                'href' => 'javascript:void(0);',
+                'icon_key' => 'package',
+                'modal_target' => '#customer-services-modal',
+                'type' => 'modal',
+                'active_paths' => [],
+            ],
+            [
                 'label' => 'Fund Wallet',
                 'href' => route('customer.load.wallet'),
                 'icon_key' => 'wallet-alt',
@@ -705,15 +713,8 @@ if (!function_exists('customerMobileNavItems')) {
                 'icon_key' => 'history',
                 'active_paths' => [
                     'customer.transaction.history',
-                    'customer.airtime2cash.transaction.history',
                     'transaction.status',
                 ],
-            ],
-            [
-                'label' => 'Reports',
-                'href' => route('customer.transaction.report'),
-                'icon_key' => 'bar-chart-square',
-                'active_paths' => ['customer.transaction.report'],
             ],
         ];
     }

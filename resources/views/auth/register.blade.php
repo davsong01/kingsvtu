@@ -1,70 +1,76 @@
 @extends('layouts.auth')
-@section('body')
-    <!-- left section-login -->
-    <div class="col-md-12 col-12 px-0">
-        <div class="card disable-rounded-right d-flex justify-content-center">
-            <div class="card-header pb-1">
-                <div class="card-title">
-                    <h4 class="text-center mb-2">Create An Account</h4>
-                </div>
-            </div>
-            <div class="card-content">
-                <div class="card-body">
-                    @include('layouts.alerts')
-                    <form action="{{ route('register') }}" method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="form-group mb-50 col-sm-6 col-12">
-                                <label class="text-bold-600" for="firstName">First Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="firstName" name="first_name"
-                                    value="{{ old('first_name') }}" placeholder="First name" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-12">
-                                <label class="text-bold-600" for="lastName">Last Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="lastName" name="last_name" value="{{ old('last_name') }}" placeholder="Last name" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="email">Email Address <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                value="{{ old('email') }}" placeholder="Enter your email address" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="phone">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" id="phone" name="phone"
-                                value="{{ old('phone') }}" placeholder="Enter your phone number" required>
-                            </div>
-                            <div class="form-group col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="username">Username <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="username" name="username"
-                                    value="{{ old('username') }}" placeholder="Username" required>
-                            </div>
-                            <div class="form-group mb-50 col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="ref">Referral Username</label>
-                                <input type="text" class="form-control" id="referral" name="referral"
-                                    value="{{ request()->referral }}" placeholder="Enter referral id">
-                            </div>
-                            <div class="form-group mb-50 col-sm-6 col-12 mb-50">
-                                <label class="text-bold-600" for="password">Password <span class="text-danger">*</span></label>
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Password" required>
-                            </div>
-                        </div>
-                        <div class="form-group mb-50 mt-2 ">
-                            <div class="checkbox checkbox-success checkbox-glow">
-                                <input type="checkbox" id="checkboxGlow3" name="privacy" required>
-                                <label for="checkboxGlow3"><p>I agree to the <a target="_blank" href="https://kingsvtu.ng/privacy-policy">privacy policy</a> of {{ config('app.name')}}</p></label>
-                            </div>
-                        </div>
-                        <x-captcha group-class="mb-50 mt-2" />
 
-                        <button type="submit" class="btn btn-primary glow w-100 position-relative">Register</button>
-                    </form>
-                    <hr>
-                    <div class="text-center"><small class="mr-25">Already have an account?</small><a
-                            href="{{ route('login') }}"><small>Login</small></a></div>
-                    @include('layouts.support')
+@section('auth-title', 'Create account')
+@section('auth-subtitle', 'Join KingsVTU and start using the platform.')
+
+@section('body')
+    <div class="auth-form">
+        @include('layouts.alerts')
+
+        <form action="{{ route('register') }}" method="POST">
+            @csrf
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="first_name">First name</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name') }}" placeholder="First name" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="last_name">Last name</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name') }}" placeholder="Last name" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="Email address" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="phone">Phone number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" placeholder="Phone number" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ old('username') }}" placeholder="Username" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label for="referral">Referral username</label>
+                        <input type="text" class="form-control" id="referral" name="referral" value="{{ request()->referral }}" placeholder="Referral username">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-group auth-password-field">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                            <button type="button" class="btn auth-password-toggle" data-password-toggle="password">Show</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="form-check mt-3">
+                <input type="checkbox" class="form-check-input" id="privacy" name="privacy" required>
+                <label class="form-check-label" for="privacy">
+                    I agree to the <a target="_blank" href="https://kingsvtu.ng/privacy-policy">privacy policy</a>.
+                </label>
+            </div>
+
+            <x-captcha group-class="mt-3" />
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
+        </form>
+
+        <div class="auth-footer-note">
+            Already have an account? <a href="{{ route('login') }}" class="auth-link">Login</a>
         </div>
     </div>
 @endsection

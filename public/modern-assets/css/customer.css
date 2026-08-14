@@ -1,0 +1,368 @@
+body[data-bs-theme="light"] .customer-dashboard {
+  position: relative;
+  isolation: isolate;
+}
+
+.customer-dashboard::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(55vw, 720px);
+  height: min(55vw, 720px);
+  top: 8rem;
+  right: -10rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--bs-primary-rgb), .105), transparent 68%);
+  pointer-events: none;
+}
+
+.customer-dashboard .card:not(.dashboard-balance-card) {
+  border: 1px solid rgba(255, 255, 255, .66);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, .7));
+  box-shadow:
+    0 1.35rem 3rem rgba(34, 48, 62, .09),
+    0 .3rem .85rem rgba(34, 48, 62, .055);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.customer-dashboard .card:not(.dashboard-balance-card)::before {
+  content: "";
+  position: absolute;
+  height: 1px;
+  inset: 0 1.25rem auto;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .92), transparent);
+  pointer-events: none;
+}
+
+[data-bs-theme="dark"] .customer-dashboard .card:not(.dashboard-balance-card) {
+  border-color: rgba(255, 255, 255, .08);
+  background: linear-gradient(145deg, rgba(47, 51, 73, .87), rgba(38, 41, 60, .74));
+}
+
+.dashboard-balance-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 292px;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(99, 102, 241, .55), transparent 30%),
+    radial-gradient(circle at 8% 110%, rgba(20, 184, 166, .32), transparent 38%),
+    linear-gradient(135deg, #111827 0%, #1e293b 52%, #252760 100%);
+  box-shadow: 0 1.25rem 2.75rem rgba(15, 23, 42, .24);
+}
+
+.dashboard-balance-card::before {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  right: -105px;
+  top: -155px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, .12);
+  box-shadow:
+    0 0 0 38px rgba(255, 255, 255, .035),
+    0 0 0 76px rgba(255, 255, 255, .02);
+}
+
+.dashboard-balance-card::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 1px;
+  right: -8%;
+  bottom: 34%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .18), transparent);
+  transform: rotate(-24deg);
+}
+
+.dashboard-balance-card .card-body {
+  z-index: 1;
+}
+
+.dashboard-wallet-mark {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: .9rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .08));
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16);
+  backdrop-filter: blur(12px);
+}
+
+.dashboard-wallet-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: rgba(255, 255, 255, .7);
+  font-size: .75rem;
+}
+
+.dashboard-wallet-status::before {
+  content: "";
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 0 .2rem rgba(52, 211, 153, .15);
+}
+
+.dashboard-wallet-balance {
+  color: #fff;
+  font-size: clamp(2.2rem, 4vw, 3.15rem);
+  font-weight: 700;
+  letter-spacing: -.045em;
+  line-height: 1;
+}
+
+.dashboard-wallet-visibility,
+.dashboard-wallet-secondary-action {
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: rgba(255, 255, 255, .09);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.dashboard-wallet-visibility {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.dashboard-wallet-visibility:hover,
+.dashboard-wallet-secondary-action:hover {
+  border-color: rgba(255, 255, 255, .3);
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+}
+
+.dashboard-wallet-primary-action {
+  border-color: #fff;
+  background: #fff;
+  color: #20235b;
+  box-shadow: 0 .5rem 1.25rem rgba(2, 6, 23, .18);
+}
+
+.dashboard-wallet-primary-action:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, .92);
+  color: #20235b;
+  transform: translateY(-1px);
+}
+
+.dashboard-wallet-footer {
+  border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
+.dashboard-wallet-history {
+  color: rgba(255, 255, 255, .78);
+}
+
+.dashboard-wallet-history:hover {
+  color: #fff;
+}
+
+.dashboard-action {
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.dashboard-action:hover {
+  border-color: rgba(var(--bs-primary-rgb), .22);
+  transform: translateY(-5px);
+  box-shadow: 0 1.25rem 2.35rem rgba(34, 48, 62, .14) !important;
+}
+
+.dashboard-action .dashboard-action-arrow {
+  transition: transform .2s ease;
+}
+
+.dashboard-action:hover .dashboard-action-arrow {
+  transform: translateX(3px);
+}
+
+.dashboard-action-icon,
+.dashboard-service-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.dashboard-action-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: .75rem;
+}
+
+.dashboard-service-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: .65rem;
+  font-size: 1.25rem;
+  color: var(--bs-primary);
+}
+
+.dashboard-service-icon > i {
+  color: currentColor !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+}
+
+.dashboard-service-icon > svg {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  fill: currentColor !important;
+}
+
+.dashboard-service-icon > svg path:not([fill="none"]),
+.dashboard-service-icon > svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.dashboard-service-icon > svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
+}
+
+.dashboard-service {
+  border: 1px solid transparent;
+  transition: background-color .2s ease, transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.dashboard-service:hover {
+  border-color: rgba(var(--bs-primary-rgb), .12);
+  background: rgba(var(--bs-primary-rgb), .055);
+  box-shadow: 0 .45rem 1rem rgba(34, 48, 62, .055);
+  transform: translateX(3px);
+}
+
+.dashboard-referral-link {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-action:focus-visible,
+.dashboard-service:focus-visible {
+  outline: 3px solid rgba(var(--bs-primary-rgb), .22);
+  outline-offset: 2px;
+}
+
+.customer-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .9rem;
+}
+
+.customer-mini-stat__value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+
+.customer-dashboard-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255, 255, 255, .16), transparent 28%),
+    linear-gradient(135deg, #0f172a 0%, #111827 48%, #1e293b 100%);
+  color: #fff;
+}
+
+.customer-dashboard-hero__title {
+  font-size: clamp(2rem, 3vw, 2.9rem);
+  line-height: 1.05;
+  letter-spacing: -.04em;
+  margin-bottom: .7rem;
+}
+
+.customer-dashboard-hero__balance {
+  font-size: clamp(2.1rem, 3.7vw, 3.5rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -.05em;
+}
+
+.customer-dashboard-hero__muted {
+  color: rgba(255, 255, 255, .72);
+}
+
+.customer-dashboard-hero__actions {
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.customer-dashboard-hero__actions .btn {
+  border-radius: .9rem;
+}
+
+.customer-referral {
+  word-break: break-all;
+  font-size: .92rem;
+}
+
+.customer-service-card {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.customer-service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, .11);
+  border-color: rgba(24, 168, 107, .18);
+}
+
+.customer-service-card__icon {
+  width: 3rem;
+  height: 3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  background: rgba(24, 168, 107, .12);
+  color: #18a86b;
+}
+
+.customer-service-card__icon i {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .customer-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .customer-category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dashboard-balance-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .dashboard-wallet-actions .btn {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-action,
+  .dashboard-service,
+  .dashboard-action .dashboard-action-arrow,
+  .customer-service-card {
+    transition: none;
+  }
+}
