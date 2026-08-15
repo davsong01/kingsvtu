@@ -24,7 +24,7 @@ class AnnouncementController extends Controller
     }
 
     function scroll () {
-        $ann = Announcement::where('type', 'scroll')->paginate(20);
+        $ann = Announcement::where('type', 'scroll')->paginate(paginationRecords());
         return view ('admin.announcement.index', ['announcements' => $ann]);
     }
 

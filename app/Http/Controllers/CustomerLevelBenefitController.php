@@ -15,7 +15,7 @@ class CustomerLevelBenefitController extends Controller
     {
         $benefits = CustomerLevelBenefit::orderBy('created_at', 'desc')->get();
         $levels = CustomerLevel::all();
-        return view('admin.levelbenefits.index', compact('benefits','levels'));
+        return view(themeView('admin', 'levelbenefits.index'), compact('benefits','levels'));
     }
 
     /**
@@ -24,7 +24,7 @@ class CustomerLevelBenefitController extends Controller
     public function create()
     {
         $levels = CustomerLevel::all();
-        return view('admin.levelbenefits.create', compact('levels'));
+        return view(themeView('admin', 'levelbenefits.create'), compact('levels'));
         
     }
 
@@ -63,7 +63,7 @@ class CustomerLevelBenefitController extends Controller
     public function edit(CustomerLevelBenefit $levelbenefit)
     {
         $levels = CustomerLevel::all();
-        return view('admin.levelbenefits.edit', compact('levelbenefit','levels'));
+        return view(themeView('admin', 'levelbenefits.edit'), compact('levelbenefit','levels'));
     }
 
     /**

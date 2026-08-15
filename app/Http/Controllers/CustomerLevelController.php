@@ -14,7 +14,7 @@ class CustomerLevelController extends Controller
     {
         $levels = CustomerLevel::withCount('customers')->orderBy('order', 'desc')->get();
 
-        return view('admin.customerlevel.index', compact('levels'));
+        return view(themeView('admin', 'customerlevel.index'), compact('levels'));
     }
 
     /**
@@ -22,7 +22,9 @@ class CustomerLevelController extends Controller
      */
     public function create()
     {
-        return view('admin.customerlevel.create');
+        return view(themeView('admin', 'customerlevel.form'), [
+            'customerlevel' => null,
+        ]);
     }
 
     /**
@@ -64,7 +66,7 @@ class CustomerLevelController extends Controller
      */
     public function edit(CustomerLevel $customerlevel)
     {
-        return view('admin.customerlevel.edit', compact('customerlevel'));
+        return view(themeView('admin', 'customerlevel.form'), compact('customerlevel'));
     }
 
     /**

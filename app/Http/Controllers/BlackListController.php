@@ -12,8 +12,17 @@ class BlackListController extends Controller
      */
     public function index()
     {
-        $bliacklist = BlackList::paginate(20);
-        return view('admin.customers.blacklist', ['customers' => $bliacklist]);
+        $bliacklist = BlackList::paginate(paginationRecords());
+        $totalBlacklist = $bliacklist->total();
+        $activeBlacklist = BlackList::where('status', 'active')->count();
+        $inactiveBlacklist = BlackList::where('status', 'in-active')->count();
+
+        return view(themeView('admin', 'customers.blacklist'), [
+            'customers' => $bliacklist,
+            'totalBlacklist' => $totalBlacklist,
+            'activeBlacklist' => $activeBlacklist,
+            'inactiveBlacklist' => $inactiveBlacklist,
+        ]);
     }
 
     /**
@@ -21,7 +30,7 @@ class BlackListController extends Controller
      */
     public function create()
     {
-        return view('admin.customers.create');
+        return view(themeView('admin', 'customers.create'));
     }
 
     /**
@@ -77,17 +86,32 @@ class BlackListController extends Controller
     public function status(Request $request)
     {
         $request->validate([
-            'status' => 'required',
             'id' => 'required|integer'
         ]);
 
-        $status = $request->status == 'active' ? 'in-active' : 'active';
-        $black = BlackList::find($request->id)->update(['status' => $status]);
+        $blackList = BlackList::find($request->id);
+
+        if (!$blackList) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Blacklist entry not found',
+            ], 404);
+        }
+
+        $status = $blackList->status === 'active' ? 'in-active' : 'active';
+        $black = $blackList->update(['status' => $status]);
 
         if ($black) {
-            return ['code' => 1, 'status' => $status, 'message' => 'Success'];
+            return response()->json([
+                'code' => 1,
+                'status' => $status,
+                'message' => 'Success',
+            ]);
         } else {
-            return ['code' => 0, 'message' => 'Failed to set status'];
+            return response()->json([
+                'code' => 0,
+                'message' => 'Failed to set status',
+            ], 500);
         }
     }
 }

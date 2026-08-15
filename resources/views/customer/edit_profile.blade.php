@@ -141,7 +141,7 @@
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
                                                                             <label for="new_transaction_pin">New Transaction PIN</label>
-                                                                            <input type="text" class="form-control" name="new_transaction_pin">
+                                                                            <input type="password" class="form-control" name="new_transaction_pin" autocomplete="new-password">
                                                                         </fieldset>
                                                                     </div>
                                                 
@@ -160,8 +160,20 @@
                                                                     @endif
                                                                     <div class="col-md-6">
                                                                         <fieldset class="form-group">
+                                                                            <label for="current_password">Current Password</label>
+                                                                            <input type="password" class="form-control" id="current_password" name="current_password" autocomplete="current-password">
+                                                                        </fieldset>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <fieldset class="form-group">
                                                                             <label for="new_password">New Password</label>
-                                                                            <input type="text" class="form-control" name="new_password">
+                                                                            <input type="password" class="form-control" id="new_password" name="new_password" autocomplete="new-password">
+                                                                        </fieldset>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <fieldset class="form-group">
+                                                                            <label for="new_password_confirmation">Confirm New Password</label>
+                                                                            <input type="password" class="form-control" id="new_password_confirmation" name="new_password_confirmation" autocomplete="new-password">
                                                                         </fieldset>
                                                                     </div>
                                                                 </div>
