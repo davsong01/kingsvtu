@@ -32,7 +32,8 @@ class PaymentGatewayController extends Controller
                 'reserved_account_payment_charge' => 1.5
             ]);
         }
-        return view('admin.paymentgateway.index', compact('paymentgateway'));
+
+        return view(themeView('admin', 'paymentgateway.index'), compact('paymentgateway'));
     }
 
     /**
@@ -45,7 +46,7 @@ class PaymentGatewayController extends Controller
 
     public function edit(PaymentGateway $paymentgateway)
     {
-        return view('admin.paymentgateway.edit', compact('paymentgateway'));
+        return view(themeView('admin', 'paymentgateway.edit'), compact('paymentgateway'));
     }
 
     public function update(Request $request, PaymentGateway $paymentgateway)

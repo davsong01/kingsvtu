@@ -10,12 +10,22 @@ class RolePermissionController extends Controller
     public function index(Request $request)
     {
         $permissions = RolePermission::orderBy('created_at', 'DESC')->get();
-        return view('admin.permission.index', ['permissions' => $permissions]);
+        $summary = [
+            'totalPermissions' => $permissions->count(),
+            'menus' => $permissions->where('type', 'menu')->count(),
+            'links' => $permissions->where('type', 'link')->count(),
+            'active' => $permissions->where('status', 'active')->count(),
+        ];
+
+        return view(themeView('admin', 'permissions.index'), compact('permissions', 'summary'));
     }
 
     public function edit(RolePermission $permission)
     {
-        return view('admin.permission.edit', compact('permission'));
+        return view(themeView('admin', 'permissions.form'), [
+            'permission' => $permission,
+            'pageTitle' => 'Edit Permission',
+        ]);
     }
 
     public function update(Request $request, RolePermission $permission)
@@ -46,7 +56,10 @@ class RolePermissionController extends Controller
 
     function create()
     {
-        return view('admin.permission.create');
+        return view(themeView('admin', 'permissions.form'), [
+            'permission' => null,
+            'pageTitle' => 'Add Permission',
+        ]);
     }
 
     /**

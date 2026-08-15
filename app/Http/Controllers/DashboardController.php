@@ -24,33 +24,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $customer = $this->customerOfTheMonth();
+        $monthReference = Carbon::now()->subMonth();
+        $customer = $this->customerOfTheMonth($monthReference) ?: $this->customerOfTheMonth();
         if (auth()->user()->type == 'admin') {
-            // $transaction_debit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
-            //     ->where('wallets.type', 'debit')->whereIn('status', ['success', 'delivered']);
-
-            // $transaction_credit = TransactionLog::join('wallets', 'wallets.transaction_id', '=', 'transaction_logs.transaction_id')
-            //     ->where('wallets.type', 'credit')->whereIn('status', ['success', 'delivered']);
-
-            // $debit = $transaction_debit->sum('total_amount');
-            // $debit_count = $transaction_debit->count();
-
-            // $credit = $transaction_credit->sum('total_amount');
-            // $credit_count = $transaction_credit->count();
-
-            // $referralC = ReferralEarning::where('type', 'credit');
-            // $referral_credit = $referralC->sum('amount');
-            // $referral_credit_count = $referralC->count();
-
-            // $referralD = ReferralEarning::where('type', 'debit');
-            // $referral_debit = $referralD->sum('amount');
-            // $referral_debit_count = $referralD->count();
-            // $total_wallet_balance = Customer::sum('wallet');
-
-            // $kyc_verified = User::join('customers', 'customers.user_id', 'users.id')->where('users.type', 'customer')->where('kyc_status', 'verified')->count();
-            // $active_customers = TransactionLog::distinct('customer_id')->count();
-            // $customers = User::where('type', 'customer')->count();
-
             // Sum total wallet balance in a single query
             $total_wallet_balance = Customer::sum('wallet');
 
@@ -65,9 +41,31 @@ class DashboardController extends Controller
 
             // Count total customers
             $customers = User::where('type', 'customer')->count();
+            $successfulStatuses = ['completed', 'delivered', 'success'];
+            $all_transactions_count = TransactionLog::whereIn('status', $successfulStatuses)->count();
+            $all_transactions_total = TransactionLog::whereIn('status', $successfulStatuses)->sum('total_amount');
+            $referral_earnings_total = ReferralEarning::where('type', 'credit')->sum('amount');
+            $referral_earnings_count = ReferralEarning::where('type', 'credit')->count();
             $apis = API::get();
+            $server_address = request()->server('SERVER_ADDR') ?: 'NOT SET';
+            $remote_address = request()->server('REMOTE_ADDR') ?: '127.0.0.1';
+            $customer_month_label = $customer ? $monthReference->format('F Y') : Carbon::now()->format('F Y');
             
-            return view('admin.dashboard', compact('customer', 'kyc_verified', 'active_customers', 'customers', 'total_wallet_balance','apis'));
+            return view(themeView('admin', 'dashboard'), compact(
+                'customer',
+                'kyc_verified',
+                'active_customers',
+                'customers',
+                'total_wallet_balance',
+                'apis',
+                'all_transactions_count',
+                'all_transactions_total',
+                'referral_earnings_total',
+                'referral_earnings_count',
+                'server_address',
+                'remote_address',
+                'customer_month_label'
+            ));
         } else {
             $currentPaymentGateway = getSettings()->payment_gateway;
             $account_count = ReservedAccountNumber::where('customer_id', auth()->user()->customer->id)->where('paymentgateway_id', $currentPaymentGateway)->count();
@@ -81,7 +79,7 @@ class DashboardController extends Controller
                     $reserved = createReservedAccount($data, null, $currentPaymentGateway);
                 }
             }
-            return view('customer.dashboard', compact('customer'));
+            return view(themeView('customer', 'dashboard'), compact('customer'));
         }
     }
 
@@ -129,15 +127,17 @@ class DashboardController extends Controller
         return $res;
     }
 
-    public function customerOfTheMonth()
+    public function customerOfTheMonth(?Carbon $period = null)
     {
-        $firstdayofmonth = Carbon::today()->startOfMonth();
+        $period = $period ?: Carbon::today();
+        $firstdayofmonth = $period->copy()->startOfMonth();
+        $lastdayofmonth = $period->copy()->endOfMonth();
 
         $count = TransactionLog::with('customer')->where('reason', 'Product Purchase')
         ->whereIn('status',['completed','delivered','success'])
         ->addSelect(DB::raw('SUM(total_amount) as total_amount, COUNT(id) as count,customer_id'))
             ->groupBy('customer_id')
-            ->whereBetween('created_at', [$firstdayofmonth, Carbon::now()])
+            ->whereBetween('created_at', [$firstdayofmonth, $lastdayofmonth])
             ->orderBy('total_amount', 'DESC')->first();
         
         return $count;
@@ -607,5 +607,3 @@ __here;
         return view('admin.customers.single-customer');
     }
 }
-
-

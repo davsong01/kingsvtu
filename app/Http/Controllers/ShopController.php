@@ -57,10 +57,46 @@ class ShopController extends Controller
         return back()->with('message', 'Shop Creation request sent succesfully, an administrator is reviewing your request');
     }
 
-    public function shopRequests()
+    public function shopRequests(Request $request)
     {
-        $requests = ShopRequests::orderBy('created_at','DESC')->get();
-        return view('admin.customers.shop_creation_request', compact('requests'));
+        $requestsQuery = ShopRequests::with('customer.user')->orderBy('created_at', 'DESC');
+
+        if ($request->filled('search')) {
+            $search = trim((string) $request->search);
+            $like = '%' . $search . '%';
+
+            $requestsQuery->where(function ($query) use ($like) {
+                $query->whereHas('customer.user', function ($userQuery) use ($like) {
+                    $userQuery->where('firstname', 'like', $like)
+                        ->orWhere('lastname', 'like', $like)
+                        ->orWhere('email', 'like', $like)
+                        ->orWhere('phone', 'like', $like);
+                })->orWhere('request_details->first_name', 'like', $like)
+                    ->orWhere('request_details->last_name', 'like', $like)
+                    ->orWhere('request_details->official_email', 'like', $like)
+                    ->orWhere('request_details->phone', 'like', $like)
+                    ->orWhere('request_details->shop_name', 'like', $like)
+                    ->orWhere('request_details->shop_slug', 'like', $like);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $requestsQuery->where('status', $request->status);
+        }
+
+        if ($request->filled('shop_status')) {
+            $requestsQuery->where('shop_status', $request->shop_status);
+        }
+
+        $requests = $requestsQuery
+            ->paginate(paginationRecords())
+            ->withQueryString();
+
+        $totalRequests = $requests->total();
+        $pendingRequests = ShopRequests::where('status', 'pending')->count();
+        $approvedRequests = ShopRequests::where('status', 'approved')->count();
+
+        return view(themeView('admin', 'customers.shop_creation_request'), compact('requests', 'totalRequests', 'pendingRequests', 'approvedRequests'));
     }
 
     public function approveRequests(Request $request, ShopRequests $shoprequest)

@@ -12,13 +12,15 @@ use App\Models\PaymentGateway;
 use App\Models\ReferralEarning;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\BlackList;
 use App\Models\ReservedAccountNumber;
 
 class CustomerController extends Controller
 {
     function customers(Request $request, $status = null)
     {
-        $customers = User::with('customer')->where('type', '!=', 'admin')->orderBy('created_at', 'DESC');
+        $allCustomers = User::with(['customer.level'])->where('type', '!=', 'admin')->get();
+        $customers = User::with(['customer.level'])->where('type', '!=', 'admin')->orderBy('created_at', 'DESC');
 
         if ($status) {
             if ($status == 'active') {
@@ -75,17 +77,42 @@ class CustomerController extends Controller
             $customers = $customers->whereBetween('created_at', [$from, $to]);
         }
 
-        $customers = $customers->paginate(20);
+        $customers = $customers->paginate(paginationRecords())->withQueryString();
         $customer_levels = CustomerLevel::all();
+        $totalCustomers = $allCustomers->count();
+        $activeCustomers = $allCustomers->where('status', 'active')->count();
+        $suspendedCustomers = $allCustomers->where('status', 'suspended')->count();
+        $apiCustomers = $allCustomers->where('type', 'api')->count();
+        $verifiedCustomers = $allCustomers->filter(function ($customer) {
+            return data_get($customer, 'customer.kyc_status') === 'verified';
+        })->count();
 
-        return view('admin.customers.index', ['customers' => $customers, 'customer_levels' => $customer_levels]);
+        return view(themeView('admin', 'customers.index'), [
+            'customers' => $customers,
+            'customer_levels' => $customer_levels,
+            'totalCustomers' => $totalCustomers,
+            'activeCustomers' => $activeCustomers,
+            'suspendedCustomers' => $suspendedCustomers,
+            'apiCustomers' => $apiCustomers,
+            'verifiedCustomers' => $verifiedCustomers,
+        ]);
     }
 
     function unverifiedCustomers(Request $request, $status = null)
     {
         set_time_limit(360);
-        $customers = User::select('id', 'firstname', 'lastname', 'email', 'phone', 'created_at', 'email_verified_at', 'username')->whereNull('email_verified_at')->orderBy('created_at', 'DESC')->get();
-        return view('admin.customers.unverified', ['customers' => $customers]);
+        $customers = User::select('id', 'firstname', 'lastname', 'email', 'phone', 'created_at', 'email_verified_at', 'username')
+            ->whereNull('email_verified_at')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(paginationRecords())
+            ->withQueryString();
+
+        $totalCustomers = $customers->total();
+
+        return view(themeView('admin', 'customers.unverified'), [
+            'customers' => $customers,
+            'totalCustomers' => $totalCustomers,
+        ]);
     }
 
     function verifyCustomer($customer, $internal = null)
@@ -184,11 +211,15 @@ class CustomerController extends Controller
         
         $admin_id = auth()->user()->admin->id;
         $reserved = createReservedAccount($data, $admin_id, [$request->provider]);
+        $tab = $request->input('tab', 'reserved');
+        $redirectUrl = route('customers.edit', $customer->user->id) . '?tab=' . $tab;
 
         if ($reserved['status'] && $reserved['status'] == 'success') {
-            return back()->with('message', 'Reserved Account(s) crearted successfully');
+            return redirect($redirectUrl)
+                ->with('message', 'Reserved Account(s) crearted successfully');
         } else {
-            return back()->with('error', 'Error: ' . $reserved['data'] ?? 'Something went wrong');
+            return redirect($redirectUrl)
+                ->with('error', 'Error: ' . $reserved['data'] ?? 'Something went wrong');
         }
     }
 
@@ -248,19 +279,40 @@ class CustomerController extends Controller
         $transTotal = $curr . number_format($user->customer->transactions()->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $fundTotal = $curr . number_format($user->customer->transactions()->whereNotNull('wallet_funding_provider')->first([DB::raw('sum(amount) as total')], 2)->total) ?? 0;
         $balances = ['Wallet Balance' => $balance, 'Referral Earning' => $ref, 'Transaction Total' => $transTotal, 'Funds Total' => $fundTotal];
-        $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->orderBy('created_at', 'desc')->get();
+        $reservedAccount = ReservedAccountNumber::where('customer_id', $customer)->orderBy('created_at', 'desc')->paginate(paginationRecords(), ['*'], 'accounts_page')->withQueryString();
         $providers = PaymentGateway::orderBy('status')->get();
         $customerLevels = CustomerLevel::orderBy('order','ASC')->get();
+        $oldState = kycStatus('STATE', $user->customer->id)['value'] ?? null;
+        $lgas = !empty($oldState) ? getLgas($oldState) : [];
+        $transactions = $user->customer
+            ->transactions()
+            ->latest()
+            ->paginate(paginationRecords(), ['*'], 'transactions_page')
+            ->withQueryString();
+        $downlines = ReferralEarning::where('customer_id', $customer)
+            ->latest()
+            ->paginate(paginationRecords(), ['*'], 'downlines_page')
+            ->withQueryString();
+        $blacklistedEmailEntry = BlackList::where('value', $user->email)->first();
+        $blacklistedPhoneEntry = BlackList::where('value', $user->phone)->first();
 
         return view(
-            'admin.customers.single-customer',
+            themeView('admin', 'customers.edit'),
             [
                 'user' => $user,
                 'downlines' => $downlines,
                 'accounts' => $reservedAccount,
                 'balances' => $balances,
                 'customerLevels' => $customerLevels,
-                'providers' => $providers
+                'providers' => $providers,
+                'lgas' => $lgas,
+                'transactions' => $transactions,
+                'blacklistedEmail' => (bool) $blacklistedEmailEntry,
+                'blacklistedPhone' => (bool) $blacklistedPhoneEntry,
+                'blacklistEmailId' => $blacklistedEmailEntry?->id,
+                'blacklistEmailStatus' => $blacklistedEmailEntry?->status,
+                'blacklistPhoneId' => $blacklistedPhoneEntry?->id,
+                'blacklistPhoneStatus' => $blacklistedPhoneEntry?->status,
             ]
         );
     }
@@ -292,7 +344,9 @@ class CustomerController extends Controller
             
             $user->customer->save();
         }
-        return back()->with('message', 'Update successful!');
+        return redirect()
+            ->to(route('customers.edit', $user->id) . '?tab=' . $request->input('tab', 'account'))
+            ->with('message', 'Update successful!');
 
     }
 
@@ -321,7 +375,9 @@ class CustomerController extends Controller
 
         logEmails($user->email, $subject, $body);
 
-        return back()->with('message', 'Transaction PIN successfully reset to: '.$request->new_transaction_pin);
+        return redirect()
+            ->to(route('customers.edit', $user->id) . '?tab=' . $request->input('tab', 'actions'))
+            ->with('message', 'Transaction PIN successfully reset to: '.$request->new_transaction_pin);
     }
 
     public function resetPassword(Request $request, User $user)
@@ -343,7 +399,9 @@ class CustomerController extends Controller
 
         logEmails($user->email, $subject, $body);
 
-        return back()->with('message', 'Transaction PIN successfully reset to: ' . $request->new_password);
+        return redirect()
+            ->to(route('customers.edit', $user->id) . '?tab=' . $request->input('tab', 'actions'))
+            ->with('message', 'Transaction PIN successfully reset to: ' . $request->new_password);
     }
 
     public function processCustomerUpdateKycInfo(Request $request, Customer $customer)
@@ -392,7 +450,9 @@ class CustomerController extends Controller
             ]);
         }
 
-        return back()->with('message', 'Information Update completed, click approve to generate reserved account');        
+        return redirect()
+            ->to(route('customers.edit', $customer->user->id) . '?tab=' . $request->input('tab', 'kyc'))
+            ->with('message', 'Information Update completed, click approve to generate reserved account');        
     }
 
     public function approveCustomerKyc(Customer $customer)
@@ -425,9 +485,13 @@ class CustomerController extends Controller
 
         // $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
         if ($reserved['status'] && $reserved['status'] == 'success') {
-            return back()->with('message', 'KYC Approved succesfully and reserved accounts created');
+            return redirect()
+                ->to(route('customers.edit', $customer->user->id) . '?tab=' . request()->query('tab', 'kyc'))
+                ->with('message', 'KYC Approved succesfully and reserved accounts created');
         } else {
-            return back()->with('error', 'KYC Approved succesfully but NO reserved accounts created');
+            return redirect()
+                ->to(route('customers.edit', $customer->user->id) . '?tab=' . request()->query('tab', 'kyc'))
+                ->with('error', 'KYC Approved succesfully but NO reserved accounts created');
         }
     }
 
@@ -447,6 +511,8 @@ class CustomerController extends Controller
 
         logEmails($customer->user->email, $subject, $body);
 
-        return back()->with('message', 'Operation successful');
+        return redirect()
+            ->to(route('customers.edit', $customer->user->id) . '?tab=' . request()->query('tab', 'kyc'))
+            ->with('message', 'Operation successful');
     }
 }

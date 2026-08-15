@@ -13,11 +13,18 @@ class KycMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::check()) {
+            $user = auth()->user();
+            $customer = $user?->customer;
+
+            if (!$customer) {
+                return $next($request);
+            }
+
             // Handle special cases of KYC
             $keys = kycSpecialKeys();
 
             $keyNames = array_column($keys, 'key');
-            $kycData = multipleKycStatuses($keyNames, auth()->user()->customer->id);
+            $kycData = multipleKycStatuses($keyNames, $customer->id);
             
             $unverified = [];
             $rawUnverified = [];
@@ -49,7 +56,7 @@ class KycMiddleware
                 return redirect(route('update.kyc.special'));
             }
 
-            $kyc_status = getFinalKycStatus(auth()->user()->customer->id);
+            $kyc_status = getFinalKycStatus($customer->id);
             if ($kyc_status != 'verified') {
                 return redirect(route('dashboard'))->with('unverified', 'You need to complete your KYC to be able to use this resource, Click <a href="' . route("update.kyc.details") . '"><b>HERE</b></a>');
             }

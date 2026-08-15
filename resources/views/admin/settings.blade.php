@@ -69,6 +69,22 @@ use App\Models\PaymentGateway;
                                                                             </select>
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
+                                                                            <label for="customer_layout">Customer Layout</label>
+                                                                            <select name="customer_layout" class="form-control" id="customer_layout">
+                                                                                <option value="legacy" {{ old('customer_layout', $settings->customer_layout ?? 'modern') === 'legacy' ? 'selected' : '' }}>Legacy Layout</option>
+                                                                                <option value="modern" {{ old('customer_layout', $settings->customer_layout ?? 'modern') === 'modern' ? 'selected' : '' }}>Modern Layout</option>
+                                                                            </select>
+                                                                            <small class="text-muted d-block mt-50">Customer dashboard resolves through the Sneat template when modern is selected.</small>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
+                                                                            <label for="admin_layout">Admin Layout</label>
+                                                                            <select name="admin_layout" class="form-control" id="admin_layout">
+                                                                                <option value="legacy" {{ old('admin_layout', $settings->admin_layout ?? 'modern') === 'legacy' ? 'selected' : '' }}>Legacy Layout</option>
+                                                                                <option value="modern" {{ old('admin_layout', $settings->admin_layout ?? 'modern') === 'modern' ? 'selected' : '' }}>Modern Layout</option>
+                                                                            </select>
+                                                                            <small class="text-muted d-block mt-50">Admin dashboard resolves through the Sneat template when modern is selected.</small>
+                                                                        </fieldset>
+                                                                        <fieldset class="form-group">
                                                                             <label for="allow_fund_with_card" style="color:blue">Allow Wallet Funding with card</label>
                                                                             <select name="allow_fund_with_card" class="form-control" id="allow_fund_with_card">
                                                                                 <option value="">Select</option>

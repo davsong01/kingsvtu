@@ -11,6 +11,7 @@ use App\Models\Announcement;
 use App\Models\PaymentGateway;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\PaymentProcessors\SquadController;
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
@@ -235,10 +236,499 @@ if (!function_exists("referralBalance")) {
     }
 }
 
+if (!function_exists("paginationRecords")) {
+    function paginationRecords($bypass=null)
+    {
+        return $bypass ?? 30;
+    }
+}
+
+if (!function_exists("formControlSize")) {
+    function formControlSize()
+    {
+        return 'md';
+    }
+}
+
+if (!function_exists("checkBoxControlSize")) {
+    function checkBoxControlSize()
+    {
+        return 'sm';
+    }
+}
+
 if (!function_exists("getSettings")) {
     function getSettings()
     {
         return Settings::first();
+    }
+}
+
+if (!function_exists("layoutMode")) {
+    function layoutMode(string $scope = 'customer'): string
+    {
+        $settings = getSettings();
+
+        if (!$settings) {
+            return 'modern';
+        }
+
+        if ($scope === 'admin') {
+            return $settings->admin_layout ?? 'modern';
+        }
+
+        return $settings->customer_layout
+            ?? $settings->ui_layout_version
+            ?? 'modern';
+    }
+}
+
+if (!function_exists("layoutIsModern")) {
+    function layoutIsModern(string $scope = 'customer'): bool
+    {
+        return layoutMode($scope) === 'modern';
+    }
+}
+
+if (!function_exists("menuItemIsActive")) {
+    function menuItemIsActive(array $patterns = []): bool
+    {
+        foreach ($patterns as $pattern) {
+            if (request()->is($pattern) || request()->routeIs($pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists("menuItemHasActiveChild")) {
+    function menuItemHasActiveChild(array $item): bool
+    {
+        if (menuItemIsActive($item['active_paths'] ?? [])) {
+            return true;
+        }
+
+        foreach ($item['children'] ?? [] as $child) {
+            if (menuItemHasActiveChild($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists("menuIconClass")) {
+    function menuIconClass(string $iconKey, string $variant = 'legacy'): string
+    {
+        $icons = [
+            'grid-alt' => 'bx-grid-alt',
+            'mobile-alt' => 'bx-mobile-alt',
+            'wifi' => 'bx-wifi',
+            'tv' => 'bx-tv',
+            'bulb' => 'bx-bulb',
+            'book-open' => 'bx-book-open',
+            'trophy' => 'bx-trophy',
+            'shield-quarter' => 'bx-shield-quarter',
+            'bus' => 'bx-bus',
+            'building-house' => 'bx-building-house',
+            'transfer-alt' => 'bx-transfer-alt',
+            'transfer' => 'bx-transfer',
+            'home-smile' => 'bx-home-smile',
+            'user-circle' => 'bx-user-circle',
+            'user' => 'bx-user',
+            'network-chart' => 'bx-network-chart',
+            'group' => 'bx-group',
+            'dollar-circle' => 'bx-dollar-circle',
+            'wallet' => 'bx-wallet',
+            'wallet-alt' => 'bx-wallet-alt',
+            'receipt' => 'bx-receipt',
+            'history' => 'bx-history',
+            'bar-chart-square' => 'bx-bar-chart-square',
+            'badge-check' => 'bx-badge-check',
+            'news' => 'bx-news',
+            'time' => 'bx-time-five',
+            'file' => 'bx-file',
+            'id-card' => 'bx-id-card',
+            'headphone' => 'bx-headphone',
+            'support' => 'bx-support',
+            'settings' => 'bx-cog',
+            'package' => 'bx-package',
+            'store' => 'bx-store-alt',
+            'shield' => 'bx-shield',
+            'user-check' => 'bx-user-check',
+            'receipt-long' => 'bx-receipt',
+            'log-out-circle' => 'bx-log-out-circle',
+            'log-out' => 'bx-log-out',
+            'circle' => 'bx-circle',
+        ];
+
+        $icon = $icons[$iconKey] ?? $icons['circle'];
+
+        if ($variant === 'sneat') {
+            return 'menu-icon icon-base bx ' . $icon;
+        }
+
+        return 'bx ' . $icon;
+    }
+}
+
+if (!function_exists("modernServiceIconKey")) {
+    function modernServiceIconKey($category): string
+    {
+        $service = strtolower(trim(($category->slug ?? '') . ' ' . ($category->display_name ?? '')));
+        $icons = [
+            'airtime' => 'mobile-alt',
+            'recharge' => 'mobile-alt',
+            'data' => 'wifi',
+            'internet' => 'wifi',
+            'tv' => 'tv',
+            'cable' => 'tv',
+            'dstv' => 'tv',
+            'gotv' => 'tv',
+            'electric' => 'bulb',
+            'power' => 'bulb',
+            'education' => 'book-open',
+            'exam' => 'book-open',
+            'e-pin' => 'book-open',
+            'epin' => 'book-open',
+            'waec' => 'book-open',
+            'neco' => 'book-open',
+            'jamb' => 'book-open',
+            'bet' => 'trophy',
+            'sport' => 'trophy',
+            'insurance' => 'shield-quarter',
+            'transport' => 'bus',
+            'flight' => 'bus',
+        ];
+
+        foreach ($icons as $keyword => $iconKey) {
+            if (str_contains($service, $keyword)) {
+                return $iconKey;
+            }
+        }
+
+        return 'grid-alt';
+    }
+}
+
+if (!function_exists("customerMenuData")) {
+    function customerMenuData(): array
+    {
+        $user = auth()->user();
+        $settings = getSettings();
+
+        if (!$user || !$settings) {
+            return [
+                'stats' => [],
+                'sections' => [],
+            ];
+        }
+
+        $routeExists = static fn (string $name): bool => \Illuminate\Support\Facades\Route::has($name);
+
+        $makeLeaf = static function (
+            string $label,
+            string $routeName,
+            string $iconKey,
+            array $routeParameters = [],
+            array $activePaths = [],
+            array $extra = []
+        ) use ($routeExists): ?array {
+            if (!$routeExists($routeName)) {
+                return null;
+            }
+
+            return array_merge([
+                'label' => $label,
+                'href' => route($routeName, $routeParameters),
+                'icon_key' => $iconKey,
+                'modern_icon_key' => $iconKey,
+                'active_paths' => $activePaths,
+            ], $extra);
+        };
+
+        $makeToggle = static function (
+            string $label,
+            string $iconKey,
+            array $children,
+            array $activePaths = [],
+            array $extra = []
+        ): ?array {
+            $children = array_values(array_filter($children));
+
+            if (empty($children)) {
+                return null;
+            }
+
+            return array_merge([
+                'label' => $label,
+                'href' => 'javascript:void(0);',
+                'icon_key' => $iconKey,
+                'modern_icon_key' => $iconKey,
+                'active_paths' => $activePaths,
+                'children' => $children,
+            ], $extra);
+        };
+
+        if ($user->type === 'admin') {
+            $sections = [];
+
+            $dashboard = $makeLeaf('Dashboard', 'dashboard', 'grid-alt', [], ['dashboard']);
+            $announcement = $makeLeaf('Announcement', 'announcement.index', 'news', [], ['announcement*']);
+
+            $catalogueChildren = [
+                $makeLeaf('API Providers', 'api.index', 'settings', [], ['api*']),
+                $makeLeaf('Categories', 'category.index', 'store', [], ['category*']),
+                $makeLeaf('Products', 'product.index', 'package', [], ['product*']),
+            ];
+
+            $emailChildren = [
+                $makeLeaf('Emails', 'emails.index', 'file', [], ['emails.index']),
+                $makeLeaf('Pending Emails', 'emails.pending', 'time', [], ['emails.pending']),
+            ];
+
+            $customerChildren = [
+                $makeLeaf('All Customers', 'customers', 'group', [], ['customers']),
+                $makeLeaf('Active Customers', 'customers.active', 'user-check', ['status' => 'active'], ['customers.active*']),
+                $makeLeaf('Suspended Customers', 'customers.suspended', 'shield', ['status' => 'suspended'], ['customers.suspended*']),
+                $makeLeaf('Blacklisted Customers', 'customer-blacklist.index', 'shield', [], ['customer-blacklist*']),
+                $makeLeaf('Unverified Customers', 'customers.unverified', 'badge-check', [], ['customers.unverified']),
+                $makeLeaf('Customer Levels', 'customerlevel.index', 'trophy', [], ['customerlevel*']),
+                $makeLeaf('Level Benefits', 'levelbenefit.index', 'shield-quarter', [], ['levelbenefit*']),
+                $makeLeaf('Shop Creation Requests', 'customer.shop.requests', 'store', [], ['customer.shop.requests']),
+            ];
+
+            $userChildren = [
+                $makeLeaf('All Admins', 'admins', 'user-check', [], ['admins']),
+                $makeLeaf('All Roles', 'role.index', 'shield', [], ['role*']),
+                $makeLeaf('All Permissions', 'permission.index', 'shield-quarter', [], ['permission*']),
+            ];
+
+            $financialChildren = [
+                $makeLeaf('Product Purchase Log', 'admin.trans', 'receipt', [], ['admin.trans']),
+                $makeLeaf('Wallet Funding Log', 'admin.walletfundinglog', 'wallet-alt', [], ['admin.walletfundinglog']),
+                $makeLeaf('Wallet Log', 'admin.walletlog', 'wallet', [], ['admin.walletlog']),
+                $makeLeaf('Earnings Log', 'admin.earninglog', 'bar-chart-square', [], ['admin.earninglog']),
+                $makeLeaf('Credit Customer', 'admin.credit.customer', 'user', [], ['admin.credit.customer']),
+                $makeLeaf('Debit Customer', 'admin.debit.customer', 'user', [], ['admin.debit.customer']),
+                $makeLeaf('Verify Biller', 'admin.verifybiller', 'badge-check', [], ['admin.verifybiller']),
+                $makeLeaf('Biller Logs', 'billerlog.index', 'history', [], ['billerlog.index']),
+                $makeLeaf('Reserved Account Numbers', 'admin.reserved.accounts', 'id-card', [], ['admin.reserved.accounts']),
+            ];
+
+            $profile = $makeLeaf('My Profile', 'profile.edit', 'user-circle', [], ['profile*']);
+            $callbackAnalysis = $makeLeaf('Callback Analysis', 'callback.analysis', 'network-chart', [], ['callback.analysis']);
+            $kycManagement = $makeLeaf('KYC Management', 'admin.kyc', 'badge-check', [], ['admin.kyc']);
+            $paymentGatewaySettings = $makeLeaf('Payment Gateway Settings', 'paymentgateway.index', 'credit-card', [], ['paymentgateway*']);
+            $generalSettings = $makeLeaf('General Settings', 'settings.edit', 'settings', [], ['settings*']);
+
+            $sections = array_values(array_filter([
+                ['label' => 'Dashboard', 'items' => array_values(array_filter([$dashboard]))],
+                ['label' => 'Announcement', 'items' => array_values(array_filter([$announcement]))],
+                ['label' => 'Catalogue', 'items' => array_values(array_filter([
+                    $makeToggle('Catalogue', 'package', $catalogueChildren),
+                ]))],
+                ['label' => 'Email Management', 'items' => array_values(array_filter([
+                    $makeToggle('Email Management', 'file', $emailChildren),
+                ]))],
+                ['label' => 'Customers', 'items' => array_values(array_filter([
+                    $makeToggle('Customers', 'group', $customerChildren),
+                ]))],
+                ['label' => 'User Management', 'items' => array_values(array_filter([
+                    $makeToggle('User Management', 'user-check', $userChildren),
+                ]))],
+                ['label' => 'Financials', 'items' => array_values(array_filter([
+                    $makeToggle('Financials', 'receipt', $financialChildren),
+                ]))],
+                ['label' => 'Profile', 'items' => array_values(array_filter([$profile]))],
+                ['label' => 'Callback Analysis', 'items' => array_values(array_filter([$callbackAnalysis]))],
+                ['label' => 'KYC Management', 'items' => array_values(array_filter([$kycManagement]))],
+                ['label' => 'Payment Gateway Settings', 'items' => array_values(array_filter([$paymentGatewaySettings]))],
+                ['label' => 'General Settings', 'items' => array_values(array_filter([$generalSettings]))],
+                ['label' => 'Logout', 'items' => [[
+                    'label' => 'Logout',
+                    'href' => route('logout'),
+                    'icon_key' => 'log-out',
+                    'modern_icon_key' => 'log-out-circle',
+                    'type' => 'logout',
+                    'active_paths' => [],
+                ]]],
+            ], fn ($section) => !empty($section['items'])));
+
+            return [
+                'stats' => [],
+                'sections' => $sections,
+            ];
+        }
+
+        $balance = $settings->currency . number_format(walletBalance($user), 2);
+        $levelName = $user->customer?->level?->name ?? 'N/A';
+        $sections = [];
+
+        $paymentItems = [];
+        foreach (getCategories() as $category) {
+            $paymentItems[] = [
+                'label' => $category->display_name,
+                'href' => route('open.transaction.page', $category->slug),
+                'icon_html' => $category->icon ?: null,
+                'icon_key' => 'grid-alt',
+                'modern_icon_key' => modernServiceIconKey($category),
+                'active_paths' => ['customer/' . $category->slug],
+            ];
+        }
+
+        if (!empty($paymentItems)) {
+            $sections[] = [
+                'label' => 'Make Payment',
+                'items' => $paymentItems,
+            ];
+        }
+
+        $selfService = [];
+        if ($leaf = $makeLeaf('Dashboard', 'dashboard', 'grid-alt', [], ['dashboard'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('My Profile', 'profile.edit', 'user-circle', [], ['profile*'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Downlines', 'alldownlines', 'network-chart', [], ['alldownlines'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Referral Earnings', 'downlines', 'dollar-circle', [], ['downlines'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Upgrade Account', 'customer.level.upgrade', 'transfer', [], ['customer.level.upgrade'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Fund Wallet', 'customer.load.wallet', 'wallet', [], ['customer.load.wallet', 'process-customer-load-wallet'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Transactions History', 'customer.transaction.history', 'receipt', [], ['customer.transaction.history', 'customer.airtime2cash.transaction.history', 'transaction.status'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('Reports', 'customer.transaction.report', 'bar-chart-square', [], ['customer.transaction.report'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('KYC Info', 'update.kyc.details', 'badge-check', [], ['update.kyc.details'])) {
+            $selfService[] = $leaf;
+        }
+        if ($leaf = $makeLeaf('API Settings', 'api.settings', 'settings', [], ['api.settings'])) {
+            if (($user->customer?->api_access ?? null) === 'active') {
+                $selfService[] = $leaf;
+            }
+        }
+        if (!empty($settings->support_link)) {
+            $selfService[] = [
+                'label' => 'Contact Us',
+                'href' => $settings->support_link,
+                'icon_key' => 'support',
+                'modern_icon_key' => 'headphone',
+                'target' => '_blank',
+                'active_paths' => [],
+            ];
+        }
+        if ($routeExists('customer.shop.create') && ($user->customer?->api_access ?? null) === 'active' && !empty($settings->api_documentation_link)) {
+            $shopLabel = !empty($user->customer?->shop_request) && $user->customer?->shop_request->whereStatus('approved')->count() > 0
+                ? 'My Shop'
+                : 'Create Shop';
+
+            $selfService[] = [
+                'label' => $shopLabel,
+                'href' => route('customer.shop.create'),
+                'icon_key' => 'store',
+                'modern_icon_key' => 'store',
+                'target' => '_blank',
+                'active_paths' => ['customer.shop.create'],
+            ];
+
+            $selfService[] = [
+                'label' => 'API Documentation',
+                'href' => $settings->api_documentation_link,
+                'icon_key' => 'book-open',
+                'modern_icon_key' => 'book-open',
+                'target' => '_blank',
+                'active_paths' => [],
+            ];
+        }
+
+        if (!empty($selfService)) {
+            $sections[] = [
+                'label' => 'Self Service',
+                'items' => $selfService,
+            ];
+        }
+
+        $sections[] = [
+            'label' => 'Logout',
+            'items' => [[
+                'label' => 'Logout',
+                'href' => route('logout'),
+                'icon_key' => 'log-out',
+                'modern_icon_key' => 'log-out-circle',
+                'type' => 'logout',
+                'active_paths' => [],
+            ]],
+        ];
+
+        return [
+            'stats' => [
+                ['label' => 'Wallet Balance', 'value' => $balance],
+                ['label' => 'Customer Level', 'value' => $levelName],
+            ],
+            'sections' => $sections,
+        ];
+    }
+}
+
+if (!function_exists('customerMobileNavItems')) {
+    function customerMobileNavItems(): array
+    {
+        return [
+            [
+                'label' => 'Home',
+                'href' => route('dashboard'),
+                'icon_key' => 'home-smile',
+                'active_paths' => ['dashboard'],
+            ],
+            [
+                'label' => 'Fund Wallet',
+                'href' => route('customer.load.wallet'),
+                'icon_key' => 'wallet-alt',
+                'active_paths' => ['customer.load.wallet', 'process-customer-load-wallet'],
+            ],
+            [
+                'label' => 'History',
+                'href' => route('customer.transaction.history'),
+                'icon_key' => 'history',
+                'active_paths' => [
+                    'customer.transaction.history',
+                    'customer.airtime2cash.transaction.history',
+                    'transaction.status',
+                ],
+            ],
+            [
+                'label' => 'Reports',
+                'href' => route('customer.transaction.report'),
+                'icon_key' => 'bar-chart-square',
+                'active_paths' => ['customer.transaction.report'],
+            ],
+        ];
+    }
+}
+
+if (!function_exists("themeView")) {
+    function themeView(string $scope, string $view): string
+    {
+        $modernView = "sneat.{$scope}.{$view}";
+
+        if (layoutIsModern($scope) && View::exists($modernView)) {
+            return $modernView;
+        }
+
+        return "{$scope}.{$view}";
     }
 }
 
