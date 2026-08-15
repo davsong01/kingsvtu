@@ -77,10 +77,10 @@
                                         <div class="admin-feature-card__meta-value">{{ number_format($customers) }}</div>
                                         <div class="admin-feature-card__meta-label">Total Users</div>
                                     </div>
-                                    <div class="admin-feature-card__meta">
+                                    {{-- <div class="admin-feature-card__meta">
                                         <div class="admin-feature-card__meta-value">{{ $currency }}{{ number_format($all_transactions_total, 1) }}</div>
                                         <div class="admin-feature-card__meta-label">Total Revenue</div>
-                                    </div>
+                                    </div> --}}
                                     <div class="admin-feature-card__meta">
                                         <div class="admin-feature-card__meta-value">{{ $currency }}{{ number_format($total_wallet_balance, 1) }}</div>
                                         <div class="admin-feature-card__meta-label">Wallets Balance</div>
@@ -105,7 +105,7 @@
             </div>
         </div>
 
-        <div class="col-xl-2 col-lg-4 col-md-6">
+        {{-- <div class="col-xl-2 col-lg-4 col-md-6">
             <div class="admin-summary-card h-100">
                 <div class="admin-summary-card__icon admin-summary-card__icon--green">
                     <i class="bx bx-trending-up"></i>
@@ -113,7 +113,7 @@
                 <div class="admin-summary-card__value">{{ $currency }}{{ number_format($all_transactions_total, 1) }}</div>
                 <div class="admin-summary-card__label">Total Revenue</div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="col-xl-2 col-lg-4 col-md-6">
             <div class="admin-summary-card h-100">

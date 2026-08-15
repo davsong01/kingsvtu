@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             set -euo pipefail
-            trap 'echo "Deployment stopped: a command failed before seeders could run."' ERR
+            # trap 'echo "Deployment stopped: a command failed before seeders could run."' ERR
             cd portal.kingsvtu.ng/kingso
             git stash
             git pull origin main
