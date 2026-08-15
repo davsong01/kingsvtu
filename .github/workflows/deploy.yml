@@ -1,12 +1,12 @@
-name: Deploy to production
+name: Deploy to main
 
 on:
   push:
     branches:
-      - production
+      - main
   pull_request:
     branches:
-      - production
+      - main
     types: [closed]
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
             trap 'echo "Deployment stopped: a command failed before seeders could run."' ERR
             cd portal.kingsvtu.ng/kingso
             git stash
-            git pull origin production
+            git pull origin main
             # composer update
             php artisan migrate --force
             rm -rf ../modern-assets && cp -r public/modern-assets ../modern-assets
