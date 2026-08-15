@@ -20,12 +20,12 @@ class AnnouncementController extends Controller
                 1 => (object) ['type' => 'scroll', 'status' => 'inactive', 'message' => null, 'title' => 'Scroll Announcement',]
             ];
         }
-        return view ('admin.announcement.index', ['announcements' => $ann]);
+        return view(themeView('admin', 'announcement.index'), ['announcements' => $ann]);
     }
 
     function scroll () {
         $ann = Announcement::where('type', 'scroll')->paginate(paginationRecords());
-        return view ('admin.announcement.index', ['announcements' => $ann]);
+        return view(themeView('admin', 'announcement.index'), ['announcements' => $ann]);
     }
 
     /**
@@ -33,7 +33,7 @@ class AnnouncementController extends Controller
      */
     public function create()
     {
-        return view ('admin.announcement.create');
+        return view(themeView('admin', 'announcement.create'));
     }
 
     /**
@@ -66,7 +66,7 @@ class AnnouncementController extends Controller
      */
     public function edit(Announcement $announcement)
     {
-        return view ('admin.announcement.edit', ['announcement' => $announcement]);
+        return view(themeView('admin', 'announcement.edit'), ['announcement' => $announcement]);
     }
 
     /**

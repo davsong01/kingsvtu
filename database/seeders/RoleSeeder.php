@@ -43,7 +43,7 @@ class RoleSeeder extends Seeder
             'My Profile',
             'Callback Analysis',
             'KYC Management',
-            'Payment Gateway Settings',
+            'Payment Gateways',
             'General Settings',
             'Level Benefits',
             'Shop Creation Requests',

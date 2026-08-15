@@ -46,6 +46,7 @@ Route::post('log-p-callback/{provider}', [PaymentController::class, 'dumpCallbac
 Route::get('cron/analyze-callback', [PaymentController::class, 'analyzeCallbackResponse'])->name('callback.analyze');
 Route::post('log-provider-callback/{provider_id}', [PaymentController::class, 'dumpPurchaseCallback'])->name('log.provider.callback');
 Route::get('cron/analyze-provider-callback/{pick}', [PaymentController::class, 'analyzeProviderCallbackResponse'])->name('callback.provider.analyze');
+Route::get('cron/api-availability-monitor/{windowMinutes?}/{sampleSize?}', [APIController::class, 'monitorAvailability'])->name('cron.api-availability-monitor');
 Route::get( 'cron/sendemails', [Controller::class, 'cronSendEmails']);
 Route::get('generate-api-keys', function(){
     $users = User::all();

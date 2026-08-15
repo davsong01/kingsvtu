@@ -212,8 +212,8 @@ class RoleController extends Controller
                 'children' => [],
             ],
             [
-                'label' => 'Payment Gateway Settings',
-                'parent' => 'Payment Gateway Settings',
+                'label' => 'Payment Gateways',
+                'parent' => 'Payment Gateways',
                 'parent_permissions' => ['paymentgateway.*'],
                 'children' => [],
             ],

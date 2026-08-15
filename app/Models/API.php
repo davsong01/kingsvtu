@@ -15,11 +15,47 @@ class API extends Model
     use HasFactory;
     protected $guarded = [];
     protected $table = 'a_p_is';
+    protected $casts = [
+        'balance' => 'float',
+        'availability_score' => 'integer',
+        'availability_check_transactions_count' => 'integer',
+        'successful_transactions' => 'integer',
+        'failed_transactions' => 'integer',
+        'availability_checked_at' => 'datetime',
+    ];
 
     protected function createdAt(): Attribute
     {
         return Attribute::make(
             get: fn (string $value) => date("M jS, Y", strtotime($value)),
+        );
+    }
+
+    protected function availabilityStatusClass(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => match ($attributes['availability_status'] ?? null) {
+                'critical' => 'critical',
+                'unstable' => 'unstable',
+                'average' => 'average',
+                'stable' => 'stable',
+                'healthy' => 'healthy',
+                default => null,
+            },
+        );
+    }
+
+    protected function availabilityStatusLabel(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes) => match ($attributes['availability_status'] ?? null) {
+                'critical' => 'Critical',
+                'unstable' => 'Unstable',
+                'average' => 'Average',
+                'stable' => 'Stable',
+                'healthy' => 'Healthy',
+                default => null,
+            },
         );
     }
     

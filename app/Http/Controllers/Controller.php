@@ -55,7 +55,7 @@ class Controller extends BaseController
         if (substr($file->getMimeType(), 0, 5) == 'image') {
             $imageFile = Image::make($file);
             $imgWidth = $width ?? $imageFile->width();
-            $imgHeight = $imgHeight ?? $imageFile->height();
+            $imgHeight = $height ?? $imageFile->height();
 
             if (!is_null($imgWidth) && !is_null($imgHeight)) {
                 if ($imgWidth < $imgHeight) {
@@ -70,9 +70,18 @@ class Controller extends BaseController
             }
         }
 
-        $imageFile->save($folder . '/' . $name);
+        $imageFile->save($this->storageRootPath() . '/' . $folder . '/' . $name);
 
         return $folder . '/' . $name;
+    }
+
+    private function storageRootPath(): string
+    {
+        $path = env('ENT') === 'local'
+            ? env('LOCAL_STORAGE_PATH')
+            : env('LIVE_STORAGE_PATH');
+
+        return rtrim($path ?: public_path(), '/');
     }
 
     public function getPathToSaveFile($location = null)
@@ -86,12 +95,12 @@ class Controller extends BaseController
         } else {
             $location = $year . '/' . $month . '/' . $day;
         }
-        $location = 'uploads/'.$location;
-        
-        $path = ENV('IMAGE_UPLOAD_PATH');
+
+        $location = 'uploads/' . $location;
+        $path = $this->storageRootPath();
 
         if (!is_dir($path . '/' . $location)) {
-            mkdir($path . '/' . $location, 0777, true);
+            mkdir($path . '/' . $location, 0775, true);
         }
 
         return $location;

@@ -2,10 +2,6 @@
 
 @section('title', 'Reserved Accounts')
 
-@section('page-style')
-    <link href="{{ asset('modern-assets/vendor/libs/select2/select2.css') }}" rel="stylesheet" />
-@endsection
-
 @section('content')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
@@ -15,7 +11,7 @@
                     <h1>Reserved Accounts</h1>
                     <p>Review account reservations and the customers attached to them.</p>
                 </div>
-                <span class="gateway-badge gateway-badge--active">{{ $numbers->count() }} accounts</span>
+                <span class="gateway-badge gateway-badge--active">{{ number_format($numbers->total()) }} accounts</span>
             </div>
 
             @include('sneat.layouts.alerts')
@@ -41,7 +37,7 @@
                             </div>
                             <div class="col-lg-4">
                                 <label class="modern-admin-label" for="payment_gateway">Payment Gateway</label>
-                                <select class="form-select form-select-{{ formControlSize() }}" name="payment_gateway" id="payment_gateway" data-placeholder="Search gateway">
+                                <select class="form-select form-select-{{ formControlSize() }}" name="payment_gateway" id="payment_gateway">
                                     <option value="">Select gateway</option>
                                     @foreach($gateways as $gateway)
                                         <option value="{{ $gateway->id }}" @selected(request('payment_gateway') == $gateway->id)>{{ $gateway->name }}</option>
@@ -78,6 +74,7 @@
                         <table class="table financial-table align-middle">
                             <thead>
                                 <tr>
+                                    <th>S/N</th>
                                     <th>Customer Details</th>
                                     <th>Account Details</th>
                                     <th>Transactions</th>
@@ -86,7 +83,10 @@
                             </thead>
                             <tbody>
                                 @forelse($numbers as $number)
+                                    @php $serialNumber = method_exists($numbers, 'firstItem') ? $numbers->firstItem() + $loop->index : $loop->iteration; @endphp
                                     <tr>
+                                        <td>{{ $serialNumber }}
+                                        </td>
                                         <td>
                                             <div class="fw-semibold">{{ $number->customer->user->name }}</div>
                                             <div class="gateway-helper">{{ $number->customer->user->email }}</div>
@@ -122,26 +122,10 @@
                     </div>
                 </div>
             </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                {{ $numbers->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
-@endsection
-
-@section('page-script')
-    <script src="{{ asset('modern-assets/vendor/libs/select2/select2.js') }}"></script>
-    <script>
-        (function () {
-            const $gateway = $('#payment_gateway');
-
-            if ($gateway.length && !$gateway.data('select2')) {
-                const $wrapper = $gateway.wrap('<div class="position-relative"></div>').parent();
-
-                $gateway.select2({
-                    placeholder: $gateway.data('placeholder') || 'Search gateway',
-                    allowClear: true,
-                    width: '100%',
-                    dropdownParent: $wrapper
-                });
-            }
-        })();
-    </script>
 @endsection

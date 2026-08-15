@@ -522,7 +522,7 @@ if (!function_exists("customerMenuData")) {
             $profile = $makeLeaf('My Profile', 'profile.edit', 'user-circle', [], ['profile*']);
             $callbackAnalysis = $makeLeaf('Callback Analysis', 'callback.analysis', 'network-chart', [], ['callback.analysis']);
             $kycManagement = $makeLeaf('KYC Management', 'admin.kyc', 'badge-check', [], ['admin.kyc']);
-            $paymentGatewaySettings = $makeLeaf('Payment Gateway Settings', 'paymentgateway.index', 'credit-card', [], ['paymentgateway*']);
+            $paymentGatewaySettings = $makeLeaf('Payment Gateways', 'paymentgateway.index', 'credit-card', [], ['paymentgateway*']);
             $generalSettings = $makeLeaf('General Settings', 'settings.edit', 'settings', [], ['settings*']);
 
             $sections = array_values(array_filter([
@@ -546,7 +546,7 @@ if (!function_exists("customerMenuData")) {
                 ['label' => 'Profile', 'items' => array_values(array_filter([$profile]))],
                 ['label' => 'Callback Analysis', 'items' => array_values(array_filter([$callbackAnalysis]))],
                 ['label' => 'KYC Management', 'items' => array_values(array_filter([$kycManagement]))],
-                ['label' => 'Payment Gateway Settings', 'items' => array_values(array_filter([$paymentGatewaySettings]))],
+                ['label' => 'Payment Gateways', 'items' => array_values(array_filter([$paymentGatewaySettings]))],
                 ['label' => 'General Settings', 'items' => array_values(array_filter([$generalSettings]))],
                 ['label' => 'Logout', 'items' => [[
                     'label' => 'Logout',

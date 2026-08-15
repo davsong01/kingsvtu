@@ -102,60 +102,28 @@
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Customers</span></a>
                     <ul class="menu-content">
                         @if (in_array('customers', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('customers') ? 'active' : '' }}"><a
-                                    href="{{ route('customers') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                        class="menu-item">All Customers</span></a>
-                            </li>
+                            <li class="{{ Route::is('customers') ? 'active' : '' }}"><a href="{{ route('customers') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">All Customers</span></a></li>
                         @endif
                         @if (in_array('customers.active', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('customers.active.*') ? 'active' : '' }}"><a
-                                    href="{{ route('customers.active', 'active') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input">Active
-                                        Customers</span></a>
-                            </li>
+                            <li class="{{ Route::is('customers.active.*') ? 'active' : '' }}"><a href="{{ route('customers.active', 'active') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Active Customers</span></a></li>
                         @endif
                         @if (in_array('customers.suspended', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Request::is('customers-suspended/suspended') ? 'active' : '' }}"><a
-                                    href="{{ route('customers.suspended', 'suspended') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Suspended Customers</span></a>
-                            </li>
+                            <li class="{{ Request::is('customers-suspended/suspended') ? 'active' : '' }}"><a href="{{ route('customers.suspended', 'suspended') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Suspended Customers</span></a></li>
                         @endif
-
                         @if (in_array('customer-blacklist.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class=""><a href="{{ request()->route()->getPrefix() }}/customer-blacklist"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Blacklisted Customers</span></a>
-                            </li>
+                            <li><a href="{{ request()->route()->getPrefix() }}/customer-blacklist"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Blacklisted Customers</span></a></li>
                         @endif
                         @if (in_array('customers.unverified', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="svg {{ Route::is('customers.unverified') ? 'active' : '' }}"><a
-                                    href="{{ route('customers.unverified', request()->array) }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Unverified Customers</span></a>
-                            </li>
+                            <li class="{{ Route::is('customers.unverified') ? 'active' : '' }}"><a href="{{ route('customers.unverified', request()->array) }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Unverified Customers</span></a></li>
                         @endif
                         @if (in_array('customerlevel.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a
-                                    href="{{ route('customerlevel.index') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Customer Levels</span></a>
-                            </li>
+                            <li class="{{ Route::is('customerlevel.*') ? 'active' : '' }}"><a href="{{ route('customerlevel.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Customer Levels</span></a></li>
                         @endif
                         @if (in_array('levelbenefit.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('levelbenefit.*') ? 'active' : '' }}"><a
-                                    href="{{ route('levelbenefit.index') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Level Benefits</span></a>
-                            </li>
+                            <li class="{{ Route::is('levelbenefit.*') ? 'active' : '' }}"><a href="{{ route('levelbenefit.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Level Benefits</span></a></li>
                         @endif
                         @if (in_array('customer.shop.requests', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('customer.shop.requests') ? 'active' : '' }}"><a
-                                    href="{{ route('customer.shop.requests') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item"
-                                        data-i18n="Input Groups">Shop Creation Requests</span></a>
-                            </li>
+                            <li class="{{ Route::is('customer.shop.requests') ? 'active' : '' }}"><a href="{{ route('customer.shop.requests') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Shop Creation Requests</span></a></li>
                         @endif
                     </ul>
                 </li>
@@ -195,64 +163,31 @@
                         </svg><span class="menu-title" data-i18n="Form Elements">&nbsp;Financials</span></a>
                     <ul class="menu-content">
                         @if (in_array('admin.trans', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.trans') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.trans') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                        class="menu-item">Product Purchase Log</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.trans') ? 'active' : '' }}"><a href="{{ route('admin.trans') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Product Purchase Log</span></a></li>
                         @endif
                         @if (in_array('admin.walletfundinglog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.walletfundinglog') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.walletfundinglog') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Funding
-                                        Log</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.walletfundinglog') ? 'active' : '' }}"><a href="{{ route('admin.walletfundinglog') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Funding Log</span></a></li>
                         @endif
                         @if (in_array('admin.walletlog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.walletlog') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.walletlog') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                        class="menu-item">Wallet
-                                        Log</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.walletlog') ? 'active' : '' }}"><a href="{{ route('admin.walletlog') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Wallet Log</span></a></li>
                         @endif
                         @if (in_array('admin.earninglog', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.earninglog') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.earninglog') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                        class="menu-item">Earnings
-                                        Log</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.earninglog') ? 'active' : '' }}"><a href="{{ route('admin.earninglog') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Earnings Log</span></a></li>
                         @endif
                         @if (in_array('admin.credit.customer', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.credit.customer') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.credit.customer') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">Credit
-                                        Customer</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.credit.customer') ? 'active' : '' }}"><a href="{{ route('admin.credit.customer') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Credit Customer</span></a></li>
                         @endif
                         @if (in_array('admin.debit.customer', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.debit.customer') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.debit.customer') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit
-                                        Customer</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.debit.customer') ? 'active' : '' }}"><a href="{{ route('admin.debit.customer') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Debit Customer</span></a></li>
                         @endif
                         @if (in_array('admin.verifybiller', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                        <li class="{{ Route::is('admin.verifybiller') ? 'active' : '' }}"><a
-                             href="{{ route('admin.verifybiller') }}"><i
-                                 class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a>
-                        </li>
+                        <li class="{{ Route::is('admin.verifybiller') ? 'active' : '' }}"><a href="{{ route('admin.verifybiller') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Verify Biller</span></a></li>
                         @endif
                         @if (in_array('billerlog.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                        <li class="{{ Route::is('billerlog.index') ? 'active' : '' }}"><a
-                             href="{{ route('billerlog.index') }}"><i
-                                 class="bx bx-right-arrow-alt"></i><span class="menu-item">Biller Logs</span></a>
-                        </li>
+                        <li class="{{ Route::is('billerlog.index') ? 'active' : '' }}"><a href="{{ route('billerlog.index') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Biller Logs</span></a></li>
                         @endif
                         @if (in_array('admin.reserved.accounts', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
-                            <li class="{{ Route::is('admin.reserved.accounts') ? 'active' : '' }}"><a
-                                    href="{{ route('admin.reserved.accounts') }}"><i
-                                        class="bx bx-right-arrow-alt"></i><span class="menu-item">Reserved Account
-                                        Numbers</span></a>
-                            </li>
+                            <li class="{{ Route::is('admin.reserved.accounts') ? 'active' : '' }}"><a href="{{ route('admin.reserved.accounts') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item">Reserved Account Numbers</span></a></li>
                         @endif
                     </ul>
                 </li>
@@ -285,14 +220,14 @@
                         </svg><span class="menu-title">&nbsp;KYC Management</span></a>
                 </li>
             @endif
-            @if (in_array('Payment Gateway Settings', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
+            @if (in_array('Payment Gateways', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'paymentgateway' ? 'active' : '' }}"><a
                         href="{{ route('paymentgateway.index') }}"><svg xmlns="http://www.w3.org/2000/svg"
                             height="24" viewBox="0 -960 960 960" width="24">
                             <path
                                 d="m480-560-56-56 63-64H320v-80h167l-64-64 57-56 160 160-160 160ZM280-80q-33 0-56.5-23.5T200-160q0-33 23.5-56.5T280-240q33 0 56.5 23.5T360-160q0 33-23.5 56.5T280-80Zm400 0q-33 0-56.5-23.5T600-160q0-33 23.5-56.5T680-240q33 0 56.5 23.5T760-160q0 33-23.5 56.5T680-80ZM40-800v-80h131l170 360h280l156-280h91L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68.5-39t-1.5-79l54-98-144-304H40Z"
                                 fill="white" />
-                        </svg><span class="menu-title">&nbsp;Payment Gateway Settings</span></a></li>
+                        </svg><span class="menu-title">&nbsp;Payment Gateways</span></a></li>
             @endif
             @if (in_array('General Settings', $allowedMenu) || in_array(1, auth()->user()->admin->roleIds()))
                 <li class="{{ Request::path() == 'settings' ? 'active' : '' }}"><a
