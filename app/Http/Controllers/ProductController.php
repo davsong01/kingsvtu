@@ -153,13 +153,20 @@ class ProductController extends Controller
         if (! layoutIsModern('admin')) {
             return redirect()
                 ->route('product.edit', $product->id)
-                ->with('message', 'Use the product edit page for variations on the legacy layout.');
+                ->with('message', 'Use the product edit page for variations.');
         }
 
-        $product->load(['category', 'api', 'variations.category']);
+        $product->load(['category', 'api']);
+        $variations = Variation::with(['category', 'discounts'])
+            ->withCount('transaction')
+            ->where('product_id', $product->id)
+            ->where('api_id', $product->api_id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        $variationCount = $variations->count();
         $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
 
-        return view('sneat.admin.product.variations', compact('product', 'customerlevel'));
+        return view('sneat.admin.product.variations', compact('product', 'variations', 'variationCount', 'customerlevel'));
     }
 
     public function update(Product $product, Request $request)

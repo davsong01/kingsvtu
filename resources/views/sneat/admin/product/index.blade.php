@@ -63,6 +63,7 @@
                                         $productImage = !empty($product->image)
                                             ? (str_starts_with($product->image, 'http') ? $product->image : asset($product->image))
                                             : asset('site/upgrade.jpg');
+                                        $variationCount = $product->variations->count();
                                     @endphp
                                     <tr>
                                         <td class="fw-semibold text-secondary">{{ $loop->iteration }}</td>
@@ -89,8 +90,8 @@
                                         </td>
                                         <td>{{ $product->api->name ?? 'N/A' }}</td>
                                         <td>
-                                            <div class="gateway-helper">All: {{ $product->variations()->count() }}</div>
-                                            <div class="gateway-helper text-success">Active: {{ $product->variations()->where('status', 'active')->count() }}</div>
+                                            <div class="gateway-helper">All: {{ $product->variations->count() }}</div>
+                                            <div class="gateway-helper text-success">Active: {{ $product->variations->where('status', 'active')->count() }}</div>
                                         </td>
                                         <td>
                                             <span class="gateway-badge {{ $product->status === 'active' ? 'gateway-badge--active' : 'gateway-badge--inactive' }}">
@@ -105,6 +106,9 @@
                                                     <a class="btn btn-sm btn-outline-secondary" onclick="return confirm('{{ $product->name }} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}">Duplicate</a>
                                                     @if($product->has_variations === 'yes')
                                                         <a class="btn btn-sm btn-outline-success" href="{{ route('product.variations', $product->id) }}">Variations</a>
+                                                        <a class="btn btn-sm btn-outline-info" href="{{ route('variations.pull', $product->id) }}">
+                                                            {{ $variationCount > 0 ? 'Re-pull variations' : 'Pull variations' }}
+                                                        </a>
                                                     @endif
                                                 </div>
                                             </td>
