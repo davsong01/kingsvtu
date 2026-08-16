@@ -47,7 +47,7 @@
                         <strong>{{ $currentApiName }}</strong>
                     </a>
                     <a
-                        href="{{ $isEdit ? route('product.edit', $product->id) . '?tab=variations' : '#' }}"
+                        href="{{ $isEdit ? route('product.variations', $product->id) : '#' }}"
                         class="admin-page-badge admin-page-badge--link"
                         @if(!$isEdit) aria-disabled="true" tabindex="-1" @endif
                     >

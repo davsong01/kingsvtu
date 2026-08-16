@@ -1,6 +1,8 @@
 <?php 
     use Illuminate\Support\Facades\Session;
-    $page = Session::get('page') ?? 1;
+    $page = request()->query('tab') === 'variations'
+        ? 2
+        : (Session::get('page') ?? 1);
 ?>
 @extends('layouts.app')
 @section('page-css')

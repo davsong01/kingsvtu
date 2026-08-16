@@ -148,6 +148,20 @@ class ProductController extends Controller
         return view(themeView('admin', 'product.form'), compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }
 
+    public function variations(Product $product)
+    {
+        if (! layoutIsModern('admin')) {
+            return redirect()
+                ->route('product.edit', $product->id)
+                ->with('message', 'Use the product edit page for variations on the legacy layout.');
+        }
+
+        $product->load(['category', 'api', 'variations.category']);
+        $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
+
+        return view('sneat.admin.product.variations', compact('product', 'customerlevel'));
+    }
+
     public function update(Product $product, Request $request)
     {
         $this->validate($request, [

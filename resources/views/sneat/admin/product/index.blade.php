@@ -104,7 +104,7 @@
                                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('product.edit', $product->id) }}">Edit</a>
                                                     <a class="btn btn-sm btn-outline-secondary" onclick="return confirm('{{ $product->name }} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}">Duplicate</a>
                                                     @if($product->has_variations === 'yes')
-                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.edit', $product->id) }}?tab=variations">Variations</a>
+                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.variations', $product->id) }}">Variations</a>
                                                     @endif
                                                 </div>
                                             </td>

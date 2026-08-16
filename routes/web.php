@@ -126,6 +126,7 @@ Route::middleware('auth', 'user-status')->group(function () {
 // Admin
 Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute', 'user-status'])->prefix('admin')->group(function () {
     Route::resource('product', ProductController::class);
+    Route::get('product/{product}/variations', [ProductController::class, 'variations'])->name('product.variations');
     Route::get('duplicate-product/{product}', [ProductController::class, 'duplicateProduct'])->name('duplicate.product');
     Route::resource('api', APIController::class);
     Route::get('api-balance/{api}', [APIController::class, 'getBalance'])->name('api.balance');
