@@ -16,12 +16,26 @@ class Product extends Model
 
     public function variations()
     {
-        return $this->hasMany(Variation::class, 'product_id')->orderBy('created_at', 'DESC')->where('api_id', $this->api_id);
+        $apiId = $this->getRawOriginal('api_id') ?? $this->api_id;
+
+        $query = $this->hasMany(Variation::class, 'product_id')->orderBy('created_at', 'DESC');
+
+        if (! is_null($apiId) && $apiId !== '') {
+            $query->where('api_id', $apiId);
+        }
+
+        return $query;
     }
 
     public function getVariationCountAttribute()
     {
-        return $this->variations()->count();
+        $apiId = $this->getRawOriginal('api_id') ?? $this->api_id;
+
+        if (is_null($apiId) || $apiId === '') {
+            return 0;
+        }
+
+        return Variation::where('product_id', $this->id)->where('api_id', $apiId)->count();
     }
 
     public function api()
