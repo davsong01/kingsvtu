@@ -132,7 +132,12 @@
                                                             <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-pencil"></i><span class="align-middle ml-25">View</span></button></a>
                                                             <a class="btn btn-info btn-sm mr-1 mb-1" onclick="return confirm('{{$product->name}} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Duplicate</span></button></a>
                                                             @if($product->has_variations == 'yes')
-                                                            <a class="btn btn-dark btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Edit Variations</span></button></a>
+                                                            <a class="btn btn-dark btn-sm mr-1 mb-1" href="{{ route('product.edit', $product->id) }}"><i class="bx bxs-copy"></i><span class="align-middle ml-25">Edit Variations</span></a>
+                                                            @if($product->variations()->count() < 1)
+                                                                <a class="btn btn-primary btn-sm mr-1 mb-1" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i><span class="align-middle ml-25">Pull Variations</span></a>
+                                                            @else
+                                                                <a class="btn btn-info btn-sm mr-1 mb-1" href="{{ route('variations.pull', $product->id) }}"><i class="bx bx-plus"></i><span class="align-middle ml-25">Re Pull Variations</span></a>
+                                                            @endif
                                                             @endif
                                                         </td>
                                                         @endif

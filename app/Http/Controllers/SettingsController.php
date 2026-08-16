@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Settings;
 use Illuminate\Http\Request;
 use App\Models\PaymentGateway;
+use Illuminate\Support\Facades\Schema;
 
 class SettingsController extends Controller
 {
@@ -55,7 +56,11 @@ class SettingsController extends Controller
                 'customer_layout' => 'modern',
                 'official_email' => '',
                 'whatsapp_number' => '',
+                'customer_of_the_month_status' => 'yes',
+                'allow_google_dashboard_ad' => 'no',
+                'allow_google_ad' => 'no',
                 'google_ad_code' => '',
+                'google_dashboard_ad_code' => '',
                 'seo_title' => '',
                 'seo_description' => '',
                 'support_link' => '',
@@ -90,6 +95,14 @@ class SettingsController extends Controller
         $data = $request->except(['_token', 'logo', 'favicon', 'ip', 'captcha_settings_status', 'captcha_settings_provider', 'RECAPTCHA_SITE_KEY', 'RECAPTCHA_SECRET_KEY']);
 
         $data['captcha_settings'] = $captcha_settings;
+        $data['customer_of_the_month_status'] = $request->input('customer_of_the_month_status', $settings->customer_of_the_month_status ?? 'yes') === 'yes' ? 'yes' : 'no';
+        if (Schema::hasColumn('settings', 'allow_google_dashboard_ad')) {
+            $data['allow_google_dashboard_ad'] = $request->input('allow_google_dashboard_ad', $settings->allow_google_dashboard_ad ?? 'no') === 'yes' ? 'yes' : 'no';
+        }
+
+        if (Schema::hasColumn('settings', 'allow_google_ad')) {
+            $data['allow_google_ad'] = $request->input('allow_google_ad', $settings->allow_google_ad ?? 'no') === 'yes' ? 'yes' : 'no';
+        }
         $adminLayout = $request->input('admin_layout', $settings->admin_layout ?? 'modern');
         $customerLayout = $request->input('customer_layout', $settings->customer_layout ?? 'modern');
         $data['admin_layout'] = in_array($adminLayout, ['legacy', 'modern'], true) ? $adminLayout : 'modern';

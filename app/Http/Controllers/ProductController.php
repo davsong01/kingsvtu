@@ -21,7 +21,37 @@ class ProductController extends Controller
             $perPage = 15;
         }
 
-        $baseQuery = Product::query()
+        $filteredQuery = Product::query();
+
+        if ($search = trim((string) $request->input('search', ''))) {
+            $filteredQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('display_name', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($status = $request->input('status')) {
+            $filteredQuery->where('status', $status);
+        }
+
+        if ($category = $request->input('category')) {
+            $filteredQuery->where('category_id', $category);
+        }
+
+        if ($api = $request->input('api')) {
+            $filteredQuery->where('api_id', $api);
+        }
+
+        if ($hasVariations = $request->input('has_variations')) {
+            $filteredQuery->where('has_variations', $hasVariations);
+        }
+
+        $totalProducts = (clone $filteredQuery)->count();
+        $activeProducts = (clone $filteredQuery)->where('status', 'active')->count();
+        $variationProducts = (clone $filteredQuery)->where('has_variations', 'yes')->count();
+
+        $products = $filteredQuery
             ->with([
                 'api:id,name',
                 'category:id,name,display_name',
@@ -32,37 +62,7 @@ class ProductController extends Controller
                 'variations as active_variations_count' => function ($query) {
                     $query->where('status', 'active');
                 },
-            ]);
-
-        if ($search = trim((string) $request->input('search', ''))) {
-            $baseQuery->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('display_name', 'like', '%' . $search . '%')
-                    ->orWhere('slug', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($status = $request->input('status')) {
-            $baseQuery->where('status', $status);
-        }
-
-        if ($category = $request->input('category')) {
-            $baseQuery->where('category_id', $category);
-        }
-
-        if ($api = $request->input('api')) {
-            $baseQuery->where('api_id', $api);
-        }
-
-        if ($hasVariations = $request->input('has_variations')) {
-            $baseQuery->where('has_variations', $hasVariations);
-        }
-
-        $totalProducts = (clone $baseQuery)->count();
-        $activeProducts = (clone $baseQuery)->where('status', 'active')->count();
-        $variationProducts = (clone $baseQuery)->where('has_variations', 'yes')->count();
-
-        $products = $baseQuery
+            ])
             ->orderByRaw("CASE WHEN status = 'active' THEN 0 ELSE 1 END")
             ->orderBy('created_at', 'DESC')
             ->paginate($perPage)
@@ -135,6 +135,7 @@ class ProductController extends Controller
             'ussd_string' => 'nullable',
             'multistep' => 'nullable',
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -177,6 +178,7 @@ class ProductController extends Controller
                 'ussd_string' => $request->ussd_string,
                 'multistep' => $request->multistep ?? 'no',
                 'referral_percentage' => $request->referral_percentage,
+                'show_in_menu' => $request->boolean('show_in_menu'),
             ]
         );
 
@@ -220,6 +222,27 @@ class ProductController extends Controller
         return view(themeView('admin', 'product.form'), compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }
 
+    public function variations(Product $product)
+    {
+        if (! layoutIsModern('admin')) {
+            return redirect()
+                ->route('product.edit', $product->id)
+                ->with('message', 'Use the product edit page for variations.');
+        }
+
+        $product->load(['category', 'api']);
+        $variations = Variation::with(['category', 'discounts'])
+            ->withCount('transaction')
+            ->where('product_id', $product->id)
+            ->where('api_id', $product->api_id)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        $variationCount = $variations->count();
+        $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
+
+        return view('sneat.admin.product.variations', compact('product', 'variations', 'variationCount', 'customerlevel'));
+    }
+
     public function update(Product $product, Request $request)
     {
         $this->validate($request, [
@@ -247,6 +270,7 @@ class ProductController extends Controller
             'multistep' => 'nullable',
             "allow_subscription_type" => "nullable",
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -307,6 +331,7 @@ class ProductController extends Controller
             'ussd_string' => $request->ussd_string,
             'multistep' => $request->multistep,
             'referral_percentage' => $request->referral_percentage,
+            'show_in_menu' => $request->boolean('show_in_menu'),
         ]);
 
         $productLevel = $request->productlevel;

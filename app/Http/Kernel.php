@@ -2,6 +2,8 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ApiAuthMiddleware;
+use App\Http\Middleware\UserStatusMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -70,6 +72,8 @@ class Kernel extends HttpKernel
         'adminRoute' => \App\Http\Middleware\RouteProtectionMiddleware::class,
         'reserved_account' => \App\Http\Middleware\ReservedAccountCreationMiddleware::class,
         'tpin' => \App\Http\Middleware\TransactionPinMiddleware::class,
-        'api-auth' => \App\Http\Middleware\ApiAuthMiddleware::class,
+        'api-auth' => ApiAuthMiddleware::class,
+        'user-status' => UserStatusMiddleware::class,
+        
     ];
 }

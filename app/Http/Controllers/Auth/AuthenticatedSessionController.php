@@ -27,15 +27,28 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $user = auth()->user();
+
+        // if (bounceBlacklist($user?->phone, $user?->email, $user?->email)) {
+        //     Auth::guard('web')->logout();
+        //     $request->session()->invalidate();
+        //     $request->session()->regenerateToken();
+
+        //     return redirect()->route('login')->with('error', 'This account has been blacklisted. Please contact support.');
+        // }
+
         if ($user->status != 'active') {
             auth()->logout();
-            if ($user->status == 'deleted') {
-                return back()->with('error', 'Sorry, this account was deleted! Please contact support.');
-                // return back()->with('error', );
-            } else {
-                return back()->with('error', 'Sorry, this account was suspended! Please contact support.');
-            }
+            
+            $message = match ($user->status) {
+                'delete' => 'This account has been deleted. Please contact support.',
+                'suspended' => 'This account has been suspended. Please contact support.',
+                default => 'This account is not active. Please contact support.',
+            };
+
+            return redirect()->route('login')->with('error', $message);
+
         }
+
         $request->session()->regenerate();
         return redirect()->intended(RouteServiceProvider::HOME);
     }

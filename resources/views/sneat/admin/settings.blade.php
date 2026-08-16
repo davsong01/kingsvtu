@@ -153,6 +153,13 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6">
+                                        <label class="admin-form-label" for="customer_of_the_month_status">Customer of the Month</label>
+                                        <select name="customer_of_the_month_status" class="form-select form-select-{{ formControlSize() }}" id="customer_of_the_month_status">
+                                            <option value="yes" {{ old('customer_of_the_month_status', $settings->customer_of_the_month_status ?? 'yes') === 'yes' ? 'selected' : '' }}>Show</option>
+                                            <option value="no" {{ old('customer_of_the_month_status', $settings->customer_of_the_month_status ?? 'yes') === 'no' ? 'selected' : '' }}>Hide</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
                                         <label class="admin-form-label" for="login_email_notification">Customer Login Email Notification</label>
                                         <select name="login_email_notification" class="form-select form-select-{{ formControlSize() }}" id="login_email_notification" required>
                                             <option value="yes" {{ old('login_email_notification', $settings->login_email_notification ?? '') === 'yes' ? 'selected' : '' }}>Yes</option>
@@ -267,9 +274,23 @@
                                         <label class="admin-form-label" for="google_ad_code">Google Ad Code</label>
                                         <textarea class="form-control" id="google_ad_code" rows="4" name="google_ad_code" placeholder="Google ad code">{{ old('google_ad_code', $settings->google_ad_code ?? '') }}</textarea>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label class="admin-form-label" for="allow_google_ad">Allow Google Ad</label>
+                                        <select name="allow_google_ad" class="form-select form-select-{{ formControlSize() }}" id="allow_google_ad">
+                                            <option value="yes" {{ old('allow_google_ad', $settings->allow_google_ad ?? 'no') === 'yes' ? 'selected' : '' }}>Yes</option>
+                                            <option value="no" {{ old('allow_google_ad', $settings->allow_google_ad ?? 'no') === 'no' ? 'selected' : '' }}>No</option>
+                                        </select>
+                                    </div>
                                     <div class="col-md-12">
                                         <label class="admin-form-label" for="google_dashboard_ad_code">Google Dashboard Ad Code</label>
                                         <textarea class="form-control" id="google_dashboard_ad_code" rows="5" name="google_dashboard_ad_code" placeholder="Google dashboard ad code">{{ old('google_dashboard_ad_code', $settings->google_dashboard_ad_code ?? '') }}</textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="admin-form-label" for="allow_google_dashboard_ad">Allow Google Dashboard Ad</label>
+                                        <select name="allow_google_dashboard_ad" class="form-select form-select-{{ formControlSize() }}" id="allow_google_dashboard_ad">
+                                            <option value="yes" {{ old('allow_google_dashboard_ad', $settings->allow_google_dashboard_ad ?? 'no') === 'yes' ? 'selected' : '' }}>Yes</option>
+                                            <option value="no" {{ old('allow_google_dashboard_ad', $settings->allow_google_dashboard_ad ?? 'no') === 'no' ? 'selected' : '' }}>No</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

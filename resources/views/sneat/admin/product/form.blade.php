@@ -15,6 +15,7 @@
         $selectedAllowQuantity = old('allow_quantity', data_get($product, 'allow_quantity', ''));
         $selectedAllowSubscription = old('allow_subscription_type', data_get($product, 'allow_subscription_type', ''));
         $selectedMultistep = old('multistep', data_get($product, 'multistep', ''));
+        $selectedShowInMenu = old('show_in_menu', data_get($product, 'show_in_menu', false));
         $imageUrl = $isEdit && !empty($product->image) ? asset($product->image) : null;
         $currentCategoryName = data_get($product, 'category.name', 'Not set');
         $currentApiName = data_get($product, 'api.name', 'Not set');
@@ -46,7 +47,7 @@
                         <strong>{{ $currentApiName }}</strong>
                     </a>
                     <a
-                        href="{{ $isEdit ? route('product.edit', $product->id) . '?tab=variations' : '#' }}"
+                        href="{{ $isEdit ? route('product.variations', $product->id) : '#' }}"
                         class="admin-page-badge admin-page-badge--link"
                         @if(!$isEdit) aria-disabled="true" tabindex="-1" @endif
                     >
@@ -143,6 +144,15 @@
                                                 <option value="yes" @selected($selectedAllowSubscription === 'yes')>Yes</option>
                                                 <option value="no" @selected($selectedAllowSubscription === 'no')>No</option>
                                             </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="modern-admin-label d-block">Customer menu visibility</label>
+                                            <input type="hidden" name="show_in_menu" value="0">
+                                            <div class="form-check form-switch mt-2">
+                                                <input class="form-check-input" type="checkbox" role="switch" id="show_in_menu" name="show_in_menu" value="1" @checked((bool) $selectedShowInMenu)>
+                                                <label class="form-check-label" for="show_in_menu">Show in customer menu</label>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">When enabled, this service appears directly in the customer menu after categories.</small>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="modern-admin-label" for="multistep">Use Multistep</label>

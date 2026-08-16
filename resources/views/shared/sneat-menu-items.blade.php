@@ -7,9 +7,15 @@
     @php
         $children = $item['children'] ?? [];
         $hasChildren = !empty($children);
-        $isActive = menuItemIsActive($item['active_paths'] ?? []);
-        $isActive = $isActive || menuItemHasActiveChild($item);
-        $isOpen = $hasChildren && menuItemHasActiveChild($item);
+        $currentProductId = request()->integer('product');
+        $itemProductId = (int) ($item['product_id'] ?? 0);
+        $isShortcut = $itemProductId > 0;
+        $hasActiveChild = $itemProductId > 0 ? false : menuItemHasActiveChild($item);
+        $isActive = $isShortcut
+            ? false
+            : menuItemIsActive($item['active_paths'] ?? []);
+        $isActive = $isActive || $hasActiveChild;
+        $isOpen = $hasChildren && $hasActiveChild;
         $isLogout = ($item['type'] ?? null) === 'logout';
         $target = $item['target'] ?? null;
         $href = $item['href'] ?? 'javascript:void(0);';
@@ -17,10 +23,11 @@
         $isSubItem = $depth > 0;
     @endphp
 
-    <li class="menu-item {{ $isActive ? 'active' : '' }} {{ $isOpen ? 'open' : '' }}">
+    <li class="menu-item {{ $isActive ? 'active' : '' }} {{ $isOpen ? 'open' : '' }} {{ $isShortcut ? 'menu-item--shortcut' : '' }}">
         <a
             href="{{ $hasChildren ? 'javascript:void(0);' : $href }}"
-            class="menu-link {{ $hasChildren ? 'menu-toggle' : '' }} {{ $isSubItem ? 'menu-sub-link' : '' }}"
+            class="menu-link {{ $hasChildren ? 'menu-toggle' : '' }} {{ $isSubItem ? 'menu-sub-link' : '' }} {{ $isShortcut ? 'menu-link--shortcut' : '' }}"
+            @if($isShortcut) style="opacity:.78;" @endif
             @if($target) target="{{ $target }}" @endif
             @if($isLogout && !$hasChildren) onclick="event.preventDefault(); document.getElementById('logout-form').submit();" @endif
         >
@@ -37,7 +44,9 @@
             <ul class="menu-sub">
                 @include('shared.sneat-menu-items', ['items' => $children, 'depth' => $depth + 1])
             </ul>
-        @elseif($isLogout)
+        @endif
+
+        @if($isLogout)
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>

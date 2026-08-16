@@ -71,7 +71,7 @@
                     </div>
                     <div class="gateway-summary__card">
                         <span class="gateway-summary__label">KYC</span>
-                        <span class="gateway-summary__value">{{ ucfirst($kycStatusValue) }}</span>
+                        <span class="gateway-summary__value">{{ formatKycStatusLabel($kycStatusValue) }}</span>
                     </div>
                 </div>
             </div>
@@ -303,7 +303,7 @@
                                     <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
                                         <div>
                                             <div class="gateway-helper text-uppercase fw-semibold">General KYC status</div>
-                                            <h4 class="mb-1">{{ ucfirst($kycStatusValue) }}</h4>
+                                            <h4 class="mb-1">{{ formatKycStatusLabel($kycStatusValue) }}</h4>
                                             <p class="mb-0">Review the captured identity fields before approving or declining the record.</p>
                                         </div>
                                         <div class="d-flex flex-wrap gap-2">
@@ -436,25 +436,16 @@
                                                 <div class="profile-badge mb-3">Blacklist email</div>
                                                 <div class="gateway-helper mb-3">{{ $user->email }}</div>
                                                 @if($blacklistedEmail)
-                                                    <div class="form-check form-switch mb-0">
-                                                        <input
-                                                            class="form-check-input"
-                                                            type="checkbox"
-                                                            role="switch"
-                                                            id="blacklist-email-toggle"
-                                                            @checked($blacklistedEmail)
-                                                            onchange="toggleBlacklistStatus(this)"
-                                                            data-id="{{ $blacklistEmailId }}"
-                                                            data-value="{{ $blacklistEmailStatus }}"
-                                                        >
-                                                        <label class="form-check-label" for="blacklist-email-toggle">Active blacklist entry</label>
-                                                    </div>
+                                                    <form action="{{ route('customer-blacklist.destroy', $blacklistEmailId) }}" method="POST" onsubmit="return confirm('Remove this email from the blacklist?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-outline-danger" type="submit">Remove email from blacklist</button>
+                                                    </form>
                                                 @else
                                                     <form action="{{ route('customer-blacklist.store') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="type" value="email">
                                                         <input type="hidden" name="value" value="{{ $user->email }}">
-                                                        <input type="hidden" name="status" value="active">
                                                         <button class="btn btn-outline-danger" type="submit">Add email to blacklist</button>
                                                     </form>
                                                 @endif
@@ -465,25 +456,16 @@
                                                 <div class="profile-badge mb-3">Blacklist phone</div>
                                                 <div class="gateway-helper mb-3">{{ $user->phone }}</div>
                                                 @if($blacklistedPhone)
-                                                    <div class="form-check form-switch mb-0">
-                                                        <input
-                                                            class="form-check-input"
-                                                            type="checkbox"
-                                                            role="switch"
-                                                            id="blacklist-phone-toggle"
-                                                            @checked($blacklistedPhone)
-                                                            onchange="toggleBlacklistStatus(this)"
-                                                            data-id="{{ $blacklistPhoneId }}"
-                                                            data-value="{{ $blacklistPhoneStatus }}"
-                                                        >
-                                                        <label class="form-check-label" for="blacklist-phone-toggle">Active blacklist entry</label>
-                                                    </div>
+                                                    <form action="{{ route('customer-blacklist.destroy', $blacklistPhoneId) }}" method="POST" onsubmit="return confirm('Remove this phone number from the blacklist?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-outline-danger" type="submit">Remove phone from blacklist</button>
+                                                    </form>
                                                 @else
                                                     <form action="{{ route('customer-blacklist.store') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="type" value="phone">
                                                         <input type="hidden" name="value" value="{{ $user->phone }}">
-                                                        <input type="hidden" name="status" value="active">
                                                         <button class="btn btn-outline-danger" type="submit">Add phone to blacklist</button>
                                                     </form>
                                                 @endif
@@ -685,34 +667,5 @@
 
         initReservedAccountSelect2();
 
-        function toggleBlacklistStatus(input) {
-            const $input = $(input);
-
-            if (!confirm('Are you sure you want to perform this action?')) {
-                $input.prop('checked', !$input.prop('checked'));
-                return;
-            }
-
-            $.ajax({
-                url: '{{ route('black.list.status') }}',
-                data: {
-                    status: $input.attr('data-value'),
-                    id: $input.attr('data-id')
-                },
-                success: function (response) {
-                    if (response.code === 1) {
-                        $input.attr('data-value', response.status);
-                        $input.prop('checked', response.status === 'active');
-                    } else {
-                        alert(response.message || 'Request could not be completed!');
-                        $input.prop('checked', !$input.prop('checked'));
-                    }
-                },
-                error: function () {
-                    alert('Request could not be completed!');
-                    $input.prop('checked', !$input.prop('checked'));
-                }
-            });
-        }
     </script>
 @endsection

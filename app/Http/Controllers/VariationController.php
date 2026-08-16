@@ -6,7 +6,9 @@ use App\Models\Product;
 use App\Models\Discount;
 use App\Models\Variation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 
 class VariationController extends Controller
 {
@@ -61,47 +63,88 @@ class VariationController extends Controller
 
     public function updateVariations(Request $request)
     {
-        if (isset($request->level)) {
-            foreach ($request->level as $key => $level) {
-                foreach ($level as $k => $price) {
-                    Discount::updateOrCreate([
-                        'customer_level' => $key,
-                        'product_id' => $request->product_id ?? $request->product,
-                        'variation_id' => $k,
-                    ], [
-                        'status' => 'active',
-                        'customer_level' => $key,
-                        'product_id' => $request->product_id ?? $request->product,
-                        'variation_id' => $k,
-                        'price' => $price ?? 0
-                    ]);
-                }
+        $product = Product::findOrFail($request->product_id ?? $request->product);
+        $customerLevelPrices = $request->input('level', []);
+        $variationIds = $request->input('variation_id', []);
+        $apiId = $product->api_id;
+
+        foreach ($variationIds as $index => $variationId) {
+            if (!empty($variationId)) {
+                continue;
+            }
+
+            $apiName = $request->api_name[$index] ?? null;
+            $systemName = $request->system_name[$index] ?? null;
+
+            if (blank($apiName) || blank($systemName)) {
+                throw ValidationException::withMessages([
+                    'api_name' => 'API Name and System Name are required for new variations.',
+                    'system_name' => 'API Name and System Name are required for new variations.',
+                ]);
             }
         }
 
-        foreach ($request->variation_id as $variation) {
-            $data = [
-                'api_name' => $request->api_name[$variation],
-                'api_price' => $request->api_price[$variation],
-                'system_name' => $request->system_name[$variation],
-                'slug' => $request->slug[$variation],
-                'api_code' => $request->slug[$variation],
-                'ussd_string' => $request->ussd_string[$variation],
-                'system_price' => $request->system_price[$variation],
-                'datasize' => $request->datasize[$variation] ?? null,
-                'fixed_price' => $request->fixed_price[$variation],
-                'min' => $request->min[$variation] ?? null,
-                'max' => $request->max[$variation] ?? null,
-                'ussd_string' => $request->ussd_string[$variation] ?? null,
-                'multistep' => $request->multistep[$variation] ?? "no",
-                'status' => $request->status[$variation],
-            ];
+        DB::transaction(function () use ($request, $product, $customerLevelPrices, $variationIds, $apiId) {
+            foreach ($variationIds as $index => $variationId) {
+                $row = [
+                    'api_name' => $request->api_name[$index] ?? null,
+                    'api_price' => $request->api_price[$index] ?? null,
+                    'system_name' => $request->system_name[$index] ?? null,
+                    'slug' => $request->slug[$index] ?? null,
+                    'api_code' => $request->slug[$index] ?? null,
+                    'ussd_string' => $request->ussd_string[$index] ?? null,
+                    'system_price' => $request->system_price[$index] ?? null,
+                    'datasize' => $request->datasize[$index] ?? null,
+                    'fixed_price' => $request->fixed_price[$index] ?? null,
+                    'min' => $request->min[$index] ?? null,
+                    'max' => $request->max[$index] ?? null,
+                    'multistep' => $request->multistep[$index] ?? 'no',
+                    'status' => $request->status[$index] ?? 'inactive',
+                ];
 
-            Variation::where('id', $variation)->update($data);
-        }
+                $hasMeaningfulData = collect($row)->filter(function ($value) {
+                    return filled($value);
+                })->isNotEmpty();
+
+                if (! $hasMeaningfulData) {
+                    continue;
+                }
+
+                if (!empty($variationId)) {
+                    Variation::where('id', $variationId)->update($row);
+                    $savedVariationId = $variationId;
+                } else {
+                    $savedVariation = Variation::create(array_merge($row, [
+                        'product_id' => $product->id,
+                        'category_id' => $product->category_id,
+                        'api_id' => $apiId,
+                    ]));
+
+                    $savedVariationId = $savedVariation->id;
+                }
+
+                if (!empty($customerLevelPrices)) {
+                    foreach ($customerLevelPrices as $levelId => $prices) {
+                        $price = $prices[$index] ?? 0;
+
+                        Discount::updateOrCreate([
+                            'customer_level' => $levelId,
+                            'product_id' => $product->id,
+                            'variation_id' => $savedVariationId,
+                        ], [
+                            'status' => 'active',
+                            'customer_level' => $levelId,
+                            'product_id' => $product->id,
+                            'variation_id' => $savedVariationId,
+                            'price' => $price ?? 0,
+                        ]);
+                    }
+                }
+            }
+        });
 
         \Session::flash('page', 2);
-        return back()->with('message', 'Variations Updated succesfully');
+        return back()->with('message', 'Variations updated successfully');
     }
 
     public function addManualVariations(Request $request, Product $product)
@@ -162,14 +205,15 @@ class VariationController extends Controller
 
     public function deleteVariations(Variation $variation)
     {
-
-        if ($variation->discounts->count() > 0) {
-            foreach ($variation->discounts as $dist) {
-                $dist->delete();
-            }
-        }
-
+        $variation->discounts()->delete();
         $variation->delete();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Variation deleted successfully',
+            ]);
+        }
 
         return back()->with('message', 'Variation deleted successfully');
         // Discount::

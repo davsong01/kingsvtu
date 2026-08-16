@@ -127,6 +127,7 @@
                                         $productImage = !empty($product->image)
                                             ? (str_starts_with($product->image, 'http') ? $product->image : asset($product->image))
                                             : asset('site/upgrade.jpg');
+                                        $variationCount = $product->variations->count();
                                     @endphp
                                     <tr>
                                         <td class="fw-semibold text-secondary">{{ $loop->iteration }}</td>
@@ -168,7 +169,10 @@
                                                     <a class="btn btn-sm btn-outline-primary" href="{{ route('product.edit', $product->id) }}">Edit</a>
                                                     <a class="btn btn-sm btn-outline-secondary" onclick="return confirm('{{ $product->name }} will be duplicated!')" href="{{ route('duplicate.product', $product->id) }}">Duplicate</a>
                                                     @if($product->has_variations === 'yes')
-                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.edit', $product->id) }}?tab=variations">Variations</a>
+                                                        <a class="btn btn-sm btn-outline-success" href="{{ route('product.variations', $product->id) }}">Variations</a>
+                                                        <a class="btn btn-sm btn-outline-info" href="{{ route('variations.pull', $product->id) }}">
+                                                            {{ $variationCount > 0 ? 'Re-pull variations' : 'Pull variations' }}
+                                                        </a>
                                                     @endif
                                                 </div>
                                             </td>

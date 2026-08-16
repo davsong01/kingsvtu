@@ -18,7 +18,7 @@ class ShopController extends Controller
             // '$'
         ];
 
-        return view('customer.create_shop',compact('currencies'));
+        return view(themeView('customer', 'create_shop'),compact('currencies'));
     }
 
     public function store(Request $request){

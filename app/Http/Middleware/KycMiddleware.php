@@ -45,20 +45,14 @@ class KycMiddleware
 
                 $message .= implode(', ', $unverified);
                 $message .= '.<br><br>Please ensure you complete this process As Soon As Possible to enable you access our services.<br><br>If you have any questions or need assistance, our support team is available to help you through the process.<br><br>Thank you for your prompt attention to this matter.';
-                
-                $special_kyc_data = [
-                    'kycmessage' => $message,
-                    'fields' => $rawUnverified,
-                ];
 
-                session(['special_kyc_data' => $special_kyc_data]);
-                
-                return redirect(route('update.kyc.special'));
+                return redirect(route('update.kyc.details'))->with('error', $message);
             }
 
             $kyc_status = getFinalKycStatus($customer->id);
             if ($kyc_status != 'verified') {
-                return redirect(route('dashboard'))->with('unverified', 'You need to complete your KYC to be able to use this resource, Click <a href="' . route("update.kyc.details") . '"><b>HERE</b></a>');
+                return redirect(route('update.kyc.details'))
+                    ->with('error', 'You need to complete your KYC to be able to use this resource.');
             }
 
             return $next($request);

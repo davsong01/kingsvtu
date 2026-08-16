@@ -35,6 +35,7 @@
 
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('assets/css/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('modern-assets/css/auth.css') }}">
     <!-- END: Custom CSS-->
     <style>
         .btn-group{
@@ -81,19 +82,6 @@
             fill: white !important;
         }
 
-        .captcha {
-            width: 100%;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .captcha input {
-            width: 100%;
-            display: block;
-            margin-top: 10px;
-            padding: 10px;
-            font-size: 16px;
-        }
     </style>
     @yield('page-css')
     {{-- {!! getSettings()->google_ad_code !!} --}}

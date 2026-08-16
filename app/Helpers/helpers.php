@@ -1,22 +1,38 @@
 <?php
 
-use App\Models\KycData;
+use App\Http\Controllers\PaymentProcessors\MonnifyController;
+use App\Http\Controllers\PaymentProcessors\PaymentPointController;
+use App\Http\Controllers\PaymentProcessors\SquadController;
+use App\Http\Controllers\WalletController;
+use App\Mail\EmailMessages;
+use App\Models\Announcement;
+use App\Models\BlackList;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\EmailLog;
-use App\Models\Settings;
-use App\Mail\EmailMessages;
-use Illuminate\Support\Arr;
-use App\Models\Announcement;
+use App\Models\KycData;
 use App\Models\PaymentGateway;
+use App\Models\Product;
+use App\Models\ReservedAccountNumber;
+use App\Models\Settings;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
-use App\Http\Controllers\WalletController;
-use App\Http\Controllers\PaymentProcessors\SquadController;
-use App\Http\Controllers\PaymentProcessors\MonnifyController;
-use App\Http\Controllers\PaymentProcessors\PaymentPointController;
-use App\Models\ReservedAccountNumber;
+
+if (!function_exists("bounceBlacklist")) {
+    function bounceBlacklist($phone, $user, $mail = null): bool
+    {
+        $values = array_filter([$mail, $phone, $user]);
+
+        if (empty($values)) {
+            return false;
+        }
+
+        return BlackList::whereIn('value', $values)->exists();
+    }
+}
+
 
 if (!function_exists("mask")) {
     function mask($word, $a = 2, $b = 9, $c = 9, $d = 10)
@@ -568,6 +584,15 @@ if (!function_exists("customerMenuData")) {
         $levelName = $user->customer?->level?->name ?? 'N/A';
         $sections = [];
 
+        $featuredProducts = Product::with('category')
+            ->where('status', 'active')
+            ->where('show_in_menu', true)
+            ->whereHas('category', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->orderBy('display_name')
+            ->get();
+
         $paymentItems = [];
         foreach (getCategories() as $category) {
             $paymentItems[] = [
@@ -577,6 +602,25 @@ if (!function_exists("customerMenuData")) {
                 'icon_key' => 'grid-alt',
                 'modern_icon_key' => modernServiceIconKey($category),
                 'active_paths' => ['customer/' . $category->slug],
+            ];
+        }
+
+        foreach ($featuredProducts as $product) {
+            if (empty($product->category?->slug)) {
+                continue;
+            }
+
+            $paymentItems[] = [
+                'label' => $product->display_name,
+                'href' => route('open.transaction.page', [
+                    'slug' => $product->category->slug,
+                    'product' => $product->id,
+                ]),
+                'icon_html' => $product->category->icon ?: null,
+                'icon_key' => 'package',
+                'modern_icon_key' => modernServiceIconKey($product->category),
+                'product_id' => $product->id,
+                'active_paths' => ['customer/' . $product->category->slug],
             ];
         }
 
@@ -615,9 +659,10 @@ if (!function_exists("customerMenuData")) {
         if ($leaf = $makeLeaf('KYC Info', 'update.kyc.details', 'badge-check', [], ['update.kyc.details'])) {
             $selfService[] = $leaf;
         }
-        if ($leaf = $makeLeaf('API Settings', 'api.settings', 'settings', [], ['api.settings'])) {
-            if (($user->customer?->api_access ?? null) === 'active') {
-                $selfService[] = $leaf;
+        $apiChildren = [];
+        if (($user->customer?->api_access ?? null) === 'active') {
+            if ($leaf = $makeLeaf('API Settings', 'api.settings', 'settings', [], ['api.settings'])) {
+                $apiChildren[] = $leaf;
             }
         }
         if (!empty($settings->support_link)) {
@@ -643,8 +688,9 @@ if (!function_exists("customerMenuData")) {
                 'target' => '_blank',
                 'active_paths' => ['customer.shop.create'],
             ];
-
-            $selfService[] = [
+        }
+        if (!empty($settings->api_documentation_link) && ($user->customer?->api_access ?? null) === 'active') {
+            $apiChildren[] = [
                 'label' => 'API Documentation',
                 'href' => $settings->api_documentation_link,
                 'icon_key' => 'book-open',
@@ -652,6 +698,9 @@ if (!function_exists("customerMenuData")) {
                 'target' => '_blank',
                 'active_paths' => [],
             ];
+        }
+        if (!empty($apiChildren)) {
+            $selfService[] = $makeToggle('API', 'code', $apiChildren);
         }
 
         if (!empty($selfService)) {
@@ -694,6 +743,14 @@ if (!function_exists('customerMobileNavItems')) {
                 'active_paths' => ['dashboard'],
             ],
             [
+                'label' => 'Buy',
+                'href' => 'javascript:void(0);',
+                'icon_key' => 'package',
+                'modal_target' => '#customer-services-modal',
+                'type' => 'modal',
+                'active_paths' => [],
+            ],
+            [
                 'label' => 'Fund Wallet',
                 'href' => route('customer.load.wallet'),
                 'icon_key' => 'wallet-alt',
@@ -705,15 +762,8 @@ if (!function_exists('customerMobileNavItems')) {
                 'icon_key' => 'history',
                 'active_paths' => [
                     'customer.transaction.history',
-                    'customer.airtime2cash.transaction.history',
                     'transaction.status',
                 ],
-            ],
-            [
-                'label' => 'Reports',
-                'href' => route('customer.transaction.report'),
-                'icon_key' => 'bar-chart-square',
-                'active_paths' => ['customer.transaction.report'],
             ],
         ];
     }
@@ -1855,6 +1905,22 @@ if (!function_exists("getFinalKycStatus")) {
     function getFinalKycStatus($customer_id)
     {
         return Customer::where(['id' => $customer_id])->value('kyc_status');
+    }
+}
+
+if (!function_exists("formatKycStatusLabel")) {
+    function formatKycStatusLabel($status)
+    {
+        $status = strtolower(trim((string) $status));
+
+        return match ($status) {
+            'verified' => 'Verified',
+            'approved' => 'Approved',
+            'awaiting-approval', 'pending-review' => 'Awaiting Approval',
+            'pending' => 'Pending',
+            'declined', 'rejected' => 'Declined',
+            default => $status !== '' ? ucwords(str_replace(['-', '_'], ' ', $status)) : 'Pending',
+        };
     }
 }
 
