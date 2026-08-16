@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Discount;
 use App\Models\Variation;
+use App\Models\TransactionLog;
 use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
 
@@ -52,17 +53,32 @@ class ProductController extends Controller
         $variationProducts = (clone $filteredQuery)->where('has_variations', 'yes')->count();
 
         $products = $filteredQuery
+            ->select('products.*')
             ->with([
                 'api:id,name',
                 'category:id,name,display_name',
             ])
-            ->withCount([
-                'transactions',
-                'variations',
-                'variations as active_variations_count' => function ($query) {
-                    $query->where('status', 'active');
-                },
-            ])
+            ->selectSub(
+                TransactionLog::query()
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('transaction_logs.product_id', 'products.id'),
+                'transactions_count'
+            )
+            ->selectSub(
+                Variation::query()
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('variations.product_id', 'products.id')
+                    ->whereColumn('variations.api_id', 'products.api_id'),
+                'variations_count'
+            )
+            ->selectSub(
+                Variation::query()
+                    ->selectRaw('COUNT(*)')
+                    ->whereColumn('variations.product_id', 'products.id')
+                    ->whereColumn('variations.api_id', 'products.api_id')
+                    ->where('status', 'active'),
+                'active_variations_count'
+            )
             ->orderByRaw("CASE WHEN status = 'active' THEN 0 ELSE 1 END")
             ->orderBy('created_at', 'DESC')
             ->paginate($perPage)

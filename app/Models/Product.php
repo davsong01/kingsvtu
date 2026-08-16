@@ -16,15 +16,7 @@ class Product extends Model
 
     public function variations()
     {
-        $apiId = $this->getRawOriginal('api_id') ?? $this->api_id;
-
-        $query = $this->hasMany(Variation::class, 'product_id')->orderBy('created_at', 'DESC');
-
-        if (! is_null($apiId) && $apiId !== '') {
-            $query->where('api_id', $apiId);
-        }
-
-        return $query;
+        return $this->hasMany(Variation::class, 'product_id')->orderBy('created_at', 'DESC');
     }
 
     public function getVariationCountAttribute()
