@@ -61,12 +61,12 @@ Route::get('generate-api-keys', function(){
     }
 });
 
-Route::middleware(['auth', 'verified','ipcheck', 'kyc'])->group(function () {
+Route::middleware(['auth', 'verified','ipcheck', 'kyc', 'user-status'])->group(function () {
     Route::get('/create-transaction-pin', [DashboardController::class, 'createTransactionPin'])->name('customer.create.pin');
     Route::post('/create-transaction-pin', [DashboardController::class, 'processCreateTransactionPin'])->name('customer.process.create.pin');
 });
 
-Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
+Route::middleware(['auth', 'verified', 'tpin', 'ipcheck', 'user-status'])->group(function () {
     Route::middleware('reserved_account')->group(function () {
         Route::get('/', [DashboardController::class, 'index']);
         // Route::get('/dashboard', [DashboardController::class, 'index'])->name('customer.dashboard');
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified', 'tpin', 'ipcheck'])->group(function () {
     // Route::post('transaction-confirm/{provider}/{reference?}', [PaymentController::class, 'logPaymentResponse'])->name('log.payment.response');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'user-status')->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -124,7 +124,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin
-Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute', 'user-status'])->prefix('admin')->group(function () {
     Route::resource('product', ProductController::class);
     Route::get('duplicate-product/{product}', [ProductController::class, 'duplicateProduct'])->name('duplicate.product');
     Route::resource('api', APIController::class);
@@ -141,7 +141,6 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
     Route::get('emails/destroy/{id}', [EmailLogController::class, 'destroy'])->name('emails.destroy');
     Route::get('emails/clear', [EmailLogController::class, 'sweep'])->name('emails.sweep');
     Route::get('emails', [EmailLogController::class, 'index'])->name('emails.index');
-    Route::get('black-list-status', [BlackListController::class, 'status'])->name('black.list.status');
 
     // transactions route
     Route::get('transactions', [TransactionController::class, 'transView'])->name('admin.trans');
@@ -225,7 +224,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute'])->prefi
 });
 
 
-Route::middleware(['auth', 'verified', 'admin', 'ipcheck'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'user-status'])->prefix('admin')->group(function () {
     Route::get('/utilities', [DashboardController::class, 'utility']);
 });
 

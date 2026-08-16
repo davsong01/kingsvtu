@@ -57,7 +57,7 @@ class TransactionController extends Controller
 
     public function initializeTransaction(Request $request)
     {
-        $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
+        $blacklist = bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
 
         if ($blacklist) {
             return back()->with('error', 'Account blacklisted!, kindly reach out to support!');
@@ -998,14 +998,6 @@ class TransactionController extends Controller
         return $ref;
     }
 
-    public function bounceBlacklist($phone, $user, $mail = null)
-    {
-        $blacklist = BlackList::where('status', 'active')->whereRaw(" (value = ? or value = ? or value = ?)", [$mail, $phone, $user])->first();
-
-        if ($blacklist)
-            return true;
-        return false;
-    }
 
     public function transView(Request $request)
     {
