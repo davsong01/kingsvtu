@@ -38,14 +38,6 @@
                                 <label class="modern-admin-label" for="value">Blacklist value</label>
                                 <input type="text" class="form-control form-control-{{ formControlSize() }}" name="value" id="value" value="{{ old('value') }}" placeholder="Enter item to blacklist" required>
                             </div>
-                            <div class="col-md-3">
-                                <label class="modern-admin-label" for="status">Status</label>
-                                <select class="form-select form-select-{{ formControlSize() }}" name="status" id="status" required>
-                                    <option value="">Select status</option>
-                                    <option value="active" @selected(old('status', 'active') === 'active')>Active</option>
-                                    <option value="in-active" @selected(old('status') === 'in-active')>In active</option>
-                                </select>
-                            </div>
                         </div>
 
                         <div class="d-flex justify-content-start mt-4 gap-2">

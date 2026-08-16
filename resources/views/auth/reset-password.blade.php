@@ -1,44 +1,35 @@
 @extends('layouts.auth')
+
+@section('auth-title', 'Reset password')
+@section('auth-subtitle', 'Choose a new password for your account.')
+
 @section('body')
-<!-- left section-login -->
+    <div class="auth-form">
+        @include('layouts.alerts')
 
-<div class="col-md-12 col-12 px-0">
-    <div class="card disable-rounded-right d-flex justify-content-center">
-        <div class="card-header pb-1">
-            <div class="card-title">
-                <h4 class="text-center mb-2">Reset Password</h4>
+        <form action="{{ route('password.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ old('email') ?? $request->email }}" required autofocus autocomplete="username">
             </div>
-        </div>
-        <div class="card-content">
-            <div class="card-body">
-               @include('layouts.alerts')
-                <form action="{{ route('password.store') }}" method="POST">
-                    @csrf
-                    <div class="row">
-
-                    </div>
-                    <div class="form-group mb-50">
-                        <label class="text-bold-600" for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') ?? $request->email }}" required autofocus autocomplete="username">
-                    </div>
-                    <div class="form-group">
-                        <label class="text-bold-600" for="password">New Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="text-bold-600" for="password">Confirm Password</label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary glow w-100 position-relative">Reset Password<i id="icon-arrow" class="bx bx-right-arrow-alt"></i></button>
-                <input type="hidden" name="token" value="{{ $request->route('token') }}">
-
-                </form>
-                <hr>
-                <div class="text-center"><small class="mr-25">I remember my passsword</small><a href="{{ route('register') }}"><small>Sign up</small></a></div>
+            <div class="form-group">
+                <label for="password">New password</label>
+                <div class="input-group auth-password-field">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
+                    <button type="button" class="btn auth-password-toggle" data-password-toggle="password">Show</button>
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="password_confirmation">Confirm password</label>
+                <div class="input-group auth-password-field">
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password" required>
+                    <button type="button" class="btn auth-password-toggle" data-password-toggle="password_confirmation">Show</button>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Reset password</button>
+        </form>
     </div>
-</div>
 @endsection
-

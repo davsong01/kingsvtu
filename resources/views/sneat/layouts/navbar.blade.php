@@ -1,5 +1,9 @@
 @php
   $navbarUser = auth()->user();
+  $navbarSettings = getSettings();
+  $navbarCurrency = $navbarSettings->currency ?? '₦';
+  $navbarBalance = $navbarUser?->type === 'customer' ? $navbarCurrency . number_format(walletBalance($navbarUser), 2) : $navbarCurrency . '0.00';
+  $navbarReferral = $navbarUser?->type === 'customer' ? $navbarCurrency . number_format(referralBalance($navbarUser), 2) : $navbarCurrency . '0.00';
   $navbarFullName = trim(collect([
     $navbarUser?->firstname,
     $navbarUser?->middlename,
@@ -36,6 +40,19 @@
   </div>
 
   <div class="sneat-navbar-actions ms-auto">
+    @if($navbarUser?->type === 'customer')
+      <div class="navbar-customer-stats d-none d-lg-flex align-items-center gap-2 me-2">
+        <a href="{{ route('customer.load.wallet') }}" class="navbar-customer-stat text-decoration-none">
+          <span class="navbar-customer-stat__label">Balance</span>
+          <span class="navbar-customer-stat__value">{{ $navbarBalance }}</span>
+        </a>
+        <a href="{{ route('downlines') }}" class="navbar-customer-stat text-decoration-none">
+          <span class="navbar-customer-stat__label">Referral Earning</span>
+          <span class="navbar-customer-stat__value">{{ $navbarReferral }}</span>
+        </a>
+      </div>
+    @endif
+
     <button
       type="button"
       class="sneat-icon-btn"

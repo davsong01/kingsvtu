@@ -310,9 +310,7 @@ class CustomerController extends Controller
                 'blacklistedEmail' => (bool) $blacklistedEmailEntry,
                 'blacklistedPhone' => (bool) $blacklistedPhoneEntry,
                 'blacklistEmailId' => $blacklistedEmailEntry?->id,
-                'blacklistEmailStatus' => $blacklistedEmailEntry?->status,
                 'blacklistPhoneId' => $blacklistedPhoneEntry?->id,
-                'blacklistPhoneStatus' => $blacklistedPhoneEntry?->status,
             ]
         );
     }

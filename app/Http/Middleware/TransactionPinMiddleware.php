@@ -16,7 +16,23 @@ class TransactionPinMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(empty(auth()->user()->transaction_pin) && auth()->user()->type == 'customer'){
+        $routeName = $request->route()?->getName();
+        $exemptRoutes = [
+            'customer.create.pin',
+            'customer.process.create.pin',
+            'customer.reset.pin',
+            'process.transaction.pin.reset',
+            'update.kyc.details',
+            'update.kyc.details.process',
+            'update.kyc.special',
+            'customer.notify.admin.kyc',
+        ];
+
+        if (in_array($routeName, $exemptRoutes, true)) {
+            return $next($request);
+        }
+
+        if (empty(auth()->user()->transaction_pin) && auth()->user()->type == 'customer') {
             return redirect(route('customer.create.pin'));
         }
         

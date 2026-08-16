@@ -4,40 +4,62 @@
 
 @include('layouts.head')
 <!-- END: Head-->
-
+@php
+    $settings = getSettings();
+    $brandLogo = $settings->dashboard_logo ?? $settings->logo ?? null;
+    $brandName = $settings->seo_title ?? config('app.name');
+    $brandSubtitle = $settings->seo_description ?? 'Sign in to continue';
+    $defaultAuthTitle = 'Welcome to ' . config('app.name');
+@endphp
 <!-- BEGIN: Body-->
-<body class="vertical-layout vertical-menu-modern semi-dark-layout 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column" data-layout="semi-dark-layout">
-    <!-- BEGIN: Content-->
-    <div class="app-content content">
-        <div class="content-overlay"></div>
-        <div class="content-wrapper">
-            <div class="content-header row">
+<body class="auth-page" style="--auth-accent: {{ $settings->primary_color ?? '#1fa868' }};">
+    <main class="auth-page-shell">
+        <section class="auth-page-shell__card">
+            <div class="auth-brand">
+                <div class="auth-brand__mark">
+                    @if($brandLogo)
+                        <img src="{{ asset($brandLogo) }}" alt="{{ $brandName }}">
+                    @else
+                        <span>{{ strtoupper(substr($brandName, 0, 1)) }}</span>
+                    @endif
+                </div>
             </div>
-            <div class="content-body">
-                <!-- login page start -->
-                <section id="auth-login" class="row flexbox-container">
-                    <div class="col-xl-8 col-11">
-                        <div class="card bg-authentication mb-0">
-                            <div class="row m-1">
-                                <a href="/" class="app-brand-link gap-2" style="margin: auto !important;">
-                                    <span class="app-brand-logo demo">
-                                        <img style="object-fit: contain;max-width: 300px;" src="{{ asset(getSettings()->logo) }}" height="100px">
-                                    </span>
-                                </a>
-                                @yield('body')
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <!-- login page ends -->
 
+            <div class="auth-page-shell__header">
+                <div class="auth-page-shell__badge">@yield('auth-badge', 'Secure access')</div>
+                <h1>@yield('auth-title', $defaultAuthTitle)</h1>
+                <p>@yield('auth-subtitle', $brandSubtitle)</p>
             </div>
-        </div>
-    </div>
+
+            <div class="auth-page-shell__body">
+                @yield('body')
+            </div>
+        </section>
+
+        @if(!empty($settings->support_link))
+            <a class="auth-page-shell__support" href="{{ $settings->support_link }}" target="_blank" rel="noreferrer">
+                Need help? Contact support
+            </a>
+        @endif
+    </main>
 </body>
 @include('layouts.footer')
+<script>
+    document.querySelectorAll('[data-password-toggle]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            const targetId = this.getAttribute('data-password-toggle');
+            const input = document.getElementById(targetId);
 
-</body>
-<!-- END: Body-->
+            if (!input) {
+                return;
+            }
+
+            const isPassword = input.getAttribute('type') === 'password';
+            input.setAttribute('type', isPassword ? 'text' : 'password');
+            this.textContent = isPassword ? 'Hide' : 'Show';
+            this.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+        });
+    });
+</script>
 
 </html>

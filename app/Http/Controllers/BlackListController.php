@@ -14,14 +14,14 @@ class BlackListController extends Controller
     {
         $bliacklist = BlackList::paginate(paginationRecords());
         $totalBlacklist = $bliacklist->total();
-        $activeBlacklist = BlackList::where('status', 'active')->count();
-        $inactiveBlacklist = BlackList::where('status', 'in-active')->count();
+        $emailBlacklist = BlackList::where('type', 'email')->count();
+        $phoneBlacklist = BlackList::where('type', 'phone')->count();
 
         return view(themeView('admin', 'customers.blacklist'), [
             'customers' => $bliacklist,
             'totalBlacklist' => $totalBlacklist,
-            'activeBlacklist' => $activeBlacklist,
-            'inactiveBlacklist' => $inactiveBlacklist,
+            'emailBlacklist' => $emailBlacklist,
+            'phoneBlacklist' => $phoneBlacklist,
         ]);
     }
 
@@ -41,13 +41,15 @@ class BlackListController extends Controller
         $request->validate([
             'type' => 'required',
             'value' => 'required',
-            'status' => 'required'
         ]);
 
-        BlackList::create([
+        BlackList::firstOrCreate([
+            'value' => $request->value,
+        ], [
             'type' => $request->type,
-            'value' => $request->value
+            'value' => $request->value,
         ]);
+
         return back()->with('message', 'Item added to blacklist successfully');
     }
 
@@ -80,38 +82,8 @@ class BlackListController extends Controller
      */
     public function destroy(BlackList $blackList)
     {
-        //
-    }
+        $blackList->delete();
 
-    public function status(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|integer'
-        ]);
-
-        $blackList = BlackList::find($request->id);
-
-        if (!$blackList) {
-            return response()->json([
-                'code' => 0,
-                'message' => 'Blacklist entry not found',
-            ], 404);
-        }
-
-        $status = $blackList->status === 'active' ? 'in-active' : 'active';
-        $black = $blackList->update(['status' => $status]);
-
-        if ($black) {
-            return response()->json([
-                'code' => 1,
-                'status' => $status,
-                'message' => 'Success',
-            ]);
-        } else {
-            return response()->json([
-                'code' => 0,
-                'message' => 'Failed to set status',
-            ], 500);
-        }
+        return back()->with('message', 'Item removed from blacklist successfully');
     }
 }

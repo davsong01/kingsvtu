@@ -63,6 +63,12 @@
                                                                 $BVN = $kycStatuses->where('key', 'BVN')->first();
                                                                 $IDCARD = $kycStatuses->where('key', 'IDCARD')->first();
                                                                 $IDCARDTYPE = $kycStatuses->where('key', 'IDCARDTYPE')->first();
+                                                                $profileDefaults = [
+                                                                    'FIRST_NAME' => auth()->user()->firstname ?? '',
+                                                                    'MIDDLE_NAME' => auth()->user()->middlename ?? '',
+                                                                    'LAST_NAME' => auth()->user()->lastname ?? '',
+                                                                    'PHONE_NUMBER' => auth()->user()->phone ?? '',
+                                                                ];
                                                                 
                                                             @endphp
                                                             <div class="row">
@@ -73,7 +79,7 @@
                                                                         <input type="text" class="form-control" value="{{ $FIRST_NAME?->value }}" disabled>
                                                                         @else 
                                                                         <label for="FIRST_NAME">First Name</label>
-                                                                        <input type="text" name="FIRST_NAME" class="form-control" value="{{ $FIRST_NAME?->value }}" required>
+                                                                        <input type="text" name="FIRST_NAME" class="form-control" value="{{ $FIRST_NAME?->value ?? $profileDefaults['FIRST_NAME'] }}" required>
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>
@@ -85,7 +91,7 @@
                                                                         <input type="text" class="form-control" value="{{ $MIDDLE_NAME?->value }}" disabled>
                                                                         @else 
                                                                         <label for="MIDDLE_NAME">Middle Name</label>
-                                                                        <input type="text" name="MIDDLE_NAME" class="form-control" value="{{ $MIDDLE_NAME?->value }}" required>
+                                                                        <input type="text" name="MIDDLE_NAME" class="form-control" value="{{ $MIDDLE_NAME?->value ?? $profileDefaults['MIDDLE_NAME'] }}" required>
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>
@@ -96,7 +102,7 @@
                                                                         <input type="text" class="form-control" value="{{ $LAST_NAME?->value }}" disabled>
                                                                         @else 
                                                                         <label for="lastname">Last Name</label>
-                                                                        <input type="text" name="LAST_NAME"  class="form-control" value="{{ $LAST_NAME?->value }}" required>
+                                                                        <input type="text" name="LAST_NAME"  class="form-control" value="{{ $LAST_NAME?->value ?? $profileDefaults['LAST_NAME'] }}" required>
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>
@@ -113,7 +119,7 @@
                                                                         <input type="text" class="form-control" value="{{ $PHONE_NUMBER?->value }}" disabled>
                                                                         @else 
                                                                         <label for="lastname">Phone Number</label>
-                                                                        <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $PHONE_NUMBER?->value }}" required>
+                                                                        <input type="text" name="PHONE_NUMBER" class="form-control" value="{{ $PHONE_NUMBER?->value ?? $profileDefaults['PHONE_NUMBER'] }}" required>
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>

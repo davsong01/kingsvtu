@@ -107,7 +107,6 @@ class RoleSeeder extends Seeder
             'duplicate.product',
             'api.balance',
 
-            'black.list.status',
             'admin.trans',
             'admin.walletlog',
             'admin.walletfundinglog',

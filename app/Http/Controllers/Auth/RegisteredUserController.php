@@ -7,13 +7,13 @@ use App\Models\KycData;
 use App\Models\Customer;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
 use App\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
@@ -33,7 +33,6 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // return back()->with('error', 'Registration is currently not available, please try again');
         $captchaSettings = getSettings()->captcha_settings;
         if (isset($captchaSettings['captcha_settings_status']) && $captchaSettings['captcha_settings_status'] == 'yes') {
             if (in_array($captchaSettings['captcha_settings_provider'], ['all', 'simple'])) {
@@ -43,13 +42,18 @@ class RegisteredUserController extends Controller
             }
 
             if (in_array($captchaSettings['captcha_settings_provider'], ['all', 'google'])) {
-                Config::set('captcha.secret', $captchaSettings['google']['RECAPTCHA_SECRET_KEY']);
-                $request->validate([
-                    'g-recaptcha-response' => ['captcha'],
-                ]);
+                $siteKey = $captchaSettings['google']['RECAPTCHA_SITE_KEY'] ?? null;
+                $secretKey = $captchaSettings['google']['RECAPTCHA_SECRET_KEY'] ?? null;
+
+                if (!empty($siteKey) && !empty($secretKey)) {
+                    Config::set('captcha.secret', $secretKey);
+                    $request->validate([
+                        'g-recaptcha-response' => ['captcha'],
+                    ]);
+                }
             }
         }
-        
+
         $request->validate([
             'first_name' => ['required', 'string'],
             'last_name' => ['required', 'string'],
@@ -60,6 +64,10 @@ class RegisteredUserController extends Controller
             'privacy' => ['required'],
         ]);
 
+        if (bounceBlacklist($request->phone, $request->email, $request->email)) {
+            return back()->withInput()->with('error', 'This account has been blacklisted. Please contact support.');
+        }
+        
         $user = User::create([
             'firstname' => $request->first_name,
             'lastname' => $request->last_name,
@@ -69,12 +77,12 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'status' => 'active',
+            'email_verified_at' => now(),
         ]);
 
         $user->update([
             'api_key' =>  strrev(md5($user->username)),
         ]);
-        event(new Registered($user));
 
         $customer = Customer::create([
             'user_id' => $user->id,
@@ -85,20 +93,13 @@ class RegisteredUserController extends Controller
         
         KycData::create([
             'key' => 'PHONE_NUMBER',
-            'value' => $user->firstname,
+            'value' => $user->phone,
             'status' => 'unverified',
             'customer_id' => $customer->id
         ]);
 
         Auth::login($user);
 
-        try {
-            //code...
-            $user->sendEmailVerificationNotification();
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-
-        return redirect(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::HOME)->with('message', 'Registration successful. Please complete your KYC to continue.');
     }
 }

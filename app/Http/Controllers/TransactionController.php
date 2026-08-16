@@ -33,23 +33,31 @@ class TransactionController extends Controller
 {
     public function showProductsPage($slug)
     {
+        $selectedProductId = request()->integer('product');
+
         $category = Category::with([
             'products' => function ($query) {
-                return $query->where('status', 'active')->get();
+                return $query->where('status', 'active');
             }
         ])->where('status', 'active')->where('slug', $slug)->first();
             
         if (!empty($category) && $category->status == 'active') {
-            return view('customer.single_category_page', compact('category'));
-        } else {
-            return back();
+            $selectedProduct = null;
+
+            if (!empty($selectedProductId)) {
+                $selectedProduct = $category->products->firstWhere('id', $selectedProductId);
+            }
+
+            return view(themeView('customer', 'single_category_page'), compact('category', 'selectedProduct'));
         }
+
+        return back();
     }
 
 
     public function initializeTransaction(Request $request)
     {
-        $blacklist = $this->bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
+        $blacklist = bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
 
         if ($blacklist) {
             return back()->with('error', 'Account blacklisted!, kindly reach out to support!');
@@ -186,17 +194,22 @@ class TransactionController extends Controller
 
     public function transactionStatus($transaction_id)
     {
-        $transaction = TransactionLog::where('transaction_id', $transaction_id)->first();
-        return view('customer.transaction_status', compact('transaction'));
+        $transaction = TransactionLog::with(['product', 'variation', 'category'])->where('transaction_id', $transaction_id)->firstOrFail();
+        return view(themeView('customer', 'transaction_status'), compact('transaction'));
     }
 
     public function transactionReceipt($transaction_id)
     {
-        $transaction = TransactionLog::with(['product', 'category', 'variation'])->where('id', $transaction_id)->first()->toArray();
-        
-        $pdf = Pdf::loadView('customer.receipts.transaction_receipt', ['transaction' => $transaction])->setPaper('a4', 'portrait');
-        return $pdf->download($transaction['transaction_id'] . '.pdf');
-        // return view('customer.receipts.transaction_receipt', compact('transaction'));
+        $transaction = TransactionLog::with(['product', 'category', 'variation'])
+            ->where('id', $transaction_id)
+            ->firstOrFail();
+
+        $receiptView = themeView('customer', 'receipts.transaction_receipt');
+        $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', (string) ($transaction->transaction_id ?? 'transaction'));
+
+        $pdf = Pdf::loadView($receiptView, ['transaction' => $transaction])->setPaper('a4', 'portrait');
+
+        return $pdf->download($filename . '.pdf');
     }
 
     public function processTransaction($request, $transaction, $product, $variation)
@@ -717,7 +730,7 @@ class TransactionController extends Controller
         $transactions = $transactions->orderBy('created_at', 'DESC')->paginate(paginationRecords());
 
         $products = Product::where('status', 'active')->get();
-        return view('customer.mytransactions', compact('transactions', 'products'));
+        return view(themeView('customer', 'mytransactions'), compact('transactions', 'products'));
     }
 
     public function showTransactionReportPage(Request $request, ExcelService $export)
@@ -731,7 +744,7 @@ class TransactionController extends Controller
                 }
 
                 if (!empty ($request->unique_element)) {
-                    $transactions = $data->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
+                    $data = $data->where('unique_element', 'LIKE', "%" . $request->unique_element . "%");
                 }
 
                 if (!empty ($request->status)) {
@@ -844,7 +857,7 @@ class TransactionController extends Controller
 
         $products = Product::where('status', 'active')->get();
         $categories = Category::where('status', 'active')->get();
-        return view('customer.reports', compact('products', 'categories'));
+        return view(themeView('customer', 'reports'), compact('products', 'categories'));
     }
 
     // function referralReward($user, $amount, $transaction_id, $referral_percentage)
@@ -985,14 +998,6 @@ class TransactionController extends Controller
         return $ref;
     }
 
-    public function bounceBlacklist($phone, $user, $mail = null)
-    {
-        $blacklist = BlackList::where('status', 'active')->whereRaw(" (value = ? or value = ? or value = ?)", [$mail, $phone, $user])->first();
-
-        if ($blacklist)
-            return true;
-        return false;
-    }
 
     public function transView(Request $request)
     {

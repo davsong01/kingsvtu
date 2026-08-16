@@ -61,6 +61,7 @@ class ProductController extends Controller
             'ussd_string' => 'nullable',
             'multistep' => 'nullable',
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -103,6 +104,7 @@ class ProductController extends Controller
                 'ussd_string' => $request->ussd_string,
                 'multistep' => $request->multistep ?? 'no',
                 'referral_percentage' => $request->referral_percentage,
+                'show_in_menu' => $request->boolean('show_in_menu'),
             ]
         );
 
@@ -146,6 +148,20 @@ class ProductController extends Controller
         return view(themeView('admin', 'product.form'), compact('categories', 'apis', 'product', 'variations', 'customerlevel'));
     }
 
+    public function variations(Product $product)
+    {
+        if (! layoutIsModern('admin')) {
+            return redirect()
+                ->route('product.edit', $product->id)
+                ->with('message', 'Use the product edit page for variations on the legacy layout.');
+        }
+
+        $product->load(['category', 'api', 'variations.category']);
+        $customerlevel = CustomerLevel::isActive()->orderBy('order', 'ASC')->get();
+
+        return view('sneat.admin.product.variations', compact('product', 'customerlevel'));
+    }
+
     public function update(Product $product, Request $request)
     {
         $this->validate($request, [
@@ -173,6 +189,7 @@ class ProductController extends Controller
             'multistep' => 'nullable',
             "allow_subscription_type" => "nullable",
             'referral_percentage' => 'nullable',
+            'show_in_menu' => 'nullable|boolean',
         ]);
 
         if (!empty($request->image)) {
@@ -233,6 +250,7 @@ class ProductController extends Controller
             'ussd_string' => $request->ussd_string,
             'multistep' => $request->multistep,
             'referral_percentage' => $request->referral_percentage,
+            'show_in_menu' => $request->boolean('show_in_menu'),
         ]);
 
         $productLevel = $request->productlevel;

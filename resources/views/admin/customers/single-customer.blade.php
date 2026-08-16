@@ -841,29 +841,6 @@ use App\Models\BlackList;
             modalImg.src = e.src;
         }
 
-        function toggleStatus() {
-            let check = confirm('Are you sure you want to perform this action?');
-            if (check) {
-                let status = $('#customSwitchGlow2').attr('data-value');
-                let id = $('#customSwitchGlow2').attr('data-id');
-
-                $.ajax({
-                    url: '/admin/black-list-status',
-                    data: {
-                        status,
-                        id
-                    },
-                    success: e => {
-                        alert(e.message)
-                        if (e.code == 1) {
-                            let status = $('#customSwitchGlow2').attr('data-value', e.status);
-                        }
-                    },
-                    error: () => alert('Request could not be completed!'),
-                });
-            }
-        }
-
         const providerBankMap = @json($providerBankMap);
         const providerSlugMap = @json($providerSlugMap);
 

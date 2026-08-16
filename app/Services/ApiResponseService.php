@@ -198,7 +198,7 @@ class ApiResponseService
     }
 
     public function initializeTransaction(Request $request){
-        $blacklist = app('App\Http\Controllers\TransactionController')->bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
+        $blacklist = bounceBlacklist($request->phone ?? $request->unique_element, auth()->user()->email, $request->email);
 
         if ($blacklist) {
             return $this->responseService->formatServiceResponse("error", '', ['Account blacklisted!, kindly reach out to support!'], null);
