@@ -3,11 +3,6 @@
 @section('title', 'Products')
 
 @section('content')
-    @php
-        $activeProducts = $products->where('status', 'active')->count();
-        $variationProducts = $products->where('has_variations', 'yes')->count();
-    @endphp
-
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="admin-page-hero mb-4">
@@ -19,15 +14,15 @@
                 <div class="admin-page-badges">
                     <div class="admin-page-badge">
                         <span>Total products</span>
-                        <strong>{{ number_format($products->count()) }}</strong>
+                        <strong>{{ number_format($totalProducts ?? $products->total()) }}</strong>
                     </div>
                     <div class="admin-page-badge">
                         <span>Active products</span>
-                        <strong>{{ number_format($activeProducts) }}</strong>
+                        <strong>{{ number_format($activeProducts ?? 0) }}</strong>
                     </div>
                     <div class="admin-page-badge">
                         <span>Variation products</span>
-                        <strong>{{ number_format($variationProducts) }}</strong>
+                        <strong>{{ number_format($variationProducts ?? 0) }}</strong>
                     </div>
                     <a href="{{ route('product.create') }}" class="btn btn-admin-submit">Add product</a>
                 </div>
@@ -36,11 +31,80 @@
             @include('sneat.layouts.alerts')
 
             <div class="gateway-card card">
-                <div class="card-header">
-                    <h3>Product list</h3>
-                    <p>Jump into edit, duplicate, or manage variations.</p>
+                <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div>
+                        <h3>Product list</h3>
+                        <p>Jump into edit, duplicate, or manage variations.</p>
+                    </div>
+                    <div class="text-muted small">
+                        Showing {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} of {{ number_format($products->total()) }}
+                    </div>
                 </div>
                 <div class="card-body">
+                    <form method="GET" action="{{ route('product.index') }}" class="row g-3 mb-4">
+                        <div class="col-lg-4 col-md-6">
+                            <label class="modern-admin-label">Search</label>
+                            <input
+                                type="text"
+                                name="search"
+                                class="form-control form-control-{{ formControlSize() }}"
+                                value="{{ $filters['search'] ?? '' }}"
+                                placeholder="Name, display name, or slug"
+                            >
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label class="modern-admin-label">Status</label>
+                            <select name="status" class="form-select form-select-{{ formControlSize() }}">
+                                <option value="">All</option>
+                                <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label class="modern-admin-label">Category</label>
+                            <select name="category" class="form-select form-select-{{ formControlSize() }}">
+                                <option value="">All</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ (string)($filters['category'] ?? '') === (string)$category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label class="modern-admin-label">API</label>
+                            <select name="api" class="form-select form-select-{{ formControlSize() }}">
+                                <option value="">All</option>
+                                @foreach($apis as $api)
+                                    <option value="{{ $api->id }}" {{ (string)($filters['api'] ?? '') === (string)$api->id ? 'selected' : '' }}>
+                                        {{ $api->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label class="modern-admin-label">Variations</label>
+                            <select name="has_variations" class="form-select form-select-{{ formControlSize() }}">
+                                <option value="">All</option>
+                                <option value="yes" {{ ($filters['has_variations'] ?? '') === 'yes' ? 'selected' : '' }}>Yes</option>
+                                <option value="no" {{ ($filters['has_variations'] ?? '') === 'no' ? 'selected' : '' }}>No</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <label class="modern-admin-label">Per page</label>
+                            <select name="per_page" class="form-select form-select-{{ formControlSize() }}">
+                                @foreach([10, 15, 25, 50, 100] as $size)
+                                    <option value="{{ $size }}" {{ (int)($filters['per_page'] ?? 15) === $size ? 'selected' : '' }}>
+                                        {{ $size }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex flex-wrap gap-2">
+                            <button type="submit" class="btn btn-admin-submit">Filter</button>
+                            <a href="{{ route('product.index') }}" class="btn btn-outline-secondary">Reset</a>
+                        </div>
+                    </form>
                     <div class="table-responsive">
                         <table class="table gateway-table align-middle" id="product-table">
                             <thead>
@@ -79,7 +143,7 @@
                                                     <div class="fw-semibold">{{ $product->name }}</div>
                                                     <div class="gateway-helper">{{ $product->display_name }}</div>
                                                     <div class="gateway-helper">Slug: {{ $product->slug }}</div>
-                                                    <div class="gateway-helper">Tx: {{ number_format($product->transactions->count()) }}</div>
+                                                    <div class="gateway-helper">Tx: {{ number_format($product->transactions_count ?? 0) }}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -89,8 +153,8 @@
                                         </td>
                                         <td>{{ $product->api->name ?? 'N/A' }}</td>
                                         <td>
-                                            <div class="gateway-helper">All: {{ $product->variations()->count() }}</div>
-                                            <div class="gateway-helper text-success">Active: {{ $product->variations()->where('status', 'active')->count() }}</div>
+                                            <div class="gateway-helper">All: {{ $product->variations_count ?? 0 }}</div>
+                                            <div class="gateway-helper text-success">Active: {{ $product->active_variations_count ?? 0 }}</div>
                                         </td>
                                         <td>
                                             <span class="gateway-badge {{ $product->status === 'active' ? 'gateway-badge--active' : 'gateway-badge--inactive' }}">
@@ -127,12 +191,13 @@
 @endsection
 
 @section('page-script')
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
     <script>
-        $('#product-table').DataTable({
-            ordering: false,
+        document.querySelectorAll('form select').forEach(function (element) {
+            element.addEventListener('change', function () {
+                if (this.form) {
+                    this.form.submit();
+                }
+            });
         });
     </script>
 @endsection

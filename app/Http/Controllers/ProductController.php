@@ -12,14 +12,88 @@ use App\Models\CustomerLevel;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['api', 'variations'])
+        $perPage = (int) $request->input('per_page', 15);
+        $allowedPerPage = [10, 15, 25, 50, 100];
+
+        if (! in_array($perPage, $allowedPerPage, true)) {
+            $perPage = 15;
+        }
+
+        $baseQuery = Product::query()
+            ->with([
+                'api:id,name',
+                'category:id,name,display_name',
+            ])
+            ->withCount([
+                'transactions',
+                'variations',
+                'variations as active_variations_count' => function ($query) {
+                    $query->where('status', 'active');
+                },
+            ]);
+
+        if ($search = trim((string) $request->input('search', ''))) {
+            $baseQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('display_name', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($status = $request->input('status')) {
+            $baseQuery->where('status', $status);
+        }
+
+        if ($category = $request->input('category')) {
+            $baseQuery->where('category_id', $category);
+        }
+
+        if ($api = $request->input('api')) {
+            $baseQuery->where('api_id', $api);
+        }
+
+        if ($hasVariations = $request->input('has_variations')) {
+            $baseQuery->where('has_variations', $hasVariations);
+        }
+
+        $totalProducts = (clone $baseQuery)->count();
+        $activeProducts = (clone $baseQuery)->where('status', 'active')->count();
+        $variationProducts = (clone $baseQuery)->where('has_variations', 'yes')->count();
+
+        $products = $baseQuery
             ->orderByRaw("CASE WHEN status = 'active' THEN 0 ELSE 1 END")
             ->orderBy('created_at', 'DESC')
-            ->get();
+            ->paginate($perPage)
+            ->withQueryString();
 
-        return view(themeView('admin', 'product.index'), compact('products'));
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'display_name']);
+
+        $apis = API::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $filters = [
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+            'category' => $request->input('category'),
+            'api' => $request->input('api'),
+            'has_variations' => $request->input('has_variations'),
+            'per_page' => $perPage,
+        ];
+
+        return view(themeView('admin', 'product.index'), compact(
+            'products',
+            'categories',
+            'apis',
+            'filters',
+            'totalProducts',
+            'activeProducts',
+            'variationProducts'
+        ));
     }
 
 
