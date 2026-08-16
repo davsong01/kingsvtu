@@ -46,6 +46,56 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body card-dashboard">
+                                        <form method="GET" action="{{ route('product.index') }}" class="row mb-3">
+                                            <div class="col-md-3 mb-2">
+                                                <input type="text" name="search" class="form-control" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, display name, slug">
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <select name="status" class="form-control">
+                                                    <option value="">All status</option>
+                                                    <option value="active" {{ ($filters['status'] ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                                                    <option value="inactive" {{ ($filters['status'] ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <select name="category" class="form-control">
+                                                    <option value="">All categories</option>
+                                                    @foreach($categories as $category)
+                                                        <option value="{{ $category->id }}" {{ (string)($filters['category'] ?? '') === (string)$category->id ? 'selected' : '' }}>
+                                                            {{ $category->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <select name="api" class="form-control">
+                                                    <option value="">All APIs</option>
+                                                    @foreach($apis as $api)
+                                                        <option value="{{ $api->id }}" {{ (string)($filters['api'] ?? '') === (string)$api->id ? 'selected' : '' }}>
+                                                            {{ $api->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2 mb-2">
+                                                <select name="has_variations" class="form-control">
+                                                    <option value="">All variations</option>
+                                                    <option value="yes" {{ ($filters['has_variations'] ?? '') === 'yes' ? 'selected' : '' }}>Yes</option>
+                                                    <option value="no" {{ ($filters['has_variations'] ?? '') === 'no' ? 'selected' : '' }}>No</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-1 mb-2">
+                                                <select name="per_page" class="form-control">
+                                                    @foreach([10, 15, 25, 50, 100] as $size)
+                                                        <option value="{{ $size }}" {{ (int)($filters['per_page'] ?? 15) === $size ? 'selected' : '' }}>{{ $size }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-12 d-flex align-items-center gap-2 mb-2">
+                                                <button type="submit" class="btn btn-primary">Filter</button>
+                                                <a href="{{ route('product.index') }}" class="btn btn-outline-secondary">Reset</a>
+                                            </div>
+                                        </form>
                                         <div class="table-responsive">
                                             <table class="table table-striped" id="dtable">
                                                 <thead>
@@ -61,19 +111,19 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach ( $products as $product )
+                                                    @forelse ( $products as $product )
                                                     <tr>
                                                         <td><img src="{{asset($product->image)}}" alt="{{$product->id}}" style="width: 50px;float:left">{{ $product->name }} <br>
                                                             <span style="color:blue"><small>({{ $product->display_name }}) </small></span><br> <strong>Slug: </strong>{{ $product->slug }} <br>
-                                                            <strong>No. of Transactions</strong> {{ number_format($product->transactions->count()) }} <br>
+                                                            <strong>No. of Transactions</strong> {{ number_format($product->transactions_count ?? 0) }} <br>
                                                         </td>
                                                        
                                                         <td>{{ $product->category->name }} <br>
                                                             <strong>API:</strong> {{ $product->api->name }}
                                                         </td>
                                                         <td>
-                                                            All: {{ $product->variations()->count() }} <br>
-                                                            <span style="color:green">Active: {{ $product->variations()->where('status','active')->count() }}</span>
+                                                            All: {{ $product->variations_count ?? 0 }} <br>
+                                                            <span style="color:green">Active: {{ $product->active_variations_count ?? 0 }}</span>
                                                         </td>
                                                         <td>{{ $product->status }}</td>
                                                         <td>{{ $product->created_at }}</td>
@@ -87,10 +137,20 @@
                                                         </td>
                                                         @endif
                                                     </tr>
-                                                    @endforeach
+                                                    @empty
+                                                    <tr>
+                                                        <td colspan="{{ hasAccess('product.edit') ? 6 : 5 }}">No products found.</td>
+                                                    </tr>
+                                                    @endforelse
                                                 </tbody>
                                                 
                                             </table>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mt-3">
+                                            <div class="text-muted small">
+                                                Showing {{ $products->firstItem() ?? 0 }} - {{ $products->lastItem() ?? 0 }} of {{ number_format($products->total()) }}
+                                            </div>
+                                            {{ $products->links() }}
                                         </div>
                                     </div>
                                 </div>
@@ -104,21 +164,14 @@
     </div>
 @endsection
 @section('page-script')
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/datatables.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/buttons.bootstrap.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('app-assets/vendors/js/tables/datatable/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('app-assets/js/scripts/datatables/datatable.js') }}"></script>
-
     <script>
-        $('#dtable').DataTable({
-             "ordering": false,
+        document.querySelectorAll('form select').forEach(function (element) {
+            element.addEventListener('change', function () {
+                if (this.form) {
+                    this.form.submit();
+                }
+            });
         });
-
     </script>
     
 @endsection
