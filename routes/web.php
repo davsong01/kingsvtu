@@ -129,6 +129,7 @@ Route::middleware(['auth', 'verified', 'admin', 'ipcheck', 'adminRoute', 'user-s
     Route::get('product/{product}/variations', [ProductController::class, 'variations'])->name('product.variations');
     Route::get('duplicate-product/{product}', [ProductController::class, 'duplicateProduct'])->name('duplicate.product');
     Route::resource('api', APIController::class);
+    Route::post('api/pull-products', [APIController::class, 'pullApiProducts'])->name('api.pull.products');
     Route::get('api-balance/{api}', [APIController::class, 'getBalance'])->name('api.balance');
 
     Route::resource('category', CategoryController::class);

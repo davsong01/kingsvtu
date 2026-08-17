@@ -10,7 +10,26 @@
         $summarySlug = old('slug', data_get($api, 'slug', ''));
         $summaryStatus = old('status', data_get($api, 'status', 'inactive'));
         $summaryFile = old('file_name', data_get($api, 'file_name', ''));
+        $canPullProducts = (bool) ($canPullProducts ?? false);
     @endphp
+
+    @section('page-css')
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <style>
+            .provider-pull-btn {
+                margin-top: .6rem;
+            }
+
+            .provider-pull-btn .btn {
+                border-radius: 999px;
+                padding-inline: 1rem;
+            }
+
+            .pull-products-modal .select2-container {
+                width: 100% !important;
+            }
+        </style>
+    @endsection
 
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
@@ -28,10 +47,13 @@
                     <div class="admin-page-badge">
                         <span>Status</span>
                         <strong>{{ ucfirst($summaryStatus) }}</strong>
-                    </div>
-                    <div class="admin-page-badge">
-                        <span>File name</span>
-                        <strong>{{ $summaryFile ?: 'Not set' }}</strong>
+                        @if($isEdit && $canPullProducts)
+                            <div class="provider-pull-btn">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#pullProductsModal">
+                                    <i class="bx bx-download me-50"></i> Pull products
+                                </button>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -131,4 +153,62 @@
             </form>
         </div>
     </div>
+
+    @if($isEdit && $canPullProducts)
+        <div class="modal fade pull-products-modal" id="pullProductsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form method="POST" action="{{ route('api.pull.products') }}">
+                        @csrf
+                        <input type="hidden" name="api_id" value="{{ $api->id }}">
+
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title mb-0">Pull products</h5>
+                                <small class="text-muted">Choose the target category for this provider pull.</small>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="pull_category_id" class="form-label">Category</label>
+                                <select name="category_id" id="pull_category_id" class="form-select js-example-basic-single" data-placeholder="Search category">
+                                    <option value="">Select category</option>
+                                    @foreach($categories ?? [] as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}{{ filled($category->slug) ? ' (' . $category->slug . ')' : '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="pull_category_slug" class="form-label">Category slug</label>
+                                <input type="text" class="form-control" id="pull_category_slug" name="category_slug" placeholder="Optional slug override">
+                                <small class="text-muted">Use this only if the provider expects a slug different from the selected category.</small>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-refresh me-25"></i> Pull products
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endsection
+
+@section('page-script')
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('.js-example-basic-single').select2({
+                dropdownParent: $('#pullProductsModal'),
+                width: '100%',
+            });
+        });
+    </script>
 @endsection

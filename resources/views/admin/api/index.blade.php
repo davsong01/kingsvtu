@@ -53,7 +53,6 @@
                                                     <tr>
                                                         <th>Name</th>
                                                         <th>Products</th>
-                                                        <th>File Name</th>
                                                         <th>Status</th>
                                                         <th>Date Added</th>
                                                         @if(hasAccess('api.edit') || hasAccess('api.balance'))
@@ -69,7 +68,6 @@
 
                                                         </td>
                                                         <td>{{ $api->products_count }}</td>
-                                                        <td>{{ $api->file_name }}</td>
                                                         <td style="color:{{ $api->status == 'active' ? 'green' : 'red'}}">{{ ucfirst($api->status) }}</td>
                                                         <td>{{ $api->created_at }}</td>
                                                         @if(hasAccess('api.edit') || hasAccess('api.balance'))

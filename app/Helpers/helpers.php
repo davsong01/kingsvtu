@@ -3,11 +3,21 @@
 use App\Http\Controllers\PaymentProcessors\MonnifyController;
 use App\Http\Controllers\PaymentProcessors\PaymentPointController;
 use App\Http\Controllers\PaymentProcessors\SquadController;
+use App\Http\Controllers\Providers\AutoSyncController;
+use App\Http\Controllers\Providers\ClubkonnectController;
+use App\Http\Controllers\Providers\EasyAccessController;
+use App\Http\Controllers\Providers\MobileAirtimeNgController;
+use App\Http\Controllers\Providers\MobileNigController;
+use App\Http\Controllers\Providers\OgDamsSimHostingController;
+use App\Http\Controllers\Providers\SimServerHostingController;
+use App\Http\Controllers\Providers\UssdHosting;
+use App\Http\Controllers\Providers\VtpassController;
 use App\Http\Controllers\WalletController;
 use App\Mail\EmailMessages;
 use App\Models\Announcement;
 use App\Models\BlackList;
 use App\Models\Category;
+use App\Models\API;
 use App\Models\Customer;
 use App\Models\EmailLog;
 use App\Models\KycData;
@@ -33,6 +43,65 @@ if (!function_exists("bounceBlacklist")) {
     }
 }
 
+
+if (!function_exists("resolveProviderController")) {
+    function resolveProviderController($provider = null)
+    {
+        if (blank($provider)) {
+            return null;
+        }
+
+        if ($provider instanceof API) {
+            $model = $provider;
+        } elseif (is_numeric($provider)) {
+            $model = API::query()->find((int) $provider);
+        } elseif (is_string($provider)) {
+            $model = API::query()
+                ->where('slug', $provider)
+                ->first();
+        } else {
+            $model = $provider;
+        }
+
+        if (! $model || blank($model->slug)) {
+            return null;
+        }
+
+        $slug = strtolower(trim((string) $model->slug));
+        $controllerMap = [
+            'monnify' => 'App\\Http\\Controllers\\PaymentProcessors\\MonnifyController',
+            'paymentpoint' => 'App\\Http\\Controllers\\PaymentProcessors\\PaymentPointController',
+            'squad' => 'App\\Http\\Controllers\\PaymentProcessors\\SquadController',
+            'autosync' => AutoSyncController::class,
+            'clubkonnect' => ClubkonnectController::class,
+            'easyaccess' => EasyAccessController::class,
+            'mobile-airtime-ng' => MobileAirtimeNgController::class,
+            'mobileairtimeng' => MobileAirtimeNgController::class,
+            'mobile-airtime' => MobileAirtimeNgController::class,
+            'mobile-nig' => MobileNigController::class,
+            'mobilenig' => MobileNigController::class,
+            'ogdams-sim-hosting' => OgDamsSimHostingController::class,
+            'ogdamssimhosting' => OgDamsSimHostingController::class,
+            'sim-server-hosting' => SimServerHostingController::class,
+            'simserverhosting' => SimServerHostingController::class,
+            'ussd-hosting' => UssdHosting::class,
+            'ussdhosting' => UssdHosting::class,
+            'vtpass' => VtpassController::class,
+        ];
+
+        if (isset($controllerMap[$slug]) && class_exists($controllerMap[$slug])) {
+            return app($controllerMap[$slug]);
+        }
+
+        $fallback = 'App\\Http\\Controllers\\Providers\\' . \Illuminate\Support\Str::studly($slug) . 'Controller';
+
+        if (class_exists($fallback)) {
+            return app($fallback);
+        }
+
+        return null;
+    }
+}
 
 if (!function_exists("mask")) {
     function mask($word, $a = 2, $b = 9, $c = 9, $d = 10)

@@ -246,6 +246,9 @@
                                                                                 <input type="hidden" value="page1" name="route">
                                                                             </div>
                                                                             <div class="col-md-12">
+                                                                                @if($product->has_variations == 'yes')
+                                                                                    <a href="{{ route('product.edit', $product->id) }}?tab=variations" class="btn btn-info mr-1">Open Variations</a>
+                                                                                @endif
                                                                                 <button class="btn btn-primary" type="submit">Update</button>
                                                                             </div>
                                                                         </div>

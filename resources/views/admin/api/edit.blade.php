@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('page-css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endsection
 @section('content')
 <!-- Content wrapper -->
 <div class="app-content content">
@@ -28,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
-                                <div class="card-header">
+                                    <div class="card-header">
                                     <h4 class="card-title">Edit {{ $api->name }}</h4>
                                     @include('layouts.alerts')
                                 </div>
@@ -78,6 +81,13 @@
                                                             <option value="inactive" {{ $api->status == 'inactive' ? 'selected' : ''}}>InActive</option>
                                                         </select>
                                                     </fieldset>
+                                                    @if(strtolower((string) $api->slug) === 'autosync')
+                                                        <div class="form-group">
+                                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#pullProductsModal">
+                                                                <i class="bx bx-download"></i> Pull products
+                                                            </button>
+                                                        </div>
+                                                    @endif
                                                     <fieldset class="form-group">
                                                         <label for="file_name">File Name</label>
                                                         <input type="text" class="form-control" name="file_name" value="{{ $api->file_name ?? old('file_name') }}" placeholder="Enter file name" id="file_name" required>
@@ -109,8 +119,52 @@
             </div>
         </div>
     </div>
+
+    @if(strtolower((string) $api->slug) === 'autosync')
+        <div class="modal fade" id="pullProductsModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <form action="{{ route('api.pull.products') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="api_id" value="{{ $api->id }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Pull products</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="pull_category_id">Category</label>
+                                <select class="form-control js-example-basic-single" name="category_id" id="pull_category_id" data-placeholder="Search category">
+                                    <option value="">Select category</option>
+                                    @foreach(($categories ?? []) as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}{{ filled($category->slug) ? ' (' . $category->slug . ')' : '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label for="pull_category_slug">Category slug</label>
+                                <input type="text" class="form-control" name="category_slug" id="pull_category_slug" placeholder="Optional slug override">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Pull products</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 @section('page-script')
 <script src="{{ asset('app-assets/js/scripts/pages/dashboard-analytics.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(function () {
+        $('.js-example-basic-single').select2();
+    });
+</script>
 
 @endsection

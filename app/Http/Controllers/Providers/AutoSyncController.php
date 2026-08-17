@@ -2,61 +2,338 @@
 
 namespace App\Http\Controllers\Providers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Variation;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-
-use function PHPUnit\Framework\stringContains;
 
 class AutoSyncController extends Controller
 {
-    public function getAirtimeOptions(){
-        $response = '{
-            "status": "ok",
-            "message": "airtime fetched.",
-            "data": {
-                "category": {
-                    "id": 1,
-                    "name": "Airtime",
-                    "type": "airtime",
-                    "products": [
-                        {
-                            "id": 1,
-                            "name": "MTN VTU",
-                            "code": "mtn",
-                            "charges_fmt": "<strong>Charges:</strong> &#8358;0.05",
-                            "variations": []
-                        },
-                        {
-                            "id": 15,
-                            "name": "GLO VTU",
-                            "code": "glo",
-                            "charges_fmt": "No Charges",
-                            "variations": []
-                        },
-                        {
-                            "id": 16,
-                            "name": "AIRTEL VTU",
-                            "code": "airtel",
-                            "charges_fmt": "No Charges",
-                            "variations": []
-                        },
-                        {
-                            "id": 17,
-                            "name": "9Mobile VTU",
-                            "code": "9mobile",
-                            "charges_fmt": "No Charges",
-                            "variations": []
-                        }
-                    ]
-                },
-                "is_mtn_awuf_enabled": false
-            }
-        }';
+    public function pullProducts(array $data, $api = null): array
+    {
+        $api = $api ?: ($data['api'] ?? null);
 
-        return json_decode($response, true);
+        if (! $api) {
+            return [
+                'status' => 'failed',
+                'message' => 'Provider API is missing.',
+            ];
+        }
+
+        $categorySlug = strtolower(trim((string) (
+            $data['categorySlug']
+            ?? $data['category_slug']
+            ?? $data['slug']
+            ?? ''
+        )));
+
+        $endpoint = match (true) {
+            str_contains($categorySlug, 'airtime') => '/airtime',
+            str_contains($categorySlug, 'data') => '/data',
+            str_contains($categorySlug, 'cable') => '/cable',
+            str_contains($categorySlug, 'electric') => '/electricity',
+            default => null,
+        };
+
+        if (blank($endpoint)) {
+            return [
+                'status' => 'failed',
+                'message' => 'Unsupported category selected for this provider.',
+            ];
+        }
+
+        $baseUrl = rtrim((string) ($api->live_base_url ?? ''), '/');
+        
+        if (blank($baseUrl)) {
+            return [
+                'status' => 'failed',
+                'message' => 'Provider live base URL is not configured.',
+            ];
+        }
+
+        $url = $baseUrl . $endpoint;
+
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . ($api->api_key ?? ''),
+        ];
+
+        $res = $this->basicApiCall($url, [], $headers, 'GET');
+
+        if (! is_array($res) || empty($res)) {
+            return [
+                'status' => 'failed',
+                'message' => 'Provider did not return any products.',
+                'api_response' => $res,
+            ];
+        }
+
+        $products = $this->extractProducts(
+            $res,
+            [
+                'category_slug' => $categorySlug,
+                'category_unique_element' => data_get($data, 'category_unique_element'),
+            ]
+        );
+        
+        return [
+            'status' => 'success',
+            'message' => 'Products fetched successfully.',
+            'category_slug' => $categorySlug,
+            'endpoint' => $endpoint,
+            'products' => $products,
+            'api_response' => $res,
+        ];
     }
+
+    private function extractProducts(array $response, array $context = []): array
+    {
+        $candidates = [
+            data_get($response, 'products'),
+            data_get($response, 'data.products'),
+            data_get($response, 'data.category.products'),
+            data_get($response, 'data.data.products'),
+            data_get($response, 'data'),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (! is_array($candidate) || empty($candidate)) {
+                continue;
+            }
+
+            if (array_is_list($candidate)) {
+                return $this->normalizeProductList(array_values($candidate), $context);
+            }
+
+            if (isset($candidate['products']) && is_array($candidate['products'])) {
+                return $this->normalizeProductList(array_values($candidate['products']), $context);
+            }
+
+            if (isset($candidate['category']['products']) && is_array($candidate['category']['products'])) {
+                return $this->normalizeProductList(array_values($candidate['category']['products']), $context);
+            }
+
+            if (isset($candidate['slug']) || isset($candidate['name']) || isset($candidate['display_name'])) {
+                return $this->normalizeProductList([$candidate], $context);
+            }
+        }
+
+        return [];
+    }
+
+    private function normalizeProductList(array $products, array $context): array
+    {
+        $normalized = [];
+
+        foreach ($products as $product) {
+            if (! is_array($product)) {
+                continue;
+            }
+
+            $normalized[] = $this->normalizeProductPayload($product, $context);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeProductPayload(array $product, array $context): array
+    {
+        $categorySlug = strtolower(trim((string) ($context['category_slug'] ?? '')));
+        $categoryUniqueElement = $context['category_unique_element'] ?? null;
+        $rawVariations = $product['variations'] ?? $product['variation'] ?? [];
+        $variations = is_array($rawVariations)
+            ? $this->normalizeVariationList($rawVariations, $context)
+            : [];
+
+        $name = trim((string) (
+            $product['display_name']
+            ?? $product['name']
+            ?? $product['title']
+            ?? ''
+        ));
+
+        $slug = trim((string) (
+            $product['slug']
+            ?? $product['code']
+            ?? $product['product_code']
+            ?? $product['productCode']
+            ?? ''
+        ));
+
+        $hasVariations = ! empty($variations);
+        $amount = $product['amount'] ?? $product['price'] ?? $product['system_price'] ?? null;
+
+        return [
+            'name' => $name ?: $slug,
+            'slug' => $slug ?: null,
+            'status' => 'inactive',
+            'has_variations' => $hasVariations ? 'yes' : 'no',
+            'min' => $product['min'] ?? $product['minimum'] ?? null,
+            'max' => $product['max'] ?? $product['maximum'] ?? null,
+            'api_price' => $amount,
+            'system_price' => $product['system_price'] ?? $amount,
+            'allow_quantity' => $product['allow_quantity'] ?? $product['allowQuantity'] ?? 'no',
+            'allow_subscription_type' => $product['allow_subscription_type'] ?? $product['allowSubscriptionType'] ?? 'no',
+            'servercode' => $product['servercode'] ?? $product['server_code'] ?? $product['code'] ?? $slug,
+            'description' => $product['description'] ?? $product['desc'] ?? null,
+            'image' => $product['image'] ?? $product['icon'] ?? null,
+            'variations' => $variations,
+            'seo_title' => $product['seo_title'] ?? null,
+            'seo_description' => $product['seo_description'] ?? null,
+            'seo_keywords' => $product['seo_keywords'] ?? null,
+            'allow_meter_validation' => $product['allow_meter_validation'] ?? 'no',
+            'quantity_graduation' => $product['quantity_graduation'] ?? null,
+            'fixed_price' => $product['fixed_price'] ?? null,
+            'ussd_string' => $product['ussd_string'] ?? null,
+            'multistep' => $product['multistep'] ?? 'no',
+            'referral_percentage' => $product['referral_percentage'] ?? null,
+            'show_in_menu' => (bool) ($product['show_in_menu'] ?? false),
+        ];
+    }
+
+    private function normalizeVariationList(array $variations, array $context): array
+    {
+        $normalized = [];
+
+        foreach ($variations as $variation) {
+            if (! is_array($variation)) {
+                continue;
+            }
+
+            $normalized[] = $this->normalizeVariationPayload($variation, $context);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeVariationPayload(array $variation, array $context): array
+    {
+        $categorySlug = strtolower(trim((string) ($context['category_slug'] ?? '')));
+        $categoryUniqueElement = $context['category_unique_element'] ?? null;
+        $name = trim((string) (
+            $variation['system_name']
+            ?? $variation['name']
+            ?? $variation['display_name']
+            ?? ''
+        ));
+
+        $slug = trim((string) (
+            $variation['slug']
+            ?? $variation['api_code']
+            ?? $variation['code']
+            ?? $variation['variation_code']
+            ?? $variation['productCode']
+            ?? ''
+        ));
+
+        $amount = $variation['api_price'] ?? $variation['system_price'] ?? $variation['amount'] ?? $variation['price'] ?? null;
+        $uniqueElement = $this->deriveUniqueElement($categorySlug, $categoryUniqueElement, $slug, $variation);
+        $verifiable = $this->deriveVerifiable($uniqueElement, $slug);
+
+        return [
+            'api_name' => $variation['api_name'] ?? ($name ?: $slug),
+            'slug' => $slug ?: null,
+            'system_name' => $name ?: $slug,
+            'fixed_price' => $variation['fixed_price'] ?? $variation['fixedPrice'] ?? 'Yes',
+            'api_price' => $amount,
+            'system_price' => $amount,
+            'network' => $uniqueElement,
+            'verifiable' => $verifiable,
+            'min' => $variation['min'] ?? $variation['minimum'] ?? $variation['minimum_amount'] ?? null,
+            'max' => $variation['max'] ?? $variation['maximum'] ?? $variation['maximum_amount'] ?? null,
+            'servercode' => $variation['servercode'] ?? $variation['server_code'] ?? $variation['code'] ?? $slug,
+            'status' => 'inactive',
+            'ussd_string' => $variation['ussd_string'] ?? $variation['ussd'] ?? null,
+            'multistep' => $variation['multistep'] ?? 'no',
+            'datasize' => $variation['datasize'] ?? $variation['data_size'] ?? $variation['plan_id'] ?? null,
+        ];
+    }
+
+    private function deriveUniqueElement(string $categorySlug, ?string $categoryUniqueElement, ?string $slug, array $variation): ?string
+    {
+        if (filled($categoryUniqueElement)) {
+            return $categoryUniqueElement;
+        }
+
+        $slug = strtolower(trim((string) $slug));
+        $type = strtolower(trim($categorySlug));
+
+        if ($type !== '' && str_contains($type, 'airtime')) {
+            return 'phone';
+        }
+
+        if ($type !== '' && str_contains($type, 'data')) {
+            return 'phone';
+        }
+
+        if (filled(data_get($variation, 'unique_element'))) {
+            return (string) data_get($variation, 'unique_element');
+        }
+
+        return null;
+    }
+
+    private function deriveVerifiable(?string $uniqueElement, ?string $slug): string
+    {
+        if (filled($slug) && array_key_exists($slug, specialVerifiableVariations())) {
+            return 'yes';
+        }
+
+        if (filled($uniqueElement) && in_array($uniqueElement, verifiableUniqueElements(), true)) {
+            return 'yes';
+        }
+
+        return 'no';
+    }
+    
+    // public function getAirtimeProducts(){
+    //     $response = '{
+    //         "status": "ok",
+    //         "message": "airtime fetched.",
+    //         "data": {
+    //             "category": {
+    //                 "id": 1,
+    //                 "name": "Airtime",
+    //                 "type": "airtime",
+    //                 "products": [
+    //                     {
+    //                         "id": 1,
+    //                         "name": "MTN VTU",
+    //                         "code": "mtn",
+    //                         "charges_fmt": "<strong>Charges:</strong> &#8358;0.05",
+    //                         "variations": []
+    //                     },
+    //                     {
+    //                         "id": 15,
+    //                         "name": "GLO VTU",
+    //                         "code": "glo",
+    //                         "charges_fmt": "No Charges",
+    //                         "variations": []
+    //                     },
+    //                     {
+    //                         "id": 16,
+    //                         "name": "AIRTEL VTU",
+    //                         "code": "airtel",
+    //                         "charges_fmt": "No Charges",
+    //                         "variations": []
+    //                     },
+    //                     {
+    //                         "id": 17,
+    //                         "name": "9Mobile VTU",
+    //                         "code": "9mobile",
+    //                         "charges_fmt": "No Charges",
+    //                         "variations": []
+    //                     }
+    //                 ]
+    //             },
+    //             "is_mtn_awuf_enabled": false
+    //         }
+    //     }';
+
+
+    //     return json_decode($response, true);
+    // }
+
 
     public function getVariations($product)
     {
@@ -72,7 +349,6 @@ class AutoSyncController extends Controller
         };
 
         $url = $baseUrl . $specificUrl;
-
 
         $headers = [
             'Content-Type: application/json',

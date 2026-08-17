@@ -273,6 +273,9 @@
                             </div>
 
                             <div class="modern-admin-footer mt-4">
+                                @if($isEdit && data_get($product, 'has_variations') === 'yes')
+                                    <a href="{{ route('product.variations', $product->id) }}" class="btn btn-outline-info">Open variations</a>
+                                @endif
                                 <button class="btn btn-admin-submit" type="submit">{{ $isEdit ? 'Update product' : 'Save product' }}</button>
                                 <a href="{{ route('product.index') }}" class="gateway-action">Back to products</a>
                             </div>

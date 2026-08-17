@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\API;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Variation;
 use App\Services\ApiAvailabilityMonitorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +13,139 @@ use Throwable;
 
 class APIController extends Controller
 {
+    public function pullApiProducts(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'api_id' => ['required', 'integer', 'exists:a_p_is,id'],
+                'category_id' => ['nullable', 'integer', 'exists:categories,id'],
+                'category_slug' => ['nullable', 'string'],
+            ]);
+
+            $api = API::query()->findOrFail($validated['api_id']);
+            $controller = resolveProviderController($api);
+
+            if (! $controller || ! method_exists($controller, 'pullProducts')) {
+                return back()->with('error', 'This provider does not support product pulling.');
+            }
+
+            $category = null;
+            $categorySlug = trim((string) $request->input('category_slug', ''));
+
+            if ($categorySlug !== '') {
+                $category = Category::query()->where('slug', $categorySlug)->first();
+            }
+
+            if (! $category && ! empty($validated['category_id'])) {
+                $category = Category::query()->find($validated['category_id']);
+            }
+
+            if (! $category) {
+                return back()->with('error', 'Please select a category or enter a valid category slug.');
+            }
+
+            $payload = array_merge($request->all(), [
+                'api_id' => $api->id,
+                'category_id' => $category->id,
+                'categorySlug' => $categorySlug !== '' ? $categorySlug : $category->slug,
+                'category_unique_element' => $category->unique_element ?? null,
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'unique_element' => $category->unique_element ?? null,
+                ],
+            ]);
+
+            $res = $controller->pullProducts($payload, $api);
+
+            if (! is_array($res)) {
+                return back()->with('error', 'The provider did not return a valid response.');
+            }
+
+            if (($res['status'] ?? null) !== 'success') {
+                return back()->with('error', $res['message'] ?? 'Unable to pull products from the selected provider.');
+            }
+
+            $products = $res['products'] ?? [];
+
+            if (! is_array($products) || empty($products)) {
+                return back()->with('error', 'No normalized products were returned by the provider.');
+            }
+
+            $saved = 0;
+            $updated = 0;
+
+            foreach ($products as $productData) {
+                if (! is_array($productData)) {
+                    continue;
+                }
+
+                if (blank(data_get($productData, 'slug')) || blank(data_get($productData, 'name'))) {
+                    continue;
+                }
+
+                $existingProduct = $this->findPulledProduct($api, $productData);
+                $productAttributes = $this->mapPulledProductAttributes($productData, $api, $category);
+
+                if ($existingProduct) {
+                    $productAttributes['api_price'] = $existingProduct->api_price;
+                    $productAttributes['system_price'] = $existingProduct->system_price;
+                    $productAttributes['status'] = $existingProduct->status;
+
+                    if ($this->shouldRaisePulledPrice($existingProduct->system_price, $productAttributes['api_price'])) {
+                        $productAttributes['api_price'] = $this->normalizePulledPrice($productData['api_price'] ?? null);
+                        $productAttributes['status'] = 'inactive';
+                    }
+
+                    $existingProduct->update($productAttributes);
+                    $product = $existingProduct;
+                } else {
+                    $product = Product::create($productAttributes);
+                }
+
+                if ($product->wasRecentlyCreated) {
+                    $saved++;
+                } else {
+                    $updated++;
+                }
+
+                foreach ($this->extractPulledVariations($productData) as $variationData) {
+                    if (! is_array($variationData)) {
+                        continue;
+                    }
+
+                    if (blank(data_get($variationData, 'slug')) || blank(data_get($variationData, 'system_name'))) {
+                        continue;
+                    }
+
+                    $existingVariation = $this->findPulledVariation($api, $product, $variationData);
+                    $variationAttributes = $this->mapPulledVariationAttributes($variationData, $api, $category, $product);
+
+                    if ($existingVariation) {
+                        $variationAttributes['api_price'] = $existingVariation->api_price;
+                        $variationAttributes['system_price'] = $existingVariation->system_price;
+                        $variationAttributes['status'] = $existingVariation->status;
+
+                        if ($this->shouldRaisePulledPrice($existingVariation->system_price, $variationAttributes['api_price'])) {
+                            $variationAttributes['api_price'] = $this->normalizePulledPrice($variationData['api_price'] ?? null);
+                            $variationAttributes['status'] = 'inactive';
+                        }
+
+                        $existingVariation->update($variationAttributes);
+                    } else {
+                        Variation::create($variationAttributes);
+                    }
+                }
+            }
+
+            return back()->with('message', trim($saved . ' product(s) added' . ($updated > 0 ? ' and ' . $updated . ' updated' : '') . ' successfully.'));
+        } catch (\Throwable $th) {
+            return back()->with('error', 'No products found: '.$th->getMessage().' '.$th->getLine());
+        }
+
+    }
+
     public function index()
     {
         $apis = API::withCount(['products', 'transactions'])->orderBy('name')->get();
@@ -44,7 +180,11 @@ class APIController extends Controller
 
     public function create()
     {
-        return view(themeView('admin', 'api.form'), ['api' => null]);
+        return view(themeView('admin', 'api.form'), [
+            'api' => null,
+            'categories' => Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
+            'canPullProducts' => false,
+        ]);
     }
 
     public function store(Request $request)
@@ -82,7 +222,11 @@ class APIController extends Controller
 
     public function edit(API $api)
     {
-        return view(themeView('admin', 'api.form'), compact('api'));
+        return view(themeView('admin', 'api.form'), [
+            'api' => $api,
+            'categories' => Category::query()->orderBy('name')->get(['id', 'name', 'slug']),
+            'canPullProducts' => in_array(strtolower((string) $api->slug), ['autosync'], true),
+        ]);
     }
 
     public function update(Request $request, API $api)
@@ -192,5 +336,151 @@ class APIController extends Controller
                 'message' => 'Unable to complete availability monitor right now.',
             ], 500);
         }
+    }
+
+    private function extractPulledVariations(array $productData): array
+    {
+        return array_values((array) data_get($productData, 'variations', []));
+    }
+    
+    private function mapPulledProductAttributes(array $productData, API $api, Category $category): array
+    {
+        return [
+            'category_id' => $category->id,
+            'status' => $productData['status'] ?? 'inactive',
+            'name' => $productData['name'] ?? null,
+            'slug' => $productData['slug'] ?? null,
+            'seo_title' => $productData['seo_title'] ?? null,
+            'seo_description' => $productData['seo_description'] ?? null,
+            'seo_keywords' => $productData['seo_keywords'] ?? null,
+            'display_name' => $productData['display_name'] ?? ($productData['name'] ?? null),
+            'image' => $productData['image'] ?? null,
+            'description' => $productData['description'] ?? null,
+            'has_variations' => $productData['has_variations'] ?? 'no',
+            'api_id' => $api->id,
+            'allow_meter_validation' => $productData['allow_meter_validation'] ?? 'no',
+            'allow_subscription_type' => $productData['allow_subscription_type'] ?? 'no',
+            'fixed_price' => $productData['fixed_price'] ?? null,
+            'api_price' => $productData['api_price'] ?? null,
+            'system_price' => $productData['system_price'] ?? null,
+            'allow_quantity' => $productData['allow_quantity'] ?? null,
+            'min' => $productData['min'] ?? null,
+            'max' => $productData['max'] ?? null,
+            'servercode' => $productData['servercode'] ?? null,
+            'ussd_string' => $productData['ussd_string'] ?? null,
+            'multistep' => $productData['multistep'] ?? 'no',
+            'referral_percentage' => $productData['referral_percentage'] ?? null,
+            'show_in_menu' => $productData['show_in_menu'] ?? false,
+        ];
+    }
+
+    private function mapPulledVariationAttributes(array $variationData, API $api, Category $category, Product $product): array
+    {
+        return [
+            'product_id' => $product->id,
+            'category_id' => $category->id,
+            'api_id' => $api->id,
+            'api_name' => $variationData['api_name'] ?? ($variationData['system_name'] ?? $variationData['slug'] ?? null),
+            'api_code' => $variationData['api_code'] ?? $variationData['servercode'] ?? $variationData['slug'] ?? null,
+            'status' => strtolower((string) ($variationData['status'] ?? 'inactive')) === 'active' ? 'active' : 'inactive',
+            'slug' => $variationData['slug'] ?? null,
+            'system_name' => $variationData['system_name'] ?? ($variationData['api_name'] ?? $variationData['slug'] ?? null),
+            'fixed_price' => $variationData['fixed_price'] ?? 'Yes',
+            'api_price' => $variationData['api_price'] ?? null,
+            'system_price' => $variationData['system_price'] ?? null,
+            'datasize' => $variationData['datasize'] ?? null,
+            'network' => $variationData['network'] ?? $variationData['unique_element'] ?? null,
+            'min' => $variationData['min'] ?? null,
+            'max' => $variationData['max'] ?? null,
+            'ussd_string' => $variationData['ussd_string'] ?? null,
+            'multistep' => $variationData['multistep'] ?? 'no',
+        ];
+    }
+
+    private function findPulledProduct(API $api, array $productData): ?Product
+    {
+        $slug = trim((string) data_get($productData, 'slug', ''));
+        $servercode = trim((string) data_get($productData, 'servercode', ''));
+
+        $query = Product::query()->where('api_id', $api->id);
+
+        if ($slug !== '' && $servercode !== '') {
+            return $query->where(function ($builder) use ($slug, $servercode) {
+                $builder->where('slug', $slug)
+                    ->orWhere('servercode', $servercode);
+            })->first();
+        }
+
+        if ($slug !== '') {
+            return $query->where('slug', $slug)->first();
+        }
+
+        if ($servercode !== '') {
+            return $query->where('servercode', $servercode)->first();
+        }
+
+        return null;
+    }
+
+    private function findPulledVariation(API $api, Product $product, array $variationData): ?Variation
+    {
+        $slug = trim((string) data_get($variationData, 'slug', ''));
+        $apiCode = trim((string) data_get($variationData, 'api_code', data_get($variationData, 'servercode', '')));
+
+        $query = Variation::query()
+            ->where('product_id', $product->id)
+            ->where('api_id', $api->id);
+
+        if ($slug !== '' && $apiCode !== '') {
+            return $query->where(function ($builder) use ($slug, $apiCode) {
+                $builder->where('slug', $slug)
+                    ->orWhere('api_code', $apiCode);
+            })->first();
+        }
+
+        if ($slug !== '') {
+            return $query->where('slug', $slug)->first();
+        }
+
+        if ($apiCode !== '') {
+            return $query->where('api_code', $apiCode)->first();
+        }
+
+        return null;
+    }
+
+    private function shouldRaisePulledPrice($existingSystemPrice, $incomingApiPrice): bool
+    {
+        $existing = $this->normalizePulledPrice($existingSystemPrice);
+        $incoming = $this->normalizePulledPrice($incomingApiPrice);
+
+        if ($incoming === null) {
+            return false;
+        }
+
+        if ($existing === null) {
+            return true;
+        }
+
+        return $incoming > $existing;
+    }
+
+    private function normalizePulledPrice($value): ?float
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $clean = preg_replace('/[^\d\.\-]/', '', str_replace(',', '', trim($value)));
+
+        if ($clean === '' || ! is_numeric($clean)) {
+            return null;
+        }
+
+        return (float) $clean;
     }
 }
