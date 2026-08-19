@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\API;
 use App\Models\Product;
 use App\Models\Discount;
 use App\Models\Variation;
@@ -12,6 +13,125 @@ use Illuminate\Validation\ValidationException;
 
 class VariationController extends Controller
 {
+    public function index(Request $request)
+    {
+        $perPage = (int) $request->input('per_page', 15);
+        $allowedPerPage = [10, 15, 25, 50, 100];
+        $search = trim((string) $request->input('search', ''));
+
+        if (! in_array($perPage, $allowedPerPage, true)) {
+            $perPage = 15;
+        }
+
+        $baseQuery = Variation::query()
+            ->select('variations.*')
+            ->with([
+                'product:id,name,display_name,slug,api_id',
+                'api:id,name,slug',
+                'category:id,name,display_name',
+            ])
+            ->withCount('transaction');
+
+        if ($search !== '') {
+            $baseQuery->where(function ($query) use ($search) {
+                $query->where('api_name', 'like', '%' . $search . '%')
+                    ->orWhere('system_name', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%')
+                    ->orWhere('api_code', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($productId = $request->input('product')) {
+            $baseQuery->where('product_id', $productId);
+        }
+
+        if ($apiId = $request->input('api')) {
+            $baseQuery->where('api_id', $apiId);
+        }
+
+        if ($status = $request->input('status')) {
+            $baseQuery->where('status', $status);
+        }
+
+        if ($request->filled('date_from')) {
+            $baseQuery->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $baseQuery->whereDate('created_at', '<=', $request->input('date_to'));
+        }
+
+        $variations = (clone $baseQuery)
+            ->orderBy('created_at', 'DESC')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $summaryBaseQuery = Variation::query();
+
+        if ($search !== '') {
+            $summaryBaseQuery->where(function ($query) use ($search) {
+                $query->where('api_name', 'like', '%' . $search . '%')
+                    ->orWhere('system_name', 'like', '%' . $search . '%')
+                    ->orWhere('slug', 'like', '%' . $search . '%')
+                    ->orWhere('api_code', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($productId = $request->input('product')) {
+            $summaryBaseQuery->where('product_id', $productId);
+        }
+
+        if ($apiId = $request->input('api')) {
+            $summaryBaseQuery->where('api_id', $apiId);
+        }
+
+        if ($status = $request->input('status')) {
+            $summaryBaseQuery->where('status', $status);
+        }
+
+        if ($request->filled('date_from')) {
+            $summaryBaseQuery->whereDate('created_at', '>=', $request->input('date_from'));
+        }
+
+        if ($request->filled('date_to')) {
+            $summaryBaseQuery->whereDate('created_at', '<=', $request->input('date_to'));
+        }
+
+        $summary = [
+            'total' => (clone $summaryBaseQuery)->count(),
+            'active' => (clone $summaryBaseQuery)->where('status', 'active')->count(),
+            'inactive' => (clone $summaryBaseQuery)->where('status', 'inactive')->count(),
+            'products' => (clone $summaryBaseQuery)->distinct('product_id')->count('product_id'),
+            'providers' => (clone $summaryBaseQuery)->distinct('api_id')->count('api_id'),
+        ];
+
+        $products = Product::query()
+            ->orderBy('name')
+            ->get(['id', 'name', 'display_name']);
+
+        $apis = API::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $filters = [
+            'search' => $request->input('search'),
+            'product' => $request->input('product'),
+            'api' => $request->input('api'),
+            'status' => $request->input('status'),
+            'date_from' => $request->input('date_from'),
+            'date_to' => $request->input('date_to'),
+            'per_page' => $perPage,
+        ];
+
+        return view('sneat.admin.variations.index', compact(
+            'variations',
+            'summary',
+            'products',
+            'apis',
+            'filters'
+        ));
+    }
+
     public function pullVariations(Product $product)
     {
         $api = $product->api;

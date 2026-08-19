@@ -568,6 +568,7 @@ if (!function_exists("customerMenuData")) {
                 $makeLeaf('API Providers', 'api.index', 'settings', [], ['api*']),
                 $makeLeaf('Categories', 'category.index', 'store', [], ['category*']),
                 $makeLeaf('Products', 'product.index', 'package', [], ['product*']),
+                $makeLeaf('Variations', 'variations.index', 'shuffle', [], ['variations*']),
             ];
 
             $emailChildren = [

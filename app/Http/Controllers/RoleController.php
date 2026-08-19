@@ -153,6 +153,7 @@ class RoleController extends Controller
                     ['label' => 'API Providers', 'menu' => 'API Providers', 'permissions' => ['api.*']],
                     ['label' => 'Categories', 'menu' => 'Categories', 'permissions' => ['category.*']],
                     ['label' => 'Products', 'menu' => 'Products', 'permissions' => ['product.*']],
+                    ['label' => 'Variations', 'menu' => 'Variations', 'permissions' => ['variations.*']],
                 ],
             ],
             [

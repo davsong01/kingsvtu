@@ -69,6 +69,12 @@
                                         class="menu-item" data-i18n="Input">Products</span></a>
                             </li>
                         @endif
+                        @if (in_array('variations.index', $allowedRoutes) || in_array(1, auth()->user()->admin->roleIds()))
+                            <li class="{{ Route::is('variations.*') ? 'active' : '' }}"><a
+                                    href="{{ route('variations.index') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                        class="menu-item" data-i18n="Input">Variations</span></a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif

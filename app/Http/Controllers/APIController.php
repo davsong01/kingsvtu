@@ -399,24 +399,12 @@ class APIController extends Controller
 
     private function findPulledProduct(API $api, array $productData): ?Product
     {
-        $slug = trim((string) data_get($productData, 'slug', ''));
-        $servercode = trim((string) data_get($productData, 'servercode', ''));
+        $name = trim((string) data_get($productData, 'name', ''));
 
         $query = Product::query()->where('api_id', $api->id);
 
-        if ($slug !== '' && $servercode !== '') {
-            return $query->where(function ($builder) use ($slug, $servercode) {
-                $builder->where('slug', $slug)
-                    ->orWhere('servercode', $servercode);
-            })->first();
-        }
-
-        if ($slug !== '') {
-            return $query->where('slug', $slug)->first();
-        }
-
-        if ($servercode !== '') {
-            return $query->where('servercode', $servercode)->first();
+        if ($name !== '') {
+            return $query->whereRaw('LOWER(TRIM(name)) = ?', [mb_strtolower($name)])->first();
         }
 
         return null;
@@ -424,26 +412,17 @@ class APIController extends Controller
 
     private function findPulledVariation(API $api, Product $product, array $variationData): ?Variation
     {
-        $slug = trim((string) data_get($variationData, 'slug', ''));
-        $apiCode = trim((string) data_get($variationData, 'api_code', data_get($variationData, 'servercode', '')));
+        $name = trim((string) data_get($variationData, 'system_name', data_get($variationData, 'api_name', data_get($variationData, 'name', ''))));
 
         $query = Variation::query()
             ->where('product_id', $product->id)
             ->where('api_id', $api->id);
 
-        if ($slug !== '' && $apiCode !== '') {
-            return $query->where(function ($builder) use ($slug, $apiCode) {
-                $builder->where('slug', $slug)
-                    ->orWhere('api_code', $apiCode);
+        if ($name !== '') {
+            return $query->where(function ($builder) use ($name) {
+                $builder->whereRaw('LOWER(TRIM(system_name)) = ?', [mb_strtolower($name)])
+                    ->orWhereRaw('LOWER(TRIM(api_name)) = ?', [mb_strtolower($name)]);
             })->first();
-        }
-
-        if ($slug !== '') {
-            return $query->where('slug', $slug)->first();
-        }
-
-        if ($apiCode !== '') {
-            return $query->where('api_code', $apiCode)->first();
         }
 
         return null;
