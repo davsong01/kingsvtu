@@ -115,7 +115,7 @@
                                     <th>API</th>
                                     <th>Variations</th>
                                     <th>Status</th>
-                                    <th>Date Added</th>
+                                    <th>Date Updated</th>
                                     @if(hasAccess('product.edit'))
                                         <th class="text-end">Action</th>
                                     @endif
@@ -161,7 +161,7 @@
                                                 {{ ucfirst($product->status ?? 'inactive') }}
                                             </span>
                                         </td>
-                                        <td>{{ $product->created_at }}</td>
+                                        <td>{{ $product->updated_at }}</td>
                                         @if(hasAccess('product.edit'))
                                             <td class="text-end">
                                                 <div class="d-inline-flex flex-wrap justify-content-end gap-2">
