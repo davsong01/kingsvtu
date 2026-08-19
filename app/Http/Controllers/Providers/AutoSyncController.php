@@ -32,6 +32,9 @@ class AutoSyncController extends Controller
             str_contains($categorySlug, 'data') => '/data',
             str_contains($categorySlug, 'cable') => '/cable',
             str_contains($categorySlug, 'electric') => '/electricity',
+            str_contains($categorySlug, 'data_corporate') => 'data/corporate',
+            str_contains($categorySlug, 'data_sme') => 'data/corporate',
+            
             default => null,
         };
 
