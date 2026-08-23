@@ -87,7 +87,7 @@
                                             ['key' => 'MIDDLE_NAME', 'label' => 'Middle Name', 'type' => 'text'],
                                             ['key' => 'LAST_NAME', 'label' => 'Last Name', 'type' => 'text'],
                                             ['key' => 'PHONE_NUMBER', 'label' => 'Phone Number', 'type' => 'text'],
-                                            ['key' => 'DOB', 'label' => 'Date of Birth', 'type' => 'date'],
+                                            // ['key' => 'DOB', 'label' => 'Date of Birth', 'type' => 'date'],
                                             ['key' => 'BVN', 'label' => 'BVN', 'type' => 'text'],
                                         ];
                                     @endphp
