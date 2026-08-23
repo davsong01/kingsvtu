@@ -31,5 +31,6 @@ jobs:
             # composer update
             php artisan migrate --force
             rm -rf ../modern-assets && cp -r public/modern-assets ../modern-assets
+            rm -rf ../css/customer-mobile-nav.css && cp -r public/css/customer-mobile-nav.css ../css/customer-mobile-nav.css
             php artisan optimize:clear
             echo "Deployment to Server completed!"

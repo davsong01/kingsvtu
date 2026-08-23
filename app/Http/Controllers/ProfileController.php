@@ -21,7 +21,15 @@ class ProfileController extends Controller
         if (auth()->user()->type == 'admin') {
             return view(themeView('admin', 'edit_profile'));
         } else {
-            return view(themeView('customer', 'profile'));
+            if (view()->exists('sneat.customer.profile')) {
+                return view('sneat.customer.profile');
+            }
+
+            if (view()->exists('customer.edit_profile')) {
+                return view('customer.edit_profile');
+            }
+
+            abort(404, 'Customer profile view not found.');
         }
     }
 
