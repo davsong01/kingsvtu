@@ -17,6 +17,10 @@
                         <span class="gateway-summary__value">{{ $paymentgateway->slug }}</span>
                     </div>
                     <div class="gateway-summary__card">
+                        <span class="gateway-summary__label">Status</span>
+                        <span class="gateway-summary__value">{{ ucfirst($paymentgateway->status ?? 'inactive') }}</span>
+                    </div>
+                    <div class="gateway-summary__card">
                         <span class="gateway-summary__label">Base URL</span>
                         <span class="gateway-summary__value">{{ $paymentgateway->base_url ?: 'Not set' }}</span>
                     </div>
@@ -45,6 +49,13 @@
                                     <div class="col-12">
                                         <label class="modern-admin-label" for="name">Name</label>
                                         <input type="text" class="form-control form-control-{{ formControlSize() }}" id="name" name="name" value="{{ old('name', $paymentgateway->name ?? '') }}" placeholder="Gateway name" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="modern-admin-label" for="status">Status</label>
+                                        <select class="form-select form-select-{{ formControlSize() }}" id="status" name="status" required>
+                                            <option value="active" {{ old('status', $paymentgateway->status ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="inactive" {{ old('status', $paymentgateway->status ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        </select>
                                     </div>
                                     <div class="col-12">
                                         <label class="modern-admin-label" for="slug">Slug</label>

@@ -210,7 +210,8 @@ class CustomerController extends Controller
         ];
         
         $admin_id = auth()->user()->admin->id;
-        $reserved = createReservedAccount($data, $admin_id, [$request->provider]);
+        $reserved = createReservedAccount($data, $admin_id, $request->provider);
+        
         $tab = $request->input('tab', 'reserved');
         $redirectUrl = route('customers.edit', $customer->user->id) . '?tab=' . $tab;
 

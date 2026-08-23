@@ -178,62 +178,40 @@ if (!function_exists("getPaymentGatewayReservedAccountCharge")) {
     }
 }
 
-// if (!function_exists("createReservedAccount")) {
-//     function createReservedAccount($data = null, $admin_id = null, $provider_id = null)
-//     {
-//         if(!empty($provider_id)){
-//             $provider = PaymentGateway::where('id', $provider_id)->get();
-//         }else{
-//             $provider = PaymentGateway::whereIn('id', getSettings()->payment_gateway)->get();
-//         }
-
-//         $paymentGateway = $provider->slug;
-//         $reserved = null;
-
-//         if (!empty($paymentGateway)) {
-//             if ($paymentGateway == 'monnify') {
-//                 $monnify = new MonnifyController($provider);
-//                 $reserved = $monnify->createReservedAccount($data, $admin_id);
-//             }
-
-//             if ($paymentGateway == 'squad') {
-//                 $squad = new SquadController($provider);
-//                 $reserved = $squad->createReservedAccount($data, $admin_id);
-//             }
-
-//             if ($paymentGateway == 'paymentpoint') {
-//                 $squad = new PaymentPointController($provider);
-//                 $reserved = $squad->createReservedAccount($data, $admin_id);
-//             }
-//         }
-
-//         return $reserved;
-//     }
-// }
 if (!function_exists("createReservedAccount")) {
     function createReservedAccount($data = null, $admin_id = null, $provider_id = null)
     {
-        $providers = collect();
-        
-        if (!empty($provider_id)) {
-            $providers = PaymentGateway::whereIn('id', $provider_id)->get();
-        } else {
-            $gatewayIds = getSettings()->payment_gateway ?? [];
-            $providers = PaymentGateway::whereIn('id', (array) $gatewayIds)->get();
+        $providerIds = collect(is_array($provider_id) ? $provider_id : [$provider_id])
+            ->flatten()
+            ->filter(fn ($id) => !is_null($id) && $id !== '')
+            ->map(fn ($id) => is_array($id) ? data_get($id, 'id') : $id)
+            ->filter(fn ($id) => !is_null($id) && $id !== '')
+            ->values()
+            ->all();
+            
+
+        if (empty($providerIds)) {
+            $providerIds = PaymentGateway::query()
+                ->whereIn('id', (array) data_get(getSettings(), 'payment_gateway', []))
+                ->where('status', 'active')
+                ->orderBy('id')
+                ->pluck('id')
+                ->all();
         }
+
+        $providers = PaymentGateway::whereIn('id', $providerIds)->get();
         
         foreach ($providers as $provider) {
-            $paymentGateway = $provider->slug;
-            $reserved = null;
-
-            if(ReservedAccountNumber::where('paymentgateway_id', $provider->id)
+            if (ReservedAccountNumber::where('paymentgateway_id', $provider->id)
                 ->where('status', 'active')
-                    ->where('customer_id', $data['customer_id'])
-                        ->exists()){
+                ->where('customer_id', $data['customer_id'])
+                ->exists()) {
                 continue;
             }
 
-            switch ($paymentGateway) {
+            $reserved = null;
+
+            switch ($provider->slug) {
                 case 'monnify':
                     $monnify = new MonnifyController($provider);
                     $reserved = $monnify->createReservedAccount($data, $admin_id);
@@ -251,11 +229,11 @@ if (!function_exists("createReservedAccount")) {
             }
 
             if (!empty($reserved)) {
-                return $reserved; // stop at first successful attempt
+                return $reserved;
             }
         }
 
-        return null; // return null if all fail
+        return null;
     }
 }
 

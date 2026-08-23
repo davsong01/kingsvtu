@@ -68,16 +68,24 @@ class DashboardController extends Controller
                 'customer_month_label'
             ));
         } else {
-            $currentPaymentGateway = getSettings()->payment_gateway;
-            $account_count = ReservedAccountNumber::where('customer_id', auth()->user()->customer->id)->where('paymentgateway_id', $currentPaymentGateway)->count();
-            if($account_count < 1){
-                $data = [
-                    'customer_id' => auth()->user()->customer->id,
-                ];
-                
-                foreach($currentPaymentGateway as $gateway){
-                    $data['paymentgateway_id'] = $gateway;
-                    $reserved = createReservedAccount($data, null, $currentPaymentGateway);
+            $currentPaymentGateways = collect(getSettings()->payment_gateway ?? [])
+                ->flatten()
+                ->filter(fn ($gateway) => !is_null($gateway) && $gateway !== '')
+                ->map(fn ($gateway) => is_array($gateway) ? data_get($gateway, 'id') : $gateway)
+                ->filter(fn ($gateway) => !is_null($gateway) && $gateway !== '')
+                ->values();
+
+            foreach ($currentPaymentGateways as $gatewayId) {
+                $account_count = ReservedAccountNumber::where('customer_id', auth()->user()->customer->id)
+                    ->where('paymentgateway_id', $gatewayId)
+                    ->count();
+
+                if ($account_count < 1) {
+                    $data = [
+                        'customer_id' => auth()->user()->customer->id,
+                    ];
+
+                    $reserved = createReservedAccount($data, null, $gatewayId);
                 }
             }
             return view(themeView('customer', 'dashboard'), compact('customer'));

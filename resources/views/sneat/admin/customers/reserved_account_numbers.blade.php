@@ -107,6 +107,9 @@
                                             </a>
                                         </td>
                                         <td>
+                                            @if(hasAccess('customers.edit'))
+                                                <a href="{{ route('customers.edit', $number->customer->id) }}" class="btn btn-outline-info btn-sm">View profile</a>
+                                            @endif
                                             @if($number->transactions->count() < 1 && $number->gateway->slug === 'monnify')
                                                 <a class="btn btn-outline-danger btn-sm" onclick="return confirm('You are about to delete a reserved account!')" href="{{ route('reserved_account.delete', $number->id) }}">Delete</a>
                                             @endif
