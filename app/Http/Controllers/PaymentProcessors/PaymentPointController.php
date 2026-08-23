@@ -125,10 +125,18 @@ class PaymentPointController extends Controller
         $kycData = $customer->multiplekycdata->toArray();
         $kycData = extractKeyValuesFromMultiDimensionalArray('key', 'value', $kycData);
         
+        $preferredBanks = data_get($data, 'preferredBanks');
+
+        if (is_array($preferredBanks)) {
+            $preferredBanks = collect($preferredBanks)
+                ->filter(fn ($bank) => !is_null($bank) && $bank !== '')
+                ->first();
+        }
+
         $payload = [
             "email" => $data["customerEmail"] ?? $customer->user->email,
             "name" => $data["customerFirstName"] ?? ($kycData['FIRST_NAME'] ?? $customer->user->firstname),
-            "bankCode" =>  $data['preferredBanks'],
+            "bankCode" => $preferredBanks,
             "businessId" =>  $this->api->contract_id,
             "phoneNumber" => $data["customerPhone"] ?? ($kycData['PHONE_NUMBER'] ?? $customer->user->phone),
         ];
