@@ -180,7 +180,7 @@
                                                                         @endif
                                                                     </fieldset>
                                                                 </div>
-                                                                <div class="col-md-6">   
+                                                                {{-- <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         @if($DOB?->status == 'verified')
                                                                         <label for="DOB">Date of Birth</label><span class="verified"><i class="fa fa-check"></i> Verified</span>
@@ -190,7 +190,7 @@
                                                                         <input type="date" name="DOB"  class="form-control" value="{{ $DOB?->value }}" required>
                                                                         @endif
                                                                     </fieldset>
-                                                                </div>
+                                                                </div> --}}
                                                                 <div class="col-md-6">   
                                                                     <fieldset class="form-group">
                                                                         @if($BVN?->status == 'verified')
