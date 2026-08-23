@@ -217,7 +217,7 @@ class CustomerController extends Controller
 
         if ($reserved['status'] && $reserved['status'] == 'success') {
             return redirect($redirectUrl)
-                ->with('message', 'Reserved Account(s) crearted successfully');
+                ->with('message', 'Reserved Account(s) created successfully');
         } else {
             return redirect($redirectUrl)
                 ->with('error', 'Error: ' . $reserved['data'] ?? 'Something went wrong');
