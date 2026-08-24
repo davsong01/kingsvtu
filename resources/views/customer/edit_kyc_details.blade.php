@@ -207,10 +207,10 @@
                                                                         <label for="IDCARDTYPE">ID Card Type</label>
                                                                         <select id="IDCARDTYPE" name="IDCARDTYPE" class="form-control" required {{ $IDCARDTYPE?->status == 'verified' ? 'disabled' : ''}}>
                                                                             <option value="">Select</option>
+                                                                            <option value="Nin Slip" {{ $IDCARDTYPE?->value == 'Nin Slip' ? 'selected' : '' }}>Nin Slip</option>
                                                                             <option value="Driver's Licence" {{ $IDCARDTYPE?->value == "Driver's Licence" ? 'selected' : '' }}>Driver's Licence</option>
+                                                                            <option value="International Passport" {{ $IDCARDTYPE?->value == 'International Passport' ? 'selected' : '' }}>International Passport</option>
                                                                             <option value="Voter's Card" {{ $IDCARDTYPE?->value == "Voter's Card" ? 'selected' : '' }}>Voter's Card</option>
-                                                                            {{-- <option value="Nin Slip" {{ $IDCARDTYPE?->value == "Nin Slip" ? 'selected' : '' }}>Nin Slip</option>
-                                                                            <option value="International Passport" {{ $IDCARDTYPE?->value == "International Passport" ? 'selected' : '' }}>International Passport</option> --}}
                                                                         </select>
                                                                     </fieldset>
                                                                 </div>

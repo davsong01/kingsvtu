@@ -31,7 +31,7 @@
             'STATE' => ['label' => 'State', 'type' => 'select', 'value' => $kycRecords['STATE']['value'] ?? null, 'options' => getStates(), 'required' => true],
             'LGA' => ['label' => 'Local Government Area', 'type' => 'select', 'value' => $kycRecords['LGA']['value'] ?? null, 'options' => $lgas, 'required' => true],
             // 'DOB' => ['label' => 'Date of birth', 'type' => 'date', 'value' => $kycRecords['DOB']['value'] ?? null, 'required' => true],
-            'IDCARDTYPE' => ['label' => 'ID card type', 'type' => 'select', 'value' => $kycRecords['IDCARDTYPE']['value'] ?? null, 'options' => ["Driver's Licence", "Voter's Card"], 'required' => true],
+            'IDCARDTYPE' => ['label' => 'ID card type', 'type' => 'select', 'value' => $kycRecords['IDCARDTYPE']['value'] ?? null, 'options' => ['Nin Slip', "Driver's Licence", 'International Passport', "Voter's Card"], 'required' => true],
             'IDCARD' => ['label' => 'ID card', 'type' => 'file', 'value' => $kycRecords['IDCARD']['value'] ?? null, 'required' => true],
             'BVN' => ['label' => 'BVN', 'type' => 'text', 'value' => $kycRecords['BVN']['value'] ?? null, 'required' => true],
             'GENDER' => ['label' => 'Gender', 'type' => 'select', 'value' => $kycRecords['GENDER']['value'] ?? null, 'options' => ['male', 'female'], 'required' => true],

@@ -422,7 +422,9 @@ use App\Models\BlackList;
                                                                 @else
                                                                 <label for="IDCARDTYPE">ID Card Type</label><span class="unverified"><i class="fa fa-times"></i>Unverified</span>
                                                                 <select id="IDCARDTYPE" name="IDCARDTYPE" class="form-control">
+                                                                    <option value="Nin Slip" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == 'Nin Slip' ? 'selected' : '' }}>Nin Slip</option>
                                                                     <option value="Driver's Licence" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == "Driver's Licence" ? 'selected' : '' }}>Driver's Licence</option>
+                                                                    <option value="International Passport" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == 'International Passport' ? 'selected' : '' }}>International Passport</option>
                                                                     <option value="Voter's Card" {{ kycStatus('IDCARDTYPE', $user->customer->id)['value'] == "Voter's Card" ? 'selected' : '' }}>Voter's Card</option>
                                                                 </select>
                                                                 

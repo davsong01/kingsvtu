@@ -158,7 +158,9 @@
                                         </label>
                                         <select name="IDCARDTYPE" id="IDCARDTYPE" class="form-select form-select-{{ formControlSize() }}" @disabled($idCardTypeStatus === 'verified')>
                                             <option value="">Select card type</option>
+                                            <option value="Nin Slip" @selected(old('IDCARDTYPE', $valueFor('IDCARDTYPE')) === 'Nin Slip')>Nin Slip</option>
                                             <option value="Driver's Licence" @selected(old('IDCARDTYPE', $valueFor('IDCARDTYPE')) === "Driver's Licence")>Driver's Licence</option>
+                                            <option value="International Passport" @selected(old('IDCARDTYPE', $valueFor('IDCARDTYPE')) === 'International Passport')>International Passport</option>
                                             <option value="Voter's Card" @selected(old('IDCARDTYPE', $valueFor('IDCARDTYPE')) === "Voter's Card")>Voter's Card</option>
                                         </select>
                                     </div>
