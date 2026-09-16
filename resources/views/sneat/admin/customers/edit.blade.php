@@ -320,48 +320,58 @@
                                                 @php
                                                     $record = $kycRecords[$key] ?? ['status' => 'unverified', 'value' => null];
                                                     $isVerified = ($record['status'] ?? 'unverified') === 'verified';
+                                                    $hasExistingValue = !empty($record['value']);
+                                                    $currentValue = old($key, $record['value'] ?? $field['value'] ?? null);
                                                 @endphp
 
                                                 <div class="col-md-6">
                                                     <label class="profile-label" for="{{ $key }}">{{ $field['label'] }}</label>
-                                                    <span class="gateway-badge {{ $isVerified ? 'gateway-badge--active' : 'gateway-badge--warning' }} ms-2">{{ $isVerified ? 'Verified' : 'Unverified' }}</span>
+                                                    <span class="gateway-badge {{ $isVerified ? 'gateway-badge--active' : 'gateway-badge--warning' }} ms-2">
+                                                        {{ $isVerified ? 'Verified' : 'Unverified' }}
+                                                    </span>
 
                                                     @if($field['type'] === 'file')
-                                                        @if($isVerified && !empty($record['value']))
-                                                            <div class="mt-2">
-                                                                <img src="{{ asset($record['value']) }}" alt="{{ $field['label'] }}" class="customer-id-preview img-fluid border">
-                                                            </div>
-                                                        @else
-                                                            <input type="file" class="form-control form-control-{{ formControlSize() }} mt-2" id="{{ $key }}" name="{{ $key }}" {{ ($field['required'] ?? false) ? 'required' : '' }}>
+                                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                                            <input type="file" 
+                                                                class="form-control form-control-{{ formControlSize() }}" 
+                                                                id="{{ $key }}" 
+                                                                name="{{ $key }}" 
+                                                                {{ (($field['required'] ?? false) && !$hasExistingValue) ? 'required' : '' }}>
+                                                            
+                                                            @if($hasExistingValue)
+                                                                <a href="{{ asset($record['value']) }}" target="_blank" class="text-nowrap" title="View uploaded document">
+                                                                    <img src="{{ asset($record['value']) }}" alt="Previous upload" class="border rounded" style="width: 40px; height: 38px; object-fit: cover;">
+                                                                </a>
+                                                            @endif
+                                                        </div>
+
+                                                        {{-- Hidden input preserves existing value if admin doesn't choose a new file --}}
+                                                        @if($hasExistingValue)
+                                                            <input type="hidden" name="existing_{{ $key }}" value="{{ $record['value'] }}">
                                                         @endif
+
                                                     @elseif($field['type'] === 'select')
-                                                        @if($isVerified)
-                                                            <input type="text" class="form-control form-control-{{ formControlSize() }} mt-2" value="{{ $record['value'] ?? '' }}" readonly>
-                                                        @else
-                                                            <select name="{{ $key }}" id="{{ $key }}" class="form-select form-select-{{ formControlSize() }} mt-2" {{ ($field['required'] ?? false) ? 'required' : '' }}>
-                                                                <option value="">Select...</option>
-                                                                @foreach($field['options'] as $option)
-                                                                    <option value="{{ $option }}" @selected(($record['value'] ?? $field['value'] ?? null) == $option)>{{ $option }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        @endif
+                                                        <select name="{{ $key }}" id="{{ $key }}" class="form-select form-select-{{ formControlSize() }} mt-2" {{ ($field['required'] ?? false) ? 'required' : '' }}>
+                                                            <option value="">Select...</option>
+                                                            @foreach($field['options'] as $option)
+                                                                <option value="{{ $option }}" @selected($currentValue == $option)>{{ $option }}</option>
+                                                            @endforeach
+                                                        </select>
+
                                                     @else
-                                                        @if($isVerified)
-                                                            <input type="text" class="form-control form-control-{{ formControlSize() }} mt-2" value="{{ $record['value'] ?? $field['value'] }}" readonly>
-                                                        @else
-                                                            <input
-                                                                type="{{ $field['type'] }}"
-                                                                name="{{ $key }}"
-                                                                class="form-control form-control-{{ formControlSize() }} mt-2"
-                                                                value="{{ old($key, $record['value'] ?? $field['value']) }}"
-                                                                {{ ($field['required'] ?? false) ? 'required' : '' }}
-                                                            >
-                                                        @endif
+                                                        <input
+                                                            type="{{ $field['type'] }}"
+                                                            name="{{ $key }}"
+                                                            id="{{ $key }}"
+                                                            class="form-control form-control-{{ formControlSize() }} mt-2"
+                                                            value="{{ $currentValue }}"
+                                                            {{ ($field['required'] ?? false) ? 'required' : '' }}
+                                                        >
                                                     @endif
                                                 </div>
                                             @endforeach
                                         </div>
-
+    
                                         <div class="d-flex justify-content-start mt-4">
                                             <button type="submit" class="btn btn-admin-submit">Update KYC data</button>
                                         </div>

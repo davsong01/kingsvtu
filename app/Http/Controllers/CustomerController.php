@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\KycData;
+use App\Models\BlackList;
 use App\Models\Customer;
-use Illuminate\Http\Request;
 use App\Models\CustomerLevel;
+use App\Models\KycData;
 use App\Models\PaymentGateway;
 use App\Models\ReferralEarning;
+use App\Models\ReservedAccountNumber;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\BlackList;
-use App\Models\ReservedAccountNumber;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -244,7 +245,6 @@ class CustomerController extends Controller
                 $admin_id = auth()->user()->admin->id;
                 
                 $reserved = createReservedAccount($data, $admin_id, 2);
-                
                 if ($reserved['status'] && $reserved['status'] == 'success') {
                     $count+=1;
                 }
@@ -481,13 +481,15 @@ class CustomerController extends Controller
 
         logEmails($customer->user->email, $subject, $body);
         $reserved = createReservedAccount($data);
+        $status = $reserved['status'] ?? null;
 
         // $reserved = app('App\Http\Controllers\PaymentProcessors\MonnifyController')->createReservedAccount($data);
-        if ($reserved['status'] && $reserved['status'] == 'success') {
+        if ($status && $status == 'success') {
             return redirect()
                 ->to(route('customers.edit', $customer->user->id) . '?tab=' . request()->query('tab', 'kyc'))
                 ->with('message', 'KYC Approved succesfully and reserved accounts created');
         } else {
+            Log::error('KYC Approved but reserved account creation failed for customer ID: ' . $customer->id . '. Response: ' . json_encode($reserved));
             return redirect()
                 ->to(route('customers.edit', $customer->user->id) . '?tab=' . request()->query('tab', 'kyc'))
                 ->with('error', 'KYC Approved succesfully but NO reserved accounts created');
