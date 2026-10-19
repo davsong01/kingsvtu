@@ -325,7 +325,7 @@ class CustomerController extends Controller
         ]);
 
         $user = User::where('id', $id)->first();
-        $user->update($request->except(['_token', 'ip', 'customerlevel', 'kyc_status', 'merchant_settings', 'store_slug', 'store_name', 'merchant_id', 'array']));
+        $user->update($request->except(['tab', '_token', 'ip', 'customerlevel', 'kyc_status', 'merchant_settings', 'store_slug', 'store_name', 'merchant_id', 'array']));
         
         if(!empty($request->customerlevel)){
             $level = CustomerLevel::where('id', $request->customerlevel)->first();
